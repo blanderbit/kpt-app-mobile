@@ -1,0 +1,18 @@
+import React from "react";
+import Svg, { G, Path, Defs, ClipPath, Rect } from "react-native-svg";
+
+export const UserIcon = ({ size = 24, color = "#BBBBBB" }) => (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <G clipPath="url(#clip0_200_56334)">
+            <Path
+                d="M12 11.6953C9.87109 11.6953 8.06445 9.79102 8.06445 7.36914C8.06445 4.98633 9.88086 3.12109 12 3.12109C14.1191 3.12109 15.9355 4.94727 15.9355 7.34961C15.9355 9.79102 14.1387 11.6953 12 11.6953ZM5.49609 20.7676C4.40234 20.7676 3.74805 20.25 3.74805 19.3906C3.74805 16.8809 6.93164 13.4238 12 13.4238C17.0586 13.4238 20.252 16.8809 20.252 19.3906C20.252 20.25 19.5879 20.7676 18.4941 20.7676H5.49609Z"
+                fill={color}
+            />
+        </G>
+        <Defs>
+            <ClipPath id="clip0_200_56334">
+                <Rect width="24" height="24" fill="white" />
+            </ClipPath>
+        </Defs>
+    </Svg>
+);

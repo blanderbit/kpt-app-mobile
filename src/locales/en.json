@@ -1,0 +1,10 @@
+{
+  "home": {
+    "title": "Home screen",
+    "welcome": "Welcome, {{name}}!"
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out"
+  }
+}

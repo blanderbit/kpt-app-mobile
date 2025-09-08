@@ -1,0 +1,22 @@
+import React from 'react';
+import Svg, { G, Path, Defs, ClipPath, Rect } from 'react-native-svg';
+
+export const GrayCircleIcon = (props: { width?: number; height?: number; color?: string }) => {
+    const { width = 24, height = 24, color = "#D6D8DD" } = props;
+
+    return (
+        <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+            <G clipPath="url(#clip0)">
+                <Path
+                    d="M11.8359 22.0371C6.31836 22.0371 1.74805 17.4766 1.74805 11.9492C1.74805 6.43164 6.30859 1.86133 11.8262 1.86133C17.3535 1.86133 21.9238 6.43164 21.9238 11.9492C21.9238 17.4766 17.3535 22.0371 11.8359 22.0371ZM11.8359 20.0547C16.3281 20.0547 19.9414 16.4414 19.9414 11.9492C19.9414 7.45703 16.3184 3.85352 11.8262 3.85352C7.33398 3.85352 3.74023 7.45703 3.74023 11.9492C3.74023 16.4414 7.34375 20.0547 11.8359 20.0547Z"
+                    fill={color}
+                />
+            </G>
+            <Defs>
+                <ClipPath id="clip0">
+                    <Rect width="24" height="24" fill="white" />
+                </ClipPath>
+            </Defs>
+        </Svg>
+    );
+};

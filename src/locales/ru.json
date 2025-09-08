@@ -1,0 +1,152 @@
+{
+  "home": {
+    "title": "Главный экран",
+    "welcome": "Добро пожаловать, {{name}}!"
+  },
+  "auth": {
+    "welcome": "Welcome to App",
+    "info": "Don’t miss the opportunity ti easily find your dream",
+    "email": "Your email",
+    "password": "Password",
+    "forgotPass": "Forgot password?",
+    "login": "Log in",
+    "appleSignIn": "Sign In with Apple",
+    "resetPassScreen": {
+      "header": "Reset password",
+      "title": "Find your account",
+      "info": "Enter your email where we send a verification link for creating a new password"
+    },
+    "checkEmailScreen": {
+      "title": "Check your email",
+      "info": "We’ve sent a reset link to your email address. Please check your spam filter and mark us as not spam also!",
+      "open": "Open mail"
+    }
+  },
+  "main": {
+    "today": {
+      "subtitle": "Hey, {{ userName }}. It’s a great day to deal with your",
+      "weekTotal": {
+        "header": "Your weekly total",
+        "noInfo": "No information yet",
+        "description": "You need to start to see information here",
+        "satisfaction": "Satisfaction",
+        "achieveness": "Achieveness"
+      },
+      "activity": {
+        "title": "Daily activity",
+        "sportActivity": {
+          "label": "Sport activity",
+          "info": "Morning exercises for 10 minutes"
+        },
+        "concentration": {
+          "label": "Concentration",
+          "info": "No social media for an hour"
+        },
+        "healthcare": {
+          "label": "Healthcare",
+          "info": "Eat vegetables for breakfast"
+        }
+      },
+      "additionalTasks": {
+        "title": "Additional tasks",
+        "mood": {
+          "title": "Mood tracker",
+          "info": "Rate your mood",
+          "desc": "Short description"
+        },
+        "article": {
+          "title": "Read an article",
+          "info": "The Power of Habit: Transform Your Life One Step at a Time"
+        },
+        "survey": {
+          "title": "Complete survey",
+          "info": "Survey title",
+          "desc": "Short description"
+        },
+        "moodTracker": {
+          "title": "How do you feel right now?",
+          "desc": "Rate your mood level",
+          "titleStepTwo": "What emotions make you feel <styled>good</styled>?",
+          "descStepTwo": "Choose all, what is available",
+          "saveRate": "Save and rate"
+        },
+        "moodValues": {
+          "satisfied": "Satisfied",
+          "excited": "Excited",
+          "joyful": "Joyful",
+          "tired": "Tired",
+          "demotivated": "Demotivated",
+          "angry": "Angry"
+        }
+      }
+    },
+    "activities": {
+      "myActivities": "My activities",
+      "addNewActivity": "Write new activity...",
+      "suggestedActivities": "Suggested activities",
+      "archivedActivities": "Archived activities"
+    },
+    "profile": {
+      "progress": {
+        "title": "Program progress",
+        "daysStreak": "Days streak",
+        "tasksCompleted": "Tasks completed"
+      },
+      "settings": {
+        "title": "Settings",
+        "colorScheme": "Color scheme",
+        "personalInfo": "Personal information",
+        "privacyPolicy": "Privacy Policy",
+        "termsConditions": "Terms & Condition",
+        "support": "Support",
+        "subscriptionSettings": "Subscription settings",
+        "deleteAccount": "Delete account",
+        "logOut": "Log out"
+      },
+      "personalInfoScreen": {
+        "title": "Personal information",
+        "email": "Your email",
+        "name": "Your name",
+        "password": "Your password",
+        "changePass": "Change password"
+      },
+      "subscriptionSettingsScreen": {
+        "title": "Subscription settings",
+        "mySubscription": "My subscription",
+        "oneMonth": "1 Month plan",
+        "subscription": "Subscription",
+        "lastDay": "Last day",
+        "statuses": {
+          "cancelled": "Cancelled"
+        }
+      }
+    },
+    "additionalTasks": {
+      "article": {
+        "title": "Article"
+      }
+    },
+    "modals": {
+      "measureActivity": {
+        "title": "Measure activity",
+        "info": "Good job, now rate activity by this metrics",
+        "satisfactionLevel": {
+          "label": "Rate satisfaction level",
+          "startLabel": "Unsatisfied",
+          "endLabel": "Satisfied"
+        },
+        "hardnessLevel": {
+          "label": "Rate hardness level",
+          "startLabel": "Too easy",
+          "endLabel": "Very hard"
+        }
+      }
+    }
+  },
+  "send": "Send",
+  "close": "Close",
+  "complete": "Complete",
+  "hello": "Hello",
+  "next": "Next",
+  "add": "Add"
+}
