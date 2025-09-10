@@ -101,7 +101,8 @@
         "support": "Support",
         "subscriptionSettings": "Subscription settings",
         "deleteAccount": "Delete account",
-        "logOut": "Log out"
+        "logOut": "Log out",
+        "areYouSureLogOut": "Are you sure you want to log out?"
       },
       "personalInfoScreen": {
         "title": "Personal information",
@@ -148,5 +149,6 @@
   "complete": "Complete",
   "hello": "Hello",
   "next": "Next",
-  "add": "Add"
+  "add": "Add",
+  "cancel": "Cancel"
 }

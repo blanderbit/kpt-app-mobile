@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import { StyleSheet, Pressable, Text, View, Alert } from "react-native";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -12,24 +12,45 @@ import CustomButton from "@shared/components/Button/Button";
 import { EyeIcon } from "@assets/icons/EyeIcon";
 import { COLORS } from "@app/theme";
 import { PersonalInfoScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { useProfile, useUpdateProfile, useChangePassword } from "@features/profile";
+import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
+import { ErrorMessage } from "@shared/components/ErrorMessage/ErrorMessage";
 
 const schema = yup.object().shape({
-    password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+    firstName: yup.string().required('Имя обязательно'),
+    lastName: yup.string().required('Фамилия обязательна'),
+    currentPassword: yup.string().required('Текущий пароль обязателен'),
+    newPassword: yup.string().min(6, 'Пароль должен содержать минимум 6 символов'),
 });
 
 type FormData = {
-    password: string;
+    firstName: string;
+    lastName: string;
+    currentPassword: string;
+    newPassword: string;
 };
 
 export default function PersonalInfoScreen({ navigation }: { navigation: PersonalInfoScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    
+    // Хуки для работы с профилем
+    const { data: profile, isLoading, error } = useProfile();
+    const updateProfile = useUpdateProfile();
+    const changePassword = useChangePassword();
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
+        defaultValues: {
+            firstName: profile?.firstName || '',
+            lastName: profile?.lastName || '',
+            currentPassword: '',
+            newPassword: '',
+        },
     });
 
     const [ passwordDisabled, setPasswordDisabled ] = useState(true);
+    const [ isEditing, setIsEditing ] = useState(false);
 
     const onBack = () => {
         navigation.goBack()

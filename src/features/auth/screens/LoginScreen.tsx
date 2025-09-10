@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '@app/hooks/auth.hook';
+import { useLogin } from '@shared/services/api';
 import { LoginIcon } from '@assets/icons/LoginIcon';
 import { Input } from '@shared/components/Input/Input';
+import { ErrorMessage } from '@shared/components/ErrorMessage/ErrorMessage';
 import { useTranslation } from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import { AppleIcon } from "@assets/icons/AppleLogo";
@@ -15,27 +17,50 @@ import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 
 const schema = yup.object().shape({
-    username: yup.string().required('Username is required'),
+    email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
 });
 
 type FormData = {
-    username: string;
+    email: string;
     password: string;
 };
 
 export default function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }) {
     const { t } = useTranslation();
-    const { login } = useAuth();
+    const { login, isLoading, error } = useAuth();
     const { theme, themeName } = useCustomTheme();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
+        defaultValues: {
+            email: 'danil.utyuzh@gmail.com',
+            password: 'password123',
+        },
     });
 
-    const onSubmit = (data: FormData) => {
-        // login( data.username, data.password );
-        navigation.navigate(Routes.RESET_PASS)
+    const onSubmit = async (data: FormData) => {
+        console.log('📝 Форма отправлена:', data);
+        try {
+            setIsSubmitting(true);
+            console.log('🔄 Вызываем login...');
+            await login(data.email, data.password);
+            console.log('✅ Login завершен успешно');
+        } catch (error: any) {
+            console.error('❌ Ошибка в onSubmit:', error);
+            Alert.alert(
+                'Ошибка входа',
+                error.message || 'Неверный email или пароль',
+                [{ text: 'OK' }]
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleForgotPassword = () => {
+        navigation.navigate(Routes.RESET_PASS);
     };
 
     return (
@@ -51,13 +76,19 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                 <View style={ styles.container }>
                     <Controller
                         control={ control }
-                        name="username"
+                        name="email"
                         render={ ({ field: { value, onChange } }) => (
                             <Input
                                 label={ t('auth.email') }
                                 value={ value }
                                 onChangeText={ onChange }
-                                error={ errors.username?.message }
+                                error={ errors.email?.message }
+                                keyboardType="email-address"
+                                spellCheck={false}
+                                autoCapitalize="none"
+                                autoComplete="email"
+                                autoCorrect={false}
+                                textContentType="none"
                             />
                         ) }
                     />
@@ -73,18 +104,34 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                                 secureTextEntry
                                 showPasswordToggle
                                 error={ errors.password?.message }
+                                autoComplete="password"
                             />
                         ) }
                     />
 
-                    <Text style={ styles.forgotPassword }>{ t('auth.forgotPass') }</Text>
+                    <ErrorMessage message={ error || '' } visible={ !!error } />
+
+                    <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
+                        { t('auth.forgotPass') }
+                    </Text>
                 </View>
 
                 <View style={ styles.container }>
-                    <CustomButton title={ t('auth.login') } onPress={ onSubmit }/>
+                    <CustomButton 
+                        title={ t('auth.login') } 
+                        onPress={ handleSubmit(onSubmit) }
+                        disabled={ isSubmitting || isLoading }
+                        loading={ isSubmitting || isLoading }
+                    />
 
-                    <CustomButton title={ t('auth.appleSignIn') } onPress={ () => {
-                    } } themeName="white">
+                    <CustomButton 
+                        title={ t('auth.appleSignIn') } 
+                        onPress={ () => {
+                            // TODO: Implement Apple Sign In
+                        } } 
+                        themeName="white"
+                        disabled={ isSubmitting || isLoading }
+                    >
                         <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
                     </CustomButton>
                 </View>

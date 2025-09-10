@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Pressable, Alert } from 'react-native';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
 import LayersIcon from "@assets/icons/LayersIcon";
@@ -8,19 +8,45 @@ import SettingsIcon from "@assets/icons/SettingsIcon";
 import ToggleSwitch from "@shared/components/ToggleSwitch/ToggleSwitch";
 import Progress from "@features/profile/components/Progress/Progress";
 import { LinearGradient } from "expo-linear-gradient";
-import { settingsElements, weekDays } from "@features/main/screens/profile/const";
+import {settingsElements, SettingsItem, weekDays} from "@features/main/screens/profile/const";
 import { COLORS } from "@app/theme";
 import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
 import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { moodConfig } from "@features/main/screens/mood-tracker/const";
+import { useAuth } from "@app/hooks/auth.hook";
 
 export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    const { logout } = useAuth();
 
     const [ satisfaction, setSatisfaction ] = useState(75)
     const [ achieveness, setAchieveness ] = useState(25)
+
+    const handleLogout = () => {
+        Alert.alert(
+            t('main.profile.settings.logOut'),
+            t('main.profile.settings.areYouSureLogOut'),
+            [
+                { text: t('cancel'), style: 'cancel' },
+                {
+                    text: t('main.profile.settings.logOut'),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            console.log('🚪 Начинаем процесс выхода...');
+                            await logout();
+                            console.log('✅ Выход выполнен успешно');
+                        } catch (error) {
+                            console.error('❌ Ошибка выхода:', error);
+                            Alert.alert('Ошибка', 'Не удалось выйти из аккаунта');
+                        }
+                    },
+                },
+            ]
+        );
+    };
 
     const moodValues = useMemo(() => ([
         {
@@ -44,7 +70,15 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
         {
             value: 1
         }
-    ]))
+    ]), [])
+
+    const handlePress = (nested: SettingsItem) => {
+        if (nested.path) {
+            navigation.navigate(nested.path);
+        } else if (nested.label === 'main.profile.settings.logOut') {
+            handleLogout();
+        }
+    };
 
     return (
         <View style={ [ styles.container ] }>
@@ -183,22 +217,24 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                                 if ( Array.isArray(element) ) {
                                     return (
                                         <View key={ index }>
-                                            { element.map((nested, nestedIndex) => (
-                                                <SectionItem
-                                                    key={ `${ index }-${ nestedIndex }` }
-                                                    icon={ nested.icon }
-                                                    label={ nested.label }
-                                                    rightElement={ <ChevronRightIcon/> }
-                                                    extraStyles={ [
-                                                        nestedIndex === 0 ? styles.settingsElementsBorderTop : {},
-                                                        nestedIndex === element.length - 1
-                                                            ? styles.settingsElementsBorderBottom
-                                                            : {},
-                                                        nestedIndex < element.length - 1 ? styles.settingsElementsBorder : {},
-                                                    ] }
-                                                    onPress={ () => nested.path ? navigation.navigate(nested.path) : null }
-                                                />
-                                            )) }
+                                            { element.map((nested, nestedIndex) => {
+                                                return (
+                                                    <SectionItem
+                                                        key={ `${ index }-${ nestedIndex }` }
+                                                        icon={ nested.icon }
+                                                        label={ nested.label }
+                                                        rightElement={ <ChevronRightIcon/> }
+                                                        extraStyles={ [
+                                                            nestedIndex === 0 ? styles.settingsElementsBorderTop : {},
+                                                            nestedIndex === element.length - 1
+                                                                ? styles.settingsElementsBorderBottom
+                                                                : {},
+                                                            nestedIndex < element.length - 1 ? styles.settingsElementsBorder : {},
+                                                        ] }
+                                                        onPress={ () => handlePress(nested) }
+                                                    />
+                                                );
+                                            }) }
                                         </View>
                                     );
                                 }

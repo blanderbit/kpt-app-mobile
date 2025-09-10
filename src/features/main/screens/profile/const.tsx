@@ -11,7 +11,15 @@ import { Routes } from "@app/navigation/const";
 
 export const weekDays = [ 'S', 'M', 'T', 'W', 'T', 'F', 'S' ];
 
-export const settingsElements = [
+export interface SettingsItem {
+    label: string,
+    icon: any,
+    path?: Routes,
+}
+
+type SettingsElement = SettingsItem | SettingsItem[];
+
+export const settingsElements: SettingsElement[] = [
     {
         label: 'main.profile.settings.colorScheme',
         icon: <ColorSchemeIcon/>

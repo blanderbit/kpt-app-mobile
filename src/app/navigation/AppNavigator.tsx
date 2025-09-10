@@ -17,6 +17,7 @@ import SubscriptionSettingsScreen from "@features/main/screens/subscription-sett
 import { RouteProp } from "@react-navigation/native";
 import { useTheme } from '@react-navigation/native';
 import ArticleScreen from "@features/main/screens/article/ArticleScreen";
+import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
@@ -41,11 +42,20 @@ export type ArticleScreenRouteProp = RouteProp<RootStackParamList, Routes.ARTICL
 const Stack = createStackNavigator<RootStackParamList>();
 
 export function AppNavigator() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const { theme } = useCustomTheme();
 
     const { colors } = useTheme();
     colors.background = 'transparent';
+
+    // Показываем загрузку пока проверяем аутентификацию
+    if (isLoading) {
+        return (
+            <View style={styles.main}>
+                <LoadingSpinner message="Проверка аутентификации..." />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.main}>
