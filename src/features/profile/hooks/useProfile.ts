@@ -21,7 +21,6 @@ export const useProfile = () => {
     queryKey: profileQueryKeys.profileData(),
     queryFn: () => profileService.getProfile(),
     staleTime: 5 * 60 * 1000, // 5 минут
-    retry: 1,
   });
 };
 

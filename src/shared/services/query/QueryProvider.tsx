@@ -9,31 +9,16 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000,
       // Время жизни кеша - 10 минут
       gcTime: 10 * 60 * 1000,
-      // Повторные попытки при ошибке
-      retry: (failureCount, error: any) => {
-        // Не повторяем для 4xx ошибок (кроме 408, 429)
-        if (error?.status >= 400 && error?.status < 500 && error?.status !== 408 && error?.status !== 429) {
-          return false;
-        }
-        // Максимум 3 попытки
-        return failureCount < 3;
-      },
-      // Интервал между попытками
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      // Отключаем повторные попытки для всех запросов
+      retry: false,
       // Рефетч при фокусе окна
       refetchOnWindowFocus: false,
       // Рефетч при восстановлении соединения
-      refetchOnReconnect: true,
+      refetchOnReconnect: false,
     },
     mutations: {
-      // Повторные попытки для мутаций
-      retry: (failureCount, error: any) => {
-        // Не повторяем для 4xx ошибок
-        if (error?.status >= 400 && error?.status < 500) {
-          return false;
-        }
-        return failureCount < 2;
-      },
+      // Отключаем повторные попытки для всех мутаций
+      retry: false,
     },
   },
 });
