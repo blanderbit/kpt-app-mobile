@@ -52,7 +52,7 @@ export function AppNavigator() {
     if (isLoading) {
         return (
             <View style={styles.main}>
-                <LoadingSpinner message="Проверка аутентификации..." />
+                <LoadingSpinner visible={true} />
             </View>
         );
     }
