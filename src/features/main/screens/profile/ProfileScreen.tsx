@@ -15,11 +15,14 @@ import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { moodConfig } from "@features/main/screens/mood-tracker/const";
 import { useAuth } from "@app/hooks/auth.hook";
+import { useProfile } from "@app/hooks/profile.hook";
+import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 
 export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { logout } = useAuth();
+    const { profile, isLoading, error, refreshProfile } = useProfile();
 
     const [ satisfaction, setSatisfaction ] = useState(75)
     const [ achieveness, setAchieveness ] = useState(25)
@@ -72,6 +75,17 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
         }
     ]), [])
 
+    // Показываем загрузку если профиль загружается
+    if (isLoading) {
+        return <LoadingSpinner visible={true} />;
+    }
+
+    // Показываем ошибку если не удалось загрузить профиль
+    if (error) {
+        Alert.alert('Ошибка', `Ошибка загрузки профиля: ${error}`);
+        return null;
+    }
+
     const handlePress = (nested: SettingsItem) => {
         if (nested.path) {
             navigation.navigate(nested.path);
@@ -92,7 +106,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                     </Text>
 
                     <Text style={ theme.fonts.title }>
-                        Rostyk
+                        {profile?.firstName || 'Пользователь'}
                     </Text>
                 </View>
 

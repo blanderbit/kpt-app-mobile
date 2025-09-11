@@ -109,7 +109,9 @@
         "email": "Your email",
         "name": "Your name",
         "password": "Your password",
-        "changePass": "Change password"
+        "changePass": "Change password",
+        "currentPass": "Current password",
+        "newPass": "New password"
       },
       "subscriptionSettingsScreen": {
         "title": "Subscription settings",
@@ -150,5 +152,6 @@
   "hello": "Hello",
   "next": "Next",
   "add": "Add",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "approve": "Approve"
 }

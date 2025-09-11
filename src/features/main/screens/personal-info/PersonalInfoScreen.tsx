@@ -13,19 +13,13 @@ import { EyeIcon } from "@assets/icons/EyeIcon";
 import { COLORS } from "@app/theme";
 import { PersonalInfoScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useProfile, useUpdateProfile, useChangePassword } from "@features/profile";
-import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
-import { ErrorMessage } from "@shared/components/ErrorMessage/ErrorMessage";
 
 const schema = yup.object().shape({
-    firstName: yup.string().required('Имя обязательно'),
-    lastName: yup.string().required('Фамилия обязательна'),
-    currentPassword: yup.string().required('Текущий пароль обязателен'),
-    newPassword: yup.string().min(6, 'Пароль должен содержать минимум 6 символов'),
+    currentPassword: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+    newPassword: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
 });
 
 type FormData = {
-    firstName: string;
-    lastName: string;
     currentPassword: string;
     newPassword: string;
 };
@@ -42,8 +36,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
         defaultValues: {
-            firstName: profile?.firstName || '',
-            lastName: profile?.lastName || '',
             currentPassword: '',
             newPassword: '',
         },
@@ -82,7 +74,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                     </View>
 
                     <Text style={ theme.fonts.titleSecond }>
-                        username@mail.com
+                        { profile?.email }
                     </Text>
                 </View>
 
@@ -94,45 +86,76 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                     </View>
 
                     <Text style={ theme.fonts.titleSecond }>
-                        Rostyk
+                        { profile?.firstName }
                     </Text>
                 </View>
 
                 <View style={ [ theme.containers.cardRound, { paddingHorizontal: 16 } ] }>
-                    <View>
-                        <Text style={ [ theme.fonts.subtitle, { textAlign: 'left' } ] }>
-                            { t('main.profile.personalInfoScreen.password') }
-                        </Text>
-                    </View>
+                    {
+                        passwordDisabled ?
+                            <View style={ theme.flexBlocks.vertical8 }>
+                                <Text style={ [ theme.fonts.subtitle, { textAlign: 'left' } ] }>
+                                    { t('main.profile.personalInfoScreen.password') }
+                                </Text>
 
-                    <View style={ theme.flexBlocks.vertical16 }>
-                        { passwordDisabled ?
-                            <View style={ [ theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter ] }>
-                                <Text style={ styles.dots }>............</Text>
+                                <View style={ theme.flexBlocks.vertical16 }>
+                                    <View style={ [ theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter ] }>
+                                        <Text style={ styles.dots }>............</Text>
 
-                                <EyeIcon/>
+                                        <EyeIcon/>
+                                    </View>
+
+                                    <CustomButton title={ t('main.profile.personalInfoScreen.changePass') }
+                                                  buttonStyle={ styles.changePassBtn }
+                                                  onPress={ () => {setPasswordDisabled(!passwordDisabled)} }/>
+                                </View>
                             </View> :
-                            <Controller
-                                control={ control }
-                                name="password"
-                                render={ ({ field: { value, onChange } }) => (
-                                    <Input
-                                        value={ value }
-                                        onChangeText={ onChange }
-                                        secureTextEntry
-                                        showPasswordToggle
-                                        error={ errors.password?.message }
+                            <View style={ theme.flexBlocks.vertical16 }>
+                                <View style={ theme.flexBlocks.vertical8 }>
+                                    <Text style={ [ theme.fonts.subtitle, { textAlign: 'left' } ] }>
+                                        { t('main.profile.personalInfoScreen.currentPass') }
+                                    </Text>
+
+                                    <Controller
+                                        control={ control }
+                                        name="currentPassword"
+                                        render={ ({ field: { value, onChange } }) => (
+                                            <Input
+                                                value={ value }
+                                                onChangeText={ onChange }
+                                                secureTextEntry
+                                                showPasswordToggle
+                                                error={ errors.currentPassword?.message }
+                                            />
+                                        ) }
                                     />
-                                ) }
-                            /> }
+                                </View>
 
+                                <View style={ theme.flexBlocks.vertical8 }>
+                                    <Text style={ [ theme.fonts.subtitle, { textAlign: 'left' } ] }>
+                                        { t('main.profile.personalInfoScreen.newPass') }
+                                    </Text>
 
-                        <CustomButton title={ t('main.profile.personalInfoScreen.changePass') }
-                                      buttonStyle={ styles.changePassBtn }
-                                      onPress={ () => {
-                                          setPasswordDisabled(!passwordDisabled)
-                                      } }/>
-                    </View>
+                                    <Controller
+                                        control={ control }
+                                        name="newPassword"
+                                        render={ ({ field: { value, onChange } }) => (
+                                            <Input
+                                                value={ value }
+                                                onChangeText={ onChange }
+                                                secureTextEntry
+                                                showPasswordToggle
+                                                error={ errors.newPassword?.message }
+                                            />
+                                        ) }
+                                    />
+                                </View>
+
+                                <CustomButton title={ t('main.profile.personalInfoScreen.approve') }
+                                              buttonStyle={ styles.changePassBtn }
+                                              onPress={handleSubmit}/>
+                            </View>
+                    }
                 </View>
             </View>
         </PageWithHeader>

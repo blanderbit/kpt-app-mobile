@@ -1,6 +1,8 @@
 import React from "react";
 import { ImageBackground, SafeAreaView, StyleSheet, View } from "react-native";
 import { AuthProvider } from "@features/auth/AuthProvider";
+import { ProfileProvider } from "@features/profile/ProfileProvider";
+import { QueryProvider } from "@shared/services/query/QueryProvider";
 import { useFonts } from "expo-font";
 import "../locales";
 import { ThemeProvider, useCustomTheme } from "@app/theme/ThemeContext";
@@ -52,13 +54,17 @@ export default function App() {
     if ( !fontsLoaded ) return null;
 
     return (
-        <AuthProvider>
-            <ThemeProvider>
-                <ToastProvider>
-                    <MainApp/>
-                </ToastProvider>
-            </ThemeProvider>
-        </AuthProvider>
+        <QueryProvider>
+            <ProfileProvider>
+                <AuthProvider>
+                    <ThemeProvider>
+                        <ToastProvider>
+                            <MainApp/>
+                        </ToastProvider>
+                    </ThemeProvider>
+                </AuthProvider>
+            </ProfileProvider>
+        </QueryProvider>
     );
 }
 

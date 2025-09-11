@@ -48,7 +48,6 @@ export function AppNavigator() {
     const { colors } = useTheme();
     colors.background = 'transparent';
 
-    // Показываем загрузку пока проверяем аутентификацию
     if (isLoading) {
         return (
             <View style={styles.main}>

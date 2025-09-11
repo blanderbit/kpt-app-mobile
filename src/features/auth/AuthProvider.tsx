@@ -1,5 +1,6 @@
 import React, { useState, ReactNode, useEffect } from 'react';
 import { AuthContext } from '@app/hooks/auth.hook';
+import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils } from '@shared/services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,6 +9,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { refreshProfile, clearProfile } = useProfile();
 
     // Проверяем наличие токена при загрузке приложения
     useEffect(() => {
@@ -20,11 +22,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         const userData = await authService.getCurrentUser();
                         setUser(userData);
                         setIsAuthenticated(true);
+                        // Обновляем профиль после успешной аутентификации
+                        await refreshProfile();
                     } catch (error) {
                         // Токен недействителен, очищаем его
                         await apiUtils.removeAuthToken();
                         setIsAuthenticated(false);
                         setUser(null);
+                        await clearProfile();
                     }
                 }
             } catch (error) {
@@ -57,6 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
+            // Обновляем профиль после успешного входа
+            await refreshProfile();
             console.log('✅ Вход выполнен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка входа:', error);
@@ -82,12 +89,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(false);
             setUser(null);
             setError(null);
+            // Очищаем профиль при выходе
+            await clearProfile();
         } catch (error) {
             console.error('Ошибка выхода:', error);
             // Даже если API вызов не удался, очищаем локальное состояние
             await apiUtils.removeAuthToken();
             setIsAuthenticated(false);
             setUser(null);
+            await clearProfile();
         } finally {
             setIsLoading(false);
         }

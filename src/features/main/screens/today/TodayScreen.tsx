@@ -23,12 +23,14 @@ import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
 import MoodTracker from "@features/main/screens/mood-tracker/MoodTracker";
 import { Routes } from '@app/navigation/const';
+import {useProfile} from "@app/hooks/profile.hook";
 
 const circleSize = 16;
 
 export default function TodayScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    const { profile } = useProfile();
 
     const [ activitySections, setActivitySections ] = useState([ ...DailyActivitySections ])
 
@@ -74,7 +76,7 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
         <View style={ styles.container }>
             <View style={ theme.flexBlocks.vertical8 }>
                 <Text style={ theme.fonts.subtitle }>
-                    { t('main.today.subtitle', { userName: 'Rostyk' }) }
+                    { t('main.today.subtitle', { userName: profile?.firstName }) }
                 </Text>
 
                 <Text style={ theme.fonts.title }>

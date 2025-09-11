@@ -87,8 +87,8 @@ export class ApiService {
   // Базовый метод для GET запросов
   protected async get<T>(url: string, params?: any): Promise<T> {
     try {
-      const response = await this.client.get<ApiResponse<T>>(url, { params });
-      return response.data.data;
+      const response = await this.client.get<T>(url, { params });
+      return response.data;
     } catch (error) {
       this.handleError(error);
     }
