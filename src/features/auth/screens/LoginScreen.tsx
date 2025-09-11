@@ -36,7 +36,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         resolver: yupResolver(schema),
         defaultValues: {
             email: 'danil.utyuzh@gmail.com',
-            password: 'password123',
+            password: 'password124',
         },
     });
 

@@ -15,8 +15,14 @@ import { PersonalInfoScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useProfile, useUpdateProfile, useChangePassword } from "@features/profile";
 
 const schema = yup.object().shape({
-    currentPassword: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
-    newPassword: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+    currentPassword: yup.string().required('Текущий пароль обязателен').min(6, 'Пароль должен содержать минимум 6 символов'),
+    newPassword: yup.string()
+        .required('Новый пароль обязателен')
+        .min(6, 'Пароль должен содержать минимум 6 символов')
+        .test('different-passwords', 'Новый пароль должен отличаться от текущего', function(value) {
+            const { currentPassword } = this.parent;
+            return value !== currentPassword;
+        }),
 });
 
 type FormData = {
@@ -33,7 +39,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const updateProfile = useUpdateProfile();
     const changePassword = useChangePassword();
 
-    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
         resolver: yupResolver(schema),
         defaultValues: {
             currentPassword: '',
@@ -46,6 +52,25 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     const onBack = () => {
         navigation.goBack()
+    };
+
+    const onSubmitChangePassword = async (data: FormData) => {
+        try {
+            console.log('🔐 Начинаем смену пароля...');
+            
+            await changePassword.mutateAsync({
+                currentPassword: data.currentPassword,
+                newPassword: data.newPassword,
+            });
+            
+            console.log('✅ Пароль успешно изменен');
+            Alert.alert('Успех', 'Пароль успешно изменен');
+            reset();
+            setPasswordDisabled(true);
+        } catch (error: any) {
+            console.error('❌ Ошибка смены пароля:', error);
+            Alert.alert('Ошибка', error.message || 'Не удалось изменить пароль');
+        }
     };
 
     return (
@@ -151,9 +176,10 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                                     />
                                 </View>
 
-                                <CustomButton title={ t('main.profile.personalInfoScreen.approve') }
+                                <CustomButton title={ t('approve') }
                                               buttonStyle={ styles.changePassBtn }
-                                              onPress={handleSubmit}/>
+                                              onPress={handleSubmit(onSubmitChangePassword)}
+                                              disabled={changePassword.isPending}/>
                             </View>
                     }
                 </View>
