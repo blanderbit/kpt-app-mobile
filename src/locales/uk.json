@@ -34,12 +34,41 @@
       "codeRequired": "Код підтвердження обов'язковий",
       "codeInvalid": "Код повинен містити рівно 6 цифр",
       "passwordRequired": "Новий пароль обов'язковий",
-      "passwordMinLength": "Пароль повинен містити мінімум 6 символів",
+      "passwordMinLength": "Пароль повинен містити мінімум 8 символів",
       "passwordComplexity": "Пароль повинен містити принаймні одну малу літеру, одну велику літеру та одну цифру",
       "confirmPasswordRequired": "Будь ласка, підтвердіть ваш пароль",
       "passwordsMatch": "Паролі повинні збігатися"
     }
   },
+  "main": {
+    "profile": {
+      "personalInfoScreen": {
+        "title": "Особиста інформація",
+        "email": "Ваш email",
+        "name": "Ваше ім'я",
+        "password": "Ваш пароль",
+        "changePass": "Змінити пароль",
+        "currentPass": "Поточний пароль",
+        "newPass": "Новий пароль",
+        "changeEmail": "Змінити email",
+        "newEmail": "Новий email",
+        "confirmEmail": "Підтвердити зміну email",
+        "changeName": "Змінити ім'я",
+        "newName": "Нове ім'я",
+        "confirmName": "Підтвердити зміну імені",
+        "emailRequired": "Email обов'язковий",
+        "emailInvalid": "Будь ласка, введіть правильний email",
+        "nameRequired": "Ім'я обов'язкове",
+        "passwordRequired": "Пароль обов'язковий",
+        "passwordMinLength": "Пароль повинен містити мінімум 8 символів",
+        "passwordComplexity": "Пароль повинен містити принаймні одну малу літеру, одну велику літеру та одну цифру",
+        "currentPasswordRequired": "Поточний пароль обов'язковий",
+        "newPasswordRequired": "Новий пароль обов'язковий",
+        "differentPasswords": "Новий пароль повинен відрізнятися від поточного"
+      }
+    }
+  },
   "send": "Надіслати",
-  "ok": "ОК"
+  "ok": "ОК",
+  "approve": "Підтвердити"
 }

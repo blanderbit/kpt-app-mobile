@@ -111,7 +111,7 @@ export class ApiService {
   protected async put<T>(url: string, data?: any): Promise<T> {
     try {
       const response = await this.client.put<ApiResponse<T>>(url, data);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       this.handleError(error);
     }
@@ -121,7 +121,7 @@ export class ApiService {
   protected async delete<T>(url: string): Promise<T> {
     try {
       const response = await this.client.delete<ApiResponse<T>>(url);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       this.handleError(error);
     }

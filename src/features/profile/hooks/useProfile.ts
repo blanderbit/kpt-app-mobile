@@ -17,11 +17,16 @@ export const profileQueryKeys = {
 
 // Хук для получения профиля
 export const useProfile = () => {
-  return useQuery({
+  const query = useQuery({
     queryKey: profileQueryKeys.profileData(),
     queryFn: () => profileService.getProfile(),
     staleTime: 5 * 60 * 1000, // 5 минут
   });
+
+  return {
+    ...query,
+    refreshProfile: query.refetch,
+  };
 };
 
 // Хук для обновления профиля

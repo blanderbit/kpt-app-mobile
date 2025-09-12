@@ -22,7 +22,8 @@ const createSchema = (t: any) => yup.object().shape({
     newPassword: yup
         .string()
         .required(t('auth.checkEmailScreen.passwordRequired'))
-        .min(8, t('auth.checkEmailScreen.passwordMinLength')),
+        .min(8, t('auth.checkEmailScreen.passwordMinLength'))
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
     confirmPassword: yup
         .string()
         .required(t('auth.checkEmailScreen.confirmPasswordRequired'))

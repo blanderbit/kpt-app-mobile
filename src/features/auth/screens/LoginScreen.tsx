@@ -20,7 +20,8 @@ const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string()
         .required(t('auth.checkEmailScreen.passwordRequired'))
-        .min(8, t('auth.checkEmailScreen.passwordMinLength')),
+        .min(8, t('auth.checkEmailScreen.passwordMinLength'))
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
 });
 
 type FormData = {
@@ -38,7 +39,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         resolver: yupResolver(schema(t)),
         defaultValues: {
             email: 'danil.utyuzh@gmail.com',
-            password: 'password124',
+            password: 'password123',
         },
     });
 

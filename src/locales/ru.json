@@ -37,8 +37,8 @@
       "codeRequired": "Verification code is required",
       "codeInvalid": "Code must be exactly 6 digits",
       "passwordRequired": "New password is required",
-      "passwordMinLength": "Password must be at least 6 characters",
-      "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+      "passwordMinLength": "Пароль должен содержать минимум 8 символов",
+      "passwordComplexity": "Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву и одну цифру",
       "confirmPasswordRequired": "Please confirm your password",
       "passwordsMatch": "Passwords must match"
     }
@@ -132,7 +132,22 @@
         "password": "Your password",
         "changePass": "Change password",
         "currentPass": "Current password",
-        "newPass": "New password"
+        "newPass": "New password",
+        "changeEmail": "Change email",
+        "newEmail": "New email",
+        "confirmEmail": "Confirm email change",
+        "changeName": "Change name",
+        "newName": "New name",
+        "confirmName": "Confirm name change",
+        "emailRequired": "Email обязателен",
+        "emailInvalid": "Введите корректный email",
+        "nameRequired": "Имя обязательно",
+        "passwordRequired": "Пароль обязателен",
+        "passwordMinLength": "Пароль должен содержать минимум 8 символов",
+        "passwordComplexity": "Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву и одну цифру",
+        "currentPasswordRequired": "Текущий пароль обязателен",
+        "newPasswordRequired": "Новый пароль обязателен",
+        "differentPasswords": "Новый пароль должен отличаться от текущего"
       },
       "subscriptionSettingsScreen": {
         "title": "Subscription settings",

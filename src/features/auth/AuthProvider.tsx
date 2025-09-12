@@ -1,8 +1,7 @@
 import React, { useState, ReactNode, useEffect } from 'react';
 import { AuthContext } from '@app/hooks/auth.hook';
 import { useProfile } from '@app/hooks/profile.hook';
-import { authService, apiUtils } from '@shared/services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,8 +14,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const token = await AsyncStorage.getItem('auth_token');
-                if (token) {
+                const hasTokens = await apiUtils.hasTokens();
+                if (hasTokens) {
                     // Проверяем валидность токена, получая данные пользователя
                     try {
                         const userData = await authService.getCurrentUser();
@@ -26,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         await refreshProfile();
                     } catch (error) {
                         // Токен недействителен, очищаем его
-                        await apiUtils.removeAuthToken();
+                        await apiUtils.removeAuthTokens();
                         setIsAuthenticated(false);
                         setUser(null);
                         await clearProfile();
@@ -42,6 +41,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         checkAuthStatus();
     }, []);
 
+    // Устанавливаем callback для уведомления о необходимости логина
+    useEffect(() => {
+        const handleAuthRequired = () => {
+            console.log('🔔 Получено уведомление о необходимости логина');
+            setIsAuthenticated(false);
+            setUser(null);
+            clearProfile();
+        };
+
+        setOnAuthRequired(handleAuthRequired);
+
+        // Очищаем callback при размонтировании
+        return () => {
+            setOnAuthRequired(null);
+        };
+    }, [clearProfile]);
+
     const login = async (email: string, password: string) => {
         try {
             console.log('🔐 Начинаем процесс входа...', { email });
@@ -54,9 +70,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.log('✅ Получен ответ от API:', response);
             
             // Сохраняем токены
-            console.log('💾 Сохраняем токен...');
-            await apiUtils.setAuthToken(response.accessToken);
-            console.log('✅ Токен сохранен');
+            console.log('💾 Сохраняем токены...');
+            await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
+            console.log('✅ Токены сохранены');
             
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
@@ -83,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await authService.logout();
             
             // Очищаем токены
-            await apiUtils.removeAuthToken();
+            await apiUtils.removeAuthTokens();
             
             // Обновляем состояние
             setIsAuthenticated(false);
@@ -94,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             console.error('Ошибка выхода:', error);
             // Даже если API вызов не удался, очищаем локальное состояние
-            await apiUtils.removeAuthToken();
+            await apiUtils.removeAuthTokens();
             setIsAuthenticated(false);
             setUser(null);
             await clearProfile();

@@ -34,12 +34,41 @@
       "codeRequired": "Verification code is required",
       "codeInvalid": "Code must be exactly 6 digits",
       "passwordRequired": "New password is required",
-      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordMinLength": "Password must be at least 8 characters",
       "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
       "confirmPasswordRequired": "Please confirm your password",
       "passwordsMatch": "Passwords must match"
     }
   },
+  "main": {
+    "profile": {
+      "personalInfoScreen": {
+        "title": "Personal information",
+        "email": "Your email",
+        "name": "Your name",
+        "password": "Your password",
+        "changePass": "Change password",
+        "currentPass": "Current password",
+        "newPass": "New password",
+        "changeEmail": "Change email",
+        "newEmail": "New email",
+        "confirmEmail": "Confirm email change",
+        "changeName": "Change name",
+        "newName": "New name",
+        "confirmName": "Confirm name change",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email",
+        "nameRequired": "Name is required",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+        "currentPasswordRequired": "Current password is required",
+        "newPasswordRequired": "New password is required",
+        "differentPasswords": "New password must be different from current password"
+      }
+    }
+  },
   "send": "Send",
-  "ok": "OK"
+  "ok": "OK",
+  "approve": "Approve"
 }
