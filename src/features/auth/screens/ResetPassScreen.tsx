@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, SafeAreaView, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,18 +11,20 @@ import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import { ResetPassScreenNavigationProp } from "@app/navigation/AppNavigator";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { Routes } from "@app/navigation/const";
+import { authApiService } from '@features/auth/services';
 
 const schema = yup.object().shape({
-    username: yup.string().required('Username is required'),
+    email: yup.string().email('Invalid email format').required('Email is required'),
 });
 
 type FormData = {
-    username: string;
+    email: string;
 };
 
 export default function ResetPassScreen({ navigation }: { navigation: ResetPassScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    const [isLoading, setIsLoading] = useState(false);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema),
@@ -32,9 +34,30 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
         navigation.goBack()
     };
 
-    const onSubmit = (data: FormData) => {
-        // login(data.username);
-        navigation.navigate(Routes.CHECK_EMAIL)
+    const onSubmit = async (data: FormData) => {
+        try {
+            setIsLoading(true);
+            await authApiService.forgotPassword(data.email);
+            
+            Alert.alert(
+                t('auth.resetPassScreen.successTitle'),
+                t('auth.resetPassScreen.successMessage'),
+                [
+                    {
+                        text: t('ok'),
+                        onPress: () => navigation.navigate(Routes.CHECK_EMAIL, { email: data.email })
+                    }
+                ]
+            );
+        } catch (error: any) {
+            console.error('Forgot password error:', error);
+            Alert.alert(
+                t('auth.resetPassScreen.errorTitle'),
+                error.message || t('auth.resetPassScreen.errorMessage')
+            );
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -68,13 +91,16 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
 
                         <Controller
                             control={ control }
-                            name="username"
+                            name="email"
                             render={ ({ field: { value, onChange } }) => (
                                 <Input
                                     label={ t('auth.email') }
                                     value={ value }
                                     onChangeText={ onChange }
-                                    error={ errors.username?.message }
+                                    error={ errors.email?.message }
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoComplete="email"
                                 />
                             ) }
                         />
@@ -83,7 +109,9 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
                     <View style={ styles.formBottom }>
                         <CustomButton
                             title={ t('send') }
-                            onPress={ onSubmit }
+                            onPress={ handleSubmit(onSubmit) }
+                            loading={ isLoading }
+                            disabled={ isLoading }
                         />
                     </View>
                 </View>

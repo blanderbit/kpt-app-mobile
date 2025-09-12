@@ -22,7 +22,7 @@ import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
     [Routes.RESET_PASS]: undefined;
-    [Routes.CHECK_EMAIL]: undefined;
+    [Routes.CHECK_EMAIL]: { email: string };
     [Routes.HOME]: undefined;
     [Routes.PERSONAL_INFO]: undefined;
     [Routes.SUBSCRIPTION_SETTINGS]: undefined;
@@ -38,6 +38,7 @@ export type SubscriptionSettingsScreenNavigationProp = NativeStackNavigationProp
 export type ArticleScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.ARTICLE>;
 
 export type ArticleScreenRouteProp = RouteProp<RootStackParamList, Routes.ARTICLE>;
+export type CheckEmailScreenRouteProp = RouteProp<RootStackParamList, Routes.CHECK_EMAIL>;
 
 const Stack = createStackNavigator<RootStackParamList>();
 

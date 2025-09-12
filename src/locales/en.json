@@ -5,6 +5,41 @@
   },
   "auth": {
     "login": "Log in",
-    "logout": "Log out"
-  }
+    "logout": "Log out",
+    "email": "Your email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "resetPassScreen": {
+      "header": "Reset password",
+      "title": "Find your account",
+      "info": "Enter your email where we send a verification link for creating a new password",
+      "successTitle": "Success",
+      "successMessage": "Password reset link has been sent to your email",
+      "errorTitle": "Error",
+      "errorMessage": "Failed to send password reset link. Please try again."
+    },
+    "checkEmailScreen": {
+      "title": "Reset your password",
+      "info": "Enter the verification code from your email and create a new password",
+      "open": "Open mail",
+      "codeLabel": "Verification code",
+      "resetPassword": "Reset password",
+      "successTitle": "Success",
+      "successMessage": "Password reset successfully",
+      "errorTitle": "Error",
+      "errorMessage": "Failed to reset password. Please try again.",
+      "emailNotFound": "Email not found",
+      "mailClientError": "Could not open mail client on this device.",
+      "codeRequired": "Verification code is required",
+      "codeInvalid": "Code must be exactly 6 digits",
+      "passwordRequired": "New password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordsMatch": "Passwords must match"
+    }
+  },
+  "send": "Send",
+  "ok": "OK"
 }

@@ -16,9 +16,11 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 
-const schema = yup.object().shape({
+const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+    password: yup.string()
+        .required(t('auth.checkEmailScreen.passwordRequired'))
+        .min(8, t('auth.checkEmailScreen.passwordMinLength')),
 });
 
 type FormData = {
@@ -33,7 +35,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(schema(t)),
         defaultValues: {
             email: 'danil.utyuzh@gmail.com',
             password: 'password124',
