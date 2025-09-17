@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "78984716511",
+    "project_id": "kpt-app-6ab7a",
+    "storage_bucket": "kpt-app-6ab7a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78984716511:android:d238d57ef5c02e38d5496a",
+        "android_client_info": {
+          "package_name": "com.siplify.kpt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "78984716511-4fdfc5l4afgtag2hsbn3puvllmfc1v4h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS2LG23GYyNlNHZv_SqyzRGwVOfXachVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "78984716511-4fdfc5l4afgtag2hsbn3puvllmfc1v4h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "78984716511-v1qg9hahti25vjvgmi72bcbov49fkcql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kpt-apple"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

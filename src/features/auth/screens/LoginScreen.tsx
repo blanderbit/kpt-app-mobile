@@ -15,6 +15,8 @@ import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
+import {signInWithApple} from "@features/auth/screens/test";
+import GoogleSignInButton from "@features/auth/screens/test3";
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -28,6 +30,8 @@ type FormData = {
     email: string;
     password: string;
 };
+
+const ANDROID_CLIENT_ID = "1015243991043-qecjkbib04vpdh8ra0455mojffg1iqva.apps.googleusercontent.com";
 
 export default function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }) {
     const { t } = useTranslation();
@@ -66,9 +70,17 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         navigation.navigate(Routes.RESET_PASS);
     };
 
+    // signInWithApple()
+
+    // const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    //     clientId: ANDROID_CLIENT_ID,
+    // });
+
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
             <View style={ styles.mainContainer }>
+                <GoogleSignInButton />
+
                 <LoginIcon/>
 
                 <View style={ styles.head }>

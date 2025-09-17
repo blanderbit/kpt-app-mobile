@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authService } from './client';
 
 // Базовый URL для API
 export const API_BASE_URL = 'https://kpt.api.the-displaycontrol.com';
@@ -33,8 +34,7 @@ const refreshTokens = async (): Promise<boolean> => {
 
     // Используем существующий authService для refresh
     // Импортируем authService динамически, чтобы избежать циклических зависимостей
-    const { authService } = await import('./client');
-    
+
     const response = await authService.refreshToken({
       refreshToken,
       accessToken,

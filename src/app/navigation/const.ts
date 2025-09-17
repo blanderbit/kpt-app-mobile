@@ -6,4 +6,5 @@ export enum Routes {
     PERSONAL_INFO = 'PersonalInfo',
     SUBSCRIPTION_SETTINGS = 'SubscriptionSettings',
     ARTICLE = 'Article',
+    REDIRECT = 'Redirect',
 }
