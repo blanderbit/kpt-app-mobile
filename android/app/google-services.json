@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:78984716511:android:d238d57ef5c02e38d5496a",
+        "mobilesdk_app_id": "1:78984716511:android:0dd0c6a996aae402d5496a",
         "android_client_info": {
-          "package_name": "com.siplify.kpt"
+          "package_name": "com.simplify.kpt"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "78984716511-jjjhbdahb217cof0dla5u6t2njlsuorn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.simplify.kpt",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "78984716511-4fdfc5l4afgtag2hsbn3puvllmfc1v4h.apps.googleusercontent.com",
           "client_type": 3
@@ -31,10 +39,10 @@
               "client_type": 3
             },
             {
-              "client_id": "78984716511-v1qg9hahti25vjvgmi72bcbov49fkcql.apps.googleusercontent.com",
+              "client_id": "78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "kpt-apple"
+                "bundle_id": "com.simplify.kpt"
               }
             }
           ]

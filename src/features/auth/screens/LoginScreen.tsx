@@ -15,8 +15,9 @@ import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
-import {signInWithApple} from "@features/auth/screens/test";
-import GoogleSignInButton from "@features/auth/screens/test3";
+import Button from "@shared/components/Button/Button";
+import {signinGoogle} from "@features/auth/screens/test5";
+// import GoogleSignInButton from "@features/auth/screens/test4";
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -79,7 +80,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
             <View style={ styles.mainContainer }>
-                <GoogleSignInButton />
+                <Button onPress={() => signinGoogle()}><Text>12323</Text></Button>
 
                 <LoginIcon/>
 

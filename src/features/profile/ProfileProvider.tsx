@@ -15,6 +15,30 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         loadProfileFromStorage();
     }, []);
 
+    // Принудительно обновляем профиль с сервера при старте приложения
+    useEffect(() => {
+        const initializeProfile = async () => {
+            try {
+                // Проверяем, есть ли токены для запроса профиля
+                const { apiUtils } = await import('@shared/services/api');
+                const hasTokens = await apiUtils.hasTokens();
+                
+                if (hasTokens) {
+                    console.log('🔄 Принудительно обновляем профиль при старте приложения...');
+                    await refreshProfile();
+                }
+            } catch (error) {
+                console.error('❌ Ошибка инициализации профиля:', error);
+            }
+        };
+
+        // Запускаем инициализацию через небольшую задержку
+        // чтобы убедиться, что AuthProvider уже инициализировался
+        const timer = setTimeout(initializeProfile, 1000);
+        
+        return () => clearTimeout(timer);
+    }, []);
+
     const loadProfileFromStorage = async () => {
         try {
             console.log('📱 Загружаем профиль из AsyncStorage...');
@@ -61,9 +85,12 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const updateProfile = (profileData: any) => {
-        console.log('🔄 Обновляем профиль в контексте...');
+        console.log('🔄 Обновляем профиль в контексте...', profileData);
         setProfile(profileData);
         saveProfileToStorage(profileData);
+        
+        // Устанавливаем ошибку в null при успешном обновлении
+        setError(null);
     };
 
     const clearProfile = async () => {

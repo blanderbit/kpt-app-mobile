@@ -163,7 +163,7 @@ export class AuthService extends ApiService {
   }
 
   async getCurrentUser(): Promise<User> {
-    return this.get<User>('/users/profile');
+    return this.get<User>('/profile');
   }
 }
 

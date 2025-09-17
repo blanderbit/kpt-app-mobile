@@ -28,7 +28,19 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>test</string>
-          <string>kpt-apple</string>
+          <string>com.simplify.kpt</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+kptapp</string>
         </array>
       </dict>
     </array>
@@ -73,5 +85,16 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>GIDClientID</key>
+    <string>78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4.apps.googleusercontent.com</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+    <dict>
+    <key>CFBundleURLSchemes</key>
+    <array>
+    <string>com.googleusercontent.apps.78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4</string>
+    </array>
+    </dict>
+    </array>
   </dict>
 </plist>

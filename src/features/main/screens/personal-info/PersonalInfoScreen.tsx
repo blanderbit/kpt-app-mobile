@@ -63,7 +63,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const { theme } = useCustomTheme();
     
     // Хуки для работы с профилем
-    const { profile, isLoading, error, refreshProfile } = useProfile();
+    const { profile, isLoading, error, refreshProfile, updateProfile: updateProfileContext } = useProfile();
     const updateProfile = useUpdateProfile();
     const changePassword = useChangePassword();
     const changeEmail = useChangeEmail();
@@ -140,7 +140,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             console.log('✅ Email успешно изменен');
             Alert.alert('Успех', 'Email успешно изменен. Проверьте новую почту для подтверждения.');
             
-            // Обновляем профиль в контексте
+            // Обновляем профиль с сервера для получения актуальных данных
             await refreshProfile();
             
             // Сбрасываем форму с текущими значениями (email не изменится до подтверждения)
@@ -166,8 +166,8 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             console.log('✅ Имя успешно изменено');
             Alert.alert('Успех', 'Имя успешно изменено');
             
-            // Обновляем профиль в контексте
-            await refreshProfile();
+            // Немедленно обновляем профиль в контексте с новыми данными
+            updateProfileContext(updatedProfile);
             
             // Сбрасываем форму с новыми значениями
             nameForm.reset({
