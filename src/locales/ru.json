@@ -39,7 +39,7 @@
       "codeInvalid": "Code must be exactly 6 digits",
       "passwordRequired": "New password is required",
       "passwordMinLength": "Пароль должен содержать минимум 8 символов",
-      "passwordComplexity": "Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву и одну цифру",
+      "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
       "confirmPasswordRequired": "Please confirm your password",
       "passwordsMatch": "Passwords must match"
     }
@@ -145,7 +145,7 @@
         "nameRequired": "Имя обязательно",
         "passwordRequired": "Пароль обязателен",
         "passwordMinLength": "Пароль должен содержать минимум 8 символов",
-        "passwordComplexity": "Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву и одну цифру",
+        "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
         "currentPasswordRequired": "Текущий пароль обязателен",
         "newPasswordRequired": "Новый пароль обязателен",
         "differentPasswords": "Новый пароль должен отличаться от текущего"

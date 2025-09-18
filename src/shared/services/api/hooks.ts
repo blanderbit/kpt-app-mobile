@@ -23,6 +23,7 @@ import {
   DeleteAccountRequest,
   CreateMoodTrackerRequest,
   UpdateMoodTrackerRequest,
+  MoodType,
   CreateActivityRequest,
   UpdateActivityRequest,
   CreateRateActivityRequest,
@@ -50,6 +51,7 @@ export const queryKeys = {
   moodForDate: (date: string) => [...queryKeys.moodTracker, 'date', date] as const,
   moodForPeriod: (startDate: string, endDate: string) => [...queryKeys.moodTracker, 'period', startDate, endDate] as const,
   allMoods: () => [...queryKeys.moodTracker, 'all'] as const,
+  moodTypes: () => [...queryKeys.moodTracker, 'types'] as const,
   
   // Activities
   activities: ['activities'] as const,
@@ -275,6 +277,14 @@ export const useAllMoods = () => {
     queryKey: queryKeys.allMoods(),
     queryFn: () => moodTrackerService.getAllMoodTrackers(),
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useMoodTypes = () => {
+  return useQuery({
+    queryKey: queryKeys.moodTypes(),
+    queryFn: () => moodTrackerService.getAllMoodTypes(),
+    staleTime: 30 * 60 * 1000, // 30 минут, так как типы настроения редко изменяются
   });
 };
 

@@ -19,11 +19,11 @@ const createPasswordSchema = (t: any) => yup.object().shape({
     currentPassword: yup.string()
         .required(t('main.profile.personalInfoScreen.currentPasswordRequired'))
         .min(8, t('main.profile.personalInfoScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity')),
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity')),
     newPassword: yup.string()
         .required(t('main.profile.personalInfoScreen.newPasswordRequired'))
         .min(8, t('main.profile.personalInfoScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity'))
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity'))
         .test('different-passwords', t('main.profile.personalInfoScreen.differentPasswords'), function(value) {
             const { currentPassword } = this.parent;
             return value !== currentPassword;
@@ -37,7 +37,7 @@ const createEmailSchema = (t: any) => yup.object().shape({
     password: yup.string()
         .required(t('main.profile.personalInfoScreen.passwordRequired'))
         .min(8, t('main.profile.personalInfoScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity')),
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('main.profile.personalInfoScreen.passwordComplexity')),
 });
 
 const createNameSchema = (t: any) => yup.object().shape({

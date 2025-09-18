@@ -44,11 +44,13 @@ function MainApp() {
 
 export default function App() {
     const [ fontsLoaded ] = useFonts({
-        "SF Pro Display": require("../assets/fonts/SF-Pro-Display-Regular.otf"),
-        "SF Pro Display Bold": require("../assets/fonts/SF-Pro-Display-Bold.otf"),
-        "PP Editorial New": require("../assets/fonts/PPEditorialNew-Regular.otf"),
-        "Tilt Wrap": require("../assets/fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf"),
-        Inter: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        "SF Pro Display": require("../../assets/fonts/SF-Pro-Display-Regular.otf"),
+        "SF Pro Display Bold": require("../../assets/fonts/SF-Pro-Display-Bold.otf"),
+        "PP Editorial New": require("../../assets/fonts/PPEditorialNew-Regular.otf"),
+        "Tilt Wrap": require("../../assets/fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf"),
+        Inter: require("../../assets/fonts/Inter_18pt-Regular.ttf"),
+        InterMedium: require("../../assets/fonts/Inter_18pt-Medium.ttf"),
+        InterSemibold: require("../../assets/fonts/Inter_18pt-SemiBold.ttf"),
     });
 
     if ( !fontsLoaded ) return null;

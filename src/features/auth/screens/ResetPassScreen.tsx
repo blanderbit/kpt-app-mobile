@@ -11,7 +11,7 @@ import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import { ResetPassScreenNavigationProp } from "@app/navigation/AppNavigator";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { Routes } from "@app/navigation/const";
-import { authApiService } from '@features/auth/services';
+import { authService } from '@shared/services/api';
 
 const schema = yup.object().shape({
     email: yup.string().email('Invalid email format').required('Email is required'),
@@ -37,7 +37,7 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
     const onSubmit = async (data: FormData) => {
         try {
             setIsLoading(true);
-            await authApiService.forgotPassword(data.email);
+            await authService.forgotPassword({ email: data.email });
             
             Alert.alert(
                 t('auth.resetPassScreen.successTitle'),

@@ -227,6 +227,17 @@ export interface UpdateMoodTrackerRequest {
   notes?: string;
 }
 
+// Тип для настроения
+export interface MoodType {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  color: string;
+  score: number;
+  category: string;
+}
+
 // Типы для предложенных активностей
 export interface SuggestedActivity {
   id: number;

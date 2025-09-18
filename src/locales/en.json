@@ -35,7 +35,7 @@
       "codeInvalid": "Code must be exactly 6 digits",
       "passwordRequired": "New password is required",
       "passwordMinLength": "Password must be at least 8 characters",
-      "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+      "passwordComplexity": "Password must contain at least one letter and one number",
       "confirmPasswordRequired": "Please confirm your password",
       "passwordsMatch": "Passwords must match"
     }
@@ -61,7 +61,7 @@
         "nameRequired": "Name is required",
         "passwordRequired": "Password is required",
         "passwordMinLength": "Password must be at least 8 characters",
-        "passwordComplexity": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+        "passwordComplexity": "Password must contain at least one letter and one number",
         "currentPasswordRequired": "Current password is required",
         "newPasswordRequired": "New password is required",
         "differentPasswords": "New password must be different from current password"

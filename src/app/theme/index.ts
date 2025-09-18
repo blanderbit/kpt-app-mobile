@@ -94,7 +94,7 @@ export const pinkTheme: Theme = {
             lineHeight: 28
         },
         subtitle: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 14,
             lineHeight: 20,
@@ -109,20 +109,20 @@ export const pinkTheme: Theme = {
             opacity: .4
         },
         subheader: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Medium',
             fontWeight: '500',
             fontSize: 20,
             lineHeight: 28,
             letterSpacing: -0.5
         },
         label: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 12,
             lineHeight: 16,
         },
         labelSecond: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 16,
             lineHeight: 24,
@@ -232,7 +232,7 @@ export const greenTheme: Theme = {
             lineHeight: 28
         },
         subtitle: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 14,
             lineHeight: 20,
@@ -247,20 +247,20 @@ export const greenTheme: Theme = {
             opacity: .4
         },
         subheader: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Medium',
             fontWeight: '500',
             fontSize: 20,
             lineHeight: 28,
             letterSpacing: -0.5
         },
         label: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 12,
             lineHeight: 16,
         },
         labelSecond: {
-            fontFamily: 'Inter',
+            fontFamily: 'Inter Semibold',
             fontWeight: '600',
             fontSize: 16,
             lineHeight: 24,

@@ -5,16 +5,16 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import BottomSheet from '@shared/components/BottomSheet/BottomSheet';
 import { MoodIcon } from "@assets/icons/MoodIcon";
 import CustomButton from "@shared/components/Button/Button";
-import { moodConfig, testVariants } from "@features/main/screens/mood-tracker/const";
 import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import WhiteCheckmarkIcon from "@assets/icons/WhiteCheckmarkIcon";
 import { GrayCircleIcon } from "@assets/icons/GrayCircleIcon";
 import { BlackCheckmarkIcon } from "@assets/icons/BlackCheckmarkIcon";
+import { useMoodTypes, useSetMoodForDay } from '@shared/services/api';
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
-const NUM_COLUMNS = 3;
+const NUM_COLUMNS = 4; // Увеличиваем до 4 колонок для лучшего отображения
 const ITEM_WIDTH = (screenWidth - 32 - (GAP * (NUM_COLUMNS - 1))) / NUM_COLUMNS;
 
 export default function MoodTracker({ visible, onClose }: { visible: boolean, onClose: () => void }) {
@@ -22,9 +22,38 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
     const { theme } = useCustomTheme();
     const [ step, setStep ] = useState(1);
     const [ selectedVariants, setSelectedVariants ] = useState([]);
+    const [ selectedMoodType, setSelectedMoodType ] = useState<string | null>(null);
 
-    const goNext = () => setStep(prev => Math.min(prev + 1, 2));
+    // Получаем типы настроения с бэкенда
+    const { data: moodTypes, isLoading: moodTypesLoading } = useMoodTypes();
+    
+    // Хук для сохранения настроения
+    const setMoodForDay = useSetMoodForDay();
+
+    const goNext = () => {
+        if (step === 1 && selectedMoodType) {
+            setStep(prev => Math.min(prev + 1, 2));
+        }
+    };
     const goBack = () => setStep(prev => Math.max(prev - 1, 1));
+
+    const handleSaveMood = async () => {
+        if (selectedMoodType && moodTypes) {
+            try {
+                const selectedMoodNames = selectedVariants
+                    .map(id => moodTypes.find(mood => mood.id === id)?.name)
+                    .filter(Boolean);
+                
+                await setMoodForDay.mutateAsync({
+                    moodType: selectedMoodType,
+                    notes: selectedVariants.length > 0 ? `Дополнительные эмоции: ${selectedMoodNames.join(', ')}` : undefined
+                });
+                onClose();
+            } catch (error) {
+                console.error('Ошибка сохранения настроения:', error);
+            }
+        }
+    };
 
     return (
         <BottomSheet
@@ -37,11 +66,18 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
             button={
                 <View style={ { flexDirection: 'row', justifyContent: 'space-between' } }>
                     { step === 1 &&
-                        <CustomButton title={ t('next') } onPress={ goNext }/>
+                        <CustomButton 
+                            title={ t('next') } 
+                            onPress={ goNext }
+                            disabled={ !selectedMoodType }
+                        />
                     }
                     { step === 2 &&
-                        <CustomButton title={ t('main.today.additionalTasks.moodTracker.saveRate') }
-                                      onPress={ onClose }/> }
+                        <CustomButton 
+                            title={ t('main.today.additionalTasks.moodTracker.saveRate') }
+                            onPress={ handleSaveMood }
+                            loading={ setMoodForDay.isPending }
+                        /> }
                 </View>
             }
         >
@@ -59,14 +95,35 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         </Text>
                     </View>
 
-                    <View style={ styles.gridContainer }>
-                        { moodConfig(80).reverse().map(({ value, icon, label }) => (
-                            <Pressable key={ value } style={ [ styles.gridItem, { width: ITEM_WIDTH } ] }>
-                                { icon }
-                                <Text numberOfLines={ 1 } style={ theme.fonts.subtitleSecond }>{ t(label) }</Text>
-                            </Pressable>
-                        )) }
-                    </View>
+                    <ScrollView showsVerticalScrollIndicator={ false }>
+                        { moodTypesLoading ? (
+                            <Text style={ theme.fonts.regular }>Загрузка...</Text>
+                        ) : moodTypes ? (
+                            <View style={ styles.gridContainer }>
+                                { moodTypes
+                                    .sort((a, b) => b.score - a.score) // Сортируем по score (от высокого к низкому)
+                                    .map((moodType) => (
+                                        <Pressable 
+                                            key={ moodType.id } 
+                                            style={ [ 
+                                                styles.gridItem, 
+                                                { 
+                                                    width: ITEM_WIDTH,
+                                                    borderColor: selectedMoodType === moodType.id ? moodType.color : '#F2F1F6',
+                                                    backgroundColor: selectedMoodType === moodType.id ? `${moodType.color}20` : 'transparent'
+                                                } 
+                                            ] }
+                                            onPress={ () => setSelectedMoodType(moodType.id) }
+                                        >
+                                            <Text style={ { fontSize: 32 } }>{ moodType.emoji }</Text>
+                                            <Text numberOfLines={ 1 } style={ [ theme.fonts.subtitleSecond, { fontSize: 12 } ] }>{ moodType.name }</Text>
+                                        </Pressable>
+                                    )) }
+                            </View>
+                        ) : (
+                            <Text style={ theme.fonts.regular }>Ошибка загрузки типов настроения</Text>
+                        ) }
+                    </ScrollView>
                 </View>
             ) }
 
@@ -85,35 +142,38 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         </Text>
 
                         <Text style={ [ theme.fonts.regular, { opacity: 0.6 } ] }>
-                            { t('main.today.additionalTasks.moodTracker.descStepTwo') }
+                            Выберите дополнительные эмоции, которые вы сейчас испытываете
                         </Text>
                     </View>
 
                     <ScrollView
-                        style={ { maxHeight: '70%' }}
                         contentContainerStyle={ { paddingVertical: 8 } }
                         showsVerticalScrollIndicator={ false }
                     >
                         <View style={theme.flexBlocks.vertical8}>
-                            { testVariants.map((variant, index) => (
-                                <SectionItem
-                                    key={ index }
-                                    label={ variant.label }
-                                    rightElement={
-                                        selectedVariants.includes(variant.value)
-                                            ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
-                                            : <GrayCircleIcon/>
-                                    }
-                                    extraStyles={ [ styles.variantItem ] }
-                                    onPress={ () => setSelectedVariants(prev => {
-                                        if ( prev.includes(variant.value) ) {
-                                            return prev.filter(v => v !== variant.value);
-                                        } else {
-                                            return [ ...prev, variant.value ];
-                                        }
-                                    }) }
-                                />
-                            )) }
+                            {moodTypes
+                                    .filter(moodType => moodType.id !== selectedMoodType) // Исключаем уже выбранное основное настроение
+                                    .sort((a, b) => b.score - a.score) // Сортируем по score
+                                    .map((moodType) => (
+                                        <SectionItem
+                                            key={ moodType.id }
+                                            label={ `${moodType.emoji} ${moodType.name}` }
+                                            rightElement={
+                                                selectedVariants.includes(moodType.id)
+                                                    ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
+                                                    : <GrayCircleIcon/>
+                                            }
+                                            extraStyles={ [ styles.variantItem ] }
+                                            onPress={ () => setSelectedVariants(prev => {
+                                                if ( prev.includes(moodType.id) ) {
+                                                    return prev.filter(v => v !== moodType.id);
+                                                } else {
+                                                    return [ ...prev, moodType.id ];
+                                                }
+                                            }) }
+                                        />
+                                    ))
+                            }
                         </View>
                     </ScrollView>
                 </View>

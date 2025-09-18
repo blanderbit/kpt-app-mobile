@@ -12,7 +12,7 @@ import { CheckIcon } from "@assets/icons/CheckIcon";
 import { CheckEmailScreenNavigationProp, CheckEmailScreenRouteProp } from "@app/navigation/AppNavigator";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import {Routes} from "@app/navigation/const";
-import { authApiService } from '@features/auth/services';
+import { authService } from '@shared/services/api';
 
 const createSchema = (t: any) => yup.object().shape({
     verificationCode: yup
@@ -23,7 +23,7 @@ const createSchema = (t: any) => yup.object().shape({
         .string()
         .required(t('auth.checkEmailScreen.passwordRequired'))
         .min(8, t('auth.checkEmailScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
     confirmPassword: yup
         .string()
         .required(t('auth.checkEmailScreen.confirmPasswordRequired'))
@@ -63,7 +63,7 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
                 return;
             }
 
-            await authApiService.resetPassword(email, data.verificationCode, data.newPassword);
+            await authService.resetPassword({ email, code: data.verificationCode, newPassword: data.newPassword });
             
             Alert.alert(
                 t('auth.checkEmailScreen.successTitle'),

@@ -81,7 +81,7 @@ const styles = StyleSheet.create( {
         height: 52
     },
     text: {
-        fontFamily: 'Inter',
+        fontFamily: 'Inter Semibold',
         fontSize: 14,
         lineHeight: 20,
         fontWeight: '600',

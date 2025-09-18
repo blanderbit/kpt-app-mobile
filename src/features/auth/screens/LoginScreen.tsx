@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Alert, Platform} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '@app/hooks/auth.hook';
-import { useLogin } from '@shared/services/api';
 import { LoginIcon } from '@assets/icons/LoginIcon';
 import { Input } from '@shared/components/Input/Input';
 import { ErrorMessage } from '@shared/components/ErrorMessage/ErrorMessage';
@@ -15,24 +14,20 @@ import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
-import Button from "@shared/components/Button/Button";
-import {signInGoogle, signinGoogle} from "@features/auth/screens/test5";
-// import GoogleSignInButton from "@features/auth/screens/test4";
+import {signInGoogle, signInAppleIos, signInAppleAndroid} from "@features/auth/screens/test5";
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string()
         .required(t('auth.checkEmailScreen.passwordRequired'))
         .min(8, t('auth.checkEmailScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
 });
 
 type FormData = {
     email: string;
     password: string;
 };
-
-const ANDROID_CLIENT_ID = "1015243991043-qecjkbib04vpdh8ra0455mojffg1iqva.apps.googleusercontent.com";
 
 export default function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }) {
     const { t } = useTranslation();
@@ -71,11 +66,13 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         navigation.navigate(Routes.RESET_PASS);
     };
 
-    // signInWithApple()
+    const signInWithGoogle = () => {
+        signInGoogle()
+    }
 
-    // const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    //     clientId: ANDROID_CLIENT_ID,
-    // });
+    const signInWithApple = () => {
+        Platform.OS === "ios" ? signInAppleIos() : signInAppleAndroid();
+    }
 
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
@@ -140,9 +137,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 
                     <CustomButton 
                         title={ t('auth.appleSignIn') } 
-                        onPress={ () => {
-                            // TODO: Implement Apple Sign In
-                        } } 
+                        onPress={ () => signInWithApple()}
                         themeName="white"
                         disabled={ isSubmitting || isLoading }
                     >
@@ -151,7 +146,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 
                     <CustomButton
                         title={ t('auth.googleSignIn') }
-                        onPress={ () => signInGoogle()}
+                        onPress={ () => signInWithGoogle()}
                         themeName="white"
                         disabled={ isSubmitting || isLoading }>
                     </CustomButton>
@@ -200,7 +195,7 @@ const styles = StyleSheet.create({
     forgotPassword: {
         fontSize: 14,
         lineHeight: 20,
-        fontFamily: 'Inter',
+        fontFamily: 'Inter Semibold',
         color: COLORS.warning,
         fontWeight: '600',
         paddingBottom: 40,

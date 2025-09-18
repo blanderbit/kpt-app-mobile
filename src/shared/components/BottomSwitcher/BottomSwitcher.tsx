@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
     },
     tabText: {
-        fontFamily: 'Inter',
+        fontFamily: 'Inter Semibold',
         color: '#FFFFFFAA',
         fontWeight: '600',
         fontSize: 12,
