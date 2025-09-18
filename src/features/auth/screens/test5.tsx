@@ -6,7 +6,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
 
-export const signinGoogle = async (): Promise<string> => {
+export const signInGoogle = async (): Promise<string> => {
     try {
         await GoogleSignin.hasPlayServices({
             showPlayServicesUpdateDialog: true,

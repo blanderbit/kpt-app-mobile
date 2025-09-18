@@ -16,7 +16,7 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 import Button from "@shared/components/Button/Button";
-import {signinGoogle} from "@features/auth/screens/test5";
+import {signInGoogle, signinGoogle} from "@features/auth/screens/test5";
 // import GoogleSignInButton from "@features/auth/screens/test4";
 
 const schema =  (t: any) => yup.object().shape({
@@ -80,8 +80,6 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
             <View style={ styles.mainContainer }>
-                <Button onPress={() => signinGoogle()}><Text>12323</Text></Button>
-
                 <LoginIcon/>
 
                 <View style={ styles.head }>
@@ -149,6 +147,13 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                         disabled={ isSubmitting || isLoading }
                     >
                         <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
+                    </CustomButton>
+
+                    <CustomButton
+                        title={ t('auth.googleSignIn') }
+                        onPress={ () => signInGoogle()}
+                        themeName="white"
+                        disabled={ isSubmitting || isLoading }>
                     </CustomButton>
                 </View>
             </View>

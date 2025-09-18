@@ -13,6 +13,7 @@
     "forgotPass": "Forgot password?",
     "login": "Log in",
     "appleSignIn": "Sign In with Apple",
+    "googleSignIn": "Sign In with Google",
     "resetPassScreen": {
       "header": "Reset password",
       "title": "Find your account",
