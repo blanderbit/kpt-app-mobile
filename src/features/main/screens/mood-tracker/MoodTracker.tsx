@@ -11,6 +11,7 @@ import WhiteCheckmarkIcon from "@assets/icons/WhiteCheckmarkIcon";
 import { GrayCircleIcon } from "@assets/icons/GrayCircleIcon";
 import { BlackCheckmarkIcon } from "@assets/icons/BlackCheckmarkIcon";
 import { useMoodTypes, useSetMoodForDay } from '@shared/services/api';
+import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
@@ -29,6 +30,9 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
     
     // Хук для сохранения настроения
     const setMoodForDay = useSetMoodForDay();
+    
+    // Контекст текущего настроения
+    const { refreshCurrentMood } = useCurrentMoodContext();
 
     const goNext = () => {
         if (step === 1 && selectedMoodType) {
@@ -48,6 +52,10 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                     moodType: selectedMoodType,
                     notes: selectedVariants.length > 0 ? `Дополнительные эмоции: ${selectedMoodNames.join(', ')}` : undefined
                 });
+                
+                // Обновляем текущее настроение после сохранения
+                await refreshCurrentMood();
+                
                 onClose();
             } catch (error) {
                 console.error('Ошибка сохранения настроения:', error);

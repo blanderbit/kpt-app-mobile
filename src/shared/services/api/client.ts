@@ -30,6 +30,7 @@ import {
   CreateMoodTrackerRequest,
   UpdateMoodTrackerRequest,
   MoodType,
+  ActivityType,
   // Suggested activities types
   SuggestedActivity,
   AddSuggestedActivityRequest,
@@ -236,6 +237,10 @@ export class MoodTrackerService extends ApiService {
 
 // Сервис для активностей
 export class ActivityService extends ApiService {
+  async getActivityTypes(): Promise<ActivityType[]> {
+    return this.get<ActivityType[]>('/profile/activities/types/all');
+  }
+
   async getMyActivities(params?: SearchParams & PaginationParams): Promise<PaginatedResponse<Activity>> {
     return this.get<PaginatedResponse<Activity>>('/profile/activities', params);
   }

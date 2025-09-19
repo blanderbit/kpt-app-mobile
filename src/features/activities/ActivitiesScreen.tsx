@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
+import { ActivityLabel } from '@shared/components/ActivityLabel';
 import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { InfoPopup } from "@shared/components/InfoPopup/InfoPopup";
 import LayersIcon from "@assets/icons/LayersIcon";
@@ -106,19 +107,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                                                        <BurgerIcon/>
 
                                                        <View>
-                                                           <View style={ {
-                                                               ...styles.activityLabel,
-                                                               backgroundColor: section.backgroundColor
-                                                           } }>
-                                                               { section.icon }
-
-                                                               <Text style={ {
-                                                                   ...theme.fonts.label,
-                                                                   color: section.color
-                                                               } }>
-                                                                   { t(section.label) }
-                                                               </Text>
-                                                           </View>
+                                                           <ActivityLabel id={section.activityType} />
 
                                                            <Pressable style={ styles.activityContent }>
                                                                <Text
@@ -212,13 +201,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                                     : {}),
                             } }
                         >
-                            <View style={ { ...styles.activityLabel, backgroundColor: section.backgroundColor } }>
-                                { section.icon }
-                                <Text style={ {
-                                    ...theme.fonts.label,
-                                    color: section.color
-                                } }>{ t(section.label) }</Text>
-                            </View>
+                            <ActivityLabel id={section.activityType} />
 
                             <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                 <Text
@@ -260,13 +243,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                                     : {}),
                             } }
                         >
-                            <View style={ { ...styles.activityLabel, backgroundColor: section.backgroundColor } }>
-                                { section.icon }
-                                <Text style={ {
-                                    ...theme.fonts.label,
-                                    color: section.color
-                                } }>{ t(section.label) }</Text>
-                            </View>
+                            <ActivityLabel id={section.activityType} />
 
                             <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                 <Text

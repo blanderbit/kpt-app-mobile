@@ -24,6 +24,8 @@ import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
 import MoodTracker from "@features/main/screens/mood-tracker/MoodTracker";
 import { Routes } from '@app/navigation/const';
 import {useProfile} from "@app/hooks/profile.hook";
+import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
+import { ActivityLabel } from '@shared/components/ActivityLabel';
 
 const circleSize = 16;
 
@@ -31,6 +33,7 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { profile } = useProfile();
+    const { hasMoodForToday, currentMood } = useCurrentMoodContext();
 
     const [ activitySections, setActivitySections ] = useState([ ...DailyActivitySections ])
 
@@ -55,7 +58,10 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
 
     const onAdditionalSectionClick = (section) => {
         if ( section.mode === AdditionalActivityType.MOOD_TRACKER ) {
-            setMoodTrackerModalOpen(true)
+            if (!hasMoodForToday) {
+                setMoodTrackerModalOpen(true);
+            }
+            // Если настроение уже записано, ничего не делаем (секция заблокирована)
         }
         if ( section.mode === AdditionalActivityType.ARTICLE ) {
             navigation.navigate(Routes.ARTICLE, { id: '1' });
@@ -141,16 +147,11 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
                                         : {}),
                                 } }
                             >
-                                <View style={ { ...styles.activityLabel, backgroundColor: section.backgroundColor } }>
-                                    { section.icon }
-                                    <Text style={ {
-                                        ...theme.fonts.label,
-                                        color: section.color
-                                    } }>{ t(section.label) }</Text>
-                                </View>
+                                <ActivityLabel
+                                    id={section.activityType}
+                                />
 
                                 <Pressable style={ styles.activityContent } onPress={ () => onSectionClick(section) }>
-
                                     <Text
                                         style={ [ styles.activityTitle, theme.fonts.subheader, section.done ? styles.activitySectionDone : {} ] }>
                                         { t(section.info) }
@@ -176,30 +177,60 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
 
                     <View style={ theme.flexBlocks.vertical8 }>
                         {
-                            additionalTaskSections.map((section, index) => (
-                                <Pressable key={ index } style={ {
-                                    ...styles.activitySection,
-                                    backgroundColor: '#fff',
-                                    borderRadius: 24
-                                } } onPress={ () => onAdditionalSectionClick(section) }>
-                                    <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
-                                        { section.icon }
+                            additionalTaskSections.map((section, index) => {
+                                const isMoodSection = section.mode === AdditionalActivityType.MOOD_TRACKER;
+                                const isBlocked = isMoodSection && hasMoodForToday;
+                                
+                                return (
+                                    <Pressable 
+                                        key={ index } 
+                                        style={ {
+                                            ...styles.activitySection,
+                                            backgroundColor: '#fff',
+                                            borderRadius: 24,
+                                            opacity: isBlocked ? 0.6 : 1
+                                        } } 
+                                        onPress={ () => onAdditionalSectionClick(section) }
+                                        disabled={ isBlocked }
+                                    >
+                                        <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
+                                            { section.icon }
 
-                                        <Text style={ theme.fonts.subtitle }>{ t(section.label) }</Text>
-                                    </View>
+                                            <Text style={ [ 
+                                                theme.fonts.subtitle,
+                                            ] }>
+                                                { t(section.label) }
+                                            </Text>
+                                            
+                                            { isBlocked && (
+                                                <WhiteCheckmarkIcon />
+                                            )}
+                                        </View>
 
-                                    <View style={ theme.flexBlocks.vertical4 }>
-                                        <Text style={ theme.fonts.subheader }>
-                                            { t(section.info) }
-                                        </Text>
+                                        <View style={ theme.flexBlocks.vertical4 }>
+                                            <Text style={ [ 
+                                                theme.fonts.subheader,
+                                                isBlocked && {
+                                                    color: '#000',
+                                                    textDecorationLine: 'line-through',
+                                                    opacity: 0.3
+                                                }
+                                            ] }>
+                                                { t(section.info) }
+                                            </Text>
 
-                                        { section.description &&
-                                            <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
-                                                { t(section.description) }
-                                            </Text> }
-                                    </View>
-                                </Pressable>
-                            ))
+                                            { section.description &&
+                                                <Text style={ [ 
+                                                    theme.fonts.regular, 
+                                                    { opacity: .6 },
+                                                ] }>
+                                                    { t(section.description) }
+                                                </Text> 
+                                            }
+                                        </View>
+                                    </Pressable>
+                                );
+                            })
                         }
                     </View>
 

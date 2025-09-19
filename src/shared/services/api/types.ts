@@ -238,6 +238,16 @@ export interface MoodType {
   category: string;
 }
 
+// Тип для активности
+export interface ActivityType {
+  id: string;
+  name: string;
+  description?: string;
+  icon: string; // Эмодзи или название иконки
+  color: string;
+  category?: string;
+}
+
 // Типы для предложенных активностей
 export interface SuggestedActivity {
   id: number;

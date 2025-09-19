@@ -18,28 +18,19 @@ export enum AdditionalActivityType {
 
 export const DailyActivitySections = [
     {
-        icon: <SportActivityIcon />,
-        label: 'main.today.activity.sportActivity.label',
         info: 'main.today.activity.sportActivity.info',
-        backgroundColor: '#245DF51A',
-        color: '#245DF5',
+        activityType: 'general',
         mode: DailyActivityType.MEASURE_ACTIVITY,
         done: false
     },
     {
-        icon: <ConcentrationIcon />,
-        label: 'main.today.activity.concentration.label',
         info: 'main.today.activity.concentration.info',
-        backgroundColor: '#246B561A',
-        color: '#246B56',
+        activityType: 'fitness',
         done: false
     },
     {
-        icon: <HealthCareIcon />,
-        label: 'main.today.activity.healthcare.label',
         info: 'main.today.activity.healthcare.info',
-        backgroundColor: '#BE77151A',
-        color: '#BE7715',
+        activityType: 'social',
         done: false
     }
 ]

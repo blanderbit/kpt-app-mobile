@@ -24,6 +24,7 @@ import {
   CreateMoodTrackerRequest,
   UpdateMoodTrackerRequest,
   MoodType,
+  ActivityType,
   CreateActivityRequest,
   UpdateActivityRequest,
   CreateRateActivityRequest,
@@ -55,9 +56,9 @@ export const queryKeys = {
   
   // Activities
   activities: ['activities'] as const,
+  activityTypes: () => [...queryKeys.activities, 'types'] as const,
   myActivities: (params?: SearchParams & PaginationParams) => [...queryKeys.activities, 'my', params] as const,
   activityById: (id: number) => [...queryKeys.activities, 'byId', id] as const,
-  activityTypes: () => [...queryKeys.activities, 'types'] as const,
   recommendedTypes: (name: string) => [...queryKeys.activities, 'recommended', name] as const,
   activityTypesByCategory: (category: string) => [...queryKeys.activities, 'byCategory', category] as const,
   
@@ -314,6 +315,14 @@ export const useActivityById = (id: number) => {
     queryFn: () => activityService.getActivityById(id),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useActivityTypes = () => {
+  return useQuery({
+    queryKey: queryKeys.activityTypes(),
+    queryFn: () => activityService.getActivityTypes(),
+    staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
   });
 };
 
