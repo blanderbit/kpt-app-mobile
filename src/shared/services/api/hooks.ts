@@ -214,11 +214,12 @@ export const useSetMoodForDay = () => {
   });
 };
 
-export const useCurrentMood = () => {
+export const useCurrentMood = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: queryKeys.currentMood(),
     queryFn: () => moodTrackerService.getCurrentMood(),
     staleTime: 1 * 60 * 1000, // 1 minute
+    enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
   });
 };
 
@@ -318,11 +319,12 @@ export const useActivityById = (id: number) => {
   });
 };
 
-export const useActivityTypes = () => {
+export const useActivityTypes = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: queryKeys.activityTypes(),
     queryFn: () => activityService.getActivityTypes(),
     staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
+    enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
   });
 };
 

@@ -12,8 +12,10 @@ export const CurrentMoodProvider = ({ children, isAuthenticated }: CurrentMoodPr
     const [currentMood, setCurrentMood] = useState<MoodTrackerResponse | null>(null);
     const [hasMoodForToday, setHasMoodForToday] = useState(false);
 
-    // Используем React Query для получения текущего настроения
-    const { data: currentMoodData, isLoading, refetch } = useCurrentMood();
+    // Используем React Query для получения текущего настроения только если авторизованы
+    const { data: currentMoodData, isLoading, refetch } = useCurrentMood({ 
+        enabled: isAuthenticated 
+    });
 
     // Проверяем, есть ли настроение за сегодня
     useEffect(() => {

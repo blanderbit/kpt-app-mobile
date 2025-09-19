@@ -248,6 +248,17 @@ export interface ActivityType {
   category?: string;
 }
 
+// Тип для тултипа
+export interface Tooltip {
+  id: string;
+  page: string;
+  title: string;
+  description: string;
+  type?: 'swipe' | 'text';
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  visible?: boolean;
+}
+
 // Типы для предложенных активностей
 export interface SuggestedActivity {
   id: number;

@@ -31,6 +31,7 @@ import {
   UpdateMoodTrackerRequest,
   MoodType,
   ActivityType,
+  Tooltip,
   // Suggested activities types
   SuggestedActivity,
   AddSuggestedActivityRequest,
@@ -44,7 +45,6 @@ import {
   // Language types
   LanguageResponse,
   // Tooltip types
-  Tooltip,
   CreateTooltipRequest,
   UpdateTooltipRequest,
   // Common types

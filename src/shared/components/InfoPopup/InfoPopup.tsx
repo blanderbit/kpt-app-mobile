@@ -12,6 +12,24 @@ interface InfoPopupProps {
     onVisibleChange?: (visible: boolean) => void;
 }
 
+export enum TooltipPage {
+    DASHBOARD = 'dashboard',
+    PROFILE = 'profile',
+    SETTINGS = 'settings',
+    ACTIVITIES = 'activities',
+    MOOD_TRACKER = 'mood-tracker',
+    ANALYTICS = 'analytics',
+    HELP = 'help',
+    ONBOARDING = 'onboarding',
+    TUTORIAL = 'tutorial',
+    WELCOME = 'welcome'
+}
+
+export enum TooltipType {
+    SWIPE = 'swipe',
+    TEXT = 'text'
+}
+
 export const InfoPopup = ({ 
     title, 
     desc, 

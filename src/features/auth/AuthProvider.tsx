@@ -12,7 +12,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const { refreshProfile, clearProfile } = useProfile();
     
-    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader();
+    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
+        enabled: isAuthenticated 
+    });
 
     // Проверяем наличие токена при загрузке приложения
     useEffect(() => {

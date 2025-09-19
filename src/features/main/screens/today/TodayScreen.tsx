@@ -26,6 +26,8 @@ import { Routes } from '@app/navigation/const';
 import {useProfile} from "@app/hooks/profile.hook";
 import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
 import { ActivityLabel } from '@shared/components/ActivityLabel';
+import {TooltipPage} from "@shared/components/InfoPopup/InfoPopup";
+import {PageTooltips} from "@shared/components/PageTooltips";
 
 const circleSize = 16;
 
@@ -307,6 +309,12 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
             </BottomSheet>
 
             <MoodTracker visible={ moodTrackerModalOpen } onClose={ () => setMoodTrackerModalOpen(false) }/>
+
+            <PageTooltips
+                page={TooltipPage.DASHBOARD}
+                autoShow={true}
+                delay={2000}
+            />
         </View>
     );
 }
