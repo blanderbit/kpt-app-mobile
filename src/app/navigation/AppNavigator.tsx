@@ -18,7 +18,6 @@ import { RouteProp } from "@react-navigation/native";
 import { useTheme } from '@react-navigation/native';
 import ArticleScreen from "@features/main/screens/article/ArticleScreen";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
-import Redirect from "@features/auth/screens/redirect";
 
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
@@ -104,7 +103,6 @@ export function AppNavigator() {
                         <Stack.Screen name={ Routes.LOGIN } component={ LoginScreen }/>
                         <Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>
                         <Stack.Screen name={ Routes.CHECK_EMAIL } component={ CheckEmailScreen }/>
-                        <Stack.Screen name={ Routes.REDIRECT } component={ Redirect }/>
                     </>
                 ) }
             </Stack.Navigator>

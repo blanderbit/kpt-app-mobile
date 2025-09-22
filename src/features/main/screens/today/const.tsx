@@ -1,7 +1,4 @@
 import React from "react";
-import { SportActivityIcon } from "@assets/icons/SportActivityIcon";
-import { ConcentrationIcon } from "@assets/icons/ConcentrationIcon";
-import { HealthCareIcon } from "@assets/icons/HealthCareIcon";
 import { MoodIcon } from "@assets/icons/MoodIcon";
 import { ArticleIcon } from "@assets/icons/ArticleIcon";
 import { SurveyIcon } from "@assets/icons/SurveyIcon";

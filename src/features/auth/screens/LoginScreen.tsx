@@ -14,7 +14,7 @@ import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
-import {signInGoogle, signInAppleIos, signInAppleAndroid} from "@features/auth/screens/test5";
+import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -32,6 +32,7 @@ type FormData = {
 export default function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }) {
     const { t } = useTranslation();
     const { login, isLoading, error } = useAuth();
+    const { signInWithGoogle, signInWithApple, isLoading: firebaseLoading, error: firebaseError } = useFirebaseAuth();
     const { theme, themeName } = useCustomTheme();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,13 +67,29 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         navigation.navigate(Routes.RESET_PASS);
     };
 
-    const signInWithGoogle = () => {
-        signInGoogle()
-    }
+    const handleGoogleSignIn = async () => {
+        try {
+            await signInWithGoogle();
+        } catch (error: any) {
+            Alert.alert(
+                'Ошибка входа через Google',
+                error.message || 'Не удалось войти через Google',
+                [{ text: 'OK' }]
+            );
+        }
+    };
 
-    const signInWithApple = () => {
-        Platform.OS === "ios" ? signInAppleIos() : signInAppleAndroid();
-    }
+    const handleAppleSignIn = async () => {
+        try {
+            await signInWithApple();
+        } catch (error: any) {
+            Alert.alert(
+                'Ошибка входа через Apple',
+                error.message || 'Не удалось войти через Apple',
+                [{ text: 'OK' }]
+            );
+        }
+    };
 
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
@@ -120,7 +137,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                         ) }
                     />
 
-                    <ErrorMessage message={ error || '' } visible={ !!error } />
+                    <ErrorMessage message={ error || firebaseError || '' } visible={ !!(error || firebaseError) } />
 
                     <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
                         { t('auth.forgotPass') }
@@ -137,18 +154,18 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 
                     <CustomButton 
                         title={ t('auth.appleSignIn') } 
-                        onPress={ () => signInWithApple()}
+                        onPress={ handleAppleSignIn }
                         themeName="white"
-                        disabled={ isSubmitting || isLoading }
+                        disabled={ isSubmitting || isLoading || firebaseLoading }
                     >
                         <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
                     </CustomButton>
 
                     <CustomButton
                         title={ t('auth.googleSignIn') }
-                        onPress={ () => signInWithGoogle()}
+                        onPress={ handleGoogleSignIn }
                         themeName="white"
-                        disabled={ isSubmitting || isLoading }>
+                        disabled={ isSubmitting || isLoading || firebaseLoading }>
                     </CustomButton>
                 </View>
             </View>

@@ -97,6 +97,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const loginWithFirebase = async (idToken: string) => {
+        try {
+            console.log('🔥 Начинаем Firebase вход...');
+            setIsLoading(true);
+            setError(null);
+
+            // Вызываем API Firebase логина
+            console.log('📡 Вызываем authService.firebaseAuth...');
+            const response = await authService.firebaseAuth({ idToken });
+            console.log('✅ Получен ответ от Firebase API:', response);
+            
+            // Сохраняем токены
+            console.log('💾 Сохраняем токены...');
+            await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
+            console.log('✅ Токены сохранены');
+            
+            // Обновляем состояние
+            console.log('🔄 Обновляем состояние...');
+            setUser(response.user);
+            setIsAuthenticated(true);
+            // Обновляем профиль после успешного входа
+            await refreshProfile();
+            console.log('✅ Firebase вход выполнен успешно');
+        } catch (error: any) {
+            console.error('❌ Ошибка Firebase входа:', error);
+            const errorMessage = error.message || 'Ошибка входа через Google';
+            setError(errorMessage);
+            throw new Error(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const logout = async () => {
         try {
             setIsLoading(true);
@@ -131,6 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             user, 
             isLoading, 
             login, 
+            loginWithFirebase,
             logout, 
             error 
         }}>
