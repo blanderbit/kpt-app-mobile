@@ -14,7 +14,6 @@ import { ActivityLabel } from '@shared/components/ActivityLabel';
 import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { InfoPopup } from "@shared/components/InfoPopup/InfoPopup";
 import LayersIcon from "@assets/icons/LayersIcon";
-import { DailyActivitySections } from "@features/main/screens/today/const";
 import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
 import CustomButton from "@shared/components/Button/Button";
 import { PlusIcon } from "@assets/icons/PlusIcon";
@@ -25,6 +24,15 @@ import { ReturnIcon } from "@assets/icons/ReturnIcon";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
 import DraggableList from "@features/activities/draggable-activities/DraggableActivities";
+import { 
+    useMyActivities, 
+    useCreateActivity, 
+    useDeleteActivity,
+    useSuggestedActivities,
+    useAddSuggestedActivityToActivities,
+    useDeleteSuggestedActivity
+} from '@shared/services/api/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ActivitiesScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
     const { t } = useTranslation();
@@ -33,24 +41,110 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
 
     const [ satisfaction, setSatisfaction ] = useState(0)
     const [ achieveness, setAchieveness ] = useState(0)
-
-    const [ activitySections, setActivitySections ] = useState([ ...DailyActivitySections ])
-    const [ suggestedActivities, setSuggestedActivities ] = useState([ ...DailyActivitySections ])
     const [ newActivity, setNewActivity ] = useState('');
     const [ inputHeight, setInputHeight ] = useState(28);
+
+    // Query client for cache invalidation
+    const queryClient = useQueryClient();
+
+    // API hooks
+    const { data: myActivities, isLoading, error } = useMyActivities();
+    const { data: suggestedActivitiesData } = useSuggestedActivities();
+
+    const createActivityMutation = useCreateActivity();
+    const deleteActivityMutation = useDeleteActivity();
+    const addSuggestedActivityMutation = useAddSuggestedActivityToActivities();
+    const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
+
+    // Debug logs
+    console.log('=== ACTIVITIES DEBUG ===');
+    console.log('myActivities:', myActivities);
+    console.log('myActivities.data:', myActivities?.data);
+    console.log('myActivities.data length:', myActivities?.data?.length);
+    console.log('isLoading:', isLoading);
+    console.log('error:', error);
+    console.log('=== END DEBUG ===');
+
+    // Log when myActivities changes
+    React.useEffect(() => {
+        console.log('🔄 myActivities data changed:', myActivities?.data);
+    }, [myActivities]);
 
     const handleAddNewActivity = () => {
         if ( newActivity.trim().length < 10 ) {
             showToast({ message: "The name of activity should not be less than 10 symbols.", type: "error" })
-            // showToast({ message: "Activity successfully added", type: "info" })
             return;
         }
-        // onAddActivity(newActivity.trim());
-        setNewActivity("");
-        Keyboard.dismiss();
+        
+        createActivityMutation.mutate({
+            activityName: newActivity.trim(),
+            isPublic: false
+        }, {
+            onSuccess: (data) => {
+                console.log('✅ Activity created successfully:', data);
+                showToast({ message: "Activity successfully added", type: "success" });
+                setNewActivity("");
+                Keyboard.dismiss();
+                
+                // Invalidate and refetch activities data
+                queryClient.invalidateQueries({ queryKey: ['activities'] });
+                queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                // Force refetch
+                queryClient.refetchQueries({ queryKey: ['activities', 'my'] });
+                
+                console.log('🔄 Cache invalidated and refetch triggered');
+            },
+            onError: (error) => {
+                showToast({ message: "Failed to add activity", type: "error" });
+            }
+        });
     };
 
-    const renderRightActions = (progress, dragX, sectionIndex) => {
+    const handleArchiveActivity = (activityId: number) => {
+        deleteActivityMutation.mutate(activityId, {
+            onSuccess: () => {
+                showToast({ message: "Activity archived", type: "success" });
+                
+                // Invalidate and refetch activities data
+                queryClient.invalidateQueries({ queryKey: ['activities'] });
+                queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+            },
+            onError: (error) => {
+                showToast({ message: "Failed to archive activity", type: "error" });
+            }
+        });
+    };
+
+    const handleAddSuggestedActivity = (suggestedActivityId: number) => {
+        addSuggestedActivityMutation.mutate({
+            id: suggestedActivityId
+        }, {
+            onSuccess: () => {
+                showToast({ message: "Activity added to your list", type: "success" });
+                
+                // Invalidate and refetch activities data
+                queryClient.invalidateQueries({ queryKey: ['activities'] });
+                queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                queryClient.invalidateQueries({ queryKey: ['suggestedActivities'] });
+            },
+            onError: (error) => {
+                showToast({ message: "Failed to add activity", type: "error" });
+            }
+        });
+    };
+
+    const handleDeleteSuggestedActivity = (suggestedActivityId: number) => {
+        deleteSuggestedActivityMutation.mutate(suggestedActivityId, {
+            onSuccess: () => {
+                showToast({ message: "Suggested activity removed", type: "success" });
+            },
+            onError: (error) => {
+                showToast({ message: "Failed to remove suggested activity", type: "error" });
+            }
+        });
+    };
+
+    const renderRightActions = (progress, dragX, activityId: number) => {
         const scale = dragX.interpolate({
             inputRange: [ -150, 0 ],
             outputRange: [ 1, 1 ],
@@ -65,8 +159,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                     marginLeft: 10,
                 } }
             >
-                <RectButton onPress={ () => {
-                } }>
+                <RectButton onPress={ () => handleArchiveActivity(activityId) }>
                     <Pressable style={ styles.archiveBtn }>
                         <ArchiveIcon/>
                     </Pressable>
@@ -91,63 +184,41 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 </View>
 
                 <View style={ styles.activitySections }>
-                    <View style={ { height: 115 * activitySections.length } }>
-                        <DraggableList itemsArr={ activitySections }
-                                       itemHeight={ 115 }
-                                       renderItem={ (section, index) =>
-                                           <View style={ {
-                                               ...styles.activitySection,
-                                               borderBottomWidth: 1,
-                                               borderBottomColor: '#E2DDD8',
-                                           } }>
-                                               <Swipeable
-                                                   renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, index) }
-                                                   overshootRight={ false }>
-                                                   <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
-                                                       <BurgerIcon/>
+                    {myActivities?.data && myActivities.data.length > 0 ? (
+                        <View style={ { height: 115 * myActivities.data.length } }>
+                            <DraggableList itemsArr={ myActivities.data }
+                                           itemHeight={ 115 }
+                                           renderItem={ (activity, index) =>
+                                               <View style={ {
+                                                   ...styles.activitySection,
+                                                   borderBottomWidth: 1,
+                                                   borderBottomColor: '#E2DDD8',
+                                               } }>
+                                                   <Swipeable
+                                                       renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
+                                                       overshootRight={ false }>
+                                                       <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
+                                                           <BurgerIcon/>
 
-                                                       <View>
-                                                           <ActivityLabel id={section.activityType} />
+                                                           <View>
+                                                               <ActivityLabel id={activity.activityType} />
 
-                                                           <Pressable style={ styles.activityContent }>
-                                                               <Text
-                                                                   style={ [ styles.activityTitle, theme.fonts.subheader ] }> { t(section.info) } </Text>
-                                                               <SemiCircleSplit valueA={ satisfaction }
-                                                                                valueB={ achieveness }/>
-                                                           </Pressable>
+                                                               <Pressable style={ styles.activityContent }>
+                                                                   <Text
+                                                                       style={ [ styles.activityTitle, theme.fonts.subheader ] }> 
+                                                                       { activity.activityName } 
+                                                                   </Text>
+                                                                   <SemiCircleSplit valueA={ satisfaction }
+                                                                                    valueB={ achieveness }/>
+                                                               </Pressable>
+                                                           </View>
                                                        </View>
-                                                   </View>
-                                               </Swipeable>
-                                           </View>
-                                       }
-                        />
-                    </View>
-                    {/*{*/ }
-                    {/*    activitySections.map((section, index) => (*/ }
-                    {/*        <View key={ index }*/ }
-                    {/*              style={ {*/ }
-                    {/*                  ...styles.activitySection,*/ }
-                    {/*                  borderBottomWidth: 1,*/ }
-                    {/*                  borderBottomColor: '#E2DDD8',*/ }
-                    {/*              } }>*/ }
-                    {/*            <Swipeable*/ }
-                    {/*                renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, index) }*/ }
-                    {/*                overshootRight={ false }>*/ }
-                    {/*                <View style={ { ...styles.activityLabel, backgroundColor: section.backgroundColor } }>*/ }
-                    {/*                    { section.icon }*/ }
-                    {/*                    <Text style={ {*/ }
-                    {/*                        ...theme.fonts.label,*/ }
-                    {/*                        color: section.color*/ }
-                    {/*                    } }>{ t(section.label) }</Text>*/ }
-                    {/*                </View>*/ }
-                    {/*                <Pressable style={ styles.activityContent }>*/ }
-                    {/*                    <Text style={ [ styles.activityTitle, theme.fonts.subheader ] }> { t(section.info) } </Text>*/ }
-                    {/*                    <SemiCircleSplit valueA={ satisfaction } valueB={ achieveness }/>*/ }
-                    {/*                </Pressable>*/ }
-                    {/*            </Swipeable>*/ }
-                    {/*        </View>*/ }
-                    {/*    ))*/ }
-                    {/*}*/ }
+                                                   </Swipeable>
+                                               </View>
+                                           }
+                            />
+                        </View>
+                    ) : null}
 
                     <View
                         style={ [ styles.activitySection, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, { height: 'auto' } ] }>
@@ -166,8 +237,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                                    } }/>
 
                         <CustomButton title={ t('add') }
-                                      onPress={ () => {
-                                      } }
+                                      onPress={ handleAddNewActivity }
                                       buttonStyle={ {
                                           ...styles.addBtn,
                                           ...(newActivity ? {} : { opacity: 0 }),
@@ -191,34 +261,35 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 </View>
 
                 <View style={ styles.activitySections }>
-                    { suggestedActivities.map((section, index) => (
-                        <View
-                            key={ index }
-                            style={ {
-                                ...styles.activitySection,
-                                ...(index !== suggestedActivities.length - 1
-                                    ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
-                                    : {}),
-                            } }
-                        >
-                            <ActivityLabel id={section.activityType} />
+                    {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 && 
+                        suggestedActivitiesData.data.map((activity, index) => (
+                            <View
+                                key={ activity.id }
+                                style={ {
+                                    ...styles.activitySection,
+                                    ...(index !== suggestedActivitiesData.data.length - 1
+                                        ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                        : {}),
+                                } }
+                            >
+                                <ActivityLabel id={activity.activityType} />
 
-                            <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
-                                <Text
-                                    style={ [ styles.activityTitle, theme.fonts.subheader ] }>
-                                    { t(section.info) }
-                                </Text>
+                                <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
+                                    <Text
+                                        style={ [ styles.activityTitle, theme.fonts.subheader ] }>
+                                        { activity.activityName }
+                                    </Text>
 
-                                <CustomButton title={ t('add') }
-                                              onPress={ () => {
-                                              } }
-                                              buttonStyle={ styles.addBtn }
-                                              contentStyle={ { gap: 4 } }>
-                                    <PlusIcon color="#fff" size={ 20 }/>
-                                </CustomButton>
+                                    <CustomButton title={ t('add') }
+                                                  onPress={ () => handleAddSuggestedActivity(activity.id) }
+                                                  buttonStyle={ styles.addBtn }
+                                                  contentStyle={ { gap: 4 } }>
+                                        <PlusIcon color="#fff" size={ 20 }/>
+                                    </CustomButton>
+                                </View>
                             </View>
-                        </View>
-                    )) }
+                        ))
+                    }
                 </View>
             </View>
 
@@ -233,33 +304,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 </View>
 
                 <View style={ styles.activitySections }>
-                    { suggestedActivities.map((section, index) => (
-                        <View
-                            key={ index }
-                            style={ {
-                                ...styles.activitySection,
-                                ...(index !== suggestedActivities.length - 1
-                                    ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
-                                    : {}),
-                            } }
-                        >
-                            <ActivityLabel id={section.activityType} />
-
-                            <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
-                                <Text
-                                    style={ [ styles.activityTitle, theme.fonts.subheader ] }>
-                                    { t(section.info) }
-                                </Text>
-
-                                <CustomButton onPress={ () => {
-                                } }
-                                              buttonStyle={ styles.returnBtn }
-                                              contentStyle={ { gap: 4 } }>
-                                    <ReturnIcon/>
-                                </CustomButton>
-                            </View>
-                        </View>
-                    )) }
                 </View>
             </View>
         </View>
@@ -294,6 +338,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 16,
+        width: '100%',
+        marginRight: -30
     },
     activityTitle: {
         maxWidth: '70%',

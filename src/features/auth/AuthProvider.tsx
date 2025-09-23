@@ -3,7 +3,7 @@ import { AuthContext } from '@app/hooks/auth.hook';
 import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
-import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
+// import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,9 +12,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [error, setError] = useState<string | null>(null);
     const { refreshProfile, clearProfile } = useProfile();
     
-    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
-        enabled: isAuthenticated 
-    });
+    // const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
+    //     enabled: isAuthenticated 
+    // });
 
     // Проверяем наличие токена при загрузке приложения
     useEffect(() => {

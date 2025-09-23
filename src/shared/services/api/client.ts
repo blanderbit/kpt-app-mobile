@@ -237,9 +237,9 @@ export class MoodTrackerService extends ApiService {
 
 // Сервис для активностей
 export class ActivityService extends ApiService {
-  async getActivityTypes(): Promise<ActivityType[]> {
-    return this.get<ActivityType[]>('/profile/activities/types/all');
-  }
+  // async getActivityTypes(): Promise<ActivityType[]> {
+  //   return this.get<ActivityType[]>('/profile/activities/types/all');
+  // }
 
   async getMyActivities(params?: SearchParams & PaginationParams): Promise<PaginatedResponse<Activity>> {
     return this.get<PaginatedResponse<Activity>>('/profile/activities', params);
@@ -265,9 +265,9 @@ export class ActivityService extends ApiService {
     return this.post<ActivityResponse>(`/profile/activities/${id}/close`, data);
   }
 
-  async getAllActivityTypes(): Promise<string[]> {
-    return this.get<string[]>('/profile/activities/types/all');
-  }
+  // async getAllActivityTypes(): Promise<string[]> {
+  //   return this.get<string[]>('/profile/activities/types/all');
+  // }
 
   async getRecommendedTypes(name: string, limit?: number): Promise<string[]> {
     return this.get<string[]>('/profile/activities/types/recommended', { name, limit });

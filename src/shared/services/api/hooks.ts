@@ -319,14 +319,14 @@ export const useActivityById = (id: number) => {
   });
 };
 
-export const useActivityTypes = (options?: { enabled?: boolean }) => {
-  return useQuery({
-    queryKey: queryKeys.activityTypes(),
-    queryFn: () => activityService.getActivityTypes(),
-    staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
-    enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
-  });
-};
+// export const useActivityTypes = (options?: { enabled?: boolean }) => {
+//   return useQuery({
+//     queryKey: queryKeys.activityTypes(),
+//     queryFn: () => activityService.getActivityTypes(),
+//     staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
+//     enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
+//   });
+// };
 
 export const useUpdateActivity = () => {
   const queryClient = useQueryClient();
@@ -365,13 +365,13 @@ export const useCloseActivity = () => {
   });
 };
 
-export const useAllActivityTypes = () => {
-  return useQuery({
-    queryKey: queryKeys.activityTypes(),
-    queryFn: () => activityService.getAllActivityTypes(),
-    staleTime: 30 * 60 * 1000, // 30 minutes
-  });
-};
+// export const useAllActivityTypes = () => {
+//   return useQuery({
+//     queryKey: queryKeys.activityTypes(),
+//     queryFn: () => activityService.getAllActivityTypes(),
+//     staleTime: 30 * 60 * 1000, // 30 minutes
+//   });
+// };
 
 export const useRecommendedTypes = (name: string, limit?: number) => {
   return useQuery({
