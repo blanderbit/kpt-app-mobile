@@ -10,6 +10,7 @@ interface AuthContextType {
     loginWithFirebase: (idToken: string) => Promise<void>;
     logout: () => Promise<void>;
     error: string | null;
+    isFirebaseUser: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

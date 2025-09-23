@@ -64,7 +64,8 @@
         "passwordComplexity": "Пароль повинен містити принаймні одну літеру та одну цифру",
         "currentPasswordRequired": "Поточний пароль обов'язковий",
         "newPasswordRequired": "Новий пароль обов'язковий",
-        "differentPasswords": "Новий пароль повинен відрізнятися від поточного"
+        "differentPasswords": "Новий пароль повинен відрізнятися від поточного",
+        "firebaseUserMessage": "Ви увійшли через Google/Apple. Особисту інформацію не можна змінити тут."
       }
     }
   },

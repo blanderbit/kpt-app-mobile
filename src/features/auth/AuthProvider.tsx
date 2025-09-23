@@ -3,6 +3,7 @@ import { AuthContext } from '@app/hooks/auth.hook';
 import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -10,7 +11,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isFirebaseUser, setIsFirebaseUser] = useState(false);
     const { refreshProfile, clearProfile } = useProfile();
+    
+    // Функции для работы с флагом Firebase
+    const setFirebaseFlag = async (isFirebase: boolean) => {
+        try {
+            await AsyncStorage.setItem('is_firebase_user', isFirebase.toString());
+            setIsFirebaseUser(isFirebase);
+        } catch (error) {
+            console.error('Ошибка сохранения флага Firebase:', error);
+        }
+    };
+
+    const getFirebaseFlag = async (): Promise<boolean> => {
+        try {
+            const flag = await AsyncStorage.getItem('is_firebase_user');
+            return flag === 'true';
+        } catch (error) {
+            console.error('Ошибка получения флага Firebase:', error);
+            return false;
+        }
+    };
+
+    const clearFirebaseFlag = async () => {
+        try {
+            await AsyncStorage.removeItem('is_firebase_user');
+            setIsFirebaseUser(false);
+        } catch (error) {
+            console.error('Ошибка очистки флага Firebase:', error);
+        }
+    };
     
     // const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
     //     enabled: isAuthenticated 
@@ -27,15 +58,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         const userData = await authService.getCurrentUser();
                         setUser(userData);
                         setIsAuthenticated(true);
+                        
+                        // Загружаем флаг Firebase
+                        const firebaseFlag = await getFirebaseFlag();
+                        setIsFirebaseUser(firebaseFlag);
+                        
                         // Обновляем профиль после успешной аутентификации
                         await refreshProfile();
                     } catch (error) {
                         // Токен недействителен, очищаем его
                         await apiUtils.removeAuthTokens();
+                        await clearFirebaseFlag();
                         setIsAuthenticated(false);
                         setUser(null);
+                        setIsFirebaseUser(false);
                         await clearProfile();
                     }
+                } else {
+                    // Нет токенов, очищаем флаг Firebase
+                    await clearFirebaseFlag();
                 }
             } catch (error) {
                 console.error('Ошибка проверки аутентификации:', error);
@@ -49,10 +90,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Устанавливаем callback для уведомления о необходимости логина
     useEffect(() => {
-        const handleAuthRequired = () => {
+        const handleAuthRequired = async () => {
             console.log('🔔 Получено уведомление о необходимости логина');
             setIsAuthenticated(false);
             setUser(null);
+            setIsFirebaseUser(false);
+            await clearFirebaseFlag();
             clearProfile();
         };
 
@@ -80,10 +123,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
             console.log('✅ Токены сохранены');
             
+            // Сбрасываем флаг Firebase для обычного логина
+            await setFirebaseFlag(false);
+            
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
+            setIsFirebaseUser(false);
             // Обновляем профиль после успешного входа
             await refreshProfile();
             console.log('✅ Вход выполнен успешно');
@@ -113,10 +160,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
             console.log('✅ Токены сохранены');
             
+            // Устанавливаем флаг Firebase
+            await setFirebaseFlag(true);
+            
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
+            setIsFirebaseUser(true);
             // Обновляем профиль после успешного входа
             await refreshProfile();
             console.log('✅ Firebase вход выполнен успешно');
@@ -140,9 +191,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Очищаем токены
             await apiUtils.removeAuthTokens();
             
+            // Очищаем флаг Firebase
+            await clearFirebaseFlag();
+            
             // Обновляем состояние
             setIsAuthenticated(false);
             setUser(null);
+            setIsFirebaseUser(false);
             setError(null);
             // Очищаем профиль при выходе
             await clearProfile();
@@ -150,8 +205,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.error('Ошибка выхода:', error);
             // Даже если API вызов не удался, очищаем локальное состояние
             await apiUtils.removeAuthTokens();
+            await clearFirebaseFlag();
             setIsAuthenticated(false);
             setUser(null);
+            setIsFirebaseUser(false);
             await clearProfile();
         } finally {
             setIsLoading(false);
@@ -166,7 +223,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             login, 
             loginWithFirebase,
             logout, 
-            error 
+            error,
+            isFirebaseUser
         }}>
             <CurrentMoodProvider isAuthenticated={isAuthenticated}>
                 {children}

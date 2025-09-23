@@ -150,7 +150,8 @@
         "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
         "currentPasswordRequired": "Текущий пароль обязателен",
         "newPasswordRequired": "Новый пароль обязателен",
-        "differentPasswords": "Новый пароль должен отличаться от текущего"
+        "differentPasswords": "Новый пароль должен отличаться от текущего",
+        "firebaseUserMessage": "Вы вошли через Google/Apple. Личную информацию нельзя изменить здесь."
       },
       "subscriptionSettingsScreen": {
         "title": "Subscription settings",

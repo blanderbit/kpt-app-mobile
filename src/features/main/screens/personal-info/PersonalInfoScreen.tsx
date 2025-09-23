@@ -14,6 +14,7 @@ import { COLORS } from "@app/theme";
 import { PersonalInfoScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useUpdateProfile, useChangePassword, useChangeEmail } from "@features/profile";
 import { useProfile } from "@app/hooks/profile.hook";
+import { useAuth } from "@app/hooks/auth.hook";
 
 const createPasswordSchema = (t: any) => yup.object().shape({
     currentPassword: yup.string()
@@ -67,6 +68,11 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const updateProfile = useUpdateProfile();
     const changePassword = useChangePassword();
     const changeEmail = useChangeEmail();
+    
+    // Хук для проверки Firebase пользователя
+    const { isFirebaseUser } = useAuth();
+
+    console.log(isFirebaseUser)
 
     // Формы для разных типов редактирования
     const passwordForm = useForm<PasswordFormData>({
@@ -198,6 +204,13 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             </>
         }>
             <View style={ theme.flexBlocks.vertical8 }>
+                {isFirebaseUser && (
+                    <View style={ [ theme.containers.cardRound, { paddingHorizontal: 16, marginBottom: 16, backgroundColor: '#FFF3CD' } ] }>
+                        <Text style={ [ { color: '#856404', textAlign: 'center' } ] }>
+                            { t('main.profile.personalInfoScreen.firebaseUserMessage') }
+                        </Text>
+                    </View>
+                )}
                 <View style={ [ theme.containers.cardRound, { paddingHorizontal: 16 } ] }>
                     {
                         emailDisabled ?
@@ -215,7 +228,8 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
                                     <CustomButton title={ t('main.profile.personalInfoScreen.changeEmail') }
                                                   buttonStyle={ styles.changePassBtn }
-                                                  onPress={ () => {setEmailDisabled(!emailDisabled)} }/>
+                                                  onPress={ () => {setEmailDisabled(!emailDisabled)} }
+                                                  disabled={isFirebaseUser}/>
                                 </View>
                             </View> :
                             <View style={ theme.flexBlocks.vertical16 }>
@@ -285,7 +299,8 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
                                     <CustomButton title={ t('main.profile.personalInfoScreen.changeName') }
                                                   buttonStyle={ styles.changePassBtn }
-                                                  onPress={ () => {setNameDisabled(!nameDisabled)} }/>
+                                                  onPress={ () => {setNameDisabled(!nameDisabled)} }
+                                                  disabled={isFirebaseUser}/>
                                 </View>
                             </View> :
                             <View style={ theme.flexBlocks.vertical16 }>
@@ -333,7 +348,8 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
                                     <CustomButton title={ t('main.profile.personalInfoScreen.changePass') }
                                                   buttonStyle={ styles.changePassBtn }
-                                                  onPress={ () => {setPasswordDisabled(!passwordDisabled)} }/>
+                                                  onPress={ () => {setPasswordDisabled(!passwordDisabled)} }
+                                                  disabled={isFirebaseUser}/>
                                 </View>
                             </View> :
                             <View style={ theme.flexBlocks.vertical16 }>

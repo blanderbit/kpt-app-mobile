@@ -64,7 +64,8 @@
         "passwordComplexity": "Password must contain at least one letter and one number",
         "currentPasswordRequired": "Current password is required",
         "newPasswordRequired": "New password is required",
-        "differentPasswords": "New password must be different from current password"
+        "differentPasswords": "New password must be different from current password",
+        "firebaseUserMessage": "You signed in with Google/Apple. Personal information cannot be changed here."
       }
     }
   },
