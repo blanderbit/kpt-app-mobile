@@ -35,7 +35,7 @@ export const usePageTooltips = (page: TooltipPage, options?: { enabled?: boolean
 };
 
 // Хук для получения конкретного тултипа по ID
-export const useTooltipById = (tooltips: Tooltip[], tooltipId: string) => {
+export const useTooltipById = (tooltips: Tooltip[], tooltipId: number) => {
   return tooltips.find(tooltip => tooltip.id === tooltipId);
 };
 

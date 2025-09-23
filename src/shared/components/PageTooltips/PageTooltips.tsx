@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { usePageTooltips, useTooltipById } from '@app/hooks/use-page-tooltips.hook';
+import { useCloseTooltip } from '@shared/services/api';
 import { TooltipPage } from '@shared/components/InfoPopup/InfoPopup';
 import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 
 interface PageTooltipsProps {
   page: TooltipPage;
-  tooltipIds?: string[]; // ID тултипов для отображения
+  tooltipIds?: number[]; // ID тултипов для отображения
   autoShow?: boolean; // Автоматически показывать тултипы
   delay?: number; // Задержка перед показом (мс)
   enabled?: boolean; // Включить загрузку тултипов (по умолчанию true)
@@ -20,13 +21,14 @@ export const PageTooltips = ({
   enabled = true
 }: PageTooltipsProps) => {
   const { tooltips, isLoading } = usePageTooltips(page, { enabled });
-  const [visibleTooltips, setVisibleTooltips] = useState<string[]>([]);
+  const [visibleTooltips, setVisibleTooltips] = useState<number[]>([]);
   const [currentTooltipIndex, setCurrentTooltipIndex] = useState(0);
+  const closeTooltipMutation = useCloseTooltip();
 
   // Определяем какие тултипы показывать
   const tooltipsToShow = tooltipIds 
     ? tooltipIds.map(id => useTooltipById(tooltips, id)).filter(Boolean)
-    : tooltips.filter(tooltip => tooltip.visible !== false);
+    : tooltips; // Показываем все тултипы, так как visible больше нет в новом API
 
   // Автоматический показ тултипов
   useEffect(() => {
@@ -51,7 +53,17 @@ export const PageTooltips = ({
   };
 
   // Закрытие текущего тултипа
-  const closeCurrentTooltip = () => {
+  const closeCurrentTooltip = async () => {
+    const currentTooltip = tooltipsToShow[currentTooltipIndex];
+    if (currentTooltip) {
+      try {
+        // Вызываем API для закрытия тултипа
+        await closeTooltipMutation.mutateAsync(currentTooltip.id);
+      } catch (error) {
+        console.error('Ошибка при закрытии тултипа:', error);
+        // Продолжаем выполнение даже если API вызов не удался
+      }
+    }
     showNextTooltip();
   };
 
@@ -62,10 +74,10 @@ export const PageTooltips = ({
   }
 
   return (
-    <View>
+    <View style={{ width: '100%' }}>
       <InfoPopup
-        title={currentTooltip.title}
-        desc={currentTooltip.description}
+        title={currentTooltip.json.title}
+        desc={currentTooltip.json.description}
         visible={true}
         onClose={closeCurrentTooltip}
       />
@@ -76,7 +88,7 @@ export const PageTooltips = ({
 // Простой компонент для отображения одного тултипа
 interface SingleTooltipProps {
   page: TooltipPage;
-  tooltipId: string;
+  tooltipId: number;
   autoShow?: boolean;
   delay?: number;
   enabled?: boolean;

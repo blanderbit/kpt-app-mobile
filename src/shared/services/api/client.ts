@@ -364,6 +364,10 @@ export class TooltipService extends ApiService {
   async getTooltipsByPageAndType(page: string, type: string): Promise<Tooltip[]> {
     return this.get<Tooltip[]>(`/tooltips/page/${page}/type/${type}`);
   }
+
+  async closeTooltip(tooltipId: number): Promise<{ message: string }> {
+    return this.post<{ message: string }>(`/tooltips/close/${tooltipId}`);
+  }
 }
 
 // Сервис для управления очередью (только для админов)

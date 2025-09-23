@@ -505,3 +505,15 @@ export const useTooltipsByPageAndType = (page: string, type: string) => {
     staleTime: 30 * 60 * 1000,
   });
 };
+
+export const useCloseTooltip = () => {
+  return useMutation({
+    mutationFn: (tooltipId: number) => tooltipService.closeTooltip(tooltipId),
+    onSuccess: () => {
+      console.log('🎯 Тултип успешно закрыт');
+    },
+    onError: (error) => {
+      console.error('❌ Ошибка закрытия тултипа:', error);
+    },
+  });
+};
