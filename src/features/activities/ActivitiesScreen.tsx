@@ -43,6 +43,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
     const [ achieveness, setAchieveness ] = useState(0)
     const [ newActivity, setNewActivity ] = useState('');
     const [ inputHeight, setInputHeight ] = useState(28);
+    const [ activitiesKey, setActivitiesKey ] = useState(0);
 
     // Query client for cache invalidation
     const queryClient = useQueryClient();
@@ -70,6 +71,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
         console.log('🔄 myActivities data changed:', myActivities?.data);
     }, [myActivities]);
 
+    // Function to force re-render of DraggableList
+    const forceActivitiesRerender = () => {
+        setActivitiesKey(prev => prev + 1);
+    };
+
     const handleAddNewActivity = () => {
         if ( newActivity.trim().length < 10 ) {
             showToast({ message: "The name of activity should not be less than 10 symbols.", type: "error" })
@@ -92,6 +98,9 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 // Force refetch
                 queryClient.refetchQueries({ queryKey: ['activities', 'my'] });
                 
+                // Force re-render of DraggableList
+                forceActivitiesRerender();
+                
                 console.log('🔄 Cache invalidated and refetch triggered');
             },
             onError: (error) => {
@@ -108,6 +117,9 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                
+                // Force re-render of DraggableList
+                forceActivitiesRerender();
             },
             onError: (error) => {
                 showToast({ message: "Failed to archive activity", type: "error" });
@@ -126,6 +138,9 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 queryClient.invalidateQueries({ queryKey: ['suggestedActivities'] });
+                
+                // Force re-render of DraggableList
+                forceActivitiesRerender();
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });
@@ -186,9 +201,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 <View style={ styles.activitySections }>
                     {myActivities?.data && myActivities.data.length > 0 ? (
                         <View style={ { height: 115 * myActivities.data.length } }>
-                            <DraggableList itemsArr={ myActivities.data }
-                                           itemHeight={ 115 }
-                                           renderItem={ (activity, index) =>
+                            <DraggableList 
+                                key={`activities-${activitiesKey}-${myActivities.data.length}`}
+                                itemsArr={ myActivities.data }
+                                itemHeight={ 115 }
+                                renderItem={ (activity, index) =>
                                                <View style={ {
                                                    ...styles.activitySection,
                                                    borderBottomWidth: 1,
