@@ -82,6 +82,12 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
 
     return (
         <View style={ styles.container }>
+            <PageTooltips
+                page={TooltipPage.DASHBOARD}
+                autoShow={true}
+                delay={2000}
+            />
+
             <View style={ theme.flexBlocks.vertical8 }>
                 <Text style={ theme.fonts.subtitle }>
                     { t('main.today.subtitle', { userName: profile?.firstName }) }
@@ -309,12 +315,6 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
             </BottomSheet>
 
             <MoodTracker visible={ moodTrackerModalOpen } onClose={ () => setMoodTrackerModalOpen(false) }/>
-
-            <PageTooltips
-                page={TooltipPage.DASHBOARD}
-                autoShow={true}
-                delay={2000}
-            />
         </View>
     );
 }

@@ -10,8 +10,9 @@ import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import WhiteCheckmarkIcon from "@assets/icons/WhiteCheckmarkIcon";
 import { GrayCircleIcon } from "@assets/icons/GrayCircleIcon";
 import { BlackCheckmarkIcon } from "@assets/icons/BlackCheckmarkIcon";
-import { useMoodTypes, useSetMoodForDay } from '@shared/services/api';
+import { useMoodTypes, useMoodSurveys, useSetMoodForDay } from '@shared/services/api';
 import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
+import {useToast} from "@shared/components/Toast/ToastProvider";
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
@@ -21,12 +22,18 @@ const ITEM_WIDTH = (screenWidth - 32 - (GAP * (NUM_COLUMNS - 1))) / NUM_COLUMNS;
 export default function MoodTracker({ visible, onClose }: { visible: boolean, onClose: () => void }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    const { showToast } = useToast();
+
     const [ step, setStep ] = useState(1);
     const [ selectedVariants, setSelectedVariants ] = useState([]);
     const [ selectedMoodType, setSelectedMoodType ] = useState<string | null>(null);
+    const [ selectedSurveys, setSelectedSurveys ] = useState<number[]>([]);
 
     // Получаем типы настроения с бэкенда
     const { data: moodTypes, isLoading: moodTypesLoading } = useMoodTypes();
+    
+    // Получаем опросники настроения с бэкенда
+    const { data: moodSurveys, isLoading: moodSurveysLoading } = useMoodSurveys();
     
     // Хук для сохранения настроения
     const setMoodForDay = useSetMoodForDay();
@@ -40,25 +47,37 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
         }
     };
     const goBack = () => setStep(prev => Math.max(prev - 1, 1));
+    
+    const handleClose = () => {
+        // Сбрасываем состояние при закрытии
+        setStep(1);
+        setSelectedVariants([]);
+        setSelectedMoodType(null);
+        setSelectedSurveys([]);
+        onClose();
+    };
 
     const handleSaveMood = async () => {
-        if (selectedMoodType && moodTypes) {
+        if (selectedMoodType) {
             try {
-                const selectedMoodNames = selectedVariants
-                    .map(id => moodTypes.find(mood => mood.id === id)?.name)
-                    .filter(Boolean);
-                
-                await setMoodForDay.mutateAsync({
+                const payload = {
                     moodType: selectedMoodType,
-                    notes: selectedVariants.length > 0 ? `Дополнительные эмоции: ${selectedMoodNames.join(', ')}` : undefined
-                });
+                    moodSurveyIds: selectedSurveys
+                };
+                
+                console.log('🎭 Сохраняем настроение:', payload);
+                
+                await setMoodForDay.mutateAsync(payload);
                 
                 // Обновляем текущее настроение после сохранения
                 await refreshCurrentMood();
                 
-                onClose();
+                handleClose();
+
+                showToast({message: 'Mood successfully tracked', type: 'success'})
             } catch (error) {
                 console.error('Ошибка сохранения настроения:', error);
+                showToast({message: "Mood isn't tracked", type: 'error'})
             }
         }
     };
@@ -67,7 +86,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
         <BottomSheet
             title={ t('main.today.additionalTasks.mood.title') }
             visible={ visible }
-            onClose={ onClose }
+            onClose={ handleClose }
             onBack={ goBack }
             closeBtn={ step === 1 }
             backBtn={ step === 2 }
@@ -85,6 +104,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                             title={ t('main.today.additionalTasks.moodTracker.saveRate') }
                             onPress={ handleSaveMood }
                             loading={ setMoodForDay.isPending }
+                            disabled={ selectedSurveys.length === 0 }
                         /> }
                 </View>
             }
@@ -150,7 +170,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         </Text>
 
                         <Text style={ [ theme.fonts.regular, { opacity: 0.6 } ] }>
-                            Выберите дополнительные эмоции, которые вы сейчас испытываете
+                            Выберите опросники, которые вы хотите пройти
                         </Text>
                     </View>
 
@@ -158,31 +178,36 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         contentContainerStyle={ { paddingVertical: 8 } }
                         showsVerticalScrollIndicator={ false }
                     >
-                        <View style={theme.flexBlocks.vertical8}>
-                            {moodTypes
-                                    .filter(moodType => moodType.id !== selectedMoodType) // Исключаем уже выбранное основное настроение
-                                    .sort((a, b) => b.score - a.score) // Сортируем по score
-                                    .map((moodType) => (
+                        {moodSurveysLoading ? (
+                            <Text style={theme.fonts.regular}>Загрузка опросников...</Text>
+                        ) : moodSurveys ? (
+                            <View style={theme.flexBlocks.vertical8}>
+                                {moodSurveys
+                                    .filter(survey => !survey.isArchived) // Показываем только активные опросники
+                                    .map((survey) => (
                                         <SectionItem
-                                            key={ moodType.id }
-                                            label={ `${moodType.emoji} ${moodType.name}` }
+                                            key={survey.id}
+                                            label={survey.title}
                                             rightElement={
-                                                selectedVariants.includes(moodType.id)
+                                                selectedSurveys.includes(survey.id)
                                                     ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
                                                     : <GrayCircleIcon/>
                                             }
-                                            extraStyles={ [ styles.variantItem ] }
-                                            onPress={ () => setSelectedVariants(prev => {
-                                                if ( prev.includes(moodType.id) ) {
-                                                    return prev.filter(v => v !== moodType.id);
+                                            extraStyles={[styles.variantItem]}
+                                            onPress={() => setSelectedSurveys(prev => {
+                                                if (prev.includes(survey.id)) {
+                                                    return prev.filter(id => id !== survey.id);
                                                 } else {
-                                                    return [ ...prev, moodType.id ];
+                                                    return [...prev, survey.id];
                                                 }
-                                            }) }
+                                            })}
                                         />
                                     ))
-                            }
-                        </View>
+                                }
+                            </View>
+                        ) : (
+                            <Text style={theme.fonts.regular}>Ошибка загрузки опросников</Text>
+                        )}
                     </ScrollView>
                 </View>
             ) }

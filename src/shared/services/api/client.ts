@@ -30,6 +30,7 @@ import {
   CreateMoodTrackerRequest,
   UpdateMoodTrackerRequest,
   MoodType,
+  MoodSurvey,
   ActivityType,
   Tooltip,
   // Suggested activities types
@@ -232,6 +233,10 @@ export class MoodTrackerService extends ApiService {
 
   async getAllMoodTypes(): Promise<MoodType[]> {
     return this.get<MoodType[]>('/profile/mood-tracker/mood-types');
+  }
+
+  async getMoodSurveys(): Promise<MoodSurvey[]> {
+    return this.get<MoodSurvey[]>('/mood-surveys');
   }
 }
 

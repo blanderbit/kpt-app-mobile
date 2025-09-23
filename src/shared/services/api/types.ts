@@ -220,11 +220,13 @@ export interface MoodTrackerResponse {
 export interface CreateMoodTrackerRequest {
   moodType: string;
   notes?: string;
+  moodSurveyIds?: number[];
 }
 
 export interface UpdateMoodTrackerRequest {
   moodType?: string;
   notes?: string;
+  moodSurveyIds?: number[];
 }
 
 // Тип для настроения
@@ -236,6 +238,19 @@ export interface MoodType {
   color: string;
   score: number;
   category: string;
+}
+
+// Типы для опросников настроения
+export interface MoodSurvey {
+  id: number;
+  title: string;
+  isArchived: boolean;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  archivedAt: string | null;
+  archivedBy: string | null;
 }
 
 // Тип для активности
