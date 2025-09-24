@@ -42,6 +42,21 @@
   },
   "main": {
     "profile": {
+      "settings": {
+        "title": "Налаштування",
+        "colorScheme": "Кольорова схема",
+        "personalInfo": "Особиста інформація",
+        "privacyPolicy": "Політика конфіденційності",
+        "termsConditions": "Умови використання",
+        "support": "Підтримка",
+        "subscriptionSettings": "Налаштування підписки",
+        "deleteAccount": "Видалити акаунт",
+        "logOut": "Вийти",
+        "areYouSureLogOut": "Ви впевнені, що хочете вийти?",
+        "areYouSureDeleteAccount": "Ви впевнені, що хочете видалити свій акаунт? Цю дію неможливо скасувати.",
+        "accountDeleted": "Акаунт видалено",
+        "accountDeletedMessage": "Ваш акаунт успішно видалено."
+      },
       "personalInfoScreen": {
         "title": "Особиста інформація",
         "email": "Ваш email",

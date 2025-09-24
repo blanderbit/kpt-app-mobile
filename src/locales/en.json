@@ -42,6 +42,21 @@
   },
   "main": {
     "profile": {
+      "settings": {
+        "title": "Settings",
+        "colorScheme": "Color scheme",
+        "personalInfo": "Personal information",
+        "privacyPolicy": "Privacy Policy",
+        "termsConditions": "Terms & Condition",
+        "support": "Support",
+        "subscriptionSettings": "Subscription settings",
+        "deleteAccount": "Delete account",
+        "logOut": "Log out",
+        "areYouSureLogOut": "Are you sure you want to log out?",
+        "areYouSureDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone.",
+        "accountDeleted": "Account Deleted",
+        "accountDeletedMessage": "Your account has been successfully deleted."
+      },
       "personalInfoScreen": {
         "title": "Personal information",
         "email": "Your email",

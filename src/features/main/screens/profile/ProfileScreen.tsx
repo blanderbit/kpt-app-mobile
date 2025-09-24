@@ -16,6 +16,7 @@ import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { moodConfig } from "@features/main/screens/mood-tracker/const";
 import { useAuth } from "@app/hooks/auth.hook";
 import { useProfile } from "@app/hooks/profile.hook";
+import { useDeleteAccount } from "@shared/services/api";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 
 export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
@@ -23,6 +24,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
     const { theme } = useCustomTheme();
     const { logout } = useAuth();
     const { profile, isLoading, error, refreshProfile } = useProfile();
+    const deleteAccount = useDeleteAccount();
 
     const [ satisfaction, setSatisfaction ] = useState(75)
     const [ achieveness, setAchieveness ] = useState(25)
@@ -44,6 +46,42 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                         } catch (error) {
                             console.error('❌ Ошибка выхода:', error);
                             Alert.alert('Ошибка', 'Не удалось выйти из аккаунта');
+                        }
+                    },
+                },
+            ]
+        );
+    };
+
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            t('main.profile.settings.deleteAccount'),
+            t('main.profile.settings.areYouSureDeleteAccount'),
+            [
+                { text: t('cancel'), style: 'cancel' },
+                {
+                    text: t('main.profile.settings.deleteAccount'),
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            console.log('🗑️ Начинаем процесс удаления аккаунта...');
+                            await deleteAccount.mutateAsync({ confirm: true });
+                            console.log('✅ Аккаунт удален успешно');
+                            
+                            // После успешного удаления аккаунта выполняем логаут
+                            await logout();
+                            
+                            Alert.alert(
+                                t('main.profile.settings.accountDeleted'),
+                                t('main.profile.settings.accountDeletedMessage'),
+                                [{ text: t('ok') }]
+                            );
+                        } catch (error) {
+                            console.error('❌ Ошибка удаления аккаунта:', error);
+                            Alert.alert(
+                                'Ошибка', 
+                                error?.message || 'Не удалось удалить аккаунт'
+                            );
                         }
                     },
                 },
@@ -91,6 +129,8 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
             navigation.navigate(nested.path);
         } else if (nested.label === 'main.profile.settings.logOut') {
             handleLogout();
+        } else if (nested.label === 'main.profile.settings.deleteAccount') {
+            handleDeleteAccount();
         }
     };
 
