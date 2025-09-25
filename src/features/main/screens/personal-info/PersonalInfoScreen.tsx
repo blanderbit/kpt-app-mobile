@@ -102,17 +102,34 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const [ passwordDisabled, setPasswordDisabled ] = useState(true);
     const [ emailDisabled, setEmailDisabled ] = useState(true);
     const [ nameDisabled, setNameDisabled ] = useState(true);
+    
+    // Состояние для отслеживания изначального email
+    const [ originalEmail, setOriginalEmail ] = useState<string>('');
 
     // Обновляем значения форм при загрузке профиля
     useEffect(() => {
         if (profile) {
-            emailForm.setValue('newEmail', profile.email || '');
+            const currentEmail = profile.email || '';
+            emailForm.setValue('newEmail', currentEmail);
             nameForm.setValue('newName', profile.firstName || '');
+            
+            // Сохраняем изначальный email только если он еще не установлен
+            if (!originalEmail) {
+                setOriginalEmail(currentEmail);
+            }
         }
-    }, [profile, emailForm, nameForm]);
+    }, [profile, emailForm, nameForm, originalEmail]);
 
     const onBack = () => {
         navigation.goBack()
+    };
+
+    // Отслеживаем изменения в поле email в реальном времени
+    const watchedEmail = emailForm.watch('newEmail');
+    
+    // Функция для проверки изменения email
+    const isEmailChanged = () => {
+        return watchedEmail !== originalEmail;
     };
 
     const onSubmitChangePassword = async (data: PasswordFormData) => {
@@ -155,6 +172,9 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                 password: '',
             });
             setEmailDisabled(true);
+            
+            // Обновляем изначальный email для будущих изменений
+            setOriginalEmail(profile?.email || '');
         } catch (error: any) {
             console.error('❌ Ошибка смены email:', error);
             Alert.alert('Ошибка', error.message || 'Не удалось изменить email');
@@ -277,7 +297,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                                 <CustomButton title={ t('main.profile.personalInfoScreen.confirmEmail') }
                                               buttonStyle={ styles.changePassBtn }
                                               onPress={emailForm.handleSubmit(onSubmitChangeEmail)}
-                                              disabled={changeEmail.isPending}/>
+                                              disabled={changeEmail.isPending || !isEmailChanged()}/>
                             </View>
                     }
                 </View>

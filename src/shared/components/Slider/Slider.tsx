@@ -143,8 +143,8 @@ const Slider: React.FC<SliderProps> = ({
                     <View style={ [
                         styles.percentWrapperInsideFill,
                         {
-                            top: themeName === 'Pink' ? 38 : 48,
-                            left: themeName === 'Pink' ? SLIDER_WIDTH / 2.5 - 2 : SLIDER_WIDTH / 2.25,
+                            top: 38,
+                            left: SLIDER_WIDTH / 2.5 - 2,
                         }
                     ] }>
                         <Text style={ [ theme.fonts.title, { color: "#fff" } ] }>{ percent }%</Text>
