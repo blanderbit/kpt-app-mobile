@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFirebaseUser, setIsFirebaseUser] = useState(false);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
     const { refreshProfile, clearProfile } = useProfile();
     
     // Функции для работы с флагом Firebase
@@ -42,6 +43,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.error('Ошибка очистки флага Firebase:', error);
         }
     };
+
+    // Функции для работы с флагом emailVerified
+    const setEmailVerifiedFlag = async (isVerified: boolean) => {
+        try {
+            console.log('setEmailVerifiedFlag: saving to storage:', isVerified);
+            await AsyncStorage.setItem('email_verified', isVerified.toString());
+            console.log('setEmailVerifiedFlag: saved to storage successfully');
+        } catch (error) {
+            console.error('Ошибка сохранения флага emailVerified:', error);
+        }
+    };
+
+    const getEmailVerifiedFlag = async (): Promise<boolean> => {
+        try {
+            const flag = await AsyncStorage.getItem('email_verified');
+            const isVerified = flag === 'true';
+            console.log('getEmailVerifiedFlag: retrieved from storage:', flag, 'parsed as:', isVerified);
+            return isVerified;
+        } catch (error) {
+            console.error('Ошибка получения флага emailVerified:', error);
+            return false;
+        }
+    };
+
+    const clearEmailVerifiedFlag = async () => {
+        try {
+            console.log('clearEmailVerifiedFlag: removing from storage');
+            await AsyncStorage.removeItem('email_verified');
+            console.log('clearEmailVerifiedFlag: removed from storage successfully');
+        } catch (error) {
+            console.error('Ошибка очистки флага emailVerified:', error);
+        }
+    };
+
+    // Функция для обновления состояния emailVerified (используется после подтверждения)
+    const updateEmailVerifiedState = (isVerified: boolean) => {
+        console.log('updateEmailVerifiedState: updating state to', isVerified);
+        setIsEmailVerified(isVerified);
+    };
     
     // const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
     //     enabled: isAuthenticated 
@@ -62,6 +102,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         // Загружаем флаг Firebase
                         const firebaseFlag = await getFirebaseFlag();
                         setIsFirebaseUser(firebaseFlag);
+                        
+                        // Загружаем флаг emailVerified из хранилища
+                        const emailVerifiedFlag = await getEmailVerifiedFlag();
+                        console.log('AuthProvider: emailVerified from storage:', emailVerifiedFlag);
+                        setIsEmailVerified(emailVerifiedFlag);
                         
                         // Обновляем профиль после успешной аутентификации
                         await refreshProfile();
@@ -95,7 +140,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(false);
             setUser(null);
             setIsFirebaseUser(false);
+            setIsEmailVerified(false);
             await clearFirebaseFlag();
+            await clearEmailVerifiedFlag();
             clearProfile();
         };
 
@@ -126,11 +173,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Сбрасываем флаг Firebase для обычного логина
             await setFirebaseFlag(false);
             
+            // Сохраняем флаг emailVerified
+            console.log('Login: setting emailVerified to:', response.user.emailVerified);
+            await setEmailVerifiedFlag(response.user.emailVerified);
+            
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
             setIsFirebaseUser(false);
+            setIsEmailVerified(response.user.emailVerified);
             // Обновляем профиль после успешного входа
             await refreshProfile();
             console.log('✅ Вход выполнен успешно');
@@ -163,11 +215,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Устанавливаем флаг Firebase
             await setFirebaseFlag(true);
             
+            // Сохраняем флаг emailVerified (для Firebase пользователей всегда true)
+            await setEmailVerifiedFlag(true);
+            
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
             setIsFirebaseUser(true);
+            setIsEmailVerified(true);
             // Обновляем профиль после успешного входа
             await refreshProfile();
             console.log('✅ Firebase вход выполнен успешно');
@@ -194,10 +250,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Очищаем флаг Firebase
             await clearFirebaseFlag();
             
+            // Очищаем флаг emailVerified
+            await clearEmailVerifiedFlag();
+            
             // Обновляем состояние
             setIsAuthenticated(false);
             setUser(null);
             setIsFirebaseUser(false);
+            setIsEmailVerified(false);
             setError(null);
             // Очищаем профиль при выходе
             await clearProfile();
@@ -206,9 +266,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Даже если API вызов не удался, очищаем локальное состояние
             await apiUtils.removeAuthTokens();
             await clearFirebaseFlag();
+            await clearEmailVerifiedFlag();
             setIsAuthenticated(false);
             setUser(null);
             setIsFirebaseUser(false);
+            setIsEmailVerified(false);
             await clearProfile();
         } finally {
             setIsLoading(false);
@@ -224,7 +286,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             loginWithFirebase,
             logout, 
             error,
-            isFirebaseUser
+            isFirebaseUser,
+            isEmailVerified,
+            setEmailVerified: setEmailVerifiedFlag,
+            getEmailVerified: getEmailVerifiedFlag,
+            updateEmailVerifiedState
         }}>
             <CurrentMoodProvider isAuthenticated={isAuthenticated}>
                 {children}

@@ -41,6 +41,28 @@
     }
   },
   "main": {
+    "today": {
+      "emailVerification": {
+        "tooltip": {
+          "title": "Потрібне підтвердження email",
+          "message": "Будь ласка, підтвердіть вашу email адресу для доступу до всіх функцій"
+        },
+        "modal": {
+          "title": "Підтвердіть ваш email",
+          "description": "Введіть 6-значний код підтвердження, надісланий на ваш email",
+          "codeLabel": "Код підтвердження",
+          "codePlaceholder": "123456",
+          "verifyButton": "Підтвердити email",
+          "resendButton": "Надіслати код повторно",
+          "codeRequired": "Код підтвердження обов'язковий",
+          "codeInvalid": "Код повинен містити рівно 6 цифр",
+          "successTitle": "Email підтверджено",
+          "successMessage": "Ваш email було успішно підтверджено",
+          "errorTitle": "Помилка підтвердження",
+          "errorMessage": "Невірний код підтвердження. Спробуйте ще раз."
+        }
+      }
+    },
     "profile": {
       "settings": {
         "title": "Налаштування",

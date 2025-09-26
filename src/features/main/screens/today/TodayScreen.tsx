@@ -28,6 +28,9 @@ import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
 import { ActivityLabel } from '@shared/components/ActivityLabel';
 import {TooltipPage} from "@shared/components/InfoPopup/InfoPopup";
 import {PageTooltips} from "@shared/components/PageTooltips";
+import { useAuth } from '@app/hooks/auth.hook';
+import { EmailVerificationModal } from '@shared/components/EmailVerificationModal';
+import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 
 const circleSize = 16;
 
@@ -36,6 +39,16 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
     const { theme } = useCustomTheme();
     const { profile } = useProfile();
     const { hasMoodForToday, currentMood } = useCurrentMoodContext();
+    const { isEmailVerified, isAuthenticated } = useAuth();
+
+    console.log('TodayScreen state:', { 
+        isEmailVerified, 
+        isAuthenticated, 
+        profileEmail: profile?.email,
+        profileLoaded: !!profile,
+        tooltipVisible: emailVerificationTooltipVisible,
+        shouldShowTooltip: isAuthenticated && !isEmailVerified
+    })
 
     const [ activitySections, setActivitySections ] = useState([ ...DailyActivitySections ])
 
@@ -43,6 +56,8 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
     const [ weeklyTotalModalOpen, setWeeklyTotalModalOpen ] = useState(false);
     const [ activityModalOpen, setActivityModalOpen ] = useState(false);
     const [ moodTrackerModalOpen, setMoodTrackerModalOpen ] = useState(false);
+    const [ emailVerificationModalOpen, setEmailVerificationModalOpen ] = useState(false);
+    const [ emailVerificationTooltipVisible, setEmailVerificationTooltipVisible ] = useState(false);
 
     const [ satisfactionLevel, setSatisfactionLevel ] = useState(0);
     const [ hardnessLevel, setHardnessLevel ] = useState(0);
@@ -80,13 +95,42 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
         }
     }, [ activityModalOpen ]);
 
+    // Показываем tooltip для неподтвержденного email
+    useEffect(() => {
+        console.log('useEffect triggered:', { isEmailVerified, isAuthenticated, profile: !!profile, email: profile?.email });
+        if (isAuthenticated && !isEmailVerified && profile && profile.email) {
+            setEmailVerificationTooltipVisible(true);
+        }
+    }, [isEmailVerified, isAuthenticated, profile]);
+
     return (
         <View style={ styles.container }>
-            <PageTooltips
-                page={TooltipPage.DASHBOARD}
-                autoShow={true}
-                delay={2000}
-            />
+            {isAuthenticated && isEmailVerified && (
+                <PageTooltips
+                    page={TooltipPage.DASHBOARD}
+                    autoShow={true}
+                    delay={2000}
+                />
+            )}
+
+            {/* Email verification tooltip */}
+            {(() => {
+                const shouldShow = isAuthenticated && !isEmailVerified;
+                return shouldShow;
+            })() && (
+                <View style={{ width: '100%' }}>
+                    <InfoPopup
+                        title={t('main.today.emailVerification.tooltip.title')}
+                        desc={t('main.today.emailVerification.tooltip.message')}
+                        visible={true}
+                        onPress={() => {
+                            console.log('Tooltip pressed');
+                            setEmailVerificationTooltipVisible(false);
+                            setEmailVerificationModalOpen(true);
+                        }}
+                    />
+                </View>
+            )}
 
             <View style={ theme.flexBlocks.vertical8 }>
                 <Text style={ theme.fonts.subtitle }>
@@ -315,6 +359,15 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
             </BottomSheet>
 
             <MoodTracker visible={ moodTrackerModalOpen } onClose={ () => setMoodTrackerModalOpen(false) }/>
+
+            <EmailVerificationModal
+                visible={emailVerificationModalOpen}
+                onClose={() => setEmailVerificationModalOpen(false)}
+                onSuccess={() => {
+                    setEmailVerificationModalOpen(false);
+                    setEmailVerificationTooltipVisible(false);
+                }}
+            />
         </View>
     );
 }

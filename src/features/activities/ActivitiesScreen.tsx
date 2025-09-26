@@ -185,9 +185,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
 
     return (
         <View style={ [ styles.container, theme.flexBlocks.vertical8 ] }>
-            <InfoPopup title={ 'Min-Max Technique' }
-                       desc={ 'Set flexible goals: do the minimum to stay consistent (5 mins), aim for 100% as your baseline (30 mins), and push for the max when feeling motivated (1 hour).' }/>
-
             <View style={ theme.containers.cardRound }>
                 <View
                     style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>

@@ -9,6 +9,7 @@ import {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  VerifyEmailProfileRequest,
   RefreshTokenRequest,
   RefreshTokenResponse,
   User,
@@ -194,6 +195,14 @@ export class ProfileService extends ApiService {
 
   async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
     return this.delete<{ message: string }>('/profile/account', data);
+  }
+
+  async verifyEmail(data: VerifyEmailProfileRequest): Promise<{ message: string }> {
+    return this.post<{ message: string }>('/profile/verify-email', data);
+  }
+
+  async sendVerificationEmail(): Promise<{ message: string }> {
+    return this.post<{ message: string }>('/profile/send-verification-email');
   }
 }
 

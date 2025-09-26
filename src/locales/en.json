@@ -41,6 +41,28 @@
     }
   },
   "main": {
+    "today": {
+      "emailVerification": {
+        "tooltip": {
+          "title": "Email Verification Required",
+          "message": "Please verify your email address to access all features"
+        },
+        "modal": {
+          "title": "Verify Your Email",
+          "description": "Enter the 6-digit verification code sent to your email",
+          "codeLabel": "Verification Code",
+          "codePlaceholder": "123456",
+          "verifyButton": "Verify Email",
+          "resendButton": "Resend Code",
+          "codeRequired": "Verification code is required",
+          "codeInvalid": "Code must be exactly 6 digits",
+          "successTitle": "Email Verified",
+          "successMessage": "Your email has been successfully verified",
+          "errorTitle": "Verification Failed",
+          "errorMessage": "Invalid verification code. Please try again."
+        }
+      }
+    },
     "profile": {
       "settings": {
         "title": "Settings",

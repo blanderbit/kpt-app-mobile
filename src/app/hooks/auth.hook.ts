@@ -11,6 +11,10 @@ interface AuthContextType {
     logout: () => Promise<void>;
     error: string | null;
     isFirebaseUser: boolean;
+    isEmailVerified: boolean;
+    setEmailVerified: (isVerified: boolean) => Promise<void>;
+    getEmailVerified: () => Promise<boolean>;
+    updateEmailVerifiedState: (isVerified: boolean) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

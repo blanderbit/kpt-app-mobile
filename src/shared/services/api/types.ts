@@ -79,6 +79,10 @@ export interface VerifyEmailRequest {
   code: string;
 }
 
+export interface VerifyEmailProfileRequest {
+  code: string;
+}
+
 export interface RefreshTokenRequest {
   refreshToken: string;
   accessToken?: string;

@@ -39,7 +39,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema(t)),
         defaultValues: {
-            email: 'danil.utyuzh@gmail.com',
+            email: 'd.utyuzh@codeska.com',
             password: 'password123',
         },
     });

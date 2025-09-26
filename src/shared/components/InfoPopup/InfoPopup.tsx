@@ -8,6 +8,7 @@ interface InfoPopupProps {
     title: string;
     desc: string;
     onClose?: () => void;
+    onPress?: () => void;
     visible?: boolean;
     onVisibleChange?: (visible: boolean) => void;
 }
@@ -34,6 +35,7 @@ export const InfoPopup = ({
     title, 
     desc, 
     onClose, 
+    onPress,
     visible = true, 
     onVisibleChange 
 }: InfoPopupProps) => {
@@ -52,17 +54,23 @@ export const InfoPopup = ({
     }
 
     return (
-        <View style={ [ styles.container, theme.flexBlocks.vertical4 ] }>
+        <Pressable 
+            style={ [ styles.container, theme.flexBlocks.vertical4 ] }
+            onPress={onPress}
+        >
             <View style={ [ theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter ] }>
                 <Text style={ [ theme.fonts.subheader ] }>{ t(title) }</Text>
 
-                <Pressable onPress={handleClose} style={styles.closeButton}>
-                    <CloseIcon color="#000"/>
-                </Pressable>
+                {onClose &&
+                    <Pressable onPress={handleClose} style={styles.closeButton}>
+                        <CloseIcon color="#000"/>
+                    </Pressable>
+                }
+
             </View>
 
             <Text style={ [ theme.fonts.regular, { opacity: .6, fontWeight: 400 } ] }>{ desc }</Text>
-        </View>
+        </Pressable>
     );
 };
 const styles = StyleSheet.create({

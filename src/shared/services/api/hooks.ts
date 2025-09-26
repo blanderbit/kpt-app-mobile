@@ -15,6 +15,7 @@ import {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   VerifyEmailRequest,
+  VerifyEmailProfileRequest,
   RefreshTokenRequest,
   UpdateProfileRequest,
   ChangeEmailRequest,
@@ -122,12 +123,6 @@ export const useResetPassword = () => {
   });
 };
 
-export const useVerifyEmail = () => {
-  return useMutation({
-    mutationFn: (data: VerifyEmailRequest) => authService.verifyEmail(data),
-  });
-};
-
 export const useRefreshToken = () => {
   return useMutation({
     mutationFn: (data: RefreshTokenRequest) => authService.refreshToken(data),
@@ -189,6 +184,24 @@ export const useConfirmEmailChange = () => {
 export const useChangePassword = () => {
   return useMutation({
     mutationFn: (data: ChangePasswordRequest) => profileService.changePassword(data),
+  });
+};
+
+export const useVerifyEmail = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data: VerifyEmailProfileRequest) => profileService.verifyEmail(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.profileData() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser() });
+    },
+  });
+};
+
+export const useSendVerificationEmail = () => {
+  return useMutation({
+    mutationFn: () => profileService.sendVerificationEmail(),
   });
 };
 

@@ -46,7 +46,27 @@
   },
   "main": {
     "today": {
-      "subtitle": "Hey, {{ userName }}. It’s a great day to deal with your",
+      "emailVerification": {
+        "tooltip": {
+          "title": "Требуется подтверждение email",
+          "message": "Пожалуйста, подтвердите ваш email адрес для доступа ко всем функциям"
+        },
+        "modal": {
+          "title": "Подтвердите ваш email",
+          "description": "Введите 6-значный код подтверждения, отправленный на ваш email",
+          "codeLabel": "Код подтверждения",
+          "codePlaceholder": "123456",
+          "verifyButton": "Подтвердить email",
+          "resendButton": "Отправить код повторно",
+          "codeRequired": "Код подтверждения обязателен",
+          "codeInvalid": "Код должен содержать ровно 6 цифр",
+          "successTitle": "Email подтвержден",
+          "successMessage": "Ваш email был успешно подтвержден",
+          "errorTitle": "Ошибка подтверждения",
+          "errorMessage": "Неверный код подтверждения. Попробуйте еще раз."
+        }
+      },
+      "subtitle": "Hey, {{ userName }}. It's a great day to deal with your",
       "weekTotal": {
         "header": "Your weekly total",
         "noInfo": "No information yet",
