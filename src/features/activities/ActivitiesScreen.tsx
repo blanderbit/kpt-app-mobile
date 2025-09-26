@@ -83,8 +83,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
         }
         
         createActivityMutation.mutate({
-            activityName: newActivity.trim(),
-            isPublic: false
+            activityName: newActivity.trim()
         }, {
             onSuccess: (data) => {
                 console.log('✅ Activity created successfully:', data);

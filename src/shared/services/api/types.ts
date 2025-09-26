@@ -134,7 +134,6 @@ export interface ChangeEmailRequest {
 }
 
 export interface ConfirmEmailChangeRequest {
-  email: string;
   code: string;
 }
 
@@ -144,7 +143,6 @@ export interface ChangePasswordRequest {
 }
 
 export interface DeleteAccountRequest {
-  password: string;
   confirm: boolean;
 }
 
@@ -153,8 +151,8 @@ export interface Activity {
   id: number;
   activityName: string;
   activityType: string;
-  content?: Record<string, any>;
-  isPublic: boolean;
+  content?: string;
+  position: number;
   status: 'active' | 'closed';
   closedAt?: string;
   createdAt: string;
@@ -166,8 +164,8 @@ export interface ActivityResponse {
   userId: number;
   activityName: string;
   activityType: string;
-  content?: Record<string, any>;
-  isPublic: boolean;
+  content?: string;
+  position: number;
   status: 'active' | 'closed';
   closedAt?: string;
   createdAt: string;
@@ -177,14 +175,14 @@ export interface ActivityResponse {
 
 export interface CreateActivityRequest {
   activityName: string;
-  content?: Record<string, any>;
-  isPublic?: boolean;
+  content?: string;
+  position?: number;
 }
 
 export interface UpdateActivityRequest {
   activityName?: string;
-  content?: Record<string, any>;
-  isPublic?: boolean;
+  content?: string;
+  position?: number;
 }
 
 export interface RateActivity {
@@ -217,6 +215,11 @@ export interface MoodTrackerResponse {
   };
   notes?: string;
   moodDate: string;
+  moodSurveys?: Array<{
+    id: number;
+    title: string;
+    isArchived: boolean;
+  }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -261,10 +264,11 @@ export interface MoodSurvey {
 export interface ActivityType {
   id: string;
   name: string;
-  description?: string;
+  description: string;
+  keywords: string[];
+  category: string;
   icon: string; // Эмодзи или название иконки
   color: string;
-  category?: string;
 }
 
 // Тип для тултипа (удален старый формат)
@@ -415,5 +419,40 @@ export interface QueueStatus {
   timestamp: string;
   stats: QueueStats;
   error?: string;
+}
+
+// Новые типы из swagger spec
+
+// Тип для изменения позиции активности
+export interface ChangePositionRequest {
+  position: number;
+}
+
+// Типы для бэкапов
+export interface BackupResponse {
+  success: boolean;
+  backupPath?: string;
+  fileId?: string;
+  message: string;
+}
+
+export interface BackupFile {
+  id: string;
+  name: string;
+  size: number;
+  createdTime: string;
+  modifiedTime: string;
+}
+
+export interface BackupListResponse {
+  success: boolean;
+  backups: BackupFile[];
+  message: string;
+}
+
+export interface BackupHealthResponse {
+  mysqldumpAvailable: boolean;
+  googleDriveAvailable: boolean;
+  message: string;
 }
 

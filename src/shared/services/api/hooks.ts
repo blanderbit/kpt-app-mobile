@@ -7,6 +7,7 @@ import {
   suggestedActivityService,
   analyticsService,
   tooltipService,
+  backupService,
 } from './client';
 import {
   LoginRequest,
@@ -28,12 +29,16 @@ import {
   ActivityType,
   CreateActivityRequest,
   UpdateActivityRequest,
+  ChangePositionRequest,
   CreateRateActivityRequest,
   AddSuggestedActivityRequest,
   RefreshSuggestedActivitiesRequest,
   SearchParams,
   PaginationParams,
   DateRangeParams,
+  BackupResponse,
+  BackupListResponse,
+  BackupHealthResponse,
 } from './types';
 
 // Query keys
@@ -79,6 +84,11 @@ export const queryKeys = {
   tooltips: ['tooltips'] as const,
   tooltipsByPage: (page: string) => [...queryKeys.tooltips, 'byPage', page] as const,
   tooltipsByPageAndType: (page: string, type: string) => [...queryKeys.tooltips, 'byPageAndType', page, type] as const,
+  
+  // Backups
+  backups: ['backups'] as const,
+  backupList: () => [...queryKeys.backups, 'list'] as const,
+  backupHealth: () => [...queryKeys.backups, 'health'] as const,
 };
 
 // Auth hooks
@@ -341,14 +351,14 @@ export const useActivityById = (id: number) => {
   });
 };
 
-// export const useActivityTypes = (options?: { enabled?: boolean }) => {
-//   return useQuery({
-//     queryKey: queryKeys.activityTypes(),
-//     queryFn: () => activityService.getActivityTypes(),
-//     staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
-//     enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
-//   });
-// };
+export const useActivityTypes = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: queryKeys.activityTypes(),
+    queryFn: () => activityService.getActivityTypes(),
+    staleTime: 30 * 60 * 1000, // 30 минут, так как типы активностей редко изменяются
+    enabled: options?.enabled ?? true, // По умолчанию включен, но можно отключить
+  });
+};
 
 export const useUpdateActivity = () => {
   const queryClient = useQueryClient();
@@ -374,6 +384,19 @@ export const useDeleteActivity = () => {
   });
 };
 
+export const useChangeActivityPosition = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: ChangePositionRequest }) => 
+      activityService.changeActivityPosition(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.activityById(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.activities });
+    },
+  });
+};
+
 export const useCloseActivity = () => {
   const queryClient = useQueryClient();
   
@@ -387,13 +410,6 @@ export const useCloseActivity = () => {
   });
 };
 
-// export const useAllActivityTypes = () => {
-//   return useQuery({
-//     queryKey: queryKeys.activityTypes(),
-//     queryFn: () => activityService.getAllActivityTypes(),
-//     staleTime: 30 * 60 * 1000, // 30 minutes
-//   });
-// };
 
 export const useRecommendedTypes = (name: string, limit?: number) => {
   return useQuery({
@@ -528,5 +544,61 @@ export const useCloseTooltip = () => {
     onError: (error) => {
       console.error('❌ Ошибка закрытия тултипа:', error);
     },
+  });
+};
+
+// Backup hooks
+export const useCreateBackup = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: () => backupService.createBackup(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
+    },
+  });
+};
+
+export const useCreateLocalBackup = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: () => backupService.createLocalBackup(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
+    },
+  });
+};
+
+export const useBackupList = () => {
+  return useQuery({
+    queryKey: queryKeys.backupList(),
+    queryFn: () => backupService.listBackups(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useDownloadBackup = () => {
+  return useMutation({
+    mutationFn: (fileId: string) => backupService.downloadBackup(fileId),
+  });
+};
+
+export const useRestoreBackup = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (fileName: string) => backupService.restoreBackup(fileName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
+    },
+  });
+};
+
+export const useBackupHealth = () => {
+  return useQuery({
+    queryKey: queryKeys.backupHealth(),
+    queryFn: () => backupService.healthCheck(),
+    staleTime: 1 * 60 * 1000, // 1 minute
   });
 };

@@ -25,6 +25,7 @@ import {
   ActivityResponse,
   CreateActivityRequest,
   UpdateActivityRequest,
+  ChangePositionRequest,
   CreateRateActivityRequest,
   // Mood tracker types
   MoodTrackerResponse,
@@ -56,6 +57,10 @@ import {
   PaginatedResponse,
   QueueStats,
   QueueStatus,
+  // Backup types
+  BackupResponse,
+  BackupListResponse,
+  BackupHealthResponse,
 } from './types';
 
 // Базовый класс для API сервисов
@@ -251,9 +256,9 @@ export class MoodTrackerService extends ApiService {
 
 // Сервис для активностей
 export class ActivityService extends ApiService {
-  // async getActivityTypes(): Promise<ActivityType[]> {
-  //   return this.get<ActivityType[]>('/profile/activities/types/all');
-  // }
+  async getActivityTypes(): Promise<ActivityType[]> {
+    return this.get<ActivityType[]>('/profile/activities/types');
+  }
 
   async getMyActivities(params?: SearchParams & PaginationParams): Promise<PaginatedResponse<Activity>> {
     return this.get<PaginatedResponse<Activity>>('/profile/activities', params);
@@ -275,13 +280,14 @@ export class ActivityService extends ApiService {
     return this.delete<{ message: string }>(`/profile/activities/${id}`);
   }
 
+  async changeActivityPosition(id: number, data: ChangePositionRequest): Promise<ActivityResponse> {
+    return this.put<ActivityResponse>(`/profile/activities/${id}/position`, data);
+  }
+
   async closeActivity(id: number, data: CreateRateActivityRequest): Promise<ActivityResponse> {
     return this.post<ActivityResponse>(`/profile/activities/${id}/close`, data);
   }
 
-  // async getAllActivityTypes(): Promise<string[]> {
-  //   return this.get<string[]>('/profile/activities/types/all');
-  // }
 
   async getRecommendedTypes(name: string, limit?: number): Promise<string[]> {
     return this.get<string[]>('/profile/activities/types/recommended', { name, limit });
@@ -402,6 +408,33 @@ export class QueueService extends ApiService {
   }
 }
 
+// Сервис для бэкапов
+export class BackupService extends ApiService {
+  async createBackup(): Promise<BackupResponse> {
+    return this.post<BackupResponse>('/backup/create');
+  }
+
+  async createLocalBackup(): Promise<BackupResponse> {
+    return this.post<BackupResponse>('/backup/create-local');
+  }
+
+  async listBackups(): Promise<BackupListResponse> {
+    return this.get<BackupListResponse>('/backup/list');
+  }
+
+  async downloadBackup(fileId: string): Promise<Blob> {
+    return this.get<Blob>(`/backup/download/${fileId}`, {}, { responseType: 'blob' });
+  }
+
+  async restoreBackup(fileName: string): Promise<{ success: boolean; message: string }> {
+    return this.post<{ success: boolean; message: string }>(`/backup/restore/${fileName}`);
+  }
+
+  async healthCheck(): Promise<BackupHealthResponse> {
+    return this.get<BackupHealthResponse>('/backup/health');
+  }
+}
+
 // Экспорт всех сервисов
 export const authService = new AuthService();
 export const profileService = new ProfileService();
@@ -413,5 +446,6 @@ export const adminService = new AdminService();
 export const languageService = new LanguageService();
 export const tooltipService = new TooltipService();
 export const queueService = new QueueService();
+export const backupService = new BackupService();
 
 
