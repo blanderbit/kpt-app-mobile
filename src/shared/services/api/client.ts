@@ -187,11 +187,11 @@ export class ProfileService extends ApiService {
   }
 
   async changeEmail(data: ChangeEmailRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/change-email', data);
+    return this.post<{ message: string }>('/profile/request-for-change/email', data);
   }
 
   async confirmEmailChange(data: ConfirmEmailChangeRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/confirm-email-change', data);
+    return this.post<{ message: string }>('/profile/email/confirm-change', data);
   }
 
   async changePassword(data: ChangePasswordRequest): Promise<{ message: string }> {
@@ -203,11 +203,11 @@ export class ProfileService extends ApiService {
   }
 
   async verifyEmail(data: VerifyEmailProfileRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/verify-email', data);
+    return this.post<{ message: string }>('/profile/verification-email/verify-code/complete', data);
   }
 
   async sendVerificationEmail(): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/send-verification-email');
+    return this.post<{ message: string }>('/profile/email-verification/send-code');
   }
 }
 
