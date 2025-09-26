@@ -4,7 +4,7 @@ import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
+import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,9 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsEmailVerified(isVerified);
     };
     
-    // const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
-    //     enabled: isAuthenticated 
-    // });
+    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
+        enabled: isAuthenticated 
+    });
 
     // Проверяем наличие токена при загрузке приложения
     useEffect(() => {
