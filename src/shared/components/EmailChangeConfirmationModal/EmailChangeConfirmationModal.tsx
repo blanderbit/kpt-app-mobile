@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '@app/theme/ThemeContext';
@@ -28,6 +28,16 @@ export const EmailChangeConfirmationModal: React.FC<EmailChangeConfirmationModal
   
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [resendSecondsLeft, setResendSecondsLeft] = useState(0);
+
+  // Countdown after successful change-email request? We only enable resend if parent wants to trigger it.
+  useEffect(() => {
+    if (resendSecondsLeft <= 0) return;
+    const timer = setInterval(() => {
+      setResendSecondsLeft((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendSecondsLeft]);
 
   const validateCode = (code: string): boolean => {
     // Проверяем, что код содержит ровно 6 цифр
@@ -94,6 +104,13 @@ export const EmailChangeConfirmationModal: React.FC<EmailChangeConfirmationModal
             onPress={handleVerify}
             disabled={isButtonDisabled}
             themeName={isButtonDisabled ? 'primary_disabled' : 'primary'}
+          />
+          {/* Optional resend (disabled until we add dedicated API). Keep UI with countdown for parity */}
+          <CustomButton
+            title={resendSecondsLeft > 0 ? `${t('main.today.emailVerification.modal.resendButton')} (${resendSecondsLeft}s)` : t('main.today.emailVerification.modal.resendButton')}
+            onPress={() => setResendSecondsLeft(60)}
+            disabled={resendSecondsLeft > 0}
+            themeName={'secondary'}
           />
         </View>
       }

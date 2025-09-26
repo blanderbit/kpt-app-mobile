@@ -27,6 +27,16 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [resendSecondsLeft, setResendSecondsLeft] = useState(0);
+
+  // Countdown for resend button
+  useEffect(() => {
+    if (resendSecondsLeft <= 0) return;
+    const timer = setInterval(() => {
+      setResendSecondsLeft((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendSecondsLeft]);
 
   // Отправляем код подтверждения при открытии модала
   useEffect(() => {
@@ -35,6 +45,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       sendVerificationEmailMutation.mutate(undefined, {
         onSuccess: () => {
           console.log('Verification email sent successfully');
+          setResendSecondsLeft(60);
         },
         onError: (error) => {
           console.error('Failed to send verification email:', error);
@@ -103,6 +114,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   };
 
   const handleResendCode = () => {
+    if (resendSecondsLeft > 0) return;
     console.log('Resending verification code...');
     sendVerificationEmailMutation.mutate(undefined, {
       onSuccess: () => {
@@ -111,6 +123,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
           'Code Sent',
           'A new verification code has been sent to your email'
         );
+        setResendSecondsLeft(60);
       },
       onError: (error) => {
         console.error('Failed to resend verification code:', error);
@@ -144,10 +157,10 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
             themeName={isButtonDisabled ? 'primary_disabled' : 'primary'}
           />
           <CustomButton
-            title={t('main.today.emailVerification.modal.resendButton')}
+            title={resendSecondsLeft > 0 ? `${t('main.today.emailVerification.modal.resendButton')} (${resendSecondsLeft}s)` : t('main.today.emailVerification.modal.resendButton')}
             onPress={handleResendCode}
-            disabled={sendVerificationEmailMutation.isPending}
-            themeName="secondary"
+            disabled={sendVerificationEmailMutation.isPending || resendSecondsLeft > 0}
+            themeName={'secondary'}
             buttonStyle={styles.resendButton}
           />
         </View>
