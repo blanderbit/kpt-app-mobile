@@ -195,7 +195,7 @@ export class ProfileService extends ApiService {
   }
 
   async changePassword(data: ChangePasswordRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/change-password', data);
+    return this.post<{ message: string }>('/profile/password/change', data);
   }
 
   async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
