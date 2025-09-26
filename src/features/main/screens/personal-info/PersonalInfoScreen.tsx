@@ -15,6 +15,7 @@ import { PersonalInfoScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useUpdateProfile, useChangePassword, useChangeEmail } from "@features/profile";
 import { useProfile } from "@app/hooks/profile.hook";
 import { useAuth } from "@app/hooks/auth.hook";
+import { EmailChangeConfirmationModal } from "@shared/components/EmailChangeConfirmationModal";
 
 const createPasswordSchema = (t: any) => yup.object().shape({
     currentPassword: yup.string()
@@ -105,6 +106,10 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     
     // Состояние для отслеживания изначального email
     const [ originalEmail, setOriginalEmail ] = useState<string>('');
+    
+    // Состояние для модала подтверждения изменения email
+    const [ emailChangeModalOpen, setEmailChangeModalOpen ] = useState(false);
+    const [ newEmailToConfirm, setNewEmailToConfirm ] = useState<string>('');
 
     // Обновляем значения форм при загрузке профиля
     useEffect(() => {
@@ -160,11 +165,13 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                 password: data.password,
             });
             
-            console.log('✅ Email успешно изменен');
-            Alert.alert('Успех', 'Email успешно изменен. Проверьте новую почту для подтверждения.');
+            console.log('✅ Email успешно изменен, открываем модал подтверждения');
             
-            // Обновляем профиль с сервера для получения актуальных данных
-            await refreshProfile();
+            // Сохраняем новый email для подтверждения
+            setNewEmailToConfirm(data.newEmail);
+            
+            // Открываем модал подтверждения
+            setEmailChangeModalOpen(true);
             
             // Сбрасываем форму с текущими значениями (email не изменится до подтверждения)
             emailForm.reset({
@@ -173,8 +180,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             });
             setEmailDisabled(true);
             
-            // Обновляем изначальный email для будущих изменений
-            setOriginalEmail(profile?.email || '');
         } catch (error: any) {
             console.error('❌ Ошибка смены email:', error);
             Alert.alert('Ошибка', error.message || 'Не удалось изменить email');
@@ -203,6 +208,25 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
         } catch (error: any) {
             console.error('❌ Ошибка смены имени:', error);
             Alert.alert('Ошибка', error.message || 'Не удалось изменить имя');
+        }
+    };
+
+    const handleConfirmEmailChange = async () => {
+        try {
+            console.log('✅ Email успешно подтвержден и изменен');
+            
+            // Обновляем профиль с сервера для получения актуальных данных
+            await refreshProfile();
+            
+            // Обновляем изначальный email для будущих изменений
+            setOriginalEmail(newEmailToConfirm);
+            
+            // Закрываем модал
+            setEmailChangeModalOpen(false);
+            setNewEmailToConfirm('');
+            
+        } catch (error: any) {
+            console.error('❌ Ошибка обновления профиля после изменения email:', error);
         }
     };
 
@@ -421,6 +445,18 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                     }
                 </View>
             </View>
+            
+            {/* Модал подтверждения изменения email */}
+            <EmailChangeConfirmationModal
+                visible={emailChangeModalOpen}
+                onClose={() => {
+                    setEmailChangeModalOpen(false);
+                    setNewEmailToConfirm('');
+                }}
+                onSuccess={handleConfirmEmailChange}
+                title={t('main.profile.personalInfoScreen.confirmEmailChange')}
+                description={t('main.profile.personalInfoScreen.confirmEmailChangeDescription', { email: newEmailToConfirm })}
+            />
         </PageWithHeader>
     );
 };

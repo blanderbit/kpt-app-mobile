@@ -1,0 +1,1 @@
+export { EmailChangeConfirmationModal } from './EmailChangeConfirmationModal';

@@ -154,7 +154,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       }
     >
       <View style={styles.content}>
-        <Text style={[styles.description, theme.fonts.body]}>
+        <Text style={[styles.description, theme.fonts.regular]}>
           {t('main.today.emailVerification.modal.description')}
         </Text>
         

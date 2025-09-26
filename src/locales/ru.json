@@ -174,7 +174,9 @@
         "currentPasswordRequired": "Текущий пароль обязателен",
         "newPasswordRequired": "Новый пароль обязателен",
         "differentPasswords": "Новый пароль должен отличаться от текущего",
-        "firebaseUserMessage": "Вы вошли через Google/Apple. Личную информацию нельзя изменить здесь."
+        "firebaseUserMessage": "Вы вошли через Google/Apple. Личную информацию нельзя изменить здесь.",
+        "confirmEmailChange": "Подтверждение изменения email",
+        "confirmEmailChangeDescription": "Введите 6-значный код подтверждения, отправленный на {{email}}"
       },
       "subscriptionSettingsScreen": {
         "title": "Subscription settings",
