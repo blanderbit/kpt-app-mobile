@@ -13,10 +13,9 @@ import { COLORS } from "@app/theme";
 import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
 import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
-import { moodConfig } from "@features/main/screens/mood-tracker/const";
 import { useAuth } from "@app/hooks/auth.hook";
 import { useProfile } from "@app/hooks/profile.hook";
-import { useDeleteAccount } from "@shared/services/api";
+import { useDeleteAccount, useMoodForLast7Days } from "@shared/services/api";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 
 export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
@@ -25,6 +24,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
     const { logout } = useAuth();
     const { profile, isLoading, error, refreshProfile } = useProfile();
     const deleteAccount = useDeleteAccount();
+    const { data: moodData, isLoading: isLoadingMood } = useMoodForLast7Days();
 
     const [ satisfaction, setSatisfaction ] = useState(75)
     const [ achieveness, setAchieveness ] = useState(25)
@@ -89,29 +89,42 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
         );
     };
 
-    const moodValues = useMemo(() => ([
-        {
-            value: 1
-        },
-        {
-            value: 2
-        },
-        {
-            value: 3
-        },
-        {
-            value: 4
-        },
-        {
-            value: 5
-        },
-        {
-            value: 6
-        },
-        {
-            value: 1
+    // Создаем массив последних 7 дней с данными о настроениях
+    const last7DaysMood = useMemo(() => {
+        const days = [];
+        const today = new Date();
+        
+        console.log('🎭 ProfileScreen: moodData from API:', moodData);
+        
+        // Создаем массив дней недели, начиная с сегодняшнего дня
+        const todayDayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник, ..., 6 = суббота
+        const weekDaysOrdered = [];
+        
+        // Создаем порядок дней недели, начиная с сегодняшнего дня
+        for (let i = 0; i < 7; i++) {
+            const dayIndex = (todayDayOfWeek - 6 + i + 7) % 7; // Начинаем с 6 дней назад
+            weekDaysOrdered.push(weekDays[dayIndex]);
         }
-    ]), [])
+        
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
+            
+            // Ищем настроение для этого дня в данных с бэкенда
+            const moodForDay = moodData?.find(mood => mood.moodDate === dateString);
+            
+            days.push({
+                date: dateString,
+                mood: moodForDay || null,
+                dayName: weekDaysOrdered[6 - i] // Используем переупорядоченные дни недели
+            });
+        }
+        
+        console.log('🎭 ProfileScreen: last7DaysMood processed:', days);
+        console.log('🎭 ProfileScreen: today is', today.toDateString(), 'day of week:', todayDayOfWeek);
+        return days;
+    }, [moodData])
 
     // Показываем загрузку если профиль загружается
     if (isLoading) {
@@ -241,18 +254,26 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                         </View>
 
                         <View style={ [ styles.progressContainer, { paddingVertical: 16 } ] }>
-                            <View style={ theme.flexBlocks.justifySpaceBetween }>
-                                { weekDays.map((day, index) => (
-                                    <View
-                                        key={ index }
-                                        style={ [ { flex: 1 }, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical8 ] }>
-                                        { moodConfig(28).find(config => config.value === moodValues[index].value).icon }
-                                        <Text style={ styles.progressLabel }>
-                                            { day }
-                                        </Text>
-                                    </View>
-                                )) }
-                            </View>
+                            { isLoadingMood ? (
+                                <View style={ [ theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, { paddingVertical: 20 } ] }>
+                                    <Text style={ theme.fonts.subtitle }>Загрузка настроений...</Text>
+                                </View>
+                            ) : (
+                                <View style={ theme.flexBlocks.justifySpaceBetween }>
+                                    { last7DaysMood.map((dayData, index) => (
+                                        <View
+                                            key={ index }
+                                            style={ [ { flex: 1 }, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical8 ] }>
+                                            <Text style={ { fontSize: 28, lineHeight: 28 } }>
+                                                { dayData.mood?.moodTypeDetails?.emoji || '' }
+                                            </Text>
+                                            <Text style={ styles.progressLabel }>
+                                                { dayData.dayName }
+                                            </Text>
+                                        </View>
+                                    )) }
+                                </View>
+                            ) }
                         </View>
                     </View>
 
