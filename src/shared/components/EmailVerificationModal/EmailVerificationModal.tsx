@@ -51,7 +51,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
           console.error('Failed to send verification email:', error);
           Alert.alert(
             t('main.today.emailVerification.modal.errorTitle'),
-            'Failed to send verification email. Please try again.'
+            t('main.today.emailVerification.modal.sendFailed')
           );
         },
       });
@@ -120,8 +120,8 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       onSuccess: () => {
         console.log('Verification code resent successfully');
         Alert.alert(
-          'Code Sent',
-          'A new verification code has been sent to your email'
+          t('main.today.emailVerification.modal.resendSuccessTitle'),
+          t('main.today.emailVerification.modal.resendSuccessMessage')
         );
         setResendSecondsLeft(60);
       },
@@ -129,7 +129,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
         console.error('Failed to resend verification code:', error);
         Alert.alert(
           t('main.today.emailVerification.modal.errorTitle'),
-          'Failed to resend verification code. Please try again.'
+          t('main.today.emailVerification.modal.resendFailed')
         );
       },
     });

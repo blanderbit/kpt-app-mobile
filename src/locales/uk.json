@@ -54,6 +54,10 @@
           "codePlaceholder": "123456",
           "verifyButton": "Підтвердити email",
           "resendButton": "Надіслати код повторно",
+          "resendSuccessTitle": "Код надіслано",
+          "resendSuccessMessage": "Новий код підтвердження надіслано на ваш email",
+          "resendFailed": "Не вдалося надіслати код. Спробуйте ще раз.",
+          "sendFailed": "Не вдалося надіслати лист підтвердження. Спробуйте ще раз.",
           "codeRequired": "Код підтвердження обов'язковий",
           "codeInvalid": "Код повинен містити рівно 6 цифр",
           "successTitle": "Email підтверджено",
@@ -64,6 +68,9 @@
       }
     },
     "profile": {
+      "mood": {
+        "loading": "Завантаження настроїв..."
+      },
       "settings": {
         "title": "Налаштування",
         "colorScheme": "Кольорова схема",

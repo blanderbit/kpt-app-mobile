@@ -256,7 +256,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                         <View style={ [ styles.progressContainer, { paddingVertical: 16 } ] }>
                             { isLoadingMood ? (
                                 <View style={ [ theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, { paddingVertical: 20 } ] }>
-                                    <Text style={ theme.fonts.subtitle }>Загрузка настроений...</Text>
+                                    <Text style={ theme.fonts.subtitle }>{ t('main.profile.mood.loading') }</Text>
                                 </View>
                             ) : (
                                 <View style={ theme.flexBlocks.justifySpaceBetween }>

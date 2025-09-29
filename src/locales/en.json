@@ -54,6 +54,10 @@
           "codePlaceholder": "123456",
           "verifyButton": "Verify Email",
           "resendButton": "Resend Code",
+          "resendSuccessTitle": "Code Sent",
+          "resendSuccessMessage": "A new verification code has been sent to your email",
+          "resendFailed": "Failed to resend verification code. Please try again.",
+          "sendFailed": "Failed to send verification email. Please try again.",
           "codeRequired": "Verification code is required",
           "codeInvalid": "Code must be exactly 6 digits",
           "successTitle": "Email Verified",
@@ -64,6 +68,9 @@
       }
     },
     "profile": {
+      "mood": {
+        "loading": "Loading moods..."
+      },
       "settings": {
         "title": "Settings",
         "colorScheme": "Color scheme",
