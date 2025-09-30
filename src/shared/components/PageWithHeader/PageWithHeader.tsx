@@ -1,10 +1,10 @@
 import React, { ReactNode } from "react";
 import { View, StyleSheet } from "react-native";
 
-const PageWithHeader: React.FC<{ headerContent: ReactNode, children: ReactNode}> = ({ headerContent, children }) => {
+const PageWithHeader: React.FC<{ headerContent: ReactNode, noStylingHeader?: boolean, children: ReactNode}> = ({ headerContent, noStylingHeader, children }) => {
     return (
         <View style={ styles.page }>
-            <View style={ styles.pageHeader }>
+            <View style={ !noStylingHeader && styles.pageHeader }>
                 {headerContent}
             </View>
 

@@ -44,6 +44,7 @@ export interface Theme {
         alignCenter: ViewStyle,
         horizontal4: ViewStyle,
         horizontal8: ViewStyle,
+        horizontal16: ViewStyle,
         vertical4: ViewStyle,
         vertical8: ViewStyle,
         vertical16: ViewStyle,
@@ -157,6 +158,10 @@ export const pinkTheme: Theme = {
         horizontal8: {
             flexDirection: 'row',
             gap: 8
+        },
+        horizontal16: {
+            flexDirection: 'row',
+            gap: 16
         },
         vertical4: {
             flexDirection: 'column',
@@ -294,6 +299,10 @@ export const greenTheme: Theme = {
         horizontal8: {
             flexDirection: 'row',
             gap: 8
+        },
+        horizontal16: {
+            flexDirection: 'row',
+            gap: 16
         },
         vertical4: {
             flexDirection: 'column',

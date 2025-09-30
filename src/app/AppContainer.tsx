@@ -1,12 +1,12 @@
 import React from "react";
-import { ImageBackground, SafeAreaView, StyleSheet, View } from "react-native";
+import { ImageBackground, StyleSheet, View } from "react-native";
 import { AuthProvider } from "@features/auth/AuthProvider";
 import { ProfileProvider } from "@features/profile/ProfileProvider";
 import { QueryProvider } from "@shared/services/query/QueryProvider";
 import { useFonts } from "expo-font";
 import "../locales";
 import { ThemeProvider, useCustomTheme } from "@app/theme/ThemeContext";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { AppNavigator } from "@app/navigation/AppNavigator";
 import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
@@ -14,23 +14,12 @@ import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext"
 function MainApp() {
     const { theme } = useCustomTheme();
 
-    const navTheme = {
-        ...DefaultTheme,
-        colors: {
-            ...DefaultTheme.colors,
-            background: 'transparent',
-            card: 'transparent',
-            primary: 'transparent',
-        },
-    };
-
     return (
         <ImageBackground
             source={ theme.backgroundImage }
             style={ { flex: 1 } }
             resizeMode="cover"
-            imageStyle={ { opacity: 1 } }
-        >
+            imageStyle={ { opacity: 1 } }>
             <View style={ [ styles.container ] }>
                 <NavigationContainer>
                     <ScrollBlockerProvider>

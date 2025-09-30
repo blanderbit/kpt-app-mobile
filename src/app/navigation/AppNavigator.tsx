@@ -18,6 +18,7 @@ import { RouteProp } from "@react-navigation/native";
 import { useTheme } from '@react-navigation/native';
 import ArticleScreen from "@features/main/screens/article/ArticleScreen";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
+import OnboardingTemplate from "@features/auth/screens/Onboarding/OnboardingTemplate";
 
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
@@ -78,7 +79,6 @@ export function AppNavigator() {
                             })
                             : 0;
 
-                        console.log(next)
                         return {
                             cardStyle: {
                                 transform: [
@@ -101,7 +101,8 @@ export function AppNavigator() {
                 ) : (
                     <>
                         <Stack.Screen name={ Routes.LOGIN } component={ LoginScreen }/>
-                        <Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>
+                        {/*<Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>*/}
+                        <Stack.Screen name={ Routes.RESET_PASS } component={ OnboardingTemplate }/>
                         <Stack.Screen name={ Routes.CHECK_EMAIL } component={ CheckEmailScreen }/>
                     </>
                 ) }
