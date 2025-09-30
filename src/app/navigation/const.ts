@@ -7,4 +7,5 @@ export enum Routes {
     SUBSCRIPTION_SETTINGS = 'SubscriptionSettings',
     ARTICLE = 'Article',
     REDIRECT = 'Redirect',
+    ONBOARDING = 'Onboarding',
 }

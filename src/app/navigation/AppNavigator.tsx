@@ -29,6 +29,7 @@ type RootStackParamList = {
     [Routes.SUBSCRIPTION_SETTINGS]: undefined;
     [Routes.ARTICLE]: { id: string };
     [Routes.REDIRECT]: undefined;
+    [Routes.ONBOARDING]: undefined;
 };
 
 export type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.LOGIN>;
@@ -101,8 +102,8 @@ export function AppNavigator() {
                 ) : (
                     <>
                         <Stack.Screen name={ Routes.LOGIN } component={ LoginScreen }/>
-                        {/*<Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>*/}
-                        <Stack.Screen name={ Routes.RESET_PASS } component={ OnboardingTemplate }/>
+                        <Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>
+                        <Stack.Screen name={ Routes.ONBOARDING } component={ OnboardingTemplate }/>
                         <Stack.Screen name={ Routes.CHECK_EMAIL } component={ CheckEmailScreen }/>
                     </>
                 ) }

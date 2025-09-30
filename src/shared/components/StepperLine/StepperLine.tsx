@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 
-export default function StepperLine({step}: { step: number }) {
+export default function StepperLine({step, totalSteps = 17}: { step: number; totalSteps?: number }) {
     const [lineWidth, setLineWidth] = useState(0);
 
     // Вычисляем ширину белой линии пропорционально
-    const filledWidth = lineWidth > 0 ? (lineWidth / 17) * step : 0;
+    const filledWidth = lineWidth > 0 ? (lineWidth / totalSteps) * step : 0;
 
     return (
         <View style={styles.stepperContainer}>
