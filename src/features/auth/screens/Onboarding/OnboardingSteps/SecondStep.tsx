@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, Pressable, Image} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
+import StarRating from "@shared/components/StarRating/StarRating";
 
 interface FirstStepProps {
     onNext: () => void;
@@ -28,8 +29,10 @@ export default function SecondStep({ onNext, onBack }: FirstStepProps) {
             </View>
 
             <View style={styles.feedbackContainer}>
-                <View style={[theme.flexBlocks.vertical8, styles.feedbackSection]}>
-                    <View style={styles.starsSection}></View>
+                 <View style={[theme.flexBlocks.vertical8, styles.feedbackSection]}>
+                     <View style={styles.starsSection}>
+                         <StarRating rating={5} />
+                     </View>
 
                     <Text style={styles.feedbackTitle}>
                         Life-changing for my balance!
@@ -43,7 +46,10 @@ export default function SecondStep({ onNext, onBack }: FirstStepProps) {
                 <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, styles.personContainer]}>
                     <Text style={styles.personName}>Jessica M.</Text>
 
-                    <Image style={styles.personPhoto}/>
+                     <Image 
+                         style={styles.personPhoto}
+                         source={require('@assets/images/jessica-img.png')}
+                     />
                 </View>
             </View>
 
@@ -90,25 +96,35 @@ const styles = StyleSheet.create({
     },
     feedbackSection: {
     },
-    starsSection: {
-
-    },
+     starsSection: {
+         alignItems: 'center',
+         marginBottom: 8,
+     },
     feedbackTitle: {
         textAlign: 'center',
+        fontFamily: 'SF Pro Display Bold',
+        fontSize: 18,
+        lineHeight: 24,
     },
     feedbackInfo: {
         textAlign: 'center',
+        fontFamily: 'SF Pro Display',
+        fontSize: 14,
+        lineHeight: 20,
+        opacity: .6
     },
     personContainer: {
         flexDirection: 'column',
         position: 'absolute',
         left: 0,
-        bottom: 10,
+        bottom: 0,
         width: '100%',
-        paddingHorizontal: 16
     },
     personName: {
-
+        fontFamily: 'SF Pro Display Bold',
+        fontSize: 14,
+        lineHeight: 20,
+        opacity: .6
     },
     personPhoto: {
         width: 52,
