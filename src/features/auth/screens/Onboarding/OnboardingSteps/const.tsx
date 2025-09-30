@@ -6,14 +6,10 @@ import SecondStep from "@features/auth/screens/Onboarding/OnboardingSteps/Second
 export const onboardingSteps: OnboardingStep[] = [
     {
         id: 1,
-        content: (
-            <FirstStep />
-        )
+        content: (<FirstStep />)
     },
     {
-        id: 1,
-        content: (
-            <SecondStep />
-        )
+        id: 2,
+        content: (<SecondStep />)
     },
 ]

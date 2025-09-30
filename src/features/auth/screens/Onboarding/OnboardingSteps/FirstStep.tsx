@@ -1,10 +1,17 @@
 import React from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View, Pressable} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
 
-export default function FirstStep() {
+interface FirstStepProps {
+    onNext: () => void;
+    onBack: () => void;
+    currentStep: number;
+    totalSteps: number;
+}
+
+export default function FirstStep({ onNext, onBack }: FirstStepProps) {
 
     const {theme} = useCustomTheme();
 
@@ -24,12 +31,15 @@ export default function FirstStep() {
             <View style={ styles.formBottom }>
                 <CustomButton
                     title={ 'Get started' }
+                    onPress={onNext}
                 />
 
                 <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
                     <View style={theme.flexBlocks.alignCenter}>
                         <Text style={styles.haveAnAccText}>Already have an account?</Text>
-                        <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                        <Pressable onPress={onBack}>
+                            <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                        </Pressable>
                     </View>
                 </View>
             </View>

@@ -49,7 +49,12 @@ export default function OnboardingTemplate({
                 </View>
             }>
                 <View style={styles.mainContainer}>
-                    {currentStepData && currentStepData.content}
+                    {currentStepData && React.cloneElement(currentStepData.content as React.ReactElement, {
+                        onNext,
+                        onBack,
+                        currentStep,
+                        totalSteps: onboardingSteps.length
+                    })}
                 </View>
             </PageWithHeader>
         </SafeAreaView>
