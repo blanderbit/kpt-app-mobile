@@ -16,7 +16,7 @@ import {useToast} from "@shared/components/Toast/ToastProvider";
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
-const NUM_COLUMNS = 4; // Увеличиваем до 4 колонок для лучшего отображения
+const NUM_COLUMNS = 4;
 const ITEM_WIDTH = (screenWidth - 32 - (GAP * (NUM_COLUMNS - 1))) / NUM_COLUMNS;
 
 export default function MoodTracker({ visible, onClose }: { visible: boolean, onClose: () => void }) {
@@ -49,7 +49,6 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
     const goBack = () => setStep(prev => Math.max(prev - 1, 1));
     
     const handleClose = () => {
-        // Сбрасываем состояние при закрытии
         setStep(1);
         setSelectedVariants([]);
         setSelectedMoodType(null);
@@ -129,7 +128,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         ) : moodTypes ? (
                             <View style={ styles.gridContainer }>
                                 { moodTypes
-                                    .sort((a, b) => b.score - a.score) // Сортируем по score (от высокого к низкому)
+                                    .sort((a, b) => b.score - a.score)
                                     .map((moodType) => (
                                         <Pressable 
                                             key={ moodType.id } 

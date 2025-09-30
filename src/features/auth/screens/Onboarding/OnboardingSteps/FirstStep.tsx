@@ -7,8 +7,6 @@ import {COLORS} from "@app/theme";
 interface FirstStepProps {
     onNext: () => void;
     onBack: () => void;
-    currentStep: number;
-    totalSteps: number;
 }
 
 export default function FirstStep({ onNext, onBack }: FirstStepProps) {

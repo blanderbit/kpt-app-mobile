@@ -5,14 +5,7 @@ import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
 import StarRating from "@shared/components/StarRating/StarRating";
 
-interface FirstStepProps {
-    onNext: () => void;
-    onBack: () => void;
-    currentStep: number;
-    totalSteps: number;
-}
-
-export default function SecondStep({ onNext, onBack }: FirstStepProps) {
+export default function SecondStep({ onNext }: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
@@ -43,7 +36,7 @@ export default function SecondStep({ onNext, onBack }: FirstStepProps) {
                     </Text>
                 </View>
 
-                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, styles.personContainer]}>
+                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, styles.personContainer]}>
                     <Text style={styles.personName}>Jessica M.</Text>
 
                      <Image 
@@ -87,13 +80,13 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
     },
-    feedbackContainer: {
-        borderRadius: 30,
-        backgroundColor: '#ECF1F8',
-        padding: 16,
-        paddingBottom: 40,
-        position: 'relative'
-    },
+     feedbackContainer: {
+         borderRadius: 30,
+         backgroundColor: '#ECF1F8',
+         padding: 16,
+         paddingBottom: 50,
+         position: 'relative',
+     },
     feedbackSection: {
     },
      starsSection: {
@@ -113,13 +106,15 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         opacity: .6
     },
-    personContainer: {
-        flexDirection: 'column',
-        position: 'absolute',
-        left: 0,
-        bottom: 0,
-        width: '100%',
-    },
+     personContainer: {
+         flexDirection: 'column',
+         position: 'absolute',
+         left: 0,
+         right: 0,
+         bottom: -50,
+         paddingBottom: 16,
+         paddingHorizontal: 16,
+     },
     personName: {
         fontFamily: 'SF Pro Display Bold',
         fontSize: 14,

@@ -52,8 +52,6 @@ export default function OnboardingTemplate({
                     {currentStepData && React.cloneElement(currentStepData.content as React.ReactElement, {
                         onNext,
                         onBack,
-                        currentStep,
-                        totalSteps: onboardingSteps.length
                     })}
                 </View>
             </PageWithHeader>
