@@ -3,6 +3,7 @@ import {
   authService,
   profileService,
   moodTrackerService,
+  socialNetworkService,
   activityService,
   suggestedActivityService,
   analyticsService,
@@ -60,6 +61,9 @@ export const queryKeys = {
   allMoods: () => [...queryKeys.moodTracker, 'all'] as const,
   moodTypes: () => [...queryKeys.moodTracker, 'types'] as const,
   moodSurveys: () => [...queryKeys.moodTracker, 'surveys'] as const,
+  
+  // Social Networks
+  socialNetworks: ['socialNetworks'] as const,
   
   // Activities
   activities: ['activities'] as const,
@@ -319,6 +323,15 @@ export const useMoodSurveys = () => {
     queryKey: queryKeys.moodSurveys(),
     queryFn: () => moodTrackerService.getMoodSurveys(),
     staleTime: 5 * 60 * 1000, // 5 минут
+  });
+};
+
+// Social Network hooks
+export const useSocialNetworks = () => {
+  return useQuery({
+    queryKey: queryKeys.socialNetworks,
+    queryFn: () => socialNetworkService.getSocialNetworks(),
+    staleTime: 30 * 60 * 1000, // 30 минут, так как социальные сети редко изменяются
   });
 };
 

@@ -33,6 +33,7 @@ import {
   UpdateMoodTrackerRequest,
   MoodType,
   MoodSurvey,
+  SocialNetwork,
   ActivityType,
   Tooltip,
   // Suggested activities types
@@ -254,6 +255,13 @@ export class MoodTrackerService extends ApiService {
   }
 }
 
+// Сервис для социальных сетей
+export class SocialNetworkService extends ApiService {
+  async getSocialNetworks(): Promise<SocialNetwork[]> {
+    return this.get<SocialNetwork[]>('/social-networks');
+  }
+}
+
 // Сервис для активностей
 export class ActivityService extends ApiService {
   async getActivityTypes(): Promise<ActivityType[]> {
@@ -439,6 +447,7 @@ export class BackupService extends ApiService {
 export const authService = new AuthService();
 export const profileService = new ProfileService();
 export const moodTrackerService = new MoodTrackerService();
+export const socialNetworkService = new SocialNetworkService();
 export const activityService = new ActivityService();
 export const suggestedActivityService = new SuggestedActivityService();
 export const analyticsService = new AnalyticsService();

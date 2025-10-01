@@ -260,6 +260,16 @@ export interface MoodSurvey {
   archivedBy: string | null;
 }
 
+// Типы для социальных сетей
+export interface SocialNetwork {
+  id: string;
+  name: string;
+  description: string;
+  svg: string;
+  color: string;
+  category: string;
+}
+
 // Тип для активности
 export interface ActivityType {
   id: string;
