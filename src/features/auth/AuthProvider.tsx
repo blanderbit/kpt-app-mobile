@@ -204,7 +204,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // Вызываем API Firebase логина
             console.log('📡 Вызываем authService.firebaseAuth...');
-            const response = await authService.firebaseAuth({ idToken });
+            const response = await authService.firebaseAuth({ 
+                idToken,
+                authType: 'login'
+                // Поля онбординга пока не используем
+            });
             console.log('✅ Получен ответ от Firebase API:', response);
             
             // Сохраняем токены
@@ -230,6 +234,62 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             console.error('❌ Ошибка Firebase входа:', error);
             const errorMessage = error.message || 'Ошибка входа через Google';
+            setError(errorMessage);
+            throw new Error(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const registerWithFirebase = async (
+        idToken: string, 
+        onboardingData: {
+            age?: string;
+            feelingToday?: string;
+            socialNetworks?: string[];
+            onboardingQuestionAndAnswers?: Record<string, string>;
+            activities?: Array<{ activityName: string; content?: string }>;
+            taskTrackingMethod?: string;
+        }
+    ) => {
+        try {
+            console.log('🔥 Начинаем Firebase регистрацию...');
+            setIsLoading(true);
+            setError(null);
+
+            // Вызываем API Firebase регистрации
+            console.log('📡 Вызываем authService.firebaseAuth для регистрации...');
+            const response = await authService.firebaseAuth({ 
+                idToken,
+                authType: 'register',
+                ...onboardingData
+            });
+            console.log('✅ Получен ответ от Firebase API:', response);
+            
+            // Сохраняем токены
+            console.log('💾 Сохраняем токены...');
+            await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
+            console.log('✅ Токены сохранены');
+            
+            // Устанавливаем флаг Firebase
+            await setFirebaseFlag(true);
+            
+            // Сохраняем флаг emailVerified (для Firebase пользователей всегда true)
+            await setEmailVerifiedFlag(true);
+            
+            // Обновляем состояние
+            console.log('🔄 Обновляем состояние...');
+            setUser(response.user);
+            setIsAuthenticated(true);
+            setIsFirebaseUser(true);
+            setIsEmailVerified(true);
+            // Обновляем профиль после успешной регистрации
+            await refreshProfile();
+            
+            console.log('✅ Firebase регистрация завершена успешно');
+        } catch (error: any) {
+            console.error('❌ Ошибка Firebase регистрации:', error);
+            const errorMessage = error.message || 'Ошибка регистрации через Firebase';
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -284,6 +344,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             isLoading, 
             login, 
             loginWithFirebase,
+            registerWithFirebase,
             logout, 
             error,
             isFirebaseUser,

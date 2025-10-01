@@ -8,6 +8,17 @@ interface AuthContextType {
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     loginWithFirebase: (idToken: string) => Promise<void>;
+    registerWithFirebase: (
+        idToken: string, 
+        onboardingData: {
+            age?: string;
+            feelingToday?: string;
+            socialNetworks?: string[];
+            onboardingQuestionAndAnswers?: Record<string, string>;
+            activities?: Array<{ activityName: string; content?: string }>;
+            taskTrackingMethod?: string;
+        }
+    ) => Promise<void>;
     logout: () => Promise<void>;
     error: string | null;
     isFirebaseUser: boolean;

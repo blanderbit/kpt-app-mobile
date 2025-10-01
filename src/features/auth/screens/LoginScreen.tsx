@@ -145,7 +145,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                     </Text>
                 </View>
 
-                <View style={ styles.container }>
+                <View style={styles.container}>
                     <CustomButton 
                         title={ t('auth.login') } 
                         onPress={ handleSubmit(onSubmit) }

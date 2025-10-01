@@ -48,6 +48,16 @@ export interface RegisterRequest {
 
 export interface FirebaseAuthRequest {
   idToken: string;
+  authType?: 'login' | 'register';
+  age?: string;
+  feelingToday?: string;
+  socialNetworks?: string[];
+  onboardingQuestionAndAnswers?: Record<string, string>;
+  activities?: Array<{
+    activityName: string;
+    content?: string;
+  }>;
+  taskTrackingMethod?: string;
 }
 
 export interface FirebaseAuthResponse {

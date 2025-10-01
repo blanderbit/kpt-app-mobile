@@ -78,7 +78,7 @@ const styles = StyleSheet.create( {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: 52
+        height: 55
     },
     text: {
         fontFamily: 'Inter Semibold',
