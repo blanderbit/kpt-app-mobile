@@ -34,6 +34,7 @@ import {
   MoodType,
   MoodSurvey,
   SocialNetwork,
+  OnboardingQuestion,
   ActivityType,
   Tooltip,
   // Suggested activities types
@@ -262,6 +263,13 @@ export class SocialNetworkService extends ApiService {
   }
 }
 
+// Сервис для вопросов онбординга
+export class OnboardingService extends ApiService {
+  async getOnboardingQuestions(): Promise<OnboardingQuestion[]> {
+    return this.get<OnboardingQuestion[]>('/onboarding-questions');
+  }
+}
+
 // Сервис для активностей
 export class ActivityService extends ApiService {
   async getActivityTypes(): Promise<ActivityType[]> {
@@ -448,6 +456,7 @@ export const authService = new AuthService();
 export const profileService = new ProfileService();
 export const moodTrackerService = new MoodTrackerService();
 export const socialNetworkService = new SocialNetworkService();
+export const onboardingService = new OnboardingService();
 export const activityService = new ActivityService();
 export const suggestedActivityService = new SuggestedActivityService();
 export const analyticsService = new AnalyticsService();

@@ -1,19 +1,56 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {StyleSheet, Text, View, Pressable, Image, ScrollView, Dimensions} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
+import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
 const NUM_COLUMNS = 5;
 const ITEM_WIDTH = (screenWidth - 60 - (GAP * (NUM_COLUMNS - 1))) / NUM_COLUMNS;
 
-export default function FourthStep({onNext}: { onNext: () => void }) {
+interface FourthStepProps {
+    onNext: (selectedMood: string) => void;
+}
+
+export default function FourthStep({onNext}: FourthStepProps) {
 
     const {theme} = useCustomTheme();
 
     const [ selectedMoodType, setSelectedMoodType ] = useState<string | null>(null);
+
+    // Загружаем сохраненные данные при монтировании
+    useEffect(() => {
+        loadSavedData();
+    }, []);
+
+    // Сохраняем данные при изменении
+    useEffect(() => {
+        if (selectedMoodType) {
+            saveData(selectedMoodType);
+        }
+    }, [selectedMoodType]);
+
+    const loadSavedData = async () => {
+        try {
+            const savedData = await AsyncStorage.getItem(ONBOARDING_KEYS.MOOD);
+            if (savedData) {
+                setSelectedMoodType(savedData);
+            }
+        } catch (error) {
+            console.error('Error loading saved mood selection:', error);
+        }
+    };
+
+    const saveData = async (mood: string) => {
+        try {
+            await AsyncStorage.setItem(ONBOARDING_KEYS.MOOD, mood);
+        } catch (error) {
+            console.error('Error saving mood selection:', error);
+        }
+    };
 
     const moodTypes = [
         {
@@ -103,7 +140,7 @@ export default function FourthStep({onNext}: { onNext: () => void }) {
                 {selectedMoodType &&
                     <CustomButton
                         title={'Continue'}
-                        onPress={onNext}
+                        onPress={() => onNext(selectedMoodType)}
                     />
                 }
             </View>

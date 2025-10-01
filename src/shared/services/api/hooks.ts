@@ -4,6 +4,7 @@ import {
   profileService,
   moodTrackerService,
   socialNetworkService,
+  onboardingService,
   activityService,
   suggestedActivityService,
   analyticsService,
@@ -64,6 +65,10 @@ export const queryKeys = {
   
   // Social Networks
   socialNetworks: ['socialNetworks'] as const,
+  
+  // Onboarding
+  onboarding: ['onboarding'] as const,
+  onboardingQuestions: () => [...queryKeys.onboarding, 'questions'] as const,
   
   // Activities
   activities: ['activities'] as const,
@@ -332,6 +337,15 @@ export const useSocialNetworks = () => {
     queryKey: queryKeys.socialNetworks,
     queryFn: () => socialNetworkService.getSocialNetworks(),
     staleTime: 30 * 60 * 1000, // 30 минут, так как социальные сети редко изменяются
+  });
+};
+
+// Onboarding hooks
+export const useOnboardingQuestions = () => {
+  return useQuery({
+    queryKey: queryKeys.onboardingQuestions(),
+    queryFn: () => onboardingService.getOnboardingQuestions(),
+    staleTime: 30 * 60 * 1000, // 30 минут, так как вопросы онбординга редко изменяются
   });
 };
 

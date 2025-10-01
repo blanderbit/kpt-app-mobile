@@ -270,6 +270,22 @@ export interface SocialNetwork {
   category: string;
 }
 
+// Типы для вопросов онбординга
+export interface OnboardingAnswer {
+  id: string;
+  text: string;
+  subtitle: string;
+  icon: string;
+}
+
+export interface OnboardingQuestion {
+  stepName: string;
+  stepQuestion: string;
+  answers: OnboardingAnswer[];
+  inputType: 'single' | 'multiple';
+  required: boolean;
+}
+
 // Тип для активности
 export interface ActivityType {
   id: string;

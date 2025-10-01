@@ -10,6 +10,7 @@ export {
   profileService,
   moodTrackerService,
   socialNetworkService,
+  onboardingService,
   activityService,
   suggestedActivityService,
   analyticsService,

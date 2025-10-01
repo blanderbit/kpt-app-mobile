@@ -7,49 +7,90 @@ import {SectionItem} from "@shared/components/SectionItem/SectionItem";
 import {BlackCheckmarkIcon} from "@assets/icons/BlackCheckmarkIcon";
 import {GrayCircleIcon} from "@assets/icons/GrayCircleIcon";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
-import {useSocialNetworks} from "@shared/services/api/hooks";
+import {useOnboardingQuestions} from "@shared/services/api/hooks";
+import {OnboardingQuestion} from "@shared/services/api/types";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 
-interface FifthStepProps {
-    onNext: (selectedNetworks: string[]) => void;
+interface OnboardingQuestionStepProps {
+    questionIndex: number;
+    onNext: (questionData: OnboardingQuestion, selectedAnswers: string[]) => void;
 }
 
-export default function FifthStep({onNext}: FifthStepProps) {
+export default function OnboardingQuestionStep({questionIndex, onNext}: OnboardingQuestionStepProps) {
 
     const {theme} = useCustomTheme();
-    const {data: socialNetworks, isLoading} = useSocialNetworks();
+    const {data: questions, isLoading} = useOnboardingQuestions();
 
-    const [ selectedNetworks, setSelectedNetworks ] = useState<string[]>([]);
+    const [ selectedAnswers, setSelectedAnswers ] = useState<string[]>([]);
+
+    // Берем вопрос по индексу
+    const currentQuestion = questions?.[questionIndex];
 
     // Загружаем сохраненные данные при монтировании
     useEffect(() => {
-        loadSavedData();
-    }, []);
+        if (currentQuestion) {
+            loadSavedData();
+        }
+    }, [currentQuestion]);
 
     // Сохраняем данные при изменении
     useEffect(() => {
-        if (selectedNetworks.length > 0) {
-            saveData(selectedNetworks);
+        if (selectedAnswers.length > 0 && currentQuestion) {
+            saveData(selectedAnswers);
         }
-    }, [selectedNetworks]);
+    }, [selectedAnswers, currentQuestion]);
 
     const loadSavedData = async () => {
+        if (!currentQuestion) return;
+        
         try {
-            const savedData = await AsyncStorage.getItem(ONBOARDING_KEYS.SOCIAL_NETWORKS);
+            const savedData = await AsyncStorage.getItem(ONBOARDING_KEYS.QUESTIONS);
             if (savedData) {
                 const parsedData = JSON.parse(savedData);
-                setSelectedNetworks(parsedData);
+                const questionAnswers = parsedData[currentQuestion.stepName];
+                if (questionAnswers) {
+                    setSelectedAnswers(questionAnswers);
+                }
             }
         } catch (error) {
-            console.error('Error loading saved social networks:', error);
+            console.error('Error loading saved question answers:', error);
         }
     };
 
-    const saveData = async (networks: string[]) => {
+    const saveData = async (answers: string[]) => {
+        if (!currentQuestion) return;
+        
         try {
-            await AsyncStorage.setItem(ONBOARDING_KEYS.SOCIAL_NETWORKS, JSON.stringify(networks));
+            const savedData = await AsyncStorage.getItem(ONBOARDING_KEYS.QUESTIONS);
+            const parsedData = savedData ? JSON.parse(savedData) : {};
+            parsedData[currentQuestion.stepName] = answers;
+            await AsyncStorage.setItem(ONBOARDING_KEYS.QUESTIONS, JSON.stringify(parsedData));
         } catch (error) {
-            console.error('Error saving social networks:', error);
+            console.error('Error saving question answers:', error);
+        }
+    };
+
+    const handleAnswerSelect = (answerId: string) => {
+        if (!currentQuestion) return;
+
+        if (currentQuestion.inputType === 'single') {
+            // Для одиночного выбора заменяем весь массив
+            setSelectedAnswers([answerId]);
+        } else {
+            // Для множественного выбора добавляем/удаляем
+            setSelectedAnswers(prev => {
+                if (prev.includes(answerId)) {
+                    return prev.filter(id => id !== answerId);
+                } else {
+                    return [...prev, answerId];
+                }
+            });
+        }
+    };
+
+    const handleContinue = () => {
+        if (currentQuestion && selectedAnswers.length > 0) {
+            onNext(currentQuestion, selectedAnswers);
         }
     };
 
@@ -58,7 +99,7 @@ export default function FifthStep({onNext}: FifthStepProps) {
             <View style={styles.formTop}>
                 <View style={styles.head}>
                     <Text style={[styles.title, {...theme.fonts.title}]}>
-                        How did you hear about us?
+                        {currentQuestion?.stepQuestion || 'Loading...'}
                     </Text>
                 </View>
             </View>
@@ -74,35 +115,30 @@ export default function FifthStep({onNext}: FifthStepProps) {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={theme.flexBlocks.vertical8}>
-                        {socialNetworks?.map((network) => (
+                        {currentQuestion?.answers.map((answer) => (
                             <SectionItem
-                                key={network.id}
-                                label={network.name}
-                                icon={<RemoteSvg xml={network.svg}/>}
+                                key={answer.id}
+                                label={answer.text}
+                                subtitle={answer.subtitle}
+                                icon={<RemoteSvg xml={answer.icon}/>}
                                 rightElement={
-                                    selectedNetworks.includes(network.id)
+                                    selectedAnswers.includes(answer.id)
                                         ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
                                         : <GrayCircleIcon/>
                                 }
                                 extraStyles={[styles.variantItem]}
-                                onPress={() => setSelectedNetworks(prev => {
-                                    if (prev.includes(network.id)) {
-                                        return prev.filter(id => id !== network.id);
-                                    } else {
-                                        return [...prev, network.id];
-                                    }
-                                })}
+                                onPress={() => handleAnswerSelect(answer.id)}
                             />
                         ))}
                     </View>
                 </ScrollView>
             )}
 
-            {!!selectedNetworks.length && (
+            {!!selectedAnswers.length && (
                 <View style={styles.formBottom}>
                     <CustomButton
                         title={'Continue'}
-                        onPress={() => onNext(selectedNetworks)}
+                        onPress={handleContinue}
                     />
                 </View>
             )}
