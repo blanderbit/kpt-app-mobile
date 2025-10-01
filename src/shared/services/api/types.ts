@@ -44,7 +44,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   firstName?: string;
-  lastName?: string;
 }
 
 export interface FirebaseAuthRequest {
@@ -58,7 +57,6 @@ export interface FirebaseAuthResponse {
     id: number;
     email: string;
     firstName?: string;
-    lastName?: string;
     avatarUrl?: string;
     firebaseUid: string;
   };
@@ -98,7 +96,6 @@ export interface User {
   email: string;
   passwordHash: string;
   firstName: string;
-  lastName: string;
   avatarUrl: string;
   emailVerified: boolean;
   googleId?: string;
@@ -114,7 +111,6 @@ export interface ProfileResponse {
   id: number;
   email: string;
   firstName: string;
-  lastName: string;
   avatarUrl: string;
   theme: 'light' | 'dark' | 'system';
   createdAt: string;
@@ -123,7 +119,6 @@ export interface ProfileResponse {
 
 export interface UpdateProfileRequest {
   firstName?: string;
-  lastName?: string;
   avatarUrl?: string;
   theme?: 'light' | 'dark' | 'system';
 }
@@ -345,7 +340,6 @@ export interface AdminLoginResponse {
     id: number;
     email: string;
     firstName: string;
-    lastName: string;
     roles: string[];
   };
 }

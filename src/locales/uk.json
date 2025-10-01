@@ -109,7 +109,7 @@
         "currentPasswordRequired": "Поточний пароль обов'язковий",
         "newPasswordRequired": "Новий пароль обов'язковий",
         "differentPasswords": "Новий пароль повинен відрізнятися від поточного",
-        "firebaseUserMessage": "Ви увійшли через Google/Apple. Особисту інформацію не можна змінити тут.",
+        "firebaseUserMessage": "Ви увійшли через Google/Apple. Email і пароль не можна змінити тут, але ви можете змінити своє ім'я.",
         "confirmEmailChange": "Підтвердження зміни email",
         "confirmEmailChangeDescription": "Введіть 6-значний код підтвердження, надісланий на {{email}}"
       }

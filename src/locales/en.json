@@ -109,7 +109,7 @@
         "currentPasswordRequired": "Current password is required",
         "newPasswordRequired": "New password is required",
         "differentPasswords": "New password must be different from current password",
-        "firebaseUserMessage": "You signed in with Google/Apple. Personal information cannot be changed here.",
+        "firebaseUserMessage": "You signed in with Google/Apple. Email and password cannot be changed here, but you can change your name.",
         "confirmEmailChange": "Confirm Email Change",
         "confirmEmailChangeDescription": "Enter the 6-digit verification code sent to {{email}}"
       }

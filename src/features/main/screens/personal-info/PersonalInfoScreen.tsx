@@ -343,8 +343,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
                                     <CustomButton title={ t('main.profile.personalInfoScreen.changeName') }
                                                   buttonStyle={ styles.changePassBtn }
-                                                  onPress={ () => {setNameDisabled(!nameDisabled)} }
-                                                  disabled={isFirebaseUser}/>
+                                                  onPress={ () => {setNameDisabled(!nameDisabled)} }/>
                                 </View>
                             </View> :
                             <View style={ theme.flexBlocks.vertical16 }>
