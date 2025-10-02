@@ -19,7 +19,6 @@ export const ActivityLabel = ({
     const activityConfig = ACTIVITY_TYPES[id];
 
     if (!activityConfig) {
-        console.warn(`ActivityLabel: Type with id "${id}" not found`);
         return (
             <View style={[
                 styles.activityLabel,
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start'
     },
     iconEmoji: {
-        fontSize: 16,
+        fontSize: 14,
         lineHeight: 16
     }
 });
