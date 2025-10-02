@@ -7,6 +7,8 @@ import StepperLine from "@shared/components/StepperLine/StepperLine";
 import {OnboardingTemplateProps} from './types';
 import {onboardingSteps} from "@features/auth/screens/Onboarding/OnboardingSteps/const";
 import OnboardingQuestionStep from "@features/auth/screens/Onboarding/OnboardingSteps/OnboardingQuestionStep";
+import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
+import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventhStep";
 import {useOnboardingQuestions} from "@shared/services/api/hooks";
 import {OnboardingQuestion} from "@shared/services/api/types";
 import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from "@shared/utils/onboardingStorage";
@@ -47,9 +49,9 @@ export default function OnboardingTemplate({
         }
     };
 
-    // Вычисляем общее количество шагов (статические + динамические вопросы)
+    // Вычисляем общее количество шагов (статические + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
-        return onboardingSteps.length + (questions?.length || 0);
+        return onboardingSteps.length + (questions?.length || 0) + 1; // +1 для SixthStep + SeventhStep уже в массиве
     }, [questions]);
 
     // Показываем stepper только после загрузки вопросов
@@ -131,6 +133,25 @@ export default function OnboardingTemplate({
                 <OnboardingQuestionStep
                     questionIndex={questionIndex}
                     onNext={handleQuestionAnswer}
+                />
+            );
+        }
+        
+        // Финальные степпы - после всех динамических вопросов
+        if (currentStep === totalSteps - 1) {
+            // Предпоследний степп - SixthStep
+            return (
+                <SixthStep
+                    onNext={onNext}
+                />
+            );
+        }
+        
+        if (currentStep === totalSteps) {
+            // Последний степп - SeventhStep
+            return (
+                <SeventhStep
+                    onNext={onNext}
                 />
             );
         }

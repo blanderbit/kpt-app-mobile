@@ -1,10 +1,9 @@
 import React from "react";
-import {StyleSheet, Text, View, Pressable, Image} from "react-native";
+import {StyleSheet, Text, View, Image} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
-import {COLORS} from "@app/theme";
 
-export default function ThirdStep({onNext}: { onNext: () => void }) {
+export default function SixthStep({onNext}: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
@@ -21,17 +20,17 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
                 </View>
             </View>
 
-            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8, styles.centerBlock]}>
+            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16, styles.centerBlock]}>
                 <Image
-                    source={require('@assets/images/onboarding-img.png')}/>
+                    source={require('@assets/images/onboarding-awesome.png')}/>
                 <Text style={styles.centerBlockText}>
-                    A few quick questions to better understand your current state and goals 🤝
+                    Let's discover how it works!
                 </Text>
             </View>
 
             <View style={styles.formBottom}>
                 <CustomButton
-                    title={'Continue'}
+                    title={'Show me how'}
                     onPress={onNext}
                 />
             </View>
@@ -65,7 +64,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     centerBlock: {
-        paddingBottom: 40
+        paddingVertical: 20,
+        gap: 32
     },
     centerBlockText: {
         fontFamily: 'SF Pro Display Bold',
