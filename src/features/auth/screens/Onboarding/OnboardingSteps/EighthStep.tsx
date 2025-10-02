@@ -3,7 +3,7 @@ import {StyleSheet, Text, View, Pressable, Image} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 
-export default function SeventhStep({onNext}: { onNext: () => void }) {
+export default function EighthStep({onNext}: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
@@ -12,11 +12,10 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
             <View style={styles.formTop}>
                 <View style={styles.head}>
                     <Text style={[styles.title, {...theme.fonts.title}]}>
-                        Add your first challenge
+                        Good job! 👏
                     </Text>
                     <Text style={[styles.info, {...theme.fonts.regular}]}>
-                        It can be any task, activity or habit you want to track.
-                        One-time or repetitive - it doesn't matter.
+                        Now, rate your activity using these metrics:
                     </Text>
                 </View>
             </View>
@@ -25,11 +24,18 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
                 <View>
 
                 </View>
-
-                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
-                    <Image source={require('@assets/images/click_add_button.png')}/>
+                
+                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.horizontal16]}>
+                    <Image source={require('@assets/images/swipe_the_lines.png')}/>
                     <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
                 </View>
+            </View>
+
+            <View style={styles.formBottom}>
+                <CustomButton
+                    title={'Complete'}
+                    onPress={onNext}
+                />
             </View>
         </View>
     );
@@ -41,6 +47,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 16,
         paddingTop: 10
+    },
+    formBottom: {
+        width: '100%',
+        flexDirection: 'column',
+        gap: 10
     },
     head: {
         flexDirection: 'column',

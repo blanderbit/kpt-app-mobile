@@ -5,6 +5,9 @@ import SecondStep from "@features/auth/screens/Onboarding/OnboardingSteps/Second
 import ThirdStep from "@features/auth/screens/Onboarding/OnboardingSteps/ThirdStep";
 import FourthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourthStep";
 import FifthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifthStep";
+import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventhStep";
+import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
+import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 
 export const onboardingSteps: OnboardingStep[] = [
     {
@@ -26,5 +29,17 @@ export const onboardingSteps: OnboardingStep[] = [
     {
         id: 5,
         content: (<FifthStep />)
+    },
+    {
+        id: 6,
+        content: (<SixthStep />)
+    },
+    {
+        id: 7,
+        content: (<SeventhStep />)
+    },
+    {
+        id: 8,
+        content: (<EighthStep />)
     },
 ]

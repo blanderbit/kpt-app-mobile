@@ -12,6 +12,7 @@ import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/Seven
 import {useOnboardingQuestions} from "@shared/services/api/hooks";
 import {OnboardingQuestion} from "@shared/services/api/types";
 import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from "@shared/utils/onboardingStorage";
+import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -49,9 +50,9 @@ export default function OnboardingTemplate({
         }
     };
 
-    // Вычисляем общее количество шагов (статические + динамические вопросы + финальные степпы)
+    // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
-        return onboardingSteps.length + (questions?.length || 0) + 1; // +1 для SixthStep + SeventhStep уже в массиве
+        return 5 + (questions?.length || 0) + 3; // 5 статических + вопросы + 6-й, 7-й, 8-й и далее
     }, [questions]);
 
     // Показываем stepper только после загрузки вопросов
@@ -109,7 +110,7 @@ export default function OnboardingTemplate({
     // Определяем, какой компонент рендерить
     const renderCurrentStep = () => {
         // Статические шаги (1-5)
-        if (currentStep <= onboardingSteps.length) {
+        if (currentStep <= 5) {
             const currentStepData = onboardingSteps.find(step => step.id === currentStep);
             if (currentStepData) {
                 let onNextHandler = onNext;
@@ -126,8 +127,8 @@ export default function OnboardingTemplate({
             }
         }
         
-        // Динамические вопросы (начиная с 6-го шага)
-        const questionIndex = currentStep - onboardingSteps.length - 1;
+        // Динамические вопросы (всегда после 5-го шага)
+        const questionIndex = currentStep - 6; // 6-й шаг = первый вопрос (индекс 0)
         if (questions && questionIndex >= 0 && questionIndex < questions.length) {
             return (
                 <OnboardingQuestionStep
@@ -138,8 +139,12 @@ export default function OnboardingTemplate({
         }
         
         // Финальные степпы - после всех динамических вопросов
-        if (currentStep === totalSteps - 1) {
-            // Предпоследний степп - SixthStep
+        const questionsCount = questions?.length || 0;
+        const sixthStepNumber = 6 + questionsCount; // 6 + количество вопросов
+        const seventhStepNumber = 6 + questionsCount + 1; // следующий после 6-го
+        const eighthStepNumber = 6 + questionsCount + 2; // следующий после 7-го
+
+        if (currentStep === sixthStepNumber) {
             return (
                 <SixthStep
                     onNext={onNext}
@@ -147,10 +152,17 @@ export default function OnboardingTemplate({
             );
         }
         
-        if (currentStep === totalSteps) {
-            // Последний степп - SeventhStep
+        if (currentStep === seventhStepNumber) {
             return (
                 <SeventhStep
+                    onNext={onNext}
+                />
+            );
+        }
+
+        if (currentStep === eighthStepNumber) {
+            return (
+                <EighthStep
                     onNext={onNext}
                 />
             );
