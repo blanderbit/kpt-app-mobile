@@ -107,11 +107,28 @@ export default function OnboardingTemplate({
 
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
-        return onboardingFirstSectionSteps.length + (questions?.length || 0) + onboardingSecondSectionSteps.length; // 5 статических + вопросы + 6-й, 7-й, 8-й и далее
+        const questionsCount = questions?.length || 0;
+        const total = onboardingFirstSectionSteps.length + questionsCount + onboardingSecondSectionSteps.length;
+        console.log('TotalSteps calculation:', {
+            staticSteps: onboardingFirstSectionSteps.length,
+            questionsCount,
+            finalSteps: onboardingSecondSectionSteps.length,
+            total
+        });
+        return total;
     }, [questions]);
 
     // Показываем stepper только после загрузки вопросов
-    const showStepper = !questionsLoading;
+    const showStepper = true; // Временно всегда показываем степпер
+    
+    // Отладочная информация
+    console.log('OnboardingTemplate Debug:', {
+        currentStep,
+        totalSteps,
+        questionsLoading,
+        showStepper,
+        questionsLength: questions?.length || 0
+    });
 
     // Получаем конфигурацию текущего степа
     const getCurrentStepConfig = () => {
@@ -271,95 +288,74 @@ export default function OnboardingTemplate({
         await onNext();
     };
 
-    // Определяем, какой компонент рендерить
-    const renderCurrentStep = () => {
-        // Статические шаги (1-5)
-        if (currentStep <= onboardingFirstSectionSteps.length) {
-            const currentStepData = onboardingFirstSectionSteps.find(step => step.id === currentStep);
-            if (currentStepData) {
-                let onNextHandler = onNext;
-                if (currentStep === 4) {
-                    onNextHandler = handleMoodSelection;
-                } else if (currentStep === 5) {
-                    onNextHandler = handleSocialNetworks;
-                }
-                
-                return React.cloneElement(currentStepData.content as React.ReactElement, {
-                    onNext: onNextHandler,
-                    onBack,
-                });
-            }
-        }
-        
-        // Динамические вопросы (всегда после 5-го шага)
-        const questionIndex = currentStep - 6; // 6-й шаг = первый вопрос (индекс 0)
-        if (questions && questionIndex >= 0 && questionIndex < questions.length) {
-            return (
-                <OnboardingQuestionStep
-                    questionIndex={questionIndex}
-                    onNext={handleQuestionAnswer}
-                />
-            );
-        }
-        
-        // Финальные степпы - после всех динамических вопросов
+    // Вычисляем номера степов
+    const getStepNumbers = () => {
         const questionsCount = questions?.length || 0;
-        const sixthStepNumber = 6 + questionsCount; // 6 + количество вопросов
-        const seventhStepNumber = 6 + questionsCount + 1; // следующий после 6-го
-        const eighthStepNumber = 6 + questionsCount + 2; // следующий после 7-го
-        const ninthStepNumber = 6 + questionsCount + 3; // следующий после 8-го
-        const tenthStepNumber = 6 + questionsCount + 4; // следующий после 9-го
-        const eleventhStepNumber = 6 + questionsCount + 5; // следующий после 9-го
+        return {
+            sixthStep: 6 + questionsCount,
+            seventhStep: 6 + questionsCount + 1,
+            eighthStep: 6 + questionsCount + 2,
+            ninthStep: 6 + questionsCount + 3,
+            tenthStep: 6 + questionsCount + 4,
+            eleventhStep: 6 + questionsCount + 5,
+        };
+    };
 
-        if (currentStep === sixthStepNumber) {
-            return (
-                <SixthStep
-                    onNext={onNext}
-                />
-            );
-        }
+    // Рендеринг статических степов (1-5)
+    const renderStaticSteps = () => {
+        if (currentStep > onboardingFirstSectionSteps.length) return null;
         
-        if (currentStep === seventhStepNumber) {
-            return (
-                <SeventhStep
-                    onNext={onNext}
-                />
-            );
+        const currentStepData = onboardingFirstSectionSteps.find(step => step.id === currentStep);
+        if (!currentStepData) return null;
+
+        let onNextHandler = onNext;
+        if (currentStep === 4) {
+            onNextHandler = handleMoodSelection;
+        } else if (currentStep === 5) {
+            onNextHandler = handleSocialNetworks;
         }
 
-        if (currentStep === eighthStepNumber) {
-            return (
-                <EighthStep
-                    onNext={onNext}
-                />
-            );
-        }
+        return React.cloneElement(currentStepData.content as React.ReactElement, {
+            onNext: onNextHandler,
+            onBack,
+        });
+    };
 
-        if (currentStep === ninthStepNumber) {
-            return (
-                <NinthStep
-                    onNext={onNext}
-                />
-            );
-        }
-
-        if (currentStep === tenthStepNumber) {
-            return (
-                <TenthStep
-                    onNext={onNext}
-                />
-            );
-        }
-
-        if (currentStep === eleventhStepNumber) {
-            return (
-                <EleventhStep
-                    onNext={onNext}
-                />
-            );
-        }
+    // Рендеринг динамических вопросов
+    const renderQuestions = () => {
+        const questionIndex = currentStep - 6; // 6-й шаг = первый вопрос (индекс 0)
         
-        return null;
+        if (!questions || questionIndex < 0 || questionIndex >= questions.length) {
+            return null;
+        }
+
+        return (
+            <OnboardingQuestionStep
+                questionIndex={questionIndex}
+                onNext={handleQuestionAnswer}
+            />
+        );
+    };
+
+    // Рендеринг финальных степов (6-11)
+    const renderFinalSteps = () => {
+        const stepNumbers = getStepNumbers();
+        
+        const stepComponents = {
+            [stepNumbers.sixthStep]: <SixthStep onNext={onNext} />,
+            [stepNumbers.seventhStep]: <SeventhStep onNext={onNext} />,
+            [stepNumbers.eighthStep]: <EighthStep onNext={onNext} />,
+            [stepNumbers.ninthStep]: <NinthStep onNext={onNext} />,
+            [stepNumbers.tenthStep]: <TenthStep onNext={onNext} />,
+            [stepNumbers.eleventhStep]: <EleventhStep onNext={onNext} />,
+        };
+
+        return stepComponents[currentStep] || null;
+    };
+
+    // Главная функция рендеринга текущего степа
+    const renderCurrentStep = () => {
+        return renderStaticSteps() || renderQuestions() || renderFinalSteps();
     };
 
     return (
@@ -383,22 +379,20 @@ export default function OnboardingTemplate({
                         </Pressable>
                     </Animated.View>
 
-                    {showStepper && (
-                        <Animated.View
-                            style={{
-                                width: '100%',
-                                opacity: stepperAnim,
-                                transform: [{
-                                    scale: stepperAnim.interpolate({
-                                        inputRange: [0, 1],
-                                        outputRange: [0.8, 1],
-                                    })
-                                }]
-                            }}
-                        >
-                            <StepperLine step={currentStep} totalSteps={totalSteps}/>
-                        </Animated.View>
-                    )}
+                    <Animated.View
+                        style={{
+                            width: '100%',
+                            opacity: showStepper ? stepperAnim : 0,
+                            transform: [{
+                                scale: stepperAnim.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [0.8, 1],
+                                })
+                            }]
+                        }}
+                    >
+                        <StepperLine step={currentStep} totalSteps={totalSteps}/>
+                    </Animated.View>
                 </View>
             }>
                 <View style={styles.mainContainer}>
