@@ -1,5 +1,5 @@
-import React, {useState, useMemo, useEffect} from 'react';
-import {View, StyleSheet, Pressable, SafeAreaView, Text, ActivityIndicator} from 'react-native';
+import React, {useState, useMemo, useEffect, useRef} from 'react';
+import {View, StyleSheet, Pressable, SafeAreaView, Text, ActivityIndicator, Animated} from 'react-native';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {ArrowIcon} from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
@@ -22,6 +22,21 @@ export default function OnboardingTemplate({
     const [currentStep, setCurrentStep] = useState(1);
     const {data: questions, isLoading: questionsLoading} = useOnboardingQuestions();
     
+    // Анимационные значения для переходов между степами
+    const fadeAnim = useRef(new Animated.Value(1)).current;
+    const slideAnim = useRef(new Animated.Value(0)).current;
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>('forward');
+    
+    // Анимация для загрузки
+    const loadingAnim = useRef(new Animated.Value(0)).current;
+    
+    // Анимация для степпера
+    const stepperAnim = useRef(new Animated.Value(0)).current;
+    
+    // Анимация для кнопки "Назад"
+    const backButtonAnim = useRef(new Animated.Value(1)).current;
+    
     const [onboardingData, setOnboardingData] = useState<{
         mood: string | null;
         socialNetworks: string[];
@@ -39,6 +54,40 @@ export default function OnboardingTemplate({
     useEffect(() => {
         loadOnboardingProgress();
     }, []);
+
+    // Анимация загрузки
+    useEffect(() => {
+        if (questionsLoading) {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(loadingAnim, {
+                        toValue: 1,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(loadingAnim, {
+                        toValue: 0,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    })
+                ])
+            ).start();
+        } else {
+            loadingAnim.stopAnimation();
+            loadingAnim.setValue(0);
+        }
+    }, [questionsLoading, loadingAnim]);
+
+    // Анимация появления степпера
+    useEffect(() => {
+        if (showStepper) {
+            Animated.timing(stepperAnim, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [showStepper, stepperAnim]);
 
     const loadOnboardingProgress = async () => {
         try {
@@ -59,11 +108,77 @@ export default function OnboardingTemplate({
     // Показываем stepper только после загрузки вопросов
     const showStepper = !questionsLoading;
 
+    // Функция для анимированного перехода между степами
+    const animateStepTransition = (newStep: number, direction: 'forward' | 'backward', callback?: () => void) => {
+        setIsTransitioning(true);
+        setTransitionDirection(direction);
+        
+        // Определяем направление анимации
+        const exitSlideValue = direction === 'forward' ? -50 : 50; // вперед - влево, назад - вправо
+        const enterSlideValue = direction === 'forward' ? 50 : -50; // новый контент приходит с противоположной стороны
+        
+        // Анимация кнопки "Назад" в зависимости от направления
+        Animated.timing(backButtonAnim, {
+            toValue: direction === 'backward' ? 1.1 : 0.8,
+            duration: 200,
+            useNativeDriver: true,
+        }).start();
+        
+        // Анимация исчезновения текущего степа
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: exitSlideValue,
+                duration: 200,
+                useNativeDriver: true,
+            })
+        ]).start(() => {
+            // Обновляем степ
+            setCurrentStep(newStep);
+            
+            // Сбрасываем анимационные значения для следующего степа
+            fadeAnim.setValue(0);
+            slideAnim.setValue(enterSlideValue);
+            
+            // Небольшая задержка для более плавного перехода
+            setTimeout(() => {
+                // Анимация появления нового степа
+                Animated.parallel([
+                    Animated.timing(fadeAnim, {
+                        toValue: 1,
+                        duration: 300,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(slideAnim, {
+                        toValue: 0,
+                        duration: 300,
+                        useNativeDriver: true,
+                    })
+                ]).start(() => {
+                    // Возвращаем кнопку "Назад" в исходное состояние
+                    Animated.timing(backButtonAnim, {
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }).start();
+                    
+                    setIsTransitioning(false);
+                    if (callback) callback();
+                });
+            }, 50); // 50ms задержка
+        });
+    };
+
     const onBack = async () => {
         if (currentStep > 1) {
             const newStep = currentStep - 1;
-            setCurrentStep(newStep);
-            await saveOnboardingProgress(newStep);
+            animateStepTransition(newStep, 'backward', async () => {
+                await saveOnboardingProgress(newStep);
+            });
         } else {
             // Пользователь выходит из онбординга - очищаем данные
             await clearOnboardingData();
@@ -74,8 +189,9 @@ export default function OnboardingTemplate({
     const onNext = async () => {
         if (currentStep < totalSteps) {
             const newStep = currentStep + 1;
-            setCurrentStep(newStep);
-            await saveOnboardingProgress(newStep);
+            animateStepTransition(newStep, 'forward', async () => {
+                await saveOnboardingProgress(newStep);
+            });
         } else {
             // Завершение онбординга
             await clearOnboardingData();
@@ -183,27 +299,68 @@ export default function OnboardingTemplate({
         <SafeAreaView style={{flex: 1}}>
             <PageWithHeader noStylingHeader headerContent={
                 <View style={[theme.flexBlocks.horizontal16, theme.flexBlocks.alignCenter]}>
-                    <Pressable
-                        onPress={onBack}
-                        style={({pressed}) => [
-                            {...theme.buttons.smallBtn},
-                            pressed && {opacity: 0.6}
-                        ]}>
-                        <ArrowIcon/>
-                    </Pressable>
+                    <Animated.View
+                        style={{
+                            transform: [{ scale: backButtonAnim }]
+                        }}
+                    >
+                        <Pressable
+                            onPress={onBack}
+                            style={({pressed}) => [
+                                {...theme.buttons.smallBtn},
+                                pressed && {opacity: 0.6},
+                                isTransitioning && {opacity: 0.5}
+                            ]}
+                            disabled={isTransitioning}>
+                            <ArrowIcon/>
+                        </Pressable>
+                    </Animated.View>
 
                     {showStepper && (
-                        <StepperLine step={currentStep} totalSteps={totalSteps}/>
+                        <Animated.View
+                            style={{
+                                width: '100%',
+                                opacity: stepperAnim,
+                                transform: [{
+                                    scale: stepperAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0.8, 1],
+                                    })
+                                }]
+                            }}
+                        >
+                            <StepperLine step={currentStep} totalSteps={totalSteps}/>
+                        </Animated.View>
                     )}
                 </View>
             }>
                 <View style={styles.mainContainer}>
                     {questionsLoading ? (
-                        <View style={styles.loadingContainer}>
+                        <Animated.View 
+                            style={[
+                                styles.loadingContainer,
+                                {
+                                    opacity: loadingAnim.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [0.5, 1],
+                                    })
+                                }
+                            ]}
+                        >
                             <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor} />
-                        </View>
+                        </Animated.View>
                     ) : (
-                        renderCurrentStep()
+                        <Animated.View 
+                            style={[
+                                styles.stepContainer,
+                                {
+                                    opacity: fadeAnim,
+                                    transform: [{ translateX: slideAnim }]
+                                }
+                            ]}
+                        >
+                            {renderCurrentStep()}
+                        </Animated.View>
                     )}
                 </View>
             </PageWithHeader>
@@ -221,6 +378,9 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
         borderRadius: 24,
         backgroundColor: '#fff',
+    },
+    stepContainer: {
+        flex: 1,
     },
     loadingContainer: {
         flex: 1,

@@ -1,11 +1,22 @@
-import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {View, StyleSheet, Animated} from 'react-native';
 
 export default function StepperLine({step, totalSteps = 17}: { step: number; totalSteps?: number }) {
     const [lineWidth, setLineWidth] = useState(0);
+    const animatedWidth = useRef(new Animated.Value(0)).current;
 
-    // Вычисляем ширину белой линии пропорционально
-    const filledWidth = lineWidth > 0 ? (lineWidth / totalSteps) * step : 0;
+    // Вычисляем целевую ширину белой линии пропорционально
+    const targetWidth = lineWidth > 0 ? (lineWidth / totalSteps) * step : 0;
+
+    useEffect(() => {
+        if (lineWidth > 0) {
+            Animated.timing(animatedWidth, {
+                toValue: targetWidth,
+                duration: 300,
+                useNativeDriver: false,
+            }).start();
+        }
+    }, [step, lineWidth, targetWidth, animatedWidth]);
 
     return (
         <View style={styles.stepperContainer}>
@@ -16,10 +27,10 @@ export default function StepperLine({step, totalSteps = 17}: { step: number; tot
                     setLineWidth(width);
                 }}>
             </View>
-            <View
+            <Animated.View
                 style={[
                     styles.stepperLineFilled,
-                    {width: filledWidth}
+                    {width: animatedWidth}
                 ]}
             />
         </View>
