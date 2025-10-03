@@ -35,7 +35,7 @@ export default function OnboardingTemplate({
     const loadingAnim = useRef(new Animated.Value(0)).current;
     
     // Анимация для степпера
-    const stepperAnim = useRef(new Animated.Value(0)).current;
+    const stepperAnim = useRef(new Animated.Value(1)).current;
     
     // Анимация для кнопки "Назад"
     const backButtonAnim = useRef(new Animated.Value(1)).current;
@@ -108,27 +108,11 @@ export default function OnboardingTemplate({
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
         const questionsCount = questions?.length || 0;
-        const total = onboardingFirstSectionSteps.length + questionsCount + onboardingSecondSectionSteps.length;
-        console.log('TotalSteps calculation:', {
-            staticSteps: onboardingFirstSectionSteps.length,
-            questionsCount,
-            finalSteps: onboardingSecondSectionSteps.length,
-            total
-        });
-        return total;
+        return onboardingFirstSectionSteps.length + questionsCount + onboardingSecondSectionSteps.length;
     }, [questions]);
 
     // Показываем stepper только после загрузки вопросов
-    const showStepper = true; // Временно всегда показываем степпер
-    
-    // Отладочная информация
-    console.log('OnboardingTemplate Debug:', {
-        currentStep,
-        totalSteps,
-        questionsLoading,
-        showStepper,
-        questionsLength: questions?.length || 0
-    });
+    const showStepper = !questionsLoading;
 
     // Получаем конфигурацию текущего степа
     const getCurrentStepConfig = () => {
@@ -403,7 +387,7 @@ export default function OnboardingTemplate({
                                 {
                                     opacity: loadingAnim.interpolate({
                                         inputRange: [0, 1],
-                                        outputRange: [0.5, 1],
+                                        outputRange: [1, 1],
                                     })
                                 }
                             ]}
