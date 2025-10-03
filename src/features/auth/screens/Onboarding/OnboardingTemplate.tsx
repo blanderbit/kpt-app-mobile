@@ -21,6 +21,7 @@ import TwelfthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Twelf
 import ThirteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/ThirteenthStep";
 import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourteenthStep";
 import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
+import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixteenthStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -155,6 +156,7 @@ export default function OnboardingTemplate({
         const thirteenthStepNumber = 6 + questionsCount + 7;
         const fourteenthStepNumber = 6 + questionsCount + 8;
         const fifteenthStepNumber = 6 + questionsCount + 9;
+        const sixteenthStepNumber = 6 + questionsCount + 10;
 
         if (currentStep === sixthStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 6);
@@ -185,6 +187,9 @@ export default function OnboardingTemplate({
         }
         if (currentStep === fifteenthStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 15);
+        }
+        if (currentStep === sixteenthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 16);
         }
         
         return null;
@@ -306,6 +311,7 @@ export default function OnboardingTemplate({
             thirteenthStep: 6 + questionsCount + 7,
             fourteenthStep: 6 + questionsCount + 8,
             fifteenthStep: 6 + questionsCount + 9,
+            sixteenthStep: 6 + questionsCount + 10,
         };
     };
 
@@ -360,6 +366,7 @@ export default function OnboardingTemplate({
             [stepNumbers.thirteenthStep]: <ThirteenthStep onNext={onNext} />,
             [stepNumbers.fourteenthStep]: <FourteenthStep onNext={onNext} />,
             [stepNumbers.fifteenthStep]: <FifteenthStep onNext={onNext} />,
+            [stepNumbers.sixteenthStep]: <SixteenthStep onNext={onNext} />,
         };
 
         return stepComponents[currentStep] || null;

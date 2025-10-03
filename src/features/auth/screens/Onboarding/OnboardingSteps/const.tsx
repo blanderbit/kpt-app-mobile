@@ -15,6 +15,7 @@ import TwelfthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Twelf
 import ThirteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/ThirteenthStep";
 import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourteenthStep";
 import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
+import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixteenthStep";
 
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
@@ -103,5 +104,10 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
         title: "Free to cancel anytime",
         infoText: "We'll remind you 2 days before you're charged",
         content: (<FifteenthStep onNext={() => {}} />)
+    },
+    {
+        id: 16,
+        title: "Tap Allow to get a reminder",
+        content: (<SixteenthStep onNext={() => {}} />)
     },
 ]
