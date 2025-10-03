@@ -1,82 +1,63 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {StyleSheet, View, Text, Alert, Platform, Linking} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
-import {NOTIFICATIONS_SVG, REMINDER_SVG} from "@features/auth/screens/Onboarding/OnboardingSteps/icons";
+import {NOTIFICATIONS_SVG} from "@features/auth/screens/Onboarding/OnboardingSteps/icons";
 
 export default function SixteenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
-    const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'never_ask_again'>('unknown');
-    const [isRequesting, setIsRequesting] = useState(false);
+    const [isPermissionChecked, setIsPermissionChecked] = useState(false);
+    const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'undetermined'>('unknown');
 
-    // Проверяем текущий статус разрешений при монтировании
     useEffect(() => {
         checkNotificationPermission();
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            requestNotificationPermission();
+        }, 3000);
+
+        return () => clearTimeout(timer);
     }, []);
 
     const checkNotificationPermission = async () => {
         try {
             const {getPermissionsAsync} = await import('expo-notifications');
             const {status} = await getPermissionsAsync();
+            console.log('Current notification permission status:', status);
+            
             setPermissionStatus(status as any);
+
+            if (status === 'granted' || status === 'denied') {
+                setIsPermissionChecked(true);
+            }
         } catch (error) {
             console.log('Error checking notification permission:', error);
-            setPermissionStatus('unknown');
+            setIsPermissionChecked(true);
         }
     };
 
     const requestNotificationPermission = async () => {
-        setIsRequesting(true);
         try {
-            // Пытаемся использовать expo-notifications
             const {requestPermissionsAsync} = await import('expo-notifications');
             const {status} = await requestPermissionsAsync();
 
+            setPermissionStatus(status as any);
+
             if (status === 'granted') {
-                setPermissionStatus('granted');
-                Alert.alert(
-                    'Уведомления разрешены!',
-                    'Теперь вы будете получать напоминания о ваших активностях.',
-                    [{text: 'Отлично!', onPress: onNext}]
-                );
+                console.log('Notification permission granted');
             } else if (status === 'denied') {
-                setPermissionStatus('denied');
-                Alert.alert(
-                    'Уведомления отключены',
-                    'Вы можете включить уведомления в настройках устройства позже.',
-                    [{text: 'Понятно', onPress: onNext}]
-                );
+                console.log('Notification permission denied');
             } else {
-                setPermissionStatus('never_ask_again');
-                Alert.alert(
-                    'Уведомления заблокированы',
-                    'Для включения уведомлений перейдите в настройки приложения.',
-                    [{text: 'Понятно', onPress: onNext}]
-                );
+                console.log('Notification permission blocked');
             }
+            
+            setIsPermissionChecked(true);
         } catch (error) {
             console.log('Error requesting notification permission:', error);
-            // Если библиотека не установлена, показываем инструкции
-            Alert.alert(
-                'Настройка уведомлений',
-                'Для получения напоминаний включите уведомления в настройках устройства.',
-                [
-                    {
-                        text: 'Открыть настройки',
-                        onPress: () => {
-                            if (Platform.OS === 'ios') {
-                                Linking.openURL('app-settings:');
-                            } else {
-                                Linking.openSettings();
-                            }
-                        }
-                    },
-                    {text: 'Пропустить', onPress: onNext}
-                ]
-            );
-        } finally {
-            setIsRequesting(false);
+            setIsPermissionChecked(true);
         }
     };
 
@@ -92,8 +73,9 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
                 </Text>
 
                 <CustomButton
-                    title={'See my FREE offer'}
+                    title={"See my FREE offer"}
                     onPress={onNext}
+                    disabled={!isPermissionChecked}
                 />
             </View>
         </View>
