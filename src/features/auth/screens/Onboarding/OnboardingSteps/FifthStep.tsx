@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingVertical: 8,
+        paddingBottom: 8,
     },
     variantItem: {
         borderRadius: 16

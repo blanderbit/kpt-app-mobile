@@ -143,13 +143,12 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        marginBottom: 50,
     },
     scrollViewSingle: {
         marginBottom: 0,
     },
     scrollContent: {
-        paddingVertical: 8,
+        paddingBottom: 8,
     },
     formBottom: {
         position: 'absolute',

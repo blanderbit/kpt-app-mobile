@@ -8,17 +8,18 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
 
     return (
-        <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
-
-            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16, styles.centerBlock]}>
-                <Image
-                    source={require('@assets/images/onboarding-awesome.png')}/>
-                <Text style={styles.centerBlockText}>
-                    Let's discover how it works!
-                </Text>
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16, styles.centerBlock]}>
+                    <Image
+                        source={require('@assets/images/onboarding-awesome.png')}/>
+                    <Text style={styles.centerBlockText}>
+                        Let's discover how it works!
+                    </Text>
+                </View>
             </View>
 
-            <View style={styles.formBottom}>
+            <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     title={'Show me how'}
                     onPress={onNext}
@@ -29,10 +30,13 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
-    formBottom: {
-        width: '100%',
+    container: {
+        flex: 1,
         flexDirection: 'column',
-        gap: 10
+        justifyContent: 'space-between',
+    },
+    content: {
+        flex: 1,
     },
     centerBlock: {
         paddingVertical: 20,
