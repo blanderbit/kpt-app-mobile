@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
 import {BlackCheckmarkIcon} from "@assets/icons/BlackCheckmarkIcon";
@@ -53,6 +52,14 @@ export default function FifthStep({onNext}: FifthStepProps) {
         }
     };
 
+    const handleNetworkSelect = (networkId: string) => {
+        // Выбираем только одну соцсеть и сразу переходим дальше
+        const selectedNetwork = [networkId];
+        setSelectedNetworks(selectedNetwork);
+        saveData(selectedNetwork);
+        onNext(selectedNetwork);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.formTop}>
@@ -79,33 +86,14 @@ export default function FifthStep({onNext}: FifthStepProps) {
                                 key={network.id}
                                 label={network.name}
                                 icon={<RemoteSvg xml={network.svg} size={32}/>}
-                                rightElement={
-                                    selectedNetworks.includes(network.id)
-                                        ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
-                                        : <GrayCircleIcon/>
-                                }
                                 extraStyles={[styles.variantItem]}
-                                onPress={() => setSelectedNetworks(prev => {
-                                    if (prev.includes(network.id)) {
-                                        return prev.filter(id => id !== network.id);
-                                    } else {
-                                        return [...prev, network.id];
-                                    }
-                                })}
+                                onPress={() => handleNetworkSelect(network.id)}
                             />
                         ))}
                     </View>
                 </ScrollView>
             )}
 
-            {!!selectedNetworks.length && (
-                <View style={styles.formBottom}>
-                    <CustomButton
-                        title={'Continue'}
-                        onPress={() => onNext(selectedNetworks)}
-                    />
-                </View>
-            )}
         </View>
     );
 }
@@ -125,20 +113,9 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        marginBottom: 50,
     },
     scrollContent: {
         paddingVertical: 8,
-    },
-    formBottom: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        width: '100%',
-        flexDirection: 'column',
-        gap: 10,
-        paddingTop: 10,
     },
     head: {
         flexDirection: 'column',

@@ -128,22 +128,12 @@ export default function FourthStep({onNext}: FourthStepProps) {
                                             backgroundColor: selectedMoodType === moodType.id ? `${moodType.color}20` : COLORS.gray_light
                                         }
                                     ]}
-                                    onPress={() => setSelectedMoodType(moodType.id)}
-                                >
+                                    onPress={() => onNext(moodType.id)}>
                                     <Text style={{fontSize: 32}}>{moodType.emoji}</Text>
                                 </Pressable>
                             ))}
                     </View>
             </ScrollView>
-
-            <View style={styles.formBottom}>
-                {selectedMoodType &&
-                    <CustomButton
-                        title={'Continue'}
-                        onPress={() => onNext(selectedMoodType)}
-                    />
-                }
-            </View>
         </View>
     );
 }

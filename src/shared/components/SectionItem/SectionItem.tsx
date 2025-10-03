@@ -7,7 +7,7 @@ import { COLORS } from "@app/theme";
 interface SectionItemProps {
     icon?: React.ReactNode,
     label: string,
-    rightElement: React.ReactNode,
+    rightElement?: React.ReactNode,
     extraStyles: Record<string, any>[],
     extraLabelStyles?: Record<string, any>[],
     onPress?: () => void,

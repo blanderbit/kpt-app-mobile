@@ -4,8 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
-import {BlackCheckmarkIcon} from "@assets/icons/BlackCheckmarkIcon";
-import {GrayCircleIcon} from "@assets/icons/GrayCircleIcon";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {useOnboardingQuestions} from "@shared/services/api/hooks";
 import {OnboardingQuestion} from "@shared/services/api/types";
@@ -73,24 +71,24 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
     const handleAnswerSelect = (answerId: string) => {
         if (!currentQuestion) return;
 
+        let newSelectedAnswers: string[];
+
         if (currentQuestion.inputType === 'single') {
-            // Для одиночного выбора заменяем весь массив
-            setSelectedAnswers([answerId]);
+            // Для одиночного выбора заменяем весь массив и сразу переходим
+            newSelectedAnswers = [answerId];
         } else {
             // Для множественного выбора добавляем/удаляем
-            setSelectedAnswers(prev => {
-                if (prev.includes(answerId)) {
-                    return prev.filter(id => id !== answerId);
-                } else {
-                    return [...prev, answerId];
-                }
-            });
+            newSelectedAnswers = selectedAnswers.includes(answerId)
+                ? selectedAnswers.filter(id => id !== answerId)
+                : [...selectedAnswers, answerId];
         }
-    };
 
-    const handleContinue = () => {
-        if (currentQuestion && selectedAnswers.length > 0) {
-            onNext(currentQuestion, selectedAnswers);
+        setSelectedAnswers(newSelectedAnswers);
+        saveData(newSelectedAnswers);
+
+        // Если это одиночный выбор, сразу переходим дальше
+        if (currentQuestion.inputType === 'single') {
+            onNext(currentQuestion, newSelectedAnswers);
         }
     };
 
@@ -110,7 +108,10 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
                 </View>
             ) : (
                 <ScrollView
-                    style={styles.scrollView}
+                    style={[
+                        styles.scrollView,
+                        currentQuestion?.inputType === 'single' && styles.scrollViewSingle
+                    ]}
                     contentContainerStyle={styles.scrollContent}
                     showsVerticalScrollIndicator={false}
                 >
@@ -121,11 +122,6 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
                                 label={answer.text}
                                 subtitle={answer.subtitle}
                                 icon={<RemoteSvg xml={answer.icon} size={32}/>}
-                                rightElement={
-                                    selectedAnswers.includes(answer.id)
-                                        ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
-                                        : <GrayCircleIcon/>
-                                }
                                 extraStyles={[styles.variantItem]}
                                 onPress={() => handleAnswerSelect(answer.id)}
                             />
@@ -134,11 +130,11 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
                 </ScrollView>
             )}
 
-            {!!selectedAnswers.length && (
+            {!!selectedAnswers.length && currentQuestion?.inputType === 'multiple' && (
                 <View style={styles.formBottom}>
                     <CustomButton
                         title={'Continue'}
-                        onPress={handleContinue}
+                        onPress={() => onNext(currentQuestion, selectedAnswers)}
                     />
                 </View>
             )}
@@ -162,6 +158,9 @@ const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
         marginBottom: 50,
+    },
+    scrollViewSingle: {
+        marginBottom: 0,
     },
     scrollContent: {
         paddingVertical: 8,
