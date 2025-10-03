@@ -17,6 +17,10 @@ import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Eighth
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
 import EleventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/EleventhStep";
+import TwelfthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TwelfthStep";
+import ThirteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/ThirteenthStep";
+import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourteenthStep";
+import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -147,6 +151,10 @@ export default function OnboardingTemplate({
         const ninthStepNumber = 6 + questionsCount + 3;
         const tenthStepNumber = 6 + questionsCount + 4;
         const eleventhStepNumber = 6 + questionsCount + 5;
+        const twelfthStepNumber = 6 + questionsCount + 6;
+        const thirteenthStepNumber = 6 + questionsCount + 7;
+        const fourteenthStepNumber = 6 + questionsCount + 8;
+        const fifteenthStepNumber = 6 + questionsCount + 9;
 
         if (currentStep === sixthStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 6);
@@ -165,6 +173,18 @@ export default function OnboardingTemplate({
         }
         if (currentStep === eleventhStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 11);
+        }
+        if (currentStep === twelfthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 12);
+        }
+        if (currentStep === thirteenthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 13);
+        }
+        if (currentStep === fourteenthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 14);
+        }
+        if (currentStep === fifteenthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 15);
         }
         
         return null;
@@ -282,6 +302,10 @@ export default function OnboardingTemplate({
             ninthStep: 6 + questionsCount + 3,
             tenthStep: 6 + questionsCount + 4,
             eleventhStep: 6 + questionsCount + 5,
+            twelfthStep: 6 + questionsCount + 6,
+            thirteenthStep: 6 + questionsCount + 7,
+            fourteenthStep: 6 + questionsCount + 8,
+            fifteenthStep: 6 + questionsCount + 9,
         };
     };
 
@@ -332,6 +356,10 @@ export default function OnboardingTemplate({
             [stepNumbers.ninthStep]: <NinthStep onNext={onNext} />,
             [stepNumbers.tenthStep]: <TenthStep onNext={onNext} />,
             [stepNumbers.eleventhStep]: <EleventhStep onNext={onNext} />,
+            [stepNumbers.twelfthStep]: <TwelfthStep onNext={onNext} />,
+            [stepNumbers.thirteenthStep]: <ThirteenthStep onNext={onNext} />,
+            [stepNumbers.fourteenthStep]: <FourteenthStep onNext={onNext} />,
+            [stepNumbers.fifteenthStep]: <FifteenthStep onNext={onNext} />,
         };
 
         return stepComponents[currentStep] || null;
@@ -411,7 +439,7 @@ export default function OnboardingTemplate({
                                 
                                 return (
                                     <View style={styles.commonHeader}>
-                                        <View style={styles.head}>
+                                        <View style={[styles.head, theme.flexBlocks.vertical8, stepConfig.id === 14 ? { flexDirection: 'column-reverse' } : {}]}>
                                             {stepConfig.title && (
                                                 <Text style={[styles.title, {...theme.fonts.title}]}>
                                                     {stepConfig.hasStyledNumber ? (
@@ -466,7 +494,6 @@ const styles = StyleSheet.create({
     head: {
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 4,
         marginBottom: 10,
     },
     title: {

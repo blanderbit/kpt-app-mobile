@@ -11,6 +11,10 @@ import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Eighth
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
 import EleventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/EleventhStep";
+import TwelfthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TwelfthStep";
+import ThirteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/ThirteenthStep";
+import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourteenthStep";
+import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
 
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
@@ -77,5 +81,27 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
         id: 11,
         title: "How do you usually track your tasks, activities and goals to find balance in your life?",
         content: (<EleventhStep onNext={() => {}} />)
+    },
+    {
+        id: 12,
+        title: "Noted! We're setting everything up for you",
+        content: (<TwelfthStep onNext={() => {}} />)
+    },
+    {
+        id: 13,
+        title: "Balance your life with AppName",
+        content: (<ThirteenthStep onNext={() => {}} />)
+    },
+    {
+        id: 14,
+        title: "But we'd love for you to try AppName Plus for 7 days free too!",
+        infoText: "AppName is free to use",
+        content: (<FourteenthStep onNext={() => {}} />)
+    },
+    {
+        id: 15,
+        title: "Free to cancel anytime",
+        infoText: "We'll remind you 2 days before you're charged",
+        content: (<FifteenthStep onNext={() => {}} />)
     },
 ]
