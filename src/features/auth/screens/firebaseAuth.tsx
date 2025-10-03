@@ -11,15 +11,11 @@ export const signInGoogle = async (): Promise<string> => {
         });
 
         const { data } = await GoogleSignin.signIn();
-        console.log(data)
+
         const googleCredential = auth.GoogleAuthProvider.credential(data.idToken);
         const {user} = await auth().signInWithCredential(googleCredential);
 
-        const firebaseToken = await user.getIdToken();
-
-        console.log('firebaseToken', firebaseToken);
-
-        return firebaseToken;
+        return await user.getIdToken();
     } catch (error) {
         console.log(error)
     }

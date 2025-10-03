@@ -13,8 +13,6 @@ export const useFirebaseAuth = () => {
       setIsLoading(true);
       setError(null);
 
-      console.log('🔥 Начинаем Google Sign-In...');
-      
       // Получаем Firebase токен от Google
       const firebaseToken = await signInGoogle();
       
@@ -26,8 +24,6 @@ export const useFirebaseAuth = () => {
       
       // Логинимся в ваше API с Firebase токеном
       await loginWithFirebase(firebaseToken);
-      
-      console.log('✅ Google Sign-In завершен успешно');
       
       return firebaseToken;
     } catch (error: any) {

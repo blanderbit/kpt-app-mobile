@@ -73,8 +73,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     // Хук для проверки Firebase пользователя
     const { isFirebaseUser } = useAuth();
 
-    console.log(isFirebaseUser)
-
     // Формы для разных типов редактирования
     const passwordForm = useForm<PasswordFormData>({
         resolver: yupResolver(createPasswordSchema(t)),
@@ -188,13 +186,10 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     const onSubmitChangeName = async (data: NameFormData) => {
         try {
-            console.log('👤 Начинаем смену имени...');
-            
             const updatedProfile = await updateProfile.mutateAsync({
                 firstName: data.newName,
             });
             
-            console.log('✅ Имя успешно изменено');
             Alert.alert('Успех', 'Имя успешно изменено');
             
             // Немедленно обновляем профиль в контексте с новыми данными

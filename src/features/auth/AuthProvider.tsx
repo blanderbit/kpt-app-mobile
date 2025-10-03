@@ -136,7 +136,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Устанавливаем callback для уведомления о необходимости логина
     useEffect(() => {
         const handleAuthRequired = async () => {
-            console.log('🔔 Получено уведомление о необходимости логина');
             setIsAuthenticated(false);
             setUser(null);
             setIsFirebaseUser(false);
@@ -156,36 +155,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            console.log('🔐 Начинаем процесс входа...', { email });
             setIsLoading(true);
             setError(null);
 
             // Вызываем API логина
-            console.log('📡 Вызываем authService.login...');
             const response = await authService.login({ email, password });
-            console.log('✅ Получен ответ от API:', response);
-            
+
             // Сохраняем токены
-            console.log('💾 Сохраняем токены...');
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
-            console.log('✅ Токены сохранены');
-            
+
             // Сбрасываем флаг Firebase для обычного логина
             await setFirebaseFlag(false);
             
             // Сохраняем флаг emailVerified
-            console.log('Login: setting emailVerified to:', response.user.emailVerified);
             await setEmailVerifiedFlag(response.user.emailVerified);
             
             // Обновляем состояние
-            console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
             setIsFirebaseUser(false);
             setIsEmailVerified(response.user.emailVerified);
             // Обновляем профиль после успешного входа
             await refreshProfile();
-            console.log('✅ Вход выполнен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка входа:', error);
             const errorMessage = error.message || 'Ошибка входа в систему';
@@ -198,13 +189,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const loginWithFirebase = async (idToken: string) => {
         try {
-            console.log('🔥 Начинаем Firebase вход...');
             setIsLoading(true);
             setError(null);
 
             // Вызываем API Firebase логина
-            console.log('📡 Вызываем authService.firebaseAuth...');
-            const response = await authService.firebaseAuth({ 
+            const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'login'
                 // Поля онбординга пока не используем
@@ -253,24 +242,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     ) => {
         try {
-            console.log('🔥 Начинаем Firebase регистрацию...');
             setIsLoading(true);
             setError(null);
 
             // Вызываем API Firebase регистрации
-            console.log('📡 Вызываем authService.firebaseAuth для регистрации...');
-            const response = await authService.firebaseAuth({ 
+            const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
                 ...onboardingData
             });
             console.log('✅ Получен ответ от Firebase API:', response);
-            
+
             // Сохраняем токены
-            console.log('💾 Сохраняем токены...');
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
-            console.log('✅ Токены сохранены');
-            
+
             // Устанавливаем флаг Firebase
             await setFirebaseFlag(true);
             
@@ -278,15 +263,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await setEmailVerifiedFlag(true);
             
             // Обновляем состояние
-            console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
             setIsFirebaseUser(true);
             setIsEmailVerified(true);
             // Обновляем профиль после успешной регистрации
             await refreshProfile();
-            
-            console.log('✅ Firebase регистрация завершена успешно');
         } catch (error: any) {
             console.error('❌ Ошибка Firebase регистрации:', error);
             const errorMessage = error.message || 'Ошибка регистрации через Firebase';

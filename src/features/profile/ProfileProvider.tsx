@@ -95,11 +95,9 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
     const clearProfile = async () => {
         try {
-            console.log('🗑️ Очищаем профиль...');
             setProfile(null);
             setError(null);
             await AsyncStorage.removeItem(PROFILE_STORAGE_KEY);
-            console.log('✅ Профиль очищен');
         } catch (error) {
             console.error('❌ Ошибка очистки профиля:', error);
         }

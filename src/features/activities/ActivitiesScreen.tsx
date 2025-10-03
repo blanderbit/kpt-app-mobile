@@ -58,13 +58,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
     const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
 
     // Debug logs
-    console.log('=== ACTIVITIES DEBUG ===');
     console.log('myActivities:', myActivities);
     console.log('myActivities.data:', myActivities?.data);
     console.log('myActivities.data length:', myActivities?.data?.length);
     console.log('isLoading:', isLoading);
     console.log('error:', error);
-    console.log('=== END DEBUG ===');
 
     // Log when myActivities changes
     React.useEffect(() => {
@@ -99,8 +97,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 
                 // Force re-render of DraggableList
                 forceActivitiesRerender();
-                
-                console.log('🔄 Cache invalidated and refetch triggered');
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });

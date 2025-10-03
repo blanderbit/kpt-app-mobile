@@ -48,9 +48,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         console.log('📝 Форма отправлена:', data);
         try {
             setIsSubmitting(true);
-            console.log('🔄 Вызываем login...');
             await login(data.email, data.password);
-            console.log('✅ Login завершен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка в onSubmit:', error);
             Alert.alert(

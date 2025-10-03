@@ -13,7 +13,6 @@ export const useActivityTypesLoader = (options?: { enabled?: boolean }) => {
   }, [activityTypes, isSuccess]);
 
   const refreshActivityTypes = async () => {
-    console.log('Refreshing activity types...');
     await refetch();
   };
 

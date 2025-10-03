@@ -38,8 +38,6 @@ const refreshTokens = async (): Promise<boolean> => {
       accessToken,
     });
 
-    console.log('✅ Токены успешно обновлены');
-    
     // Сохраняем новые токены
     await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
     

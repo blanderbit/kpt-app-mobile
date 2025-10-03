@@ -124,7 +124,6 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
                         desc={t('main.today.emailVerification.tooltip.message')}
                         visible={true}
                         onPress={() => {
-                            console.log('Tooltip pressed');
                             setEmailVerificationTooltipVisible(false);
                             setEmailVerificationModalOpen(true);
                         }}

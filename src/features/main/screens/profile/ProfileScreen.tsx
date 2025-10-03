@@ -40,9 +40,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                     style: 'destructive',
                     onPress: async () => {
                         try {
-                            console.log('🚪 Начинаем процесс выхода...');
                             await logout();
-                            console.log('✅ Выход выполнен успешно');
                         } catch (error) {
                             console.error('❌ Ошибка выхода:', error);
                             Alert.alert('Ошибка', 'Не удалось выйти из аккаунта');
@@ -64,11 +62,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                     style: 'destructive',
                     onPress: async () => {
                         try {
-                            console.log('🗑️ Начинаем процесс удаления аккаунта...');
                             await deleteAccount.mutateAsync({ confirm: true });
-                            console.log('✅ Аккаунт удален успешно');
-                            
-                            // После успешного удаления аккаунта выполняем логаут
                             await logout();
                             
                             Alert.alert(

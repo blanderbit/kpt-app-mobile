@@ -64,8 +64,6 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                     moodSurveyIds: selectedSurveys
                 };
                 
-                console.log('🎭 Сохраняем настроение:', payload);
-                
                 await setMoodForDay.mutateAsync(payload);
                 
                 // Обновляем текущее настроение после сохранения
