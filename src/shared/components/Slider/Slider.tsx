@@ -22,6 +22,7 @@ type SliderProps = {
     initialValue: number;
     onChange?: (value: number) => void;
     colors: Array<string>;
+    labelStyle?: Record<string, any>;
 };
 
 const Slider: React.FC<SliderProps> = ({
@@ -30,7 +31,8 @@ const Slider: React.FC<SliderProps> = ({
                                            endLabel,
                                            initialValue,
                                            onChange,
-                                           colors
+                                           colors,
+                                           labelStyle = {}
                                        }) => {
     const { theme, themeName } = useCustomTheme();
 
@@ -94,7 +96,7 @@ const Slider: React.FC<SliderProps> = ({
 
     return (
         <View style={ theme.flexBlocks.vertical8 }>
-            <Text style={ { ...theme.fonts.subtitle, textAlign: 'left' } }>{ label }</Text>
+            <Text style={ [ theme.fonts.subtitle, labelStyle, { textAlign: 'left' } ] }>{ label }</Text>
 
             <View style={ [ styles.sliderContainer, rendered.current && { opacity: 1 } ] }>
                 <View style={ styles.percentWrapper }>

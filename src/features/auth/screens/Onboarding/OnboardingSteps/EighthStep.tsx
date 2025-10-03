@@ -20,40 +20,43 @@ export default function EighthStep({onNext}: { onNext: () => void }) {
     const [ hardnessLevel, setHardnessLevel ] = useState(0);
 
     return (
-        <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <View style={theme.flexBlocks.vertical64}>
+                    <View style={theme.flexBlocks.vertical16}>
+                        <View>
+                            <SatisfactionSlider
+                                label={ t('main.modals.measureActivity.satisfactionLevel.label') }
+                                startLabel={ t('main.modals.measureActivity.satisfactionLevel.startLabel') }
+                                endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
+                                initialValue={ satisfactionLevel }
+                                onChange={ setSatisfactionLevel }
+                                colors={ [ '#DD583D', '#FFC372' ] }
+                                labelStyle={styles.sliderLabel}
+                            />
+                        </View>
 
-            <View style={[theme.flexBlocks.vertical32]}>
-                <View style={[theme.flexBlocks.vertical16, styles.sliders]}>
-                    <View>
-                        <SatisfactionSlider
-                            label={ t('main.modals.measureActivity.satisfactionLevel.label') }
-                            startLabel={ t('main.modals.measureActivity.satisfactionLevel.startLabel') }
-                            endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
-                            initialValue={ satisfactionLevel }
-                            onChange={ setSatisfactionLevel }
-                            colors={ [ '#DD583D', '#FFC372' ] }
-                        />
+                        <View>
+                            <SatisfactionSlider
+                                label={ t('main.modals.measureActivity.hardnessLevel.label') }
+                                startLabel={ t('main.modals.measureActivity.hardnessLevel.startLabel') }
+                                endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
+                                initialValue={ hardnessLevel }
+                                onChange={ setHardnessLevel }
+                                colors={ [ '#CA21D0', '#810085' ] }
+                                labelStyle={styles.sliderLabel}
+                            />
+                        </View>
                     </View>
 
-                    <View>
-                        <SatisfactionSlider
-                            label={ t('main.modals.measureActivity.hardnessLevel.label') }
-                            startLabel={ t('main.modals.measureActivity.hardnessLevel.startLabel') }
-                            endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
-                            initialValue={ hardnessLevel }
-                            onChange={ setHardnessLevel }
-                            colors={ [ '#CA21D0', '#810085' ] }
-                        />
+                    <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
+                        <RemoteSvg xml={SWIPE_THE_LINES_SVG} />
+                        <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
                     </View>
-                </View>
-
-                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
-                    <RemoteSvg xml={SWIPE_THE_LINES_SVG} />
-                    <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
                 </View>
             </View>
 
-            <View style={styles.formBottom}>
+            <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     disabled={ !satisfactionLevel || !hardnessLevel }
                     title={'Complete'}
@@ -65,12 +68,17 @@ export default function EighthStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
-    formBottom: {
-        width: '100%',
+    container: {
+        flex: 1,
         flexDirection: 'column',
-        gap: 10
+        justifyContent: 'space-between',
     },
-    sliders: {
+    content: {
+        flex: 1,
+        marginTop: 10
+    },
+    sliderLabel: {
+        paddingLeft: 16,
     },
     pointArrow: {
         marginTop: -30

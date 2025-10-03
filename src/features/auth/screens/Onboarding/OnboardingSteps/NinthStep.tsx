@@ -11,81 +11,98 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
 
     const suggestedActivitiesData = {
-        "data": [{
-            "activityName": "Morning run new",
-            "activityType": "general",
-            "closedAt": null,
-            "content": "Ran 5km in 30 minutes",
-            "createdAt": "2025-09-26T12:48:21.325Z",
-            "id": 12,
-            "position": 0,
-            "rateActivities": [Array],
-            "status": "active",
-            "updatedAt": "2025-09-26T13:06:35.000Z",
-            "userId": 15
-        }, {
-            "activityName": "Morning run test 2 йцуйцуфівфівфі в вйцв йів фй цуіфв",
-            "activityType": "general",
-            "closedAt": null,
-            "content": "Ran 5km in 30 minutes",
-            "createdAt": "2025-09-26T13:06:18.788Z",
-            "id": 15,
-            "position": 1,
-            "rateActivities": [Array],
-            "status": "active",
-            "updatedAt": "2025-09-26T13:06:35.000Z",
-            "userId": 15
-        }],
+        "data": [
+            {
+                "activityName": "Morning run new",
+                "activityType": "general",
+                "closedAt": null,
+                "content": "Ran 5km in 30 minutes",
+                "createdAt": "2025-09-26T12:48:21.325Z",
+                "id": 12,
+                "position": 0,
+                "rateActivities": [Array],
+                "status": "active",
+                "updatedAt": "2025-09-26T13:06:35.000Z",
+                "userId": 15
+            },
+            {
+                "activityName": "Morning run test 2 йцуйцуфівфівфі в вйцв йів фй цуіфв",
+                "activityType": "general",
+                "closedAt": null,
+                "content": "Ran 5km in 30 minutes",
+                "createdAt": "2025-09-26T13:06:18.788Z",
+                "id": 15,
+                "position": 1,
+                "rateActivities": [Array],
+                "status": "active",
+                "updatedAt": "2025-09-26T13:06:35.000Z",
+                "userId": 15
+            },
+            {
+                "activityName": "Morning run test 2 йцуйцуфівфівфі в вйцв йів фй цуіфв",
+                "activityType": "general",
+                "closedAt": null,
+                "content": "Ran 5km in 30 minutes",
+                "createdAt": "2025-09-26T13:06:18.788Z",
+                "id": 16,
+                "position": 1,
+                "rateActivities": [Array],
+                "status": "active",
+                "updatedAt": "2025-09-26T13:06:35.000Z",
+                "userId": 15
+            }
+        ],
         "links": {"current": "http://kpt.api.the-displaycontrol.com/profile/activities?page=1&limit=20&sortBy=position:ASC"},
         "meta": {"currentPage": 1, "itemsPerPage": 20, "sortBy": [[Array]], "totalItems": 2, "totalPages": 1}
     }
 
     return (
-        <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <View style={theme.flexBlocks.vertical16}>
+                    <Text style={styles.suggestingText}>
+                        Based on your previous answers we prepared a few first tasks and activities for you.
+                    </Text>
 
-            <View style={theme.flexBlocks.vertical16}>
-                <Text style={styles.suggestingText}>
-                    Based on your previous answers we prepared a few first tasks and activities for you.
-                </Text>
+                    <View style={theme.containers.cardRound}>
+                        <View
+                            style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, {paddingHorizontal: 8}]}>
+                            <SuggestedActivitiesIcon/>
 
-                <View style={theme.containers.cardRound}>
-                    <View
-                        style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, {paddingHorizontal: 8}]}>
-                        <SuggestedActivitiesIcon/>
+                            <Text style={theme.fonts.subtitle}>
+                                {t('main.activities.suggestedActivities')}
+                            </Text>
+                        </View>
 
-                        <Text style={theme.fonts.subtitle}>
-                            {t('main.activities.suggestedActivities')}
-                        </Text>
-                    </View>
+                        <View style={styles.activitySections}>
+                            {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 &&
+                                suggestedActivitiesData.data.map((activity, index) => (
+                                    <View
+                                        key={activity.id}
+                                        style={{
+                                            ...styles.activitySection,
+                                            ...(index !== suggestedActivitiesData.data.length - 1
+                                                ? {borderBottomWidth: 1, borderBottomColor: '#E2DDD8'}
+                                                : {}),
+                                        }}
+                                    >
+                                        <ActivityLabel id={activity.activityType}/>
 
-                    <View style={styles.activitySections}>
-                        {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 &&
-                            suggestedActivitiesData.data.map((activity, index) => (
-                                <View
-                                    key={activity.id}
-                                    style={{
-                                        ...styles.activitySection,
-                                        ...(index !== suggestedActivitiesData.data.length - 1
-                                            ? {borderBottomWidth: 1, borderBottomColor: '#E2DDD8'}
-                                            : {}),
-                                    }}
-                                >
-                                    <ActivityLabel id={activity.activityType}/>
-
-                                    <View style={[styles.activityContent, theme.flexBlocks.alignCenter]}>
-                                        <Text
-                                            style={[styles.activityTitle, theme.fonts.subheader]}>
-                                            {activity.activityName}
-                                        </Text>
+                                        <View style={[styles.activityContent, theme.flexBlocks.alignCenter]}>
+                                            <Text
+                                                style={[styles.activityTitle, theme.fonts.subheader]}>
+                                                {activity.activityName}
+                                            </Text>
+                                        </View>
                                     </View>
-                                </View>
-                            ))
-                        }
+                                ))
+                            }
+                        </View>
                     </View>
                 </View>
             </View>
 
-            <View style={[styles.formBottom, theme.flexBlocks.vertical4]}>
+            <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     title={'Add to my list'}
                     onPress={onNext}
@@ -102,8 +119,13 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
-    formBottom: {
-        width: '100%',
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    content: {
+        flex: 1,
     },
     suggestingText: {
         fontFamily: 'SF Pro Display Bold',

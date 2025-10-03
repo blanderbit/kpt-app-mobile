@@ -49,6 +49,7 @@ export interface Theme {
         vertical8: ViewStyle,
         vertical16: ViewStyle,
         vertical32: ViewStyle,
+        vertical64: ViewStyle,
     },
     containers: {
         card: ViewStyle,
@@ -179,6 +180,10 @@ export const pinkTheme: Theme = {
         vertical32: {
             flexDirection: 'column',
             gap: 32
+        },
+        vertical64: {
+            flexDirection: 'column',
+            gap: 64
         }
     },
     containers: {
@@ -324,6 +329,10 @@ export const greenTheme: Theme = {
         vertical32: {
             flexDirection: 'column',
             gap: 32
+        },
+        vertical64: {
+            flexDirection: 'column',
+            gap: 64
         }
     },
     containers: {

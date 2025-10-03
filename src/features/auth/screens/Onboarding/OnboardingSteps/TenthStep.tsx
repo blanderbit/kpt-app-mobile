@@ -55,12 +55,7 @@ export default function TenthStep({onNext}: FifthStepProps) {
 
     return (
         <View style={styles.container}>
-
-            {/*{isLoading ? (*/}
-            {/*    <View style={styles.loadingContainer}>*/}
-            {/*        <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor} />*/}
-            {/*    </View>*/}
-            {/*) : (*/}
+            <View style={styles.content}>
                 <ScrollView
                     style={styles.scrollView}
                     contentContainerStyle={styles.scrollContent}
@@ -77,7 +72,7 @@ export default function TenthStep({onNext}: FifthStepProps) {
                         ))}
                     </View>
                 </ScrollView>
-            {/*)}*/}
+            </View>
         </View>
     );
 }
@@ -88,11 +83,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between',
     },
+    content: {
+        flex: 1,
+    },
     scrollView: {
         flex: 1,
     },
     scrollContent: {
-        paddingVertical: 8,
+        paddingBottom: 8,
     },
     variantItem: {
         borderRadius: 16

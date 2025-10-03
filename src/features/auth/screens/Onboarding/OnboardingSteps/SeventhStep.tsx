@@ -18,8 +18,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
 
     return (
-        <View style={{flexDirection: 'column', height: '100%'}}>
-
+        <View style={styles.container}>
             <View style={theme.flexBlocks.vertical16}>
                 <View style={ styles.activitySections }>
                         <View
@@ -52,6 +51,11 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        marginBottom: '25%'
+    },
     activitySections: {
         backgroundColor: '#F5F5F5',
         borderRadius: 16,

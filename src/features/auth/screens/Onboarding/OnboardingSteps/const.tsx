@@ -51,26 +51,25 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
     },
     {
         id: 7,
-        title: "Let's get started!",
-        infoText: "Create your first activity and see how easy it is to stay on track.",
+        title: "Add your first challenge",
+        infoText: "It can be any task, activity or habit you want to track. One-time or repetitive - it doesn't matter.",
         content: (<SeventhStep onNext={() => {}} />)
     },
     {
         id: 8,
-        title: "You're all set!",
-        infoText: "Welcome to your personalized dashboard. Start tracking your activities and see your progress.",
+        title: "Good job! 👏",
+        infoText: "Now, rate your activity using these metrics:",
         content: (<EighthStep onNext={() => {}} />)
     },
     {
         id: 9,
-        title: "Ready to begin?",
-        infoText: "Your journey to better balance starts now. Let's make it happen!",
+        title: "Task completed successfully!",
+        infoText: "That was easy, right? 😊",
         content: (<NinthStep onNext={() => {}} />)
     },
     {
         id: 10,
-        title: "Welcome aboard!",
-        infoText: "Everything is ready. Let's start your journey to a more balanced life.",
+        title: "How old are you?",
         content: (<TenthStep onNext={() => {}} />)
     },
 ]
