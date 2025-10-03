@@ -27,7 +27,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
 
                             <View style={ [ theme.flexBlocks.alignCenter, styles.activityContent ] }>
                                 <Text
-                                    style={ [ styles.activityTitle, theme.fonts.subheader ] }>
+                                    style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
                                     { t("main.today.activity.sportActivity.info") }
                                 </Text>
 

@@ -37,6 +37,7 @@ export interface Theme {
         label: FontStyle;
         labelSecond: FontStyle;
         articleText: FontStyle;
+        activityTitle: FontStyle;
     };
     flexBlocks: {
         justifyCenter: ViewStyle,
@@ -137,6 +138,12 @@ export const pinkTheme: Theme = {
             lineHeight: 22,
             opacity: 0.6,
             fontWeight: 400
+        },
+        activityTitle: {
+            fontFamily: 'PP Editorial New',
+            fontSize: 24,
+            lineHeight: 28,
+            letterSpacing: 0
         }
     },
     flexBlocks: {
@@ -287,6 +294,13 @@ export const greenTheme: Theme = {
             lineHeight: 22,
             opacity: 0.6,
             fontWeight: 400
+        },
+        activityTitle: {
+            fontFamily: 'Inter Medium',
+            fontWeight: '500',
+            fontSize: 20,
+            lineHeight: 28,
+            letterSpacing: -0.5
         }
     },
     flexBlocks: {

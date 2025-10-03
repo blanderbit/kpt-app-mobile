@@ -196,11 +196,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
 
                 <View style={ styles.activitySections }>
                     {myActivities?.data && myActivities.data.length > 0 ? (
-                        <View style={ { minHeight: 115 * myActivities.data.length } }>
+                        <View style={ { minHeight: 90 * myActivities.data.length } }>
                             <DraggableList 
                                 key={`activities-${activitiesKey}-${myActivities.data.length}`}
                                 itemsArr={ myActivities.data }
-                                itemHeight={ 115 }
+                                itemHeight={ 90 }
                                 renderItem={ (activity, index) =>
                                                <View style={ {
                                                    ...styles.activitySection,
@@ -213,12 +213,12 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                                                        <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
                                                            <BurgerIcon/>
 
-                                                           <View>
+                                                           <View style={theme.flexBlocks.vertical8}>
                                                                <ActivityLabel id={activity.activityType} />
 
                                                                <Pressable style={ styles.activityContent }>
                                                                    <Text
-                                                                       style={ [ styles.activityTitle, theme.fonts.subheader ] }> 
+                                                                       style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
                                                                        { activity.activityName } 
                                                                    </Text>
                                                                    <SemiCircleSplit valueA={ satisfaction }
@@ -289,7 +289,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
 
                                 <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                     <Text
-                                        style={ [ styles.activityTitle, theme.fonts.subheader ] }>
+                                        style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
                                         { activity.activityName }
                                     </Text>
 
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     },
     activitySection: {
         width: '100%',
-        minHeight: 115,
+        minHeight: 90,
         flexDirection: 'column',
         padding: 16,
         gap: 8,

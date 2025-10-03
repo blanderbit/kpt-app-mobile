@@ -95,7 +95,7 @@ export default function DraggableActivities({
                             key={index}
                             style={[
                                 styles.item,
-                                { height: itemHeight },
+                                { minHeight: itemHeight },
                                 positions[index].getLayout(),
                                 isActive && {
                                     zIndex: 9999,

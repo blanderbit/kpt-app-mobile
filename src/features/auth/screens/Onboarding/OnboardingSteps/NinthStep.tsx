@@ -1,10 +1,12 @@
 import React from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View, ScrollView, Dimensions} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
 import {SuggestedActivitiesIcon} from "@assets/icons/SuggestedActivitiesIcon";
 import {ActivityLabel} from "@shared/components/ActivityLabel";
+
+const {height: screenHeight} = Dimensions.get('window');
 
 export default function NinthStep({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -26,7 +28,7 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
                 "userId": 15
             },
             {
-                "activityName": "Morning run test 2 йцуйцуфівфівфі в вйцв йів фй цуіфв",
+                "activityName": "Morning run test 2",
                 "activityType": "general",
                 "closedAt": null,
                 "content": "Ran 5km in 30 minutes",
@@ -39,7 +41,7 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
                 "userId": 15
             },
             {
-                "activityName": "Morning run test 2 йцуйцуфівфівфі в вйцв йів фй цуіфв",
+                "activityName": "Morning run test 2",
                 "activityType": "general",
                 "closedAt": null,
                 "content": "Ran 5km in 30 minutes",
@@ -59,14 +61,13 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <View style={theme.flexBlocks.vertical16}>
+                <View style={theme.flexBlocks.vertical8}>
                     <Text style={styles.suggestingText}>
                         Based on your previous answers we prepared a few first tasks and activities for you.
                     </Text>
 
                     <View style={theme.containers.cardRound}>
-                        <View
-                            style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, {paddingHorizontal: 8}]}>
+                        <View style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, {paddingHorizontal: 8}]}>
                             <SuggestedActivitiesIcon/>
 
                             <Text style={theme.fonts.subtitle}>
@@ -74,7 +75,11 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
                             </Text>
                         </View>
 
-                        <View style={styles.activitySections}>
+                        <ScrollView 
+                            style={[styles.activitySections, {maxHeight: screenHeight * 0.37}]}
+                            showsVerticalScrollIndicator={false}
+                            nestedScrollEnabled={true}
+                        >
                             {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 &&
                                 suggestedActivitiesData.data.map((activity, index) => (
                                     <View
@@ -90,19 +95,19 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
 
                                         <View style={[styles.activityContent, theme.flexBlocks.alignCenter]}>
                                             <Text
-                                                style={[styles.activityTitle, theme.fonts.subheader]}>
+                                                style={[styles.activityTitle, theme.fonts.activityTitle]}>
                                                 {activity.activityName}
                                             </Text>
                                         </View>
                                     </View>
                                 ))
                             }
-                        </View>
+                        </ScrollView>
                     </View>
                 </View>
             </View>
 
-            <View style={theme.flexBlocks.vertical8}>
+            <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
                     title={'Add to my list'}
                     onPress={onNext}
@@ -142,7 +147,7 @@ const styles = StyleSheet.create({
     },
     activitySection: {
         width: '100%',
-        minHeight: 115,
+        minHeight: 90,
         flexDirection: 'column',
         padding: 16,
         gap: 8,
