@@ -173,12 +173,7 @@ export default function OnboardingTemplate({
         const exitSlideValue = direction === 'forward' ? -50 : 50; // вперед - влево, назад - вправо
         const enterSlideValue = direction === 'forward' ? 50 : -50; // новый контент приходит с противоположной стороны
         
-        // Анимация кнопки "Назад" в зависимости от направления
-        Animated.timing(backButtonAnim, {
-            toValue: direction === 'backward' ? 1.1 : 0.8,
-            duration: 200,
-            useNativeDriver: true,
-        }).start();
+        // Убираем анимацию кнопки "Назад" для стабильности
         
         // Анимация исчезновения текущего степа
         Animated.parallel([
@@ -215,13 +210,6 @@ export default function OnboardingTemplate({
                         useNativeDriver: true,
                     })
                 ]).start(() => {
-                    // Возвращаем кнопку "Назад" в исходное состояние
-                    Animated.timing(backButtonAnim, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }).start();
-                    
                     setIsTransitioning(false);
                     if (callback) callback();
                 });

@@ -1,15 +1,15 @@
-import React, {useState} from "react";
+import React, {useMemo} from "react";
 import {StyleSheet, View, ScrollView} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 
-export default function TenthStep({onNext}:{ onNext: () => void }) {
+export default function EleventhStep({onNext}: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
-    const [ ageQuestions, setAgeQuestions ] = useState([
+    const ageQuestions = useMemo(() => [
         {
             id: 1,
             name: '24 and under',
@@ -30,7 +30,7 @@ export default function TenthStep({onNext}:{ onNext: () => void }) {
             id: 5,
             name: '55+',
         }
-    ]);
+    ], []);
 
     const saveData = async (age: string) => {
         try {

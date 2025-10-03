@@ -10,6 +10,7 @@ import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthSt
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
+import EleventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/EleventhStep";
 
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
@@ -71,5 +72,10 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
         id: 10,
         title: "How old are you?",
         content: (<TenthStep onNext={() => {}} />)
+    },
+    {
+        id: 11,
+        title: "How do you usually track your tasks, activities and goals to find balance in your life?",
+        content: (<EleventhStep onNext={() => {}} />)
     },
 ]
