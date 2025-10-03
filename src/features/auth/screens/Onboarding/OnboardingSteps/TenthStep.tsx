@@ -55,13 +55,6 @@ export default function TenthStep({onNext}: FifthStepProps) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.formTop}>
-                <View style={styles.head}>
-                    <Text style={[styles.title, {...theme.fonts.title}]}>
-                        How old are you?
-                    </Text>
-                </View>
-            </View>
 
             {/*{isLoading ? (*/}
             {/*    <View style={styles.loadingContainer}>*/}
@@ -95,27 +88,11 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between',
     },
-    formTop: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 16,
-        paddingTop: 10,
-        marginBottom: 8,
-    },
     scrollView: {
         flex: 1,
     },
     scrollContent: {
         paddingVertical: 8,
-    },
-    head: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: 'center',
     },
     variantItem: {
         borderRadius: 16

@@ -102,16 +102,6 @@ export default function FourthStep({onNext}: FourthStepProps) {
 
     return (
         <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
-            <View style={styles.formTop}>
-                <View style={styles.head}>
-                    <Text style={[styles.title, {...theme.fonts.title}]}>
-                        How does your day feel so far?
-                    </Text>
-                    <Text style={[styles.info, {...theme.fonts.regular}]}>
-                        Pick your emotion
-                    </Text>
-                </View>
-            </View>
 
             <ScrollView showsVerticalScrollIndicator={ false }>
                     <View style={ styles.gridContainer }>
@@ -139,30 +129,6 @@ export default function FourthStep({onNext}: FourthStepProps) {
 }
 
 const styles = StyleSheet.create({
-    formTop: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 16,
-        paddingTop: 10
-    },
-    formBottom: {
-        width: '100%',
-        flexDirection: 'column',
-        gap: 10
-    },
-    head: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: 'center',
-    },
-    info: {
-        opacity: 0.6,
-        textAlign: 'center',
-    },
     gridContainer: {
         flexDirection: "row",
         flexWrap: "wrap",

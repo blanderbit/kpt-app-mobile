@@ -1,35 +1,25 @@
 import React from "react";
-import {StyleSheet, Text, View, Pressable, Image} from "react-native";
+import {StyleSheet, Text, View, Image} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
-import {COLORS} from "@app/theme";
 
 export default function ThirdStep({onNext}: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
     return (
-        <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
-            <View style={styles.formTop}>
-                <View style={styles.head}>
-                    <Text style={[styles.title, {...theme.fonts.title}]}>
-                        That's great!
-                    </Text>
-                    <Text style={[styles.info, {...theme.fonts.regular}]}>
-                        93% of users report AppName has seamlessly helped them to stay balanced and live fulfilled life.
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8, styles.centerBlock]}>
+                    <Image
+                        source={require('@assets/images/onboarding-img.png')}/>
+                    <Text style={styles.centerBlockText}>
+                        A few quick questions to better understand your current state and goals 🤝
                     </Text>
                 </View>
             </View>
 
-            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8, styles.centerBlock]}>
-                <Image
-                    source={require('@assets/images/onboarding-img.png')}/>
-                <Text style={styles.centerBlockText}>
-                    A few quick questions to better understand your current state and goals 🤝
-                </Text>
-            </View>
-
-            <View style={styles.formBottom}>
+            <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     title={'Continue'}
                     onPress={onNext}
@@ -40,29 +30,13 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
-    formTop: {
+    container: {
+        flex: 1,
         flexDirection: 'column',
-        alignItems: 'center',
-        gap: 16,
-        paddingTop: 10
+        justifyContent: 'space-between',
     },
-    formBottom: {
-        width: '100%',
-        flexDirection: 'column',
-        gap: 10
-    },
-    head: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: 'center',
-    },
-    info: {
-        opacity: 0.6,
-        textAlign: 'center',
+    content: {
+        flex: 1,
     },
     centerBlock: {
         paddingBottom: 40

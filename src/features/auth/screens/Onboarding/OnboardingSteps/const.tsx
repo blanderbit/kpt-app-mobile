@@ -14,45 +14,63 @@ import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthSt
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
         id: 1,
-        content: (<FirstStep />)
+        title: "Welcome to AppName",
+        infoText: "Choose ready-made or create you own tasks, activities and habits. Track achievement and satisfaction. Discover your balance!",
+        content: (<FirstStep onNext={() => {}} onBack={() => {}} />)
     },
     {
         id: 2,
-        content: (<SecondStep />)
+        title: "We've helped {count} busy minds feel more balanced",
+        hasStyledNumber: true,
+        content: (<SecondStep onNext={() => {}} />)
     },
     {
         id: 3,
-        content: (<ThirdStep />)
+        title: "That's great!",
+        infoText: "93% of users report AppName has seamlessly helped them to stay balanced and live fulfilled life.",
+        content: (<ThirdStep onNext={() => {}} />)
     },
     {
         id: 4,
-        content: (<FourthStep />)
+        title: "What's your current mood?",
+        content: (<FourthStep onNext={() => {}} />)
     },
     {
         id: 5,
-        content: (<FifthStep />)
+        title: "How did you hear about us?",
+        content: (<FifthStep onNext={() => {}} />)
     }
 ]
 
 export const onboardingSecondSectionSteps: OnboardingStep[] = [
     {
         id: 6,
-        content: (<SixthStep />)
+        title: "Awesome",
+        infoText: "With AppName you don't need to put too much time to track your achievement and satisfaction level.",
+        content: (<SixthStep onNext={() => {}} />)
     },
     {
         id: 7,
-        content: (<SeventhStep />)
+        title: "Let's get started!",
+        infoText: "Create your first activity and see how easy it is to stay on track.",
+        content: (<SeventhStep onNext={() => {}} />)
     },
     {
         id: 8,
-        content: (<EighthStep />)
+        title: "You're all set!",
+        infoText: "Welcome to your personalized dashboard. Start tracking your activities and see your progress.",
+        content: (<EighthStep onNext={() => {}} />)
     },
     {
         id: 9,
-        content: (<NinthStep />)
+        title: "Ready to begin?",
+        infoText: "Your journey to better balance starts now. Let's make it happen!",
+        content: (<NinthStep onNext={() => {}} />)
     },
     {
         id: 10,
-        content: (<TenthStep />)
+        title: "Welcome aboard!",
+        infoText: "Everything is ready. Let's start your journey to a more balanced life.",
+        content: (<TenthStep onNext={() => {}} />)
     },
 ]

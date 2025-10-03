@@ -14,19 +14,10 @@ export default function FirstStep({ onNext, onBack }: FirstStepProps) {
     const {theme} = useCustomTheme();
 
     return (
-        <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
-            <View style={ styles.formTop }>
-                <View style={ styles.head }>
-                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>
-                        Welcome to AppName
-                    </Text>
-                    <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>
-                        Choose ready-made or create you own tasks, activities and habits. Track achievement and satisfaction. Discover your balance!
-                    </Text>
-                </View>
-            </View>
+        <View style={styles.container}>
+            <View style={styles.content} />
 
-            <View style={ styles.formBottom }>
+            <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     title={ 'Get started' }
                     onPress={onNext}
@@ -46,29 +37,13 @@ export default function FirstStep({ onNext, onBack }: FirstStepProps) {
 }
 
 const styles = StyleSheet.create({
-    formTop: {
+    container: {
+        flex: 1,
         flexDirection: 'column',
-        alignItems: 'center',
-        gap: 16,
-        paddingTop: 10
+        justifyContent: 'space-between',
     },
-    formBottom: {
-        width: '100%',
-        flexDirection: 'column',
-        gap: 10
-    },
-    head: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: 'center',
-    },
-    info: {
-        opacity: 0.6,
-        textAlign: 'center',
+    content: {
+        flex: 1,
     },
     haveAnAccSection: {
         height: 52,

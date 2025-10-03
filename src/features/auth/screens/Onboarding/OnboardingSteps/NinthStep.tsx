@@ -42,16 +42,6 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
 
     return (
         <View style={{flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
-            <View style={styles.formTop}>
-                <View style={styles.head}>
-                    <Text style={[styles.title, {...theme.fonts.title}]}>
-                        Task completed successfully!
-                    </Text>
-                    <Text style={[styles.info, {...theme.fonts.regular}]}>
-                        That was easy, right? 😊
-                    </Text>
-                </View>
-            </View>
 
             <View style={theme.flexBlocks.vertical16}>
                 <Text style={styles.suggestingText}>
@@ -112,27 +102,8 @@ export default function NinthStep({onNext}: { onNext: () => void }) {
 }
 
 const styles = StyleSheet.create({
-    formTop: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 16,
-        paddingTop: 10
-    },
     formBottom: {
         width: '100%',
-    },
-    head: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        marginBottom: 10,
-    },
-    title: {
-        textAlign: 'center',
-    },
-    info: {
-        opacity: 0.6,
-        textAlign: 'center',
     },
     suggestingText: {
         fontFamily: 'SF Pro Display Bold',

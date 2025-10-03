@@ -1,6 +1,7 @@
 import React, {useState, useMemo, useEffect, useRef} from 'react';
 import {View, StyleSheet, Pressable, SafeAreaView, Text, ActivityIndicator, Animated} from 'react-native';
 import {useCustomTheme} from "@app/theme/ThemeContext";
+import {COLORS} from "@app/theme";
 import {ArrowIcon} from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import StepperLine from "@shared/components/StepperLine/StepperLine";
@@ -101,6 +102,8 @@ export default function OnboardingTemplate({
         }
     };
 
+    const count = 17000;
+
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
         return onboardingFirstSectionSteps.length + (questions?.length || 0) + onboardingSecondSectionSteps.length; // 5 статических + вопросы + 6-й, 7-й, 8-й и далее
@@ -108,6 +111,58 @@ export default function OnboardingTemplate({
 
     // Показываем stepper только после загрузки вопросов
     const showStepper = !questionsLoading;
+
+    // Получаем конфигурацию текущего степа
+    const getCurrentStepConfig = () => {
+        // Статические шаги (1-5)
+        if (currentStep <= onboardingFirstSectionSteps.length) {
+            const stepConfig = onboardingFirstSectionSteps.find(step => step.id === currentStep);
+            if (stepConfig && currentStep === 2) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title?.replace('{count}', count.toString()),
+                };
+            }
+            return stepConfig;
+        }
+        
+        // Динамические вопросы - используем вопрос из API
+        const questionIndex = currentStep - 6;
+        if (questions && questionIndex >= 0 && questionIndex < questions.length) {
+            const question = questions[questionIndex];
+            return {
+                id: currentStep,
+                title: question.stepQuestion,
+                infoText: undefined
+            };
+        }
+        
+        // Финальные степпы - после всех динамических вопросов
+        const questionsCount = questions?.length || 0;
+        const sixthStepNumber = 6 + questionsCount;
+        const seventhStepNumber = 6 + questionsCount + 1;
+        const eighthStepNumber = 6 + questionsCount + 2;
+        const ninthStepNumber = 6 + questionsCount + 3;
+        const tenthStepNumber = 6 + questionsCount + 4;
+
+        if (currentStep === sixthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 6);
+        }
+        if (currentStep === seventhStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 7);
+        }
+        if (currentStep === eighthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 8);
+        }
+        if (currentStep === ninthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 9);
+        }
+        if (currentStep === tenthStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 10);
+        }
+        
+        return null;
+    };
 
     // Функция для анимированного перехода между степами
     const animateStepTransition = (newStep: number, direction: 'forward' | 'backward', callback?: () => void) => {
@@ -369,6 +424,35 @@ export default function OnboardingTemplate({
                                 }
                             ]}
                         >
+                            {/* Общие элементы: тайтл и инфо текст */}
+                            {(() => {
+                                const stepConfig = getCurrentStepConfig();
+                                if (!stepConfig) return null;
+                                
+                                return (
+                                    <View style={styles.commonHeader}>
+                                        <View style={styles.head}>
+                                            {stepConfig.title && (
+                                                <Text style={[styles.title, {...theme.fonts.title}]}>
+                                                    {stepConfig.hasStyledNumber ? (
+                                                        <>
+                                                            We've helped <Text style={{color: COLORS.warning}}>17,000</Text> busy minds feel more balanced
+                                                        </>
+                                                    ) : (
+                                                        stepConfig.title
+                                                    )}
+                                                </Text>
+                                            )}
+                                            {stepConfig.infoText && (
+                                                <Text style={[styles.info, {...theme.fonts.regular}]}>
+                                                    {stepConfig.infoText}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    </View>
+                                );
+                            })()}
+                            
                             {renderCurrentStep()}
                         </Animated.View>
                     )}
@@ -391,6 +475,26 @@ const styles = StyleSheet.create({
     },
     stepContainer: {
         flex: 1,
+    },
+    commonHeader: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 16,
+        paddingTop: 10,
+        marginBottom: 8,
+    },
+    head: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 4,
+        marginBottom: 10,
+    },
+    title: {
+        textAlign: 'center',
+    },
+    info: {
+        opacity: 0.6,
+        textAlign: 'center',
     },
     loadingContainer: {
         flex: 1,
