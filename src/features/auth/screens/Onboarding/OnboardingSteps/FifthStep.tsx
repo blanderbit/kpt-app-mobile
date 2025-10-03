@@ -78,7 +78,7 @@ export default function FifthStep({onNext}: FifthStepProps) {
                             <SectionItem
                                 key={network.id}
                                 label={network.name}
-                                icon={<RemoteSvg xml={network.svg}/>}
+                                icon={<RemoteSvg xml={network.svg} size={32}/>}
                                 rightElement={
                                     selectedNetworks.includes(network.id)
                                         ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>

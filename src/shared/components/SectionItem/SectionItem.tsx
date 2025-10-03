@@ -4,17 +4,16 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { COLORS } from "@app/theme";
 
-export const SectionItem = ({
-                          icon, label, rightElement, extraStyles = [], extraLabelStyles = [], onPress = () => {
-    }
-                      }: {
+interface SectionItemProps {
     icon?: React.ReactNode,
     label: string,
     rightElement: React.ReactNode,
     extraStyles: Record<string, any>[],
     extraLabelStyles?: Record<string, any>[],
     onPress?: () => void,
-}) => {
+}
+
+export const SectionItem = ({icon, label, rightElement, extraStyles = [], extraLabelStyles = [], onPress = () => {}}: SectionItemProps) => {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
 

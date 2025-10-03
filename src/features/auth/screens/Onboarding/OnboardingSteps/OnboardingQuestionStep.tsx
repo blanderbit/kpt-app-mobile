@@ -99,7 +99,7 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
             <View style={styles.formTop}>
                 <View style={styles.head}>
                     <Text style={[styles.title, {...theme.fonts.title}]}>
-                        {currentQuestion?.stepQuestion || 'Loading...'}
+                        {currentQuestion?.stepQuestion}
                     </Text>
                 </View>
             </View>
@@ -120,7 +120,7 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
                                 key={answer.id}
                                 label={answer.text}
                                 subtitle={answer.subtitle}
-                                icon={<RemoteSvg xml={answer.icon}/>}
+                                icon={<RemoteSvg xml={answer.icon} size={32}/>}
                                 rightElement={
                                     selectedAnswers.includes(answer.id)
                                         ? <BlackCheckmarkIcon color={theme.buttons.primary.backgroundColor}/>
