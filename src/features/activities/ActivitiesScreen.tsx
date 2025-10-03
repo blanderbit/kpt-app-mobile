@@ -196,7 +196,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
 
                 <View style={ styles.activitySections }>
                     {myActivities?.data && myActivities.data.length > 0 ? (
-                        <View style={ { height: 115 * myActivities.data.length } }>
+                        <View style={ { minHeight: 115 * myActivities.data.length } }>
                             <DraggableList 
                                 key={`activities-${activitiesKey}-${myActivities.data.length}`}
                                 itemsArr={ myActivities.data }
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     },
     activitySection: {
         width: '100%',
-        height: 115,
+        minHeight: 115,
         flexDirection: 'column',
         padding: 16,
         gap: 8,

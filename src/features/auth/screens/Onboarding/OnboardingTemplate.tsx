@@ -5,7 +5,7 @@ import {ArrowIcon} from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import StepperLine from "@shared/components/StepperLine/StepperLine";
 import {OnboardingTemplateProps} from './types';
-import {onboardingSteps} from "@features/auth/screens/Onboarding/OnboardingSteps/const";
+import {onboardingFirstSectionSteps, onboardingSecondSectionSteps} from "@features/auth/screens/Onboarding/OnboardingSteps/const";
 import OnboardingQuestionStep from "@features/auth/screens/Onboarding/OnboardingSteps/OnboardingQuestionStep";
 import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
 import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventhStep";
@@ -13,6 +13,7 @@ import {useOnboardingQuestions} from "@shared/services/api/hooks";
 import {OnboardingQuestion} from "@shared/services/api/types";
 import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from "@shared/utils/onboardingStorage";
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
+import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -52,7 +53,7 @@ export default function OnboardingTemplate({
 
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
-        return 5 + (questions?.length || 0) + 3; // 5 статических + вопросы + 6-й, 7-й, 8-й и далее
+        return onboardingFirstSectionSteps.length + (questions?.length || 0) + onboardingSecondSectionSteps.length; // 5 статических + вопросы + 6-й, 7-й, 8-й и далее
     }, [questions]);
 
     // Показываем stepper только после загрузки вопросов
@@ -77,9 +78,7 @@ export default function OnboardingTemplate({
             await saveOnboardingProgress(newStep);
         } else {
             // Завершение онбординга
-            console.log('Onboarding data:', onboardingData);
             await clearOnboardingData();
-            navigation.navigate('Main');
         }
     };
 
@@ -110,8 +109,8 @@ export default function OnboardingTemplate({
     // Определяем, какой компонент рендерить
     const renderCurrentStep = () => {
         // Статические шаги (1-5)
-        if (currentStep <= 5) {
-            const currentStepData = onboardingSteps.find(step => step.id === currentStep);
+        if (currentStep <= onboardingFirstSectionSteps.length) {
+            const currentStepData = onboardingFirstSectionSteps.find(step => step.id === currentStep);
             if (currentStepData) {
                 let onNextHandler = onNext;
                 if (currentStep === 4) {
@@ -143,6 +142,7 @@ export default function OnboardingTemplate({
         const sixthStepNumber = 6 + questionsCount; // 6 + количество вопросов
         const seventhStepNumber = 6 + questionsCount + 1; // следующий после 6-го
         const eighthStepNumber = 6 + questionsCount + 2; // следующий после 7-го
+        const ninthStepNumber = 6 + questionsCount + 3; // следующий после 8-го
 
         if (currentStep === sixthStepNumber) {
             return (
@@ -163,6 +163,14 @@ export default function OnboardingTemplate({
         if (currentStep === eighthStepNumber) {
             return (
                 <EighthStep
+                    onNext={onNext}
+                />
+            );
+        }
+
+        if (currentStep === ninthStepNumber) {
+            return (
+                <NinthStep
                     onNext={onNext}
                 />
             );

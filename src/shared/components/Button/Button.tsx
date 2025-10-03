@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, View } from '
 import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 
-type ButtonTheme = 'primary' | 'primary_disabled' | 'secondary' | 'danger' | 'white';
+type ButtonTheme = 'primary' | 'primary_disabled' | 'secondary' | 'danger' | 'white' | 'white_no_border';
 
 interface ButtonProps {
     title?: string;
@@ -29,12 +29,12 @@ const CustomButton: React.FC<ButtonProps> = ({
     const { theme } = useCustomTheme();
 
     const buttonThemes: Record<ButtonTheme, { backgroundColor: any; textColor: any, borderColor?: string, borderWidth?: number }> = {
-        // primary: { backgroundColor: COLORS.primary, textColor: '#fff' },
         primary: { ...theme.buttons.primary},
         primary_disabled: { backgroundColor: COLORS.gray_light, textColor: COLORS.gray_dark },
         secondary: { backgroundColor: '#fff', textColor: '#007AFF' },
         danger: { backgroundColor: '#FF3B30', textColor: '#fff' },
         white: { ...theme.buttons.appleSignBtn },
+        white_no_border: { ...theme.buttons.appleSignBtn, borderWidth: 0 },
     };
 
     const { textColor, ...themeConfig } = buttonThemes[themeName];
