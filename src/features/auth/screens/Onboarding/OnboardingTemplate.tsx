@@ -16,6 +16,7 @@ import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
+import EleventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/EleventhStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -144,6 +145,7 @@ export default function OnboardingTemplate({
         const eighthStepNumber = 6 + questionsCount + 2;
         const ninthStepNumber = 6 + questionsCount + 3;
         const tenthStepNumber = 6 + questionsCount + 4;
+        const eleventhStepNumber = 6 + questionsCount + 5;
 
         if (currentStep === sixthStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 6);
@@ -159,6 +161,9 @@ export default function OnboardingTemplate({
         }
         if (currentStep === tenthStepNumber) {
             return onboardingSecondSectionSteps.find(step => step.id === 10);
+        }
+        if (currentStep === eleventhStepNumber) {
+            return onboardingSecondSectionSteps.find(step => step.id === 11);
         }
         
         return null;
@@ -304,6 +309,7 @@ export default function OnboardingTemplate({
         const eighthStepNumber = 6 + questionsCount + 2; // следующий после 7-го
         const ninthStepNumber = 6 + questionsCount + 3; // следующий после 8-го
         const tenthStepNumber = 6 + questionsCount + 4; // следующий после 9-го
+        const eleventhStepNumber = 6 + questionsCount + 5; // следующий после 9-го
 
         if (currentStep === sixthStepNumber) {
             return (
@@ -340,6 +346,14 @@ export default function OnboardingTemplate({
         if (currentStep === tenthStepNumber) {
             return (
                 <TenthStep
+                    onNext={onNext}
+                />
+            );
+        }
+
+        if (currentStep === eleventhStepNumber) {
+            return (
+                <EleventhStep
                     onNext={onNext}
                 />
             );

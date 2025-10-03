@@ -4,31 +4,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
+import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 
 export default function EleventhStep({onNext}: { onNext: () => void }) {
 
     const {theme} = useCustomTheme();
 
-    const ageQuestions = useMemo(() => [
+    const answers = useMemo(() => [
         {
-            id: 1,
-            name: '24 and under',
+            "id": "health_body",
+            "text": "Health & bodyqweqweqweqweqweqweqweqwe",
+            "subtitle": "Physical wellness and fitness",
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#E91E63'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/></svg>"
         },
         {
-            id: 2,
-            name: '25-34',
+            "id": "productivity_focus",
+            "text": "Productivity & focus",
+            "subtitle": "Getting more done with better concentration",
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#FF5722'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/></svg>"
         },
         {
-            id: 3,
-            name: '35-44',
+            "id": "emotional_wellbeing",
+            "text": "Emotional well-being",
+            "subtitle": "Mental health and emotional balance",
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#9C27B0'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/></svg>"
         },
         {
-            id: 4,
-            name: '45-55',
-        },
-        {
-            id: 5,
-            name: '55+',
+            "id": "relationships_social",
+            "text": "Relationships & social life",
+            "subtitle": "Connections with others and social fulfillment",
+            "icon": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#3F51B5'><path d='M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H16c-.8 0-1.54.37-2.01.99L12 11l-1.99-2.01A2.5 2.5 0 0 0 8 8H5.46c-.8 0-1.54.37-2.01.99L1 15.37V22h2v-6h2.5l2.5 7.5h2L8 16h2l2.5 7.5h2L14 16h2l2.5 7.5h2L18 16h2v6h2z'/></svg>"
         }
     ], []);
 
@@ -54,12 +59,13 @@ export default function EleventhStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={theme.flexBlocks.vertical8}>
-                        {ageQuestions?.map((age) => (
+                        {answers?.map((answer) => (
                             <SectionItem
-                                key={age.id}
-                                label={age.name}
+                                key={answer.id}
+                                label={answer.text}
+                                icon={<RemoteSvg xml={answer.icon} size={32}/>}
                                 extraStyles={[styles.variantItem]}
-                                onPress={() => handleAgeSelect(age.id)}
+                                onPress={() => handleAgeSelect(answer.id)}
                             />
                         ))}
                     </View>
