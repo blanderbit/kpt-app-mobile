@@ -14,6 +14,7 @@ import {OnboardingQuestion} from "@shared/services/api/types";
 import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from "@shared/utils/onboardingStorage";
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
+import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -259,6 +260,7 @@ export default function OnboardingTemplate({
         const seventhStepNumber = 6 + questionsCount + 1; // следующий после 6-го
         const eighthStepNumber = 6 + questionsCount + 2; // следующий после 7-го
         const ninthStepNumber = 6 + questionsCount + 3; // следующий после 8-го
+        const tenthStepNumber = 6 + questionsCount + 4; // следующий после 9-го
 
         if (currentStep === sixthStepNumber) {
             return (
@@ -287,6 +289,14 @@ export default function OnboardingTemplate({
         if (currentStep === ninthStepNumber) {
             return (
                 <NinthStep
+                    onNext={onNext}
+                />
+            );
+        }
+
+        if (currentStep === tenthStepNumber) {
+            return (
+                <TenthStep
                     onNext={onNext}
                 />
             );

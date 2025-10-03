@@ -9,6 +9,7 @@ import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/Seven
 import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
+import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
 
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
@@ -49,5 +50,9 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
     {
         id: 9,
         content: (<NinthStep />)
+    },
+    {
+        id: 10,
+        content: (<TenthStep />)
     },
 ]

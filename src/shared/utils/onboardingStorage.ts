@@ -6,6 +6,7 @@ export const ONBOARDING_KEYS = {
     MOOD: 'onboarding_mood_selection',
     SOCIAL_NETWORKS: 'onboarding_social_networks',
     QUESTIONS: 'onboarding_questions_answers',
+    AGE: 'onboarding_age'
 } as const;
 
 /**
@@ -18,6 +19,7 @@ export const clearOnboardingData = async (): Promise<void> => {
             ONBOARDING_KEYS.MOOD,
             ONBOARDING_KEYS.SOCIAL_NETWORKS,
             ONBOARDING_KEYS.QUESTIONS,
+            ONBOARDING_KEYS.AGE,
         ]);
         console.log('✅ Onboarding data cleared successfully');
     } catch (error) {
