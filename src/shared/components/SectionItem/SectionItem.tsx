@@ -10,7 +10,7 @@ interface SectionItemProps {
     rightElement?: React.ReactNode,
     extraStyles: Record<string, any>[],
     extraLabelStyles?: Record<string, any>[],
-    onPress?: () => void,
+    onPress?: () => void
 }
 
 export const SectionItem = ({icon, label, rightElement, extraStyles = [], extraLabelStyles = [], onPress = () => {}}: SectionItemProps) => {
@@ -18,17 +18,18 @@ export const SectionItem = ({icon, label, rightElement, extraStyles = [], extraL
     const { theme } = useCustomTheme();
 
     return (
-        <Pressable style={ [ styles.sectionItem, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, ...extraStyles ] }
+        <Pressable style={ [ styles.sectionItem, theme.flexBlocks.justifySpaceBetween, rightElement ? theme.flexBlocks.alignCenter : {}, ...extraStyles ] }
                    onPress={onPress}>
             <View
                 style={ [
                     theme.flexBlocks.horizontal8,
-                    theme.flexBlocks.alignCenter,
-                    { padding: 16 },
+                    { padding: 16, flex: 1 },
                 ] }
             >
                 { icon }
-                <Text style={ [ theme.fonts.labelSecond, ...extraLabelStyles ] }>{ t(label) }</Text>
+                <View style={styles.textContainer}>
+                    <Text style={ [ theme.fonts.labelSecond, ...extraLabelStyles ] }>{ t(label) }</Text>
+                </View>
             </View>
 
             <View
@@ -46,5 +47,14 @@ export const SectionItem = ({icon, label, rightElement, extraStyles = [], extraL
 const styles = StyleSheet.create({
     sectionItem: {
         backgroundColor: COLORS.gray_light,
+    },
+    textContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    subtitle: {
+        marginTop: 4,
+        opacity: 0.6,
     },
 });
