@@ -127,41 +127,18 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
                     </View>
 
                     <View style={styles.mainContainer}>
-                <Animated.View 
-                    style={[
-                        styles.stepContainer,
-                        {
-                            opacity: fadeAnim,
-                            transform: [{ translateX: slideAnim }]
-                        }
-                    ]}
-                >
-                    {/* Общие элементы: тайтл и инфо текст */}
-                    {(() => {
-                        const stepConfig = getCurrentStepConfig();
-                        if (!stepConfig) return null;
-                        
-                        return (
-                            <View style={styles.commonHeader}>
-                                <View style={styles.head}>
-                                    {stepConfig.title && (
-                                        <Text style={[styles.title, {...theme.fonts.title}]}>
-                                            {stepConfig.title}
-                                        </Text>
-                                    )}
-                                    {stepConfig.infoText && (
-                                        <Text style={[styles.info, {...theme.fonts.regular}]}>
-                                            {stepConfig.infoText}
-                                        </Text>
-                                    )}
-                                </View>
-                            </View>
-                        );
-                    })()}
-                    
-                    {renderCurrentStep()}
-                </Animated.View>
-            </View>
+                        <Animated.View
+                            style={[
+                                styles.stepContainer,
+                                {
+                                    opacity: fadeAnim,
+                                    transform: [{ translateX: slideAnim }]
+                                }
+                            ]}
+                        >
+                            {renderCurrentStep()}
+                        </Animated.View>
+                    </View>
                 </SafeAreaView>
             </View>
         </LinearGradient>
@@ -195,7 +172,6 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-between',
         paddingTop: 24,
         paddingHorizontal: 16,
         paddingBottom: 16,
