@@ -4,6 +4,7 @@ import {useCustomTheme} from "@app/theme/ThemeContext";
 import {CloseIcon} from "@assets/icons/CloseIcon";
 import {SubscriptionOfferingTemplateProps} from "./types";
 import {subscriptionOfferingSteps} from "./screens/const";
+import {LinearGradient} from "expo-linear-gradient";
 
 export default function SubscriptionOfferingTemplate({navigation, onComplete}: SubscriptionOfferingTemplateProps) {
     const {theme} = useCustomTheme();
@@ -98,28 +99,34 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
     };
 
     return (
-        <View style={styles.fullScreenContainer}>
-            <SafeAreaView style={{flex: 1}}>
-                <View style={[styles.header, theme.flexBlocks.justifyCenter]}>
-                    <Text style={theme.fonts.label}>
-                        Logo
-                    </Text>
+        <LinearGradient
+            colors={['#F8FFF8', '#FFFFFF']}
+            style={styles.fullScreenGradient}
+            start={{x: 0, y: 0}}
+            end={{x: 0, y: 1}}
+        >
+            <View style={styles.fullScreenContainer}>
+                <SafeAreaView style={{flex: 1}}>
+                    <View style={[styles.header, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter]}>
+                        <Text style={theme.fonts.label}>
+                            Logo
+                        </Text>
 
-                    <Pressable
-                        onPress={onClose}
-                        style={({ pressed }) => [
-                            styles.smallBtn,
-                            { ...theme.buttons.smallBtn },
-                            pressed && { opacity: 0.6 },
-                            isTransitioning && { opacity: 0.5 }
-                        ]}
-                        disabled={isTransitioning}
-                    >
-                        <CloseIcon/>
-                    </Pressable>
-                </View>
+                        <Pressable
+                            onPress={onClose}
+                            style={({ pressed }) => [
+                                styles.smallBtn,
+                                { ...theme.buttons.smallBtn },
+                                pressed && { opacity: 0.6 },
+                                isTransitioning && { opacity: 0.5 }
+                            ]}
+                            disabled={isTransitioning}
+                        >
+                            <CloseIcon/>
+                        </Pressable>
+                    </View>
 
-                <View style={styles.mainContainer}>
+                    <View style={styles.mainContainer}>
                 <Animated.View 
                     style={[
                         styles.stepContainer,
@@ -155,15 +162,24 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
                     {renderCurrentStep()}
                 </Animated.View>
             </View>
-            </SafeAreaView>
-        </View>
+                </SafeAreaView>
+            </View>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
+    fullScreenGradient: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '108%',
+        height: '108%',
+    },
     fullScreenContainer: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
         position: 'relative',
@@ -173,8 +189,8 @@ const styles = StyleSheet.create({
     },
     smallBtn: {
         position: 'absolute',
-        top: 16,
-        left: 16,
+        top: 8,
+        right: 16,
     },
     mainContainer: {
         flex: 1,

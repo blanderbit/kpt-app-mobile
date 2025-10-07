@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         zIndex: 9999,
-        backgroundColor: '#fff',
         paddingTop: 60, // Добавляем padding сверху для устройств с notch
         paddingHorizontal: 14, // Добавляем padding по бокам как в AppNavigator
     },

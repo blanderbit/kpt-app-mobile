@@ -16,21 +16,19 @@ function MainApp() {
     const { theme } = useCustomTheme();
 
     return (
-        <SubscriptionOfferingProvider>
-            <ImageBackground
-                source={ theme.backgroundImage }
-                style={ { flex: 1 } }
-                resizeMode="cover"
-                imageStyle={ { opacity: 1 } }>
-                <View style={ [ styles.container ] }>
-                    <NavigationContainer>
-                        <ScrollBlockerProvider>
-                            <AppNavigator/>
-                        </ScrollBlockerProvider>
-                    </NavigationContainer>
-                </View>
-            </ImageBackground>
-        </SubscriptionOfferingProvider>
+        <ImageBackground
+            source={ theme.backgroundImage }
+            style={ { flex: 1 } }
+            resizeMode="cover"
+            imageStyle={ { opacity: 1 } }>
+            <View style={ [ styles.container ] }>
+                <NavigationContainer>
+                    <ScrollBlockerProvider>
+                        <AppNavigator/>
+                    </ScrollBlockerProvider>
+                </NavigationContainer>
+            </View>
+        </ImageBackground>
     );
 }
 
@@ -54,7 +52,9 @@ export default function App() {
                 <AuthProvider>
                     <ThemeProvider>
                         <ToastProvider>
-                            <MainApp/>
+                            <SubscriptionOfferingProvider>
+                                <MainApp/>
+                            </SubscriptionOfferingProvider>
                         </ToastProvider>
                     </ThemeProvider>
                 </AuthProvider>
