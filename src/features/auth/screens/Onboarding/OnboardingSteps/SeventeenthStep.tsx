@@ -1,0 +1,113 @@
+import React from "react";
+import {Pressable, StyleSheet, Text, View} from "react-native";
+import {useCustomTheme} from "@app/theme/ThemeContext";
+import CustomButton from "@shared/components/Button/Button";
+import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
+import {COLORS} from "@app/theme";
+import {AppleIcon} from "@assets/icons/AppleLogo";
+import GoogleIcon from "@assets/icons/GoogleIcon";
+
+export default function SeventeenthStep({onNext}: { onNext: () => void }) {
+    const {theme} = useCustomTheme();
+
+    return (
+        <View style={styles.container}>
+            <View style={[styles.content, theme.flexBlocks.vertical32]}>
+                <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
+                    <View style={theme.flexBlocks.alignCenter}>
+                        <Text style={styles.haveAnAccText}>Already have an account?</Text>
+                        <Pressable>
+                            <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                        </Pressable>
+                    </View>
+                </View>
+
+                <View style={theme.flexBlocks.vertical8}>
+                    <View style={theme.flexBlocks.vertical8}>
+                        <Pressable
+                            style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                            onPress={() => {}}>
+                            <AppleIcon/>
+
+                            <Text style={styles.logInBtnText}>
+                                Continue with Apple
+                            </Text>
+                        </Pressable>
+
+                        <Pressable
+                            style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                            onPress={() => {}}>
+                            <GoogleIcon/>
+
+                            <Text style={styles.logInBtnText}>
+                                Continue with Google
+                            </Text>
+                        </Pressable>
+                    </View>
+
+                    <CustomButton
+                        title={'Skip'}
+                        onPress={onNext}
+                        themeName={'white_no_border'}
+                    />
+                </View>
+            </View>
+
+            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8]}>
+                <RemoteSvg xml={`
+                    <svg width="15" height="21" viewBox="0 0 15 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.6" d="M2.8418 20.5391C1.31836 20.5391 0.537109 19.7383 0.537109 18.0879V11.0273C0.537109 9.5625 1.16211 8.77148 2.38281 8.61523V6.33008C2.38281 2.77539 4.74609 0.861328 7.5 0.861328C10.2441 0.861328 12.6172 2.77539 12.6172 6.33008V8.61523C13.8281 8.77148 14.4531 9.57227 14.4531 11.0273V18.0879C14.4531 19.7383 13.6719 20.5391 12.1484 20.5391H2.8418ZM4.42383 6.18359V8.5957H10.5859V6.18359C10.5859 4.02539 9.17969 2.81445 7.5 2.81445C5.81055 2.81445 4.42383 4.02539 4.42383 6.18359Z" fill="black"/>
+                    </svg>
+                `}/>
+
+                <Text style={[theme.fonts.regular, styles.bottomText]}>
+                    Your information is 100% secure. We don't sell your personal information. By submitting your email
+                    address, you agree with our Terms and Privacy.
+                </Text>
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: 8
+    },
+    content: {
+        paddingVertical: 20,
+        flexDirection: 'column',
+        justifyContent: 'flex-start'
+    },
+    haveAnAccSection: {
+        height: 52,
+        margin: 'auto'
+    },
+    haveAnAccText: {
+        fontSize: 18,
+        lineHeight: 24,
+        fontFamily: 'SF Pro Display Semibold',
+        marginRight: 2
+    },
+    logIn: {
+        color: COLORS.warning,
+    },
+    logInBtn: {
+        padding: 16,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#ECF1F8'
+    },
+    logInBtnText: {
+        fontSize: 18,
+        lineHeight: 24,
+        fontFamily: 'SF Pro Display Semibold',
+        opacity: .54
+    },
+    bottomText: {
+        textAlign: 'center',
+        opacity: .6
+    }
+});

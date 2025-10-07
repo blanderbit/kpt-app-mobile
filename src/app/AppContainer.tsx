@@ -34,6 +34,7 @@ function MainApp() {
 export default function App() {
     const [ fontsLoaded ] = useFonts({
         "SF Pro Display": require("../../assets/fonts/SF-Pro-Display-Regular.otf"),
+        "SF Pro Display SemiBold": require("../../assets/fonts/SF-Pro-Display-Semibold.otf"),
         "SF Pro Display Bold": require("../../assets/fonts/SF-Pro-Display-Bold.otf"),
         "PP Editorial New": require("../../assets/fonts/PPEditorialNew-Regular.otf"),
         "Tilt Wrap": require("../../assets/fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf"),

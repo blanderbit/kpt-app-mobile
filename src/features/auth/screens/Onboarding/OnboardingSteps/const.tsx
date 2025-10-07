@@ -16,6 +16,7 @@ import ThirteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Th
 import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FourteenthStep";
 import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
 import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixteenthStep";
+import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventeenthStep";
 
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
@@ -109,5 +110,10 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
         id: 16,
         title: "Tap Allow to get a reminder",
         content: (<SixteenthStep onNext={() => {}} />)
+    },
+    {
+        id: 17,
+        title: "Create an account",
+        content: (<SeventeenthStep onNext={() => {}} />)
     },
 ]
