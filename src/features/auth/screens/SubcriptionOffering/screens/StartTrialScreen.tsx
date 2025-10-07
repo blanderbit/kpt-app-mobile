@@ -1,16 +1,46 @@
-import React, {useState} from "react";
-import {StyleSheet, Text, View, Image, SafeAreaView, Pressable} from "react-native";
+import React, {useState, useRef, useEffect} from "react";
+import {StyleSheet, Text, View} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
-import SatisfactionSlider from "@shared/components/Slider/Slider";
 import {useTranslation} from "react-i18next";
-import {CloseIcon} from "@assets/icons/CloseIcon";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {LinearGradient} from "expo-linear-gradient";
 
 export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
+    const [stepHeights, setStepHeights] = useState<number[]>([]);
+    const stepRefs = useRef<(View | null)[]>([]);
+
+    const measureStepHeight = (index: number) => {
+        if (stepRefs.current[index]) {
+            stepRefs.current[index]?.measure((x, y, width, height) => {
+                setStepHeights(prev => {
+                    const newHeights = [...prev];
+                    newHeights[index] = height;
+                    return newHeights;
+                });
+            });
+        }
+    };
+
+    const getMarginBottom = (index: number) => {
+        if (index >= stepHeights.length - 1) return 0;
+        
+        const currentHeight = stepHeights[index] || 0;
+
+        return Math.max(70 - currentHeight, 10);
+    };
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            subscriptionSteps.forEach((_, index) => {
+                measureStepHeight(index);
+            });
+        }, 100);
+        
+        return () => clearTimeout(timer);
+    }, []);
 
     const subscriptionSteps = [
         {
@@ -74,7 +104,13 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
                     <View style={[{ width: '90%'}]}>
                         {subscriptionSteps.map((step, index) => (
-                            <View key={index}>
+                            <View 
+                                key={index}
+                                ref={(ref) => {
+                                    stepRefs.current[index] = ref;
+                                }}
+                                style={{marginBottom: getMarginBottom(index),}}
+                                onLayout={() => measureStepHeight(index)}>
                                 <Text style={styles.periodTitle}>
                                     {step.title}
                                 </Text>
@@ -84,6 +120,32 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                 </Text>
                             </View>
                         ))}
+                    </View>
+                </View>
+
+                <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
+                    <View style={styles.subscriptionBlock}>
+                        <View style={[theme.flexBlocks.justifySpaceBetween]}>
+                            <View style={theme.flexBlocks.vertical4}>
+                                <Text>
+                                    Yearly
+                                </Text>
+                                <View style={theme.flexBlocks.horizontal4}>
+                                    <Text style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
+                                        119,88 USD
+                                    </Text>
+                                    <Text>
+                                        49.99 USD
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View></View>
+                        </View>
+
+                        <View>
+                            7-Day Free Trial
+                        </View>
                     </View>
                 </View>
             </View>
@@ -129,5 +191,33 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         fontFamily: 'SF Pro Display Semibold',
         letterSpacing: 0
+    },
+    subscriptionContainer: {
+        backgroundColor: '#DADADA4D',
+        borderRadius: 20,
+        padding: 12
+    },
+    subscriptionBlock: {
+        position: 'relative',
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: '#D6D8DD',
+    },
+    subscriptionLabel: {
+        position: 'absolute',
+        top: 0,
+        right: '10%',
+        backgroundColor: '#246B56',
+        color: 'white',
+        fontFamily: 'SF Pro Display',
+        fontSize: 10,
+        lineHeight: 12
+    },
+    subscriptionPrice: {
+
+    },
+    subscriptionPriceCrossed: {
+        
     }
 });
