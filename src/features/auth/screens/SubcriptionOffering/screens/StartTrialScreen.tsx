@@ -44,7 +44,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
+            <View style={[styles.content, theme.flexBlocks.vertical32]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
                         􀆅 One-time offer applied
@@ -60,7 +60,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 </View>
 
                 
-                <View style={[theme.flexBlocks.horizontal16]}>
+                <View style={[styles.periodContainer, theme.flexBlocks.horizontal16]}>
                     <LinearGradient colors={['#F2CFD64D', '#FFFFFF']}
                                     start={{x: 0, y: 0}}
                                     end={{x: 0, y: 1}}
@@ -72,7 +72,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                         ))}
                     </LinearGradient>
 
-                    <View style={theme.flexBlocks.vertical32}>
+                    <View style={[theme.flexBlocks.vertical32, { width: '100%'}]}>
                         {subscriptionSteps.map((step, index) => (
                             <View key={index} style={{flexDirection: 'column'}}>
                                 <Text style={styles.periodTitle}>
@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        paddingHorizontal: 16,
     },
     textCenter: {
         textAlign: 'center',
@@ -111,6 +110,9 @@ const styles = StyleSheet.create({
     },
     description: {
         opacity: .6
+    },
+    periodContainer: {
+        overflow: 'hidden'
     },
     iconBlockContainer: {
         borderRadius: 44,
