@@ -72,9 +72,9 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                         ))}
                     </LinearGradient>
 
-                    <View style={[theme.flexBlocks.vertical32, { width: '100%'}]}>
+                    <View style={[{ width: '90%'}]}>
                         {subscriptionSteps.map((step, index) => (
-                            <View key={index} style={{flexDirection: 'column'}}>
+                            <View key={index}>
                                 <Text style={styles.periodTitle}>
                                     {step.title}
                                 </Text>
