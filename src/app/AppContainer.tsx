@@ -10,24 +10,27 @@ import { NavigationContainer } from "@react-navigation/native";
 import { AppNavigator } from "@app/navigation/AppNavigator";
 import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
+import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 
 function MainApp() {
     const { theme } = useCustomTheme();
 
     return (
-        <ImageBackground
-            source={ theme.backgroundImage }
-            style={ { flex: 1 } }
-            resizeMode="cover"
-            imageStyle={ { opacity: 1 } }>
-            <View style={ [ styles.container ] }>
-                <NavigationContainer>
-                    <ScrollBlockerProvider>
-                        <AppNavigator/>
-                    </ScrollBlockerProvider>
-                </NavigationContainer>
-            </View>
-        </ImageBackground>
+        <SubscriptionOfferingProvider>
+            <ImageBackground
+                source={ theme.backgroundImage }
+                style={ { flex: 1 } }
+                resizeMode="cover"
+                imageStyle={ { opacity: 1 } }>
+                <View style={ [ styles.container ] }>
+                    <NavigationContainer>
+                        <ScrollBlockerProvider>
+                            <AppNavigator/>
+                        </ScrollBlockerProvider>
+                    </NavigationContainer>
+                </View>
+            </ImageBackground>
+        </SubscriptionOfferingProvider>
     );
 }
 

@@ -11,20 +11,48 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
 
     return (
-        <View></View>
+        <View style={styles.container}>
+            <View style={styles.content}>
+                <Text style={[styles.description, {...theme.fonts.regular}]}>
+                    Start your 7-day free trial and get unlimited access to all features.
+                </Text>
+                
+                <View style={styles.featureList}>
+                    <Text style={[styles.feature, {...theme.fonts.regular}]}>✓ Track your mood daily</Text>
+                    <Text style={[styles.feature, {...theme.fonts.regular}]}>✓ Access personalized insights</Text>
+                    <Text style={[styles.feature, {...theme.fonts.regular}]}>✓ Unlock premium activities</Text>
+                    <Text style={[styles.feature, {...theme.fonts.regular}]}>✓ Get expert recommendations</Text>
+                </View>
+            </View>
+            
+            <View style={theme.flexBlocks.vertical8}>
+                <CustomButton title="Start Free Trial" onPress={onNext} variant="primary" />
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    header: {
-        position: 'relative',
-    },
-    smallBtn: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
     },
     content: {
-        flex: 1
-    }
+        flex: 1,
+        justifyContent: 'center',
+        paddingHorizontal: 16,
+    },
+    description: {
+        textAlign: 'center',
+        marginBottom: 32,
+        fontSize: 16,
+        lineHeight: 24,
+    },
+    featureList: {
+        gap: 16,
+    },
+    feature: {
+        fontSize: 16,
+        lineHeight: 24,
+    },
 });

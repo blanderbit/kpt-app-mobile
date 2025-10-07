@@ -23,6 +23,7 @@ import FourteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Fo
 import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/FifteenthStep";
 import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixteenthStep";
 import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventeenthStep";
+import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -30,6 +31,7 @@ export default function OnboardingTemplate({
     const {theme} = useCustomTheme();
     const [currentStep, setCurrentStep] = useState(1);
     const {data: questions, isLoading: questionsLoading} = useOnboardingQuestions();
+    const { showSubscriptionOffering } = useSubscriptionOffering();
     
     // Анимационные значения для переходов между степами
     const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -269,6 +271,16 @@ export default function OnboardingTemplate({
     const onNext = async () => {
         if (currentStep < totalSteps) {
             const newStep = currentStep + 1;
+            
+            // Получаем номера степов
+            const stepNumbers = getStepNumbers();
+            
+            // Если следующий степ - SeventeenthStep (последний), показываем SubscriptionOfferingTemplate
+            if (newStep === stepNumbers.seventeenthStep) {
+                showSubscriptionOffering(handleSubscriptionOfferingComplete);
+                return;
+            }
+            
             animateStepTransition(newStep, 'forward', async () => {
                 await saveOnboardingProgress(newStep);
             });
@@ -300,6 +312,17 @@ export default function OnboardingTemplate({
             socialNetworks: networks
         }));
         await onNext();
+    };
+
+    // Обработчик завершения SubscriptionOfferingTemplate
+    const handleSubscriptionOfferingComplete = async () => {
+        // Переходим к последнему степу (SeventeenthStep)
+        const stepNumbers = getStepNumbers();
+        const newStep = stepNumbers.seventeenthStep;
+        
+        animateStepTransition(newStep, 'forward', async () => {
+            await saveOnboardingProgress(newStep);
+        });
     };
 
     // Вычисляем номера степов
