@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, View, TouchableOpacity, Pressable} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -28,7 +28,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
     const getMarginBottom = (index: number) => {
         if (index >= stepHeights.length - 1) return 0;
-        
+
         const currentHeight = stepHeights[index] || 0;
         return Math.max(70 - currentHeight, 20);
     };
@@ -39,7 +39,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 measureStepHeight(index);
             });
         }, 100);
-        
+
         return () => clearTimeout(timer);
     }, []);
 
@@ -118,20 +118,21 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
                 <View style={[styles.periodContainer]}>
                     {subscriptionSteps.map((step, index) => (
-                        <View 
+                        <View
                             key={index}
                             style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index)}]}
                             onLayout={() => measureStepHeight(index)}
                         >
-                            <View style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
-                                <RemoteSvg xml={step.icon} />
+                            <View
+                                style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
+                                <RemoteSvg xml={step.icon}/>
                             </View>
 
-                            <View 
+                            <View
                                 ref={(ref) => {
                                     stepRefs.current[index] = ref;
                                 }}
-                                style={{ width: '90%'}}
+                                style={{width: '90%'}}
                             >
                                 <Text style={styles.periodTitle}>
                                     {step.title}
@@ -154,9 +155,9 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
                     {subscriptionPlans.map((plan) => {
                         const isSelected = selectedSubscription === plan.id;
-                        
+
                         return (
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 key={plan.id}
                                 activeOpacity={0.7}
                                 onPress={() => setSelectedSubscription(plan.id)}
@@ -175,7 +176,8 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                             </Text>
                                             {plan.originalPrice && (
                                                 <View style={theme.flexBlocks.horizontal4}>
-                                                    <Text style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
+                                                    <Text
+                                                        style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
                                                         {plan.originalPrice}
                                                     </Text>
                                                     <Text style={styles.subscriptionPrice}>
@@ -205,7 +207,9 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                         );
                     })}
                 </View>
+            </View>
 
+            <View style={theme.flexBlocks.vertical16}>
                 <View style={styles.subscriptionDescription}>
                     <Text style={[theme.fonts.regular, styles.descriptionText]}>
                         {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionText}
@@ -215,23 +219,23 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                         {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionTextAfter}
                     </Text>
                 </View>
-            </View>
-            
-            <View style={theme.flexBlocks.vertical8}>
-                <CustomButton 
-                    title={selectedSubscription === 'yearly' ? 'Start my FREE trial now' : 'Subscribe'} 
-                    onPress={onNext} 
-                    variant="primary" 
-                />
 
-                <View>
-                    <Text style={styles.skipTitle}>
-                        Skip this one-time offer
-                    </Text>
+                <View style={theme.flexBlocks.vertical8}>
+                    <CustomButton
+                        title={selectedSubscription === 'yearly' ? 'Start my FREE trial now' : 'Subscribe'}
+                        onPress={onNext}
+                        variant="primary"
+                    />
 
-                    <Text style={styles.skipDescription}>
-                        Offer expires when you exit this screen!
-                    </Text>
+                    <Pressable>
+                        <Text style={styles.skipTitle}>
+                            Skip this one-time offer
+                        </Text>
+
+                        <Text style={styles.skipDescription}>
+                            Offer expires when you exit this screen!
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
         </View>
@@ -254,8 +258,7 @@ const styles = StyleSheet.create({
     description: {
         opacity: .6
     },
-    periodContainer: {
-    },
+    periodContainer: {},
     iconBlockContainer: {
         borderRadius: 44,
         position: 'absolute',
