@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     forgotPassword: {
         fontSize: 14,
         lineHeight: 20,
-        fontFamily: 'Inter Semibold',
+        fontFamily: 'InterSemibold',
         color: COLORS.warning,
         fontWeight: '600',
         paddingBottom: 40,

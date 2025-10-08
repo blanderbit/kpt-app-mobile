@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     haveAnAccText: {
         fontSize: 14,
         lineHeight: 20,
-        fontFamily: 'Inter Semibold',
+        fontFamily: 'InterSemibold',
         fontWeight: '600',
         marginRight: 2
     },

@@ -5,6 +5,7 @@ import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {LinearGradient} from "expo-linear-gradient";
+import {COLORS} from "@app/theme";
 
 export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -26,10 +27,12 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     };
 
     const getMarginBottom = (index: number) => {
+        console.log('getMarginBottom', index);
+        console.log(stepHeights.length);
         if (index >= stepHeights.length - 1) return 0;
         
         const currentHeight = stepHeights[index] || 0;
-
+        console.log(Math.max(70 - currentHeight, 20))
         return Math.max(70 - currentHeight, 20);
     };
 
@@ -81,7 +84,9 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
             price: '49.99 USD',
             pricePerMonth: '4.16 USD/mo.',
             hasFreeTrial: true,
-            freeTrialText: '7-Day Free Trial'
+            freeTrialText: '7-Day Free Trial',
+            descriptionText: 'Unlimited free access for ',
+            descriptionHighlight: '7 days (save 58%)'
         },
         {
             id: 'monthly',
@@ -90,13 +95,16 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
             price: '9.99 USD/mo.',
             pricePerMonth: null,
             hasFreeTrial: false,
-            freeTrialText: null
+            freeTrialText: null,
+            descriptionText: '',
+            descriptionHighlight: '9.99 USD/month',
+            descriptionTextAfter: '. Cancel anytime'
         }
     ]
 
     return (
         <View style={styles.container}>
-            <View style={[styles.content, theme.flexBlocks.vertical32]}>
+            <View style={[styles.content, theme.flexBlocks.vertical16]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
                         􀆅 One-time offer applied
@@ -113,13 +121,21 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
                 <View style={[styles.periodContainer]}>
                     {subscriptionSteps.map((step, index) => (
-                        <View style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index)}]}
-                              onLayout={() => measureStepHeight(index)}>
-                            <View key={index} style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
+                        <View 
+                            key={index}
+                            style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index)}]}
+                            onLayout={() => measureStepHeight(index)}
+                        >
+                            <View style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
                                 <RemoteSvg xml={step.icon} />
                             </View>
 
-                            <View key={`text-${index}`} style={{ width: '90%'}}>
+                            <View 
+                                ref={(ref) => {
+                                    stepRefs.current[index] = ref;
+                                }}
+                                style={{ width: '90%'}}
+                            >
                                 <Text style={styles.periodTitle}>
                                     {step.title}
                                 </Text>
@@ -192,10 +208,34 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                         );
                     })}
                 </View>
+
+                <View style={styles.subscriptionDescription}>
+                    <Text style={[theme.fonts.regular, styles.descriptionText]}>
+                        {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionText}
+                        <Text style={styles.descriptionHighlight}>
+                            {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionHighlight}
+                        </Text>
+                        {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionTextAfter}
+                    </Text>
+                </View>
             </View>
             
             <View style={theme.flexBlocks.vertical8}>
-                <CustomButton title="Start Free Trial" onPress={onNext} variant="primary" />
+                <CustomButton 
+                    title={selectedSubscription === 'yearly' ? 'Start my FREE trial now' : 'Subscribe'} 
+                    onPress={onNext} 
+                    variant="primary" 
+                />
+
+                <View>
+                    <Text style={styles.skipTitle}>
+                        Skip this one-time offer
+                    </Text>
+
+                    <Text style={styles.skipDescription}>
+                        Offer expires when you exit this screen!
+                    </Text>
+                </View>
             </View>
         </View>
     );
@@ -296,4 +336,32 @@ const styles = StyleSheet.create({
     subscriptionPriceCrossed: {
         textDecorationLine: 'line-through'
     },
+    subscriptionDescription: {
+        textAlign: 'center',
+        paddingVertical: 8
+    },
+    descriptionText: {
+        textAlign: 'center',
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 18,
+        lineHeight: 24
+    },
+    descriptionHighlight: {
+        color: COLORS.warning,
+    },
+    skipTitle: {
+        fontFamily: 'InterSemibold',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: -0.02,
+        textAlign: 'center'
+    },
+    skipDescription: {
+        fontFamily: 'InterSemibold',
+        fontSize: 12,
+        lineHeight: 16,
+        letterSpacing: -0.02,
+        color: '#DD583D',
+        textAlign: 'center'
+    }
 });

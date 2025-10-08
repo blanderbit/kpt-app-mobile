@@ -99,7 +99,7 @@ export const pinkTheme: Theme = {
             lineHeight: 28
         },
         subtitle: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 14,
             lineHeight: 20,
@@ -121,13 +121,13 @@ export const pinkTheme: Theme = {
             letterSpacing: -0.5
         },
         label: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 12,
             lineHeight: 16,
         },
         labelSecond: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 16,
             lineHeight: 24,
@@ -259,7 +259,7 @@ export const greenTheme: Theme = {
             lineHeight: 28
         },
         subtitle: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 14,
             lineHeight: 20,
@@ -281,13 +281,13 @@ export const greenTheme: Theme = {
             letterSpacing: -0.5
         },
         label: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 12,
             lineHeight: 16,
         },
         labelSecond: {
-            fontFamily: 'Inter Semibold',
+            fontFamily: 'InterSemibold',
             fontWeight: '600',
             fontSize: 16,
             lineHeight: 24,
