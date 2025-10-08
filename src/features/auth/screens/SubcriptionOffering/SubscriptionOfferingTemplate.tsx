@@ -100,8 +100,8 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
 
     return (
         <LinearGradient
-            colors={['#BCD6BD', '#FFFFFF', '#F2CFD6']}
-            locations={[0.0533, 0.5, 0.8175]}
+            colors={['#d2e2d3', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#edd4d8']}
+            locations={[0.02, 0.2, 0.45, 0.6, 0.85, 0.95]}
             style={styles.fullScreenGradient}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
