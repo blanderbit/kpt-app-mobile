@@ -29,7 +29,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         
         const currentHeight = stepHeights[index] || 0;
 
-        return Math.max(70 - currentHeight, 10);
+        return Math.max(70 - currentHeight, 20);
     };
 
     useEffect(() => {
@@ -89,28 +89,15 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                     </Text>
                 </View>
 
-                
-                <View style={[styles.periodContainer, theme.flexBlocks.horizontal16]}>
-                    <LinearGradient colors={['#F2CFD64D', '#FFFFFF']}
-                                    start={{x: 0, y: 0}}
-                                    end={{x: 0, y: 1}}
-                                    style={[styles.iconBlockContainer, theme.flexBlocks.vertical32]}>
-                        {subscriptionSteps.map((step, index) => (
+                <View style={[styles.periodContainer]}>
+                    {subscriptionSteps.map((step, index) => (
+                        <View style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index)}]}
+                              onLayout={() => measureStepHeight(index)}>
                             <View key={index} style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
                                 <RemoteSvg xml={step.icon} />
                             </View>
-                        ))}
-                    </LinearGradient>
 
-                    <View style={[{ width: '90%'}]}>
-                        {subscriptionSteps.map((step, index) => (
-                            <View 
-                                key={index}
-                                ref={(ref) => {
-                                    stepRefs.current[index] = ref;
-                                }}
-                                style={{marginBottom: getMarginBottom(index),}}
-                                onLayout={() => measureStepHeight(index)}>
+                            <View key={`text-${index}`} style={{ width: '90%'}}>
                                 <Text style={styles.periodTitle}>
                                     {step.title}
                                 </Text>
@@ -119,32 +106,85 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                     {step.description}
                                 </Text>
                             </View>
-                        ))}
-                    </View>
+                        </View>
+                    ))}
+
+                    <LinearGradient colors={['#F2CFD64D', '#FFFFFF']}
+                                    start={{x: 0, y: 0}}
+                                    end={{x: 0, y: 1}}
+                                    style={[styles.iconBlockContainer]}>
+                    </LinearGradient>
+
+                    {/*<LinearGradient colors={['#F2CFD64D', '#FFFFFF']}*/}
+                    {/*                start={{x: 0, y: 0}}*/}
+                    {/*                end={{x: 0, y: 1}}*/}
+                    {/*                style={[styles.iconBlockContainer, theme.flexBlocks.vertical32]}>*/}
+                    {/*    {subscriptionSteps.map((step, index) => (*/}
+                    {/*        <View key={index} style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>*/}
+                    {/*            <RemoteSvg xml={step.icon} />*/}
+                    {/*        </View>*/}
+                    {/*    ))}*/}
+                    {/*</LinearGradient>*/}
+
+                    {/*<View style={[{ width: '90%'}]}>*/}
+                    {/*    {subscriptionSteps.map((step, index) => (*/}
+                    {/*        <View */}
+                    {/*            key={index}*/}
+                    {/*            ref={(ref) => {*/}
+                    {/*                stepRefs.current[index] = ref;*/}
+                    {/*            }}*/}
+                    {/*            style={{marginBottom: getMarginBottom(index),}}*/}
+                    {/*            onLayout={() => measureStepHeight(index)}>*/}
+                    {/*            <Text style={styles.periodTitle}>*/}
+                    {/*                {step.title}*/}
+                    {/*            </Text>*/}
+
+                    {/*            <Text style={theme.fonts.regular}>*/}
+                    {/*                {step.description}*/}
+                    {/*            </Text>*/}
+                    {/*        </View>*/}
+                    {/*    ))}*/}
+                    {/*</View>*/}
                 </View>
 
                 <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
                     <View style={styles.subscriptionBlock}>
-                        <View style={[theme.flexBlocks.justifySpaceBetween]}>
-                            <View style={theme.flexBlocks.vertical4}>
-                                <Text>
+                        <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
+                            <View>
+                                <Text style={styles.subscriptionTitle}>
                                     Yearly
                                 </Text>
                                 <View style={theme.flexBlocks.horizontal4}>
                                     <Text style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
                                         119,88 USD
                                     </Text>
-                                    <Text>
+                                    <Text style={styles.subscriptionPrice}>
                                         49.99 USD
                                     </Text>
                                 </View>
                             </View>
 
-                            <View></View>
+                            <Text style={styles.subscriptionPrice}>
+                                4.16 USD/mo.
+                            </Text>
                         </View>
 
-                        <View>
+                        <View style={styles.subscriptionLabel}>
                             7-Day Free Trial
+                        </View>
+                    </View>
+
+                    <View style={styles.subscriptionBlock}>
+                        <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
+                            <View>
+                                <Text style={styles.subscriptionTitle}>
+                                    Monthly
+                                </Text>
+                            </View>
+
+                            <Text style={styles.subscriptionPrice}>
+                                9.99 USD/mo.
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -174,11 +214,15 @@ const styles = StyleSheet.create({
         opacity: .6
     },
     periodContainer: {
-        overflow: 'hidden'
     },
     iconBlockContainer: {
         borderRadius: 44,
-        paddingBottom: 40
+        position: 'absolute',
+        width: 40,
+        height: '110%',
+        top: 0,
+        left: 0,
+        zIndex: -1
     },
     iconBlock: {
         width: 40,
@@ -204,6 +248,13 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#D6D8DD',
     },
+    subscriptionTitle: {
+        fontSize: 14,
+        lineHeight: 20,
+        fontFamily: 'SF Pro Display Semibold',
+        letterSpacing: 0,
+        opacity: .6
+    },
     subscriptionLabel: {
         position: 'absolute',
         top: 0,
@@ -212,12 +263,17 @@ const styles = StyleSheet.create({
         color: 'white',
         fontFamily: 'SF Pro Display',
         fontSize: 10,
-        lineHeight: 12
+        lineHeight: 12,
+        zIndex: 2
     },
     subscriptionPrice: {
-
+        fontFamily: 'SF Pro Display',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0,
+        opacity: .6
     },
     subscriptionPriceCrossed: {
-        
-    }
+        textDecorationLine: 'line-through'
+    },
 });
