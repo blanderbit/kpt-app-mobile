@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View, TouchableOpacity} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -10,6 +10,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [stepHeights, setStepHeights] = useState<number[]>([]);
+    const [selectedSubscription, setSelectedSubscription] = useState<string>('yearly');
     const stepRefs = useRef<(View | null)[]>([]);
 
     const measureStepHeight = (index: number) => {
@@ -72,6 +73,27 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         }
     ]
 
+    const subscriptionPlans = [
+        {
+            id: 'yearly',
+            title: 'Yearly',
+            originalPrice: '119,88 USD',
+            price: '49.99 USD',
+            pricePerMonth: '4.16 USD/mo.',
+            hasFreeTrial: true,
+            freeTrialText: '7-Day Free Trial'
+        },
+        {
+            id: 'monthly',
+            title: 'Monthly',
+            originalPrice: null,
+            price: '9.99 USD/mo.',
+            pricePerMonth: null,
+            hasFreeTrial: false,
+            freeTrialText: null
+        }
+    ]
+
     return (
         <View style={styles.container}>
             <View style={[styles.content, theme.flexBlocks.vertical32]}>
@@ -114,79 +136,61 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                     end={{x: 0, y: 1}}
                                     style={[styles.iconBlockContainer]}>
                     </LinearGradient>
-
-                    {/*<LinearGradient colors={['#F2CFD64D', '#FFFFFF']}*/}
-                    {/*                start={{x: 0, y: 0}}*/}
-                    {/*                end={{x: 0, y: 1}}*/}
-                    {/*                style={[styles.iconBlockContainer, theme.flexBlocks.vertical32]}>*/}
-                    {/*    {subscriptionSteps.map((step, index) => (*/}
-                    {/*        <View key={index} style={[styles.iconBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>*/}
-                    {/*            <RemoteSvg xml={step.icon} />*/}
-                    {/*        </View>*/}
-                    {/*    ))}*/}
-                    {/*</LinearGradient>*/}
-
-                    {/*<View style={[{ width: '90%'}]}>*/}
-                    {/*    {subscriptionSteps.map((step, index) => (*/}
-                    {/*        <View */}
-                    {/*            key={index}*/}
-                    {/*            ref={(ref) => {*/}
-                    {/*                stepRefs.current[index] = ref;*/}
-                    {/*            }}*/}
-                    {/*            style={{marginBottom: getMarginBottom(index),}}*/}
-                    {/*            onLayout={() => measureStepHeight(index)}>*/}
-                    {/*            <Text style={styles.periodTitle}>*/}
-                    {/*                {step.title}*/}
-                    {/*            </Text>*/}
-
-                    {/*            <Text style={theme.fonts.regular}>*/}
-                    {/*                {step.description}*/}
-                    {/*            </Text>*/}
-                    {/*        </View>*/}
-                    {/*    ))}*/}
-                    {/*</View>*/}
                 </View>
 
                 <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
-                    <View style={styles.subscriptionBlock}>
-                        <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
-                            <View>
-                                <Text style={styles.subscriptionTitle}>
-                                    Yearly
-                                </Text>
-                                <View style={theme.flexBlocks.horizontal4}>
-                                    <Text style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
-                                        119,88 USD
-                                    </Text>
-                                    <Text style={styles.subscriptionPrice}>
-                                        49.99 USD
-                                    </Text>
+                    {subscriptionPlans.map((plan) => {
+                        const isSelected = selectedSubscription === plan.id;
+                        
+                        return (
+                            <TouchableOpacity 
+                                key={plan.id}
+                                activeOpacity={0.7}
+                                onPress={() => setSelectedSubscription(plan.id)}
+                            >
+                                <View style={[
+                                    styles.subscriptionBlock,
+                                    isSelected && styles.subscriptionBlockSelected
+                                ]}>
+                                    <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
+                                        <View>
+                                            <Text style={[
+                                                styles.subscriptionTitle,
+                                                isSelected && styles.subscriptionTitleSelected
+                                            ]}>
+                                                {plan.title}
+                                            </Text>
+                                            {plan.originalPrice && (
+                                                <View style={theme.flexBlocks.horizontal4}>
+                                                    <Text style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
+                                                        {plan.originalPrice}
+                                                    </Text>
+                                                    <Text style={styles.subscriptionPrice}>
+                                                        {plan.price}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        </View>
+
+                                        <Text style={[
+                                            styles.subscriptionPrice,
+                                            isSelected && styles.subscriptionPriceSelected
+                                        ]}>
+                                            {plan.pricePerMonth || plan.price}
+                                        </Text>
+                                    </View>
+
+                                    {plan.hasFreeTrial && (
+                                        <View style={styles.subscriptionLabel}>
+                                            <Text style={styles.subscriptionLabelText}>
+                                                {plan.freeTrialText}
+                                            </Text>
+                                        </View>
+                                    )}
                                 </View>
-                            </View>
-
-                            <Text style={styles.subscriptionPrice}>
-                                4.16 USD/mo.
-                            </Text>
-                        </View>
-
-                        <View style={styles.subscriptionLabel}>
-                            7-Day Free Trial
-                        </View>
-                    </View>
-
-                    <View style={styles.subscriptionBlock}>
-                        <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
-                            <View>
-                                <Text style={styles.subscriptionTitle}>
-                                    Monthly
-                                </Text>
-                            </View>
-
-                            <Text style={styles.subscriptionPrice}>
-                                9.99 USD/mo.
-                            </Text>
-                        </View>
-                    </View>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </View>
             </View>
             
@@ -248,6 +252,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#D6D8DD',
     },
+    subscriptionBlockSelected: {
+        borderColor: '#246B56'
+    },
     subscriptionTitle: {
         fontSize: 14,
         lineHeight: 20,
@@ -255,16 +262,24 @@ const styles = StyleSheet.create({
         letterSpacing: 0,
         opacity: .6
     },
+    subscriptionTitleSelected: {
+        opacity: 1
+    },
     subscriptionLabel: {
         position: 'absolute',
-        top: 0,
-        right: '10%',
+        top: -10,
+        right: '5%',
         backgroundColor: '#246B56',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 6,
+        zIndex: 2
+    },
+    subscriptionLabelText: {
         color: 'white',
         fontFamily: 'SF Pro Display',
         fontSize: 10,
         lineHeight: 12,
-        zIndex: 2
     },
     subscriptionPrice: {
         fontFamily: 'SF Pro Display',
@@ -272,6 +287,11 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         letterSpacing: 0,
         opacity: .6
+    },
+    subscriptionPriceSelected: {
+        color: '#246B56',
+        fontFamily: 'SF Pro Display Semibold',
+        opacity: 1
     },
     subscriptionPriceCrossed: {
         textDecorationLine: 'line-through'
