@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
         borderRadius: 44,
         position: 'absolute',
         width: 40,
-        height: '110%',
+        height: '105%',
         top: 0,
         left: 0,
         zIndex: -1
