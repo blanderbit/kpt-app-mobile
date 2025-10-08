@@ -27,12 +27,9 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     };
 
     const getMarginBottom = (index: number) => {
-        console.log('getMarginBottom', index);
-        console.log(stepHeights.length);
         if (index >= stepHeights.length - 1) return 0;
         
         const currentHeight = stepHeights[index] || 0;
-        console.log(Math.max(70 - currentHeight, 20))
         return Math.max(70 - currentHeight, 20);
     };
 
@@ -103,7 +100,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     ]
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, theme.flexBlocks.vertical16]}>
             <View style={[styles.content, theme.flexBlocks.vertical16]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
@@ -338,7 +335,6 @@ const styles = StyleSheet.create({
     },
     subscriptionDescription: {
         textAlign: 'center',
-        paddingVertical: 8
     },
     descriptionText: {
         textAlign: 'center',

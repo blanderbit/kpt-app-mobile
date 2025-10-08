@@ -100,7 +100,7 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
 
     return (
         <LinearGradient
-            colors={['#F8FFF8', '#FFFFFF']}
+            colors={['#BCD6BD', '#F2CFD6']}
             style={styles.fullScreenGradient}
             start={{x: 0, y: 0}}
             end={{x: 0, y: 1}}
@@ -160,9 +160,8 @@ const styles = StyleSheet.create({
     },
     header: {
         position: 'relative',
-        paddingTop: 16,
-        paddingHorizontal: 16,
-        paddingBottom: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 16
     },
     smallBtn: {
         position: 'absolute',
