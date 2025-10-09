@@ -10,7 +10,7 @@ import {
     discountForeverIcon,
     radialGradientIcon
 } from "@features/auth/screens/SubcriptionOffering/screens/const";
-import ToggleSwitch from "@shared/components/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "@shared/components/ToggleSwitch";
 
 const STAR_ICON_SVG = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,10 +21,11 @@ const STAR_ICON_SVG = `
 export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
+    const [freeTrialEnabled, setFreeTrialEnabled] = React.useState(true);
 
     return (
-        <View style={[styles.container, theme.flexBlocks.vertical16]}>
-            <View style={[styles.content, theme.flexBlocks.vertical16]}>
+        <View style={[styles.container, theme.flexBlocks.vertical64]}>
+            <View style={[styles.content, theme.flexBlocks.vertical8]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, theme.fonts.title]}>
                         Your one time offer
@@ -35,33 +36,74 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                     </Text>
                 </View>
 
-                <View style={[theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter, { flex: 1}]}>
-                    <RemoteSvg xml={discountForeverIcon} />
+                <View style={[theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter, {flex: 1}]}>
+                    <RemoteSvg xml={discountForeverIcon}/>
 
                     <View style={styles.radialBackground}>
-                        <RemoteSvg xml={radialGradientIcon} />
+                        <RemoteSvg xml={radialGradientIcon}/>
                     </View>
                 </View>
 
-                <View>
-                    <Text>
-                        7.08 2.91 USD/month
-                    </Text>
+                <View style={theme.flexBlocks.vertical4}>
+                    <View style={[theme.flexBlocks.horizontal4, theme.flexBlocks.justifyCenter]}>
+                        <Text style={[styles.mainPrice, styles.mainPriceOld]}>
+                            7.08
+                        </Text>
+                        <Text style={styles.mainPrice}>
+                            2.91 USD/month
+                        </Text>
+                    </View>
 
-                    <Text>
+                    <Text style={styles.mainPriceDesc}>
                         Once you close your one-time offer, it's gone!
                     </Text>
                 </View>
 
-                <View>
-                    <Text>
-                        <RemoteSvg xml={STAR_ICON_SVG} />
-                    </Text>
-                    <Text>
-                        Free Trial Enabled
-                    </Text>
+                <View style={theme.flexBlocks.vertical8}>
+                    <View style={[styles.freeTrialSection, theme.flexBlocks.justifySpaceBetween]}>
+                        <View style={[styles.freeTrialSectionEnabled, theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter]}>
+                            <RemoteSvg xml={STAR_ICON_SVG}/>
 
-                    <ToggleSwitch />
+                            <Text style={styles.freeTrialSectionText}>
+                                Free Trial {freeTrialEnabled ? 'Enabled' : 'Disabled'}
+                            </Text>
+                        </View>
+
+                        <ToggleSwitch
+                            options={[
+                                {label: 'Off', value: 'off'},
+                                {label: 'On', value: 'on'}
+                            ]}
+                            value={freeTrialEnabled ? 'on' : 'off'}
+                            onChange={(value) => setFreeTrialEnabled(value === 'on')}
+                        />
+                    </View>
+
+                    <View style={[styles.sevenDayFreeTrialSection, theme.flexBlocks.vertical8]}>
+                        <View>
+                            <Text style={styles.sevenDayFreeTrialSectionText}>
+                                7-DAY FREE TRIAL
+                            </Text>
+                        </View>
+
+                        <View style={[styles.subscriptionBlock, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
+                            <View>
+                                <Text style={styles.subscriptionBlockTitle}>
+                                    Yearly
+                                </Text>
+
+                                <Text style={styles.subscriptionBlockDescription}>
+                                    12mo - 34.99 USD
+                                </Text>
+                            </View>
+
+                            <View>
+                                <Text style={styles.subscriptionBlockPrice}>
+                                    2.91 USD/mo
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
                 </View>
             </View>
 
@@ -79,7 +121,6 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                     <CustomButton
                         title="Start Your FREE Week"
                         onPress={onNext}
-                        variant="primary"
                     />
                 </View>
             </View>
@@ -119,4 +160,73 @@ const styles = StyleSheet.create({
         color: '#1E9F79',
         marginRight: 2
     },
+    mainPrice: {
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 32,
+        lineHeight: 44,
+        letterSpacing: 0,
+    },
+    mainPriceOld: {
+        textDecorationLine: 'line-through',
+    },
+    mainPriceDesc: {
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0,
+        textAlign: 'center',
+        opacity: .6
+    },
+    freeTrialSection: {
+        borderRadius: 16,
+        backgroundColor: '#F5F5F5',
+        padding: 12,
+        paddingHorizontal: 8
+    },
+    freeTrialSectionEnabled: {
+        paddingHorizontal: 8,
+    },
+    freeTrialSectionText: {
+        fontFamily: 'InterSemibold',
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: 0.02
+    },
+    sevenDayFreeTrialSection: {
+        backgroundColor: '#F2CFD6',
+        borderRadius: 20,
+        padding: 4
+    },
+    sevenDayFreeTrialSectionText: {
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0,
+        textAlign: 'center',
+    },
+    subscriptionBlock: {
+        borderRadius: 16,
+        padding: 12,
+        backgroundColor: '#FFF'
+    },
+    subscriptionBlockTitle: {
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0
+    },
+    subscriptionBlockDescription: {
+        fontFamily: 'SF Pro Display',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0,
+        opacity: .6
+    },
+    subscriptionBlockPrice: {
+        fontFamily: 'SF Pro Display Semibold',
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0,
+        color: '#246B56'
+    }
 });

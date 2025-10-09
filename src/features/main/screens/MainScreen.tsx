@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        paddingBottom: 80,
+        paddingBottom: 100,
         backgroundColor: 'transparent',
     },
     bottomWrapper: {

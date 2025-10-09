@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import LayersIcon from "@assets/icons/LayersIcon";
 import { MoodIcon } from "@assets/icons/MoodIcon";
 import SettingsIcon from "@assets/icons/SettingsIcon";
-import ToggleSwitch from "@shared/components/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "@shared/components/ToggleSwitch";
 import Progress from "@features/profile/components/Progress/Progress";
 import { LinearGradient } from "expo-linear-gradient";
 import {settingsElements, SettingsItem, weekDays} from "@features/main/screens/profile/const";
@@ -20,7 +20,7 @@ import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner
 
 export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
     const { t } = useTranslation();
-    const { theme } = useCustomTheme();
+    const { theme, themeName, setThemeByName } = useCustomTheme();
     const { logout } = useAuth();
     const { profile, isLoading, error, refreshProfile } = useProfile();
     const deleteAccount = useDeleteAccount();
@@ -313,7 +313,16 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                                         key={ index }
                                         icon={ element.icon }
                                         label={ element.label }
-                                        rightElement={ index > 0 ? <ChevronRightIcon/> : <ToggleSwitch/> }
+                                        rightElement={ index > 0 ? <ChevronRightIcon/> : (
+                                            <ToggleSwitch
+                                                options={[
+                                                    { label: 'Green', value: 'Green' },
+                                                    { label: 'Pink', value: 'Pink' }
+                                                ]}
+                                                value={themeName}
+                                                onChange={(value) => setThemeByName(value as any)}
+                                            />
+                                        ) }
                                         extraStyles={ [ styles.settingsElementsSingle ] }
                                         onPress={ () => element.path ? navigation.navigate(element.path) : null }
                                     />

@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         paddingTop: 24,
         paddingHorizontal: 16,
-        paddingBottom: 16,
     },
     stepContainer: {
         flex: 1,

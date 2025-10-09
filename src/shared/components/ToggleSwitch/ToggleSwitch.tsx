@@ -1,43 +1,60 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { ThemeName, useCustomTheme } from "@app/theme/ThemeContext";
+import { View, Text, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { useCustomTheme } from "@app/theme/ThemeContext";
 
-const ToggleSwitch = () => {
-    const { theme, themeName, setThemeByName } = useCustomTheme();
+export interface ToggleSwitchOption {
+    label: string;
+    value: string;
+}
 
-    const handleSelect = (option: ThemeName) => {
-        setThemeByName(option);
-    };
+export interface ToggleSwitchProps {
+    options: ToggleSwitchOption[];
+    value: string;
+    onChange: (value: string) => void;
+    containerStyle?: ViewStyle;
+    optionStyle?: ViewStyle;
+    activeOptionStyle?: ViewStyle;
+    textStyle?: TextStyle;
+    activeTextStyle?: TextStyle;
+}
+
+const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
+    options,
+    value,
+    onChange,
+    containerStyle,
+    optionStyle,
+    activeOptionStyle,
+    textStyle,
+    activeTextStyle,
+}) => {
+    const { theme } = useCustomTheme();
 
     return (
-        <View style={[styles.container, theme.flexBlocks.horizontal4]}>
-            <TouchableOpacity
-                style={[
-                    theme.flexBlocks.justifyCenter,
-                    theme.flexBlocks.alignCenter,
-                    styles.option,
-                    themeName === "Green" && styles.activeOption,
-                ]}
-                onPress={() => handleSelect("Green")}
-            >
-                <Text style={[styles.text, themeName === "Green" && styles.activeText]}>
-                    Green
-                </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={[
-                    theme.flexBlocks.justifyCenter,
-                    theme.flexBlocks.alignCenter,
-                    styles.option,
-                    themeName === "Pink" && styles.activeOption,
-                ]}
-                onPress={() => handleSelect("Pink")}
-            >
-                <Text style={[styles.text, themeName === "Pink" && styles.activeText]}>
-                    Pink
-                </Text>
-            </TouchableOpacity>
+        <View style={[styles.container, theme.flexBlocks.horizontal4, containerStyle]}>
+            {options.map((option) => (
+                <TouchableOpacity
+                    key={option.value}
+                    style={[
+                        theme.flexBlocks.justifyCenter,
+                        theme.flexBlocks.alignCenter,
+                        styles.option,
+                        optionStyle,
+                        value === option.value && [styles.activeOption, activeOptionStyle],
+                    ]}
+                    onPress={() => onChange(option.value)}
+                >
+                    <Text
+                        style={[
+                            styles.text,
+                            textStyle,
+                            value === option.value && [styles.activeText, activeTextStyle],
+                        ]}
+                    >
+                        {option.label}
+                    </Text>
+                </TouchableOpacity>
+            ))}
         </View>
     );
 };
@@ -47,6 +64,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#E1E1E2",
         padding: 2,
         borderRadius: 24,
+        alignSelf: 'flex-start',
     },
     option: {
         paddingVertical: 4,
