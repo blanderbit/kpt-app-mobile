@@ -10,6 +10,13 @@ import {
     discountForeverIcon,
     radialGradientIcon
 } from "@features/auth/screens/SubcriptionOffering/screens/const";
+import ToggleSwitch from "@shared/components/ToggleSwitch/ToggleSwitch";
+
+const STAR_ICON_SVG = `
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M4.08203 19.0801C1.97266 19.0801 0.878906 17.9961 0.878906 15.9062V4.02148C0.878906 1.93164 1.97266 0.847656 4.08203 0.847656H15.9082C18.0176 0.847656 19.1113 1.93164 19.1113 4.02148V15.9062C19.1113 17.9863 18.0176 19.0801 15.9082 19.0801H4.08203ZM7.1875 15.1152L10.0195 13.0449L12.8516 15.1152C13.457 15.5742 14.1016 15.1152 13.8574 14.3926L12.7441 11.0527L15.5957 9.01172C16.1426 8.62109 15.9961 7.80078 15.2051 7.81055L11.6992 7.83984L10.6348 4.49023C10.4102 3.78711 9.62891 3.78711 9.4043 4.49023L8.33984 7.83984L4.83398 7.81055C4.05273 7.80078 3.88672 8.61133 4.44336 9.01172L7.29492 11.0625L6.18164 14.3926C5.9375 15.1055 6.58203 15.5742 7.1875 15.1152Z" fill="#BBBBBB"/>
+</svg>
+`
 
 export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -44,6 +51,17 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                     <Text>
                         Once you close your one-time offer, it's gone!
                     </Text>
+                </View>
+
+                <View>
+                    <Text>
+                        <RemoteSvg xml={STAR_ICON_SVG} />
+                    </Text>
+                    <Text>
+                        Free Trial Enabled
+                    </Text>
+
+                    <ToggleSwitch />
                 </View>
             </View>
 
