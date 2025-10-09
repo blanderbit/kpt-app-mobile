@@ -62,12 +62,11 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     };
 
     const handleForgotPassword = () => {
-        // navigation.navigate(Routes.RESET_PASS);
-        navigation.navigate(Routes.ONBOARDING);
+        navigation.navigate(Routes.RESET_PASS);
     };
 
     const handleNavigateToSignUp = () => {
-        navigation.navigate(Routes.SIGN_UP);
+        navigation.navigate(Routes.ONBOARDING);
     };
 
     const handleGoogleSignIn = async () => {

@@ -6,9 +6,21 @@ import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {COLORS} from "@app/theme";
 import {AppleIcon} from "@assets/icons/AppleLogo";
 import GoogleIcon from "@assets/icons/GoogleIcon";
+import { Routes } from "@app/navigation/const";
+import { useNavigation } from "@react-navigation/native";
+import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 
 export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
+    const navigation = useNavigation<LoginScreenNavigationProp>();
+
+    const handleSignUp = () => {
+        navigation.navigate(Routes.SIGN_UP);
+    };
+
+    const handleLogin = () => {
+        navigation.navigate(Routes.LOGIN);
+    };
 
     return (
         <View style={styles.container}>
@@ -16,13 +28,19 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                 <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
                     <View style={theme.flexBlocks.alignCenter}>
                         <Text style={styles.haveAnAccText}>Already have an account?</Text>
-                        <Pressable>
+                        <Pressable onPress={handleLogin}>
                             <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
                         </Pressable>
                     </View>
                 </View>
 
-                <View style={theme.flexBlocks.vertical8}>
+                <View style={theme.flexBlocks.vertical16}>
+                    <CustomButton
+                        title={'Create account'}
+                        onPress={handleSignUp}
+                    />
+                    
+                    <View style={theme.flexBlocks.vertical8}>
                     <View style={theme.flexBlocks.vertical8}>
                         <Pressable
                             style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
@@ -45,11 +63,12 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                         </Pressable>
                     </View>
 
-                    <CustomButton
-                        title={'Skip'}
-                        onPress={onNext}
-                        themeName={'white_no_border'}
-                    />
+                        <CustomButton
+                            title={'Skip'}
+                            onPress={onNext}
+                            themeName={'white_no_border'}
+                        />
+                    </View>
                 </View>
             </View>
 

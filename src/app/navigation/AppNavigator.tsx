@@ -105,9 +105,9 @@ export function AppNavigator() {
                 ) : (
                     <>
                         <Stack.Screen name={ Routes.LOGIN } component={ LoginScreen }/>
+                        <Stack.Screen name={ Routes.ONBOARDING } component={ OnboardingTemplate }/>
                         <Stack.Screen name={ Routes.SIGN_UP } component={ SignUpScreen }/>
                         <Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>
-                        <Stack.Screen name={ Routes.ONBOARDING } component={ OnboardingTemplate }/>
                         <Stack.Screen name={ Routes.CHECK_EMAIL } component={ CheckEmailScreen }/>
                     </>
                 ) }
