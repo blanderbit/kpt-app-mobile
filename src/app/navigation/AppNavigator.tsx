@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '@app/hooks/auth.hook';
 
 import LoginScreen from '@features/auth/screens/LoginScreen';
+import SignUpScreen from '@features/auth/screens/SignUpScreen';
 import ResetPassScreen from "@features/auth/screens/ResetPassScreen";
 import CheckEmailScreen from "@features/auth/screens/CheckEmailScreen";
 
@@ -22,6 +23,7 @@ import OnboardingTemplate from "@features/auth/screens/Onboarding/OnboardingTemp
 
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
+    [Routes.SIGN_UP]: undefined;
     [Routes.RESET_PASS]: undefined;
     [Routes.CHECK_EMAIL]: { email: string };
     [Routes.HOME]: undefined;
@@ -33,6 +35,7 @@ type RootStackParamList = {
 };
 
 export type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.LOGIN>;
+export type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SIGN_UP>;
 export type ResetPassScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.RESET_PASS>;
 export type CheckEmailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.CHECK_EMAIL>;
 export type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.HOME>;
@@ -102,6 +105,7 @@ export function AppNavigator() {
                 ) : (
                     <>
                         <Stack.Screen name={ Routes.LOGIN } component={ LoginScreen }/>
+                        <Stack.Screen name={ Routes.SIGN_UP } component={ SignUpScreen }/>
                         <Stack.Screen name={ Routes.RESET_PASS } component={ ResetPassScreen }/>
                         <Stack.Screen name={ Routes.ONBOARDING } component={ OnboardingTemplate }/>
                         <Stack.Screen name={ Routes.CHECK_EMAIL } component={ CheckEmailScreen }/>

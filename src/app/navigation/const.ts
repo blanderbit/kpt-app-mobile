@@ -1,5 +1,6 @@
 export enum Routes {
     LOGIN = 'Login',
+    SIGN_UP = 'SignUp',
     RESET_PASS = 'ResetPass',
     CHECK_EMAIL = 'CheckEmail',
     HOME = 'Home',

@@ -12,26 +12,36 @@ import CustomButton from "@shared/components/Button/Button";
 import { AppleIcon } from "@assets/icons/AppleLogo";
 import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
-import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { SignUpScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
 
-const schema =  (t: any) => yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
+const schema = (t: any) => yup.object().shape({
+    name: yup.string()
+        .required(t('auth.signUp.nameRequired'))
+        .min(2, t('auth.signUp.nameMinLength')),
+    email: yup.string()
+        .email(t('auth.signUp.invalidEmail'))
+        .required(t('auth.signUp.emailRequired')),
     password: yup.string()
-        .required(t('auth.checkEmailScreen.passwordRequired'))
-        .min(8, t('auth.checkEmailScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
+        .required(t('auth.signUp.passwordRequired'))
+        .min(8, t('auth.signUp.passwordMinLength'))
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.signUp.passwordComplexity')),
+    repeat_password: yup.string()
+        .required(t('auth.signUp.repeatPasswordRequired'))
+        .oneOf([yup.ref('password')], t('auth.signUp.passwordsMustMatch')),
 });
 
 type FormData = {
+    name: string;
     email: string;
     password: string;
+    repeat_password: string;
 };
 
-export default function LoginScreen({ navigation }: { navigation: LoginScreenNavigationProp }) {
+export default function SignUpScreen({ navigation }: { navigation: SignUpScreenNavigationProp }) {
     const { t } = useTranslation();
-    const { login, isLoading, error } = useAuth();
+    const { register, isLoading, error } = useAuth();
     const { signInWithGoogle, signInWithApple, isLoading: firebaseLoading, error: firebaseError } = useFirebaseAuth();
     const { theme, themeName } = useCustomTheme();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,21 +49,24 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema(t)),
         defaultValues: {
-            email: 'd.utyuzh@codeska.com',
-            password: 'password123',
+            name: '',
+            email: '',
+            password: '',
+            repeat_password: '',
         },
     });
 
     const onSubmit = async (data: FormData) => {
-        console.log('📝 Форма отправлена:', data);
+        console.log('📝 Форма регистрации отправлена:', data);
         try {
             setIsSubmitting(true);
-            await login(data.email, data.password);
+            // Используем функцию register из useAuth
+            await register(data.email, data.password, data.name);
         } catch (error: any) {
             console.error('❌ Ошибка в onSubmit:', error);
             Alert.alert(
-                'Ошибка входа',
-                error.message || 'Неверный email или пароль',
+                t('auth.signUp.registrationError'),
+                error.message || t('auth.signUp.registrationErrorMessage'),
                 [{ text: 'OK' }]
             );
         } finally {
@@ -61,22 +74,13 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         }
     };
 
-    const handleForgotPassword = () => {
-        // navigation.navigate(Routes.RESET_PASS);
-        navigation.navigate(Routes.ONBOARDING);
-    };
-
-    const handleNavigateToSignUp = () => {
-        navigation.navigate(Routes.SIGN_UP);
-    };
-
     const handleGoogleSignIn = async () => {
         try {
             await signInWithGoogle();
         } catch (error: any) {
             Alert.alert(
-                'Ошибка входа через Google',
-                error.message || 'Не удалось войти через Google',
+                t('auth.signUp.googleSignInError'),
+                error.message || t('auth.signUp.googleSignInErrorMessage'),
                 [{ text: 'OK' }]
             );
         }
@@ -87,11 +91,15 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
             await signInWithApple();
         } catch (error: any) {
             Alert.alert(
-                'Ошибка входа через Apple',
-                error.message || 'Не удалось войти через Apple',
+                t('auth.signUp.appleSignInError'),
+                error.message || t('auth.signUp.appleSignInErrorMessage'),
                 [{ text: 'OK' }]
             );
         }
+    };
+
+    const handleNavigateToLogin = () => {
+        navigation.navigate(Routes.LOGIN);
     };
 
     return (
@@ -100,11 +108,26 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                 <LoginIcon/>
 
                 <View style={ styles.head }>
-                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.welcome') }</Text>
-                    <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>{ t('auth.info') }</Text>
+                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.signUp.title') }</Text>
                 </View>
 
                 <View style={ styles.container }>
+                    <Controller
+                        control={ control }
+                        name="name"
+                        render={ ({ field: { value, onChange } }) => (
+                            <Input
+                                label={ t('auth.signUp.name') }
+                                value={ value }
+                                onChangeText={ onChange }
+                                error={ errors.name?.message }
+                                autoCapitalize="words"
+                                autoComplete="name"
+                                textContentType="name"
+                            />
+                        ) }
+                    />
+
                     <Controller
                         control={ control }
                         name="email"
@@ -140,20 +163,32 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                         ) }
                     />
 
+                    <Controller
+                        control={ control }
+                        name="repeat_password"
+                        render={ ({ field: { value, onChange } }) => (
+                            <Input
+                                label={ t('auth.signUp.repeatPassword') }
+                                value={ value }
+                                onChangeText={ onChange }
+                                secureTextEntry
+                                showPasswordToggle
+                                error={ errors.repeat_password?.message }
+                                autoComplete="password"
+                            />
+                        ) }
+                    />
+
                     <ErrorMessage message={ error || firebaseError || '' } visible={ !!(error || firebaseError) } />
 
-                    <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
-                        { t('auth.forgotPass') }
-                    </Text>
-
-                    <Text style={ styles.signUpLink } onPress={ handleNavigateToSignUp }>
-                        { t('auth.dontHaveAccount') }
+                    <Text style={ styles.loginLink } onPress={ handleNavigateToLogin }>
+                        { t('auth.signUp.alreadyHaveAccount') }
                     </Text>
                 </View>
 
                 <View style={styles.container}>
                     <CustomButton 
-                        title={ t('auth.login') } 
+                        title={ t('auth.signUp.button') } 
                         onPress={ handleSubmit(onSubmit) }
                         disabled={ isSubmitting || isLoading }
                         loading={ isSubmitting || isLoading }
@@ -216,14 +251,7 @@ const styles = StyleSheet.create({
         gap: 8,
         width: '100%',
     },
-    forgotPassword: {
-        fontSize: 14,
-        lineHeight: 20,
-        fontFamily: 'InterSemibold',
-        color: COLORS.warning,
-        fontWeight: '600',
-    },
-    signUpLink: {
+    loginLink: {
         fontSize: 14,
         lineHeight: 20,
         fontFamily: 'InterSemibold',

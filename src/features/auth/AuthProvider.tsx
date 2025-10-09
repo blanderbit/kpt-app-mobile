@@ -187,6 +187,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const register = async (email: string, password: string, firstName?: string) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+
+            // Вызываем API регистрации
+            await authService.register({ email, password, firstName });
+
+            // После успешной регистрации автоматически входим
+            await login(email, password);
+        } catch (error: any) {
+            console.error('❌ Ошибка регистрации:', error);
+            const errorMessage = error.message || 'Ошибка регистрации';
+            setError(errorMessage);
+            throw new Error(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const loginWithFirebase = async (idToken: string) => {
         try {
             setIsLoading(true);
@@ -324,7 +344,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             isAuthenticated, 
             user, 
             isLoading, 
-            login, 
+            login,
+            register,
             loginWithFirebase,
             registerWithFirebase,
             logout, 

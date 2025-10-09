@@ -10,6 +10,35 @@
     "password": "Пароль",
     "newPassword": "Новий пароль",
     "confirmPassword": "Підтвердіть пароль",
+    "welcome": "З поверненням!",
+    "info": "Увійдіть, щоб продовжити",
+    "forgotPass": "Забули пароль?",
+    "dontHaveAccount": "Немає акаунта? Зареєструватися",
+    "appleSignIn": "Продовжити з Apple",
+    "googleSignIn": "Продовжити з Google",
+    "signUp": {
+      "title": "Створити акаунт",
+      "info": "Зареєструйтеся, щоб почати",
+      "name": "Ваше ім'я",
+      "repeatPassword": "Повторіть пароль",
+      "button": "Зареєструватися",
+      "alreadyHaveAccount": "Вже є акаунт? Увійти",
+      "nameRequired": "Ім'я обов'язкове",
+      "nameMinLength": "Ім'я повинно містити мінімум 2 символи",
+      "emailRequired": "Email обов'язковий",
+      "invalidEmail": "Невірний email адрес",
+      "passwordRequired": "Пароль обов'язковий",
+      "passwordMinLength": "Пароль повинен містити мінімум 8 символів",
+      "passwordComplexity": "Пароль повинен містити принаймні одну літеру та одну цифру",
+      "repeatPasswordRequired": "Будь ласка, повторіть пароль",
+      "passwordsMustMatch": "Паролі повинні збігатися",
+      "registrationError": "Помилка реєстрації",
+      "registrationErrorMessage": "Не вдалося створити акаунт. Спробуйте ще раз.",
+      "googleSignInError": "Помилка входу через Google",
+      "googleSignInErrorMessage": "Не вдалося увійти через Google",
+      "appleSignInError": "Помилка входу через Apple",
+      "appleSignInErrorMessage": "Не вдалося увійти через Apple"
+    },
     "resetPassScreen": {
       "header": "Скинути пароль",
       "title": "Знайдіть свій акаунт",
@@ -65,11 +94,79 @@
           "errorTitle": "Помилка підтвердження",
           "errorMessage": "Невірний код підтвердження. Спробуйте ще раз."
         }
+      },
+      "subtitle": "Привіт, {{ userName }}. Чудовий день, щоб зайнятися своїми справами",
+      "weekTotal": {
+        "header": "Ваш підсумок за тиждень",
+        "noInfo": "Поки немає інформації",
+        "description": "Потрібно почати, щоб побачити інформацію тут",
+        "satisfaction": "Задоволеність",
+        "achieveness": "Досягнення"
+      },
+      "activity": {
+        "title": "Щоденна активність",
+        "sportActivity": {
+          "label": "Спортивна активність",
+          "info": "Ранкові вправи 10 хвилин"
+        },
+        "concentration": {
+          "label": "Концентрація",
+          "info": "Без соцмереж протягом години"
+        },
+        "healthcare": {
+          "label": "Здоров'я",
+          "info": "З'їсти овочі на сніданок"
+        }
+      },
+      "additionalTasks": {
+        "title": "Додаткові завдання",
+        "mood": {
+          "title": "Трекер настрою",
+          "info": "Оцініть ваш настрій",
+          "desc": "Короткий опис"
+        },
+        "article": {
+          "title": "Прочитати статтю",
+          "info": "Сила звички: Трансформуйте своє життя крок за кроком"
+        },
+        "survey": {
+          "title": "Пройти опитування",
+          "info": "Назва опитування",
+          "desc": "Короткий опис"
+        },
+        "moodTracker": {
+          "title": "Як ви почуваєтесь зараз?",
+          "desc": "Оцініть ваш настрій",
+          "titleStepTwo": "Які емоції змушують вас почуватись <styled>добре</styled>?",
+          "descStepTwo": "Виберіть всі, що підходять",
+          "saveRate": "Зберегти та оцінити"
+        },
+        "moodValues": {
+          "satisfied": "Задоволений",
+          "excited": "Схвильований",
+          "joyful": "Радісний",
+          "tired": "Втомлений",
+          "demotivated": "Демотивований",
+          "angry": "Злий"
+        }
       }
+    },
+    "activities": {
+      "myActivities": "Мої активності",
+      "addNewActivity": "Написати нову активність...",
+      "suggestedActivities": "Запропоновані активності",
+      "archivedActivities": "Архівовані активності",
+      "activitySuccessfullyAdded": "Активність успішно додана",
+      "warning": "Назва активності повинна містити не менше 10 символів."
     },
     "profile": {
       "mood": {
         "loading": "Завантаження настроїв..."
+      },
+      "progress": {
+        "title": "Прогрес програми",
+        "daysStreak": "Днів підряд",
+        "tasksCompleted": "Завдань виконано"
       },
       "settings": {
         "title": "Налаштування",
@@ -112,10 +209,47 @@
         "firebaseUserMessage": "Ви увійшли через Google/Apple. Email і пароль не можна змінити тут, але ви можете змінити своє ім'я.",
         "confirmEmailChange": "Підтвердження зміни email",
         "confirmEmailChangeDescription": "Введіть 6-значний код підтвердження, надісланий на {{email}}"
+      },
+      "subscriptionSettingsScreen": {
+        "title": "Налаштування підписки",
+        "mySubscription": "Моя підписка",
+        "oneMonth": "План на 1 місяць",
+        "subscription": "Підписка",
+        "lastDay": "Останній день",
+        "statuses": {
+          "cancelled": "Скасовано"
+        }
+      }
+    },
+    "additionalTasks": {
+      "article": {
+        "title": "Стаття"
+      }
+    },
+    "modals": {
+      "measureActivity": {
+        "title": "Оцінити активність",
+        "info": "Чудова робота, тепер оцініть активність за цими метриками",
+        "satisfactionLevel": {
+          "label": "Оцініть рівень задоволеності",
+          "startLabel": "Незадоволений",
+          "endLabel": "Задоволений"
+        },
+        "hardnessLevel": {
+          "label": "Оцініть рівень складності",
+          "startLabel": "Занадто легко",
+          "endLabel": "Дуже складно"
+        }
       }
     }
   },
   "send": "Надіслати",
   "ok": "ОК",
+  "close": "Закрити",
+  "complete": "Завершити",
+  "hello": "Привіт",
+  "next": "Далі",
+  "add": "Додати",
+  "cancel": "Скасувати",
   "approve": "Підтвердити"
 }

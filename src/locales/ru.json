@@ -4,44 +4,68 @@
     "welcome": "Добро пожаловать, {{name}}!"
   },
   "auth": {
-    "welcome": "Welcome to App",
-    "info": "Don't miss the opportunity ti easily find your dream",
-    "email": "Your email",
-    "password": "Password",
-    "newPassword": "New password",
-    "confirmPassword": "Confirm password",
-    "forgotPass": "Forgot password?",
-    "login": "Log in",
-    "appleSignIn": "Sign In with Apple",
-    "googleSignIn": "Sign In with Google",
-    "resetPassScreen": {
-      "header": "Reset password",
-      "title": "Find your account",
-      "info": "Enter your email where we send a verification link for creating a new password",
-      "successTitle": "Success",
-      "successMessage": "Password reset link has been sent to your email",
-      "errorTitle": "Error",
-      "errorMessage": "Failed to send password reset link. Please try again."
-    },
-    "checkEmailScreen": {
-      "title": "Reset your password",
-      "info": "Enter the verification code from your email and create a new password",
-      "open": "Open mail",
-      "codeLabel": "Verification code",
-      "resetPassword": "Reset password",
-      "successTitle": "Success",
-      "successMessage": "Password reset successfully",
-      "errorTitle": "Error",
-      "errorMessage": "Failed to reset password. Please try again.",
-      "emailNotFound": "Email not found",
-      "mailClientError": "Could not open mail client on this device.",
-      "codeRequired": "Verification code is required",
-      "codeInvalid": "Code must be exactly 6 digits",
-      "passwordRequired": "New password is required",
+    "welcome": "Добро пожаловать!",
+    "info": "Войдите, чтобы продолжить",
+    "email": "Ваш email",
+    "password": "Пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "forgotPass": "Забыли пароль?",
+    "dontHaveAccount": "Нет аккаунта? Зарегистрироваться",
+    "login": "Войти",
+    "appleSignIn": "Продолжить с Apple",
+    "googleSignIn": "Продолжить с Google",
+    "signUp": {
+      "title": "Создать аккаунт",
+      "info": "Зарегистрируйтесь, чтобы начать",
+      "name": "Ваше имя",
+      "repeatPassword": "Повторите пароль",
+      "button": "Зарегистрироваться",
+      "alreadyHaveAccount": "Уже есть аккаунт? Войти",
+      "nameRequired": "Имя обязательно",
+      "nameMinLength": "Имя должно содержать минимум 2 символа",
+      "emailRequired": "Email обязателен",
+      "invalidEmail": "Неверный email адрес",
+      "passwordRequired": "Пароль обязателен",
       "passwordMinLength": "Пароль должен содержать минимум 8 символов",
       "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
-      "confirmPasswordRequired": "Please confirm your password",
-      "passwordsMatch": "Passwords must match"
+      "repeatPasswordRequired": "Пожалуйста, повторите пароль",
+      "passwordsMustMatch": "Пароли должны совпадать",
+      "registrationError": "Ошибка регистрации",
+      "registrationErrorMessage": "Не удалось создать аккаунт. Попробуйте снова.",
+      "googleSignInError": "Ошибка входа через Google",
+      "googleSignInErrorMessage": "Не удалось войти через Google",
+      "appleSignInError": "Ошибка входа через Apple",
+      "appleSignInErrorMessage": "Не удалось войти через Apple"
+    },
+    "resetPassScreen": {
+      "header": "Сбросить пароль",
+      "title": "Найдите ваш аккаунт",
+      "info": "Введите ваш email, на который мы отправим ссылку для создания нового пароля",
+      "successTitle": "Успешно",
+      "successMessage": "Ссылка для сброса пароля отправлена на ваш email",
+      "errorTitle": "Ошибка",
+      "errorMessage": "Не удалось отправить ссылку для сброса пароля. Попробуйте еще раз."
+    },
+    "checkEmailScreen": {
+      "title": "Сбросьте ваш пароль",
+      "info": "Введите код подтверждения из вашего email и создайте новый пароль",
+      "open": "Открыть почту",
+      "codeLabel": "Код подтверждения",
+      "resetPassword": "Сбросить пароль",
+      "successTitle": "Успешно",
+      "successMessage": "Пароль успешно сброшен",
+      "errorTitle": "Ошибка",
+      "errorMessage": "Не удалось сбросить пароль. Попробуйте еще раз.",
+      "emailNotFound": "Email не найден",
+      "mailClientError": "Не удалось открыть почтовый клиент на этом устройстве.",
+      "codeRequired": "Код подтверждения обязателен",
+      "codeInvalid": "Код должен содержать ровно 6 цифр",
+      "passwordRequired": "Новый пароль обязателен",
+      "passwordMinLength": "Пароль должен содержать минимум 8 символов",
+      "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
+      "confirmPasswordRequired": "Пожалуйста, подтвердите ваш пароль",
+      "passwordsMatch": "Пароли должны совпадать"
     }
   },
   "main": {
@@ -70,108 +94,108 @@
           "errorMessage": "Неверный код подтверждения. Попробуйте еще раз."
         }
       },
-      "subtitle": "Hey, {{ userName }}. It's a great day to deal with your",
+      "subtitle": "Привет, {{ userName }}. Отличный день, чтобы заняться своими",
       "weekTotal": {
-        "header": "Your weekly total",
-        "noInfo": "No information yet",
-        "description": "You need to start to see information here",
-        "satisfaction": "Satisfaction",
-        "achieveness": "Achieveness"
+        "header": "Ваш итог за неделю",
+        "noInfo": "Пока нет информации",
+        "description": "Нужно начать, чтобы увидеть информацию здесь",
+        "satisfaction": "Удовлетворенность",
+        "achieveness": "Достижения"
       },
       "activity": {
-        "title": "Daily activity",
+        "title": "Ежедневная активность",
         "sportActivity": {
-          "label": "Sport activity",
-          "info": "Morning exercises for 10 minutes"
+          "label": "Спортивная активность",
+          "info": "Утренние упражнения 10 минут"
         },
         "concentration": {
-          "label": "Concentration",
-          "info": "No social media for an hour"
+          "label": "Концентрация",
+          "info": "Без соцсетей в течение часа"
         },
         "healthcare": {
-          "label": "Healthcare",
-          "info": "Eat vegetables for breakfast"
+          "label": "Здоровье",
+          "info": "Съесть овощи на завтрак"
         }
       },
       "additionalTasks": {
-        "title": "Additional tasks",
+        "title": "Дополнительные задачи",
         "mood": {
-          "title": "Mood tracker",
-          "info": "Rate your mood",
-          "desc": "Short description"
+          "title": "Трекер настроения",
+          "info": "Оцените ваше настроение",
+          "desc": "Краткое описание"
         },
         "article": {
-          "title": "Read an article",
-          "info": "The Power of Habit: Transform Your Life One Step at a Time"
+          "title": "Прочитать статью",
+          "info": "Сила привычки: Преобразите свою жизнь шаг за шагом"
         },
         "survey": {
-          "title": "Complete survey",
-          "info": "Survey title",
-          "desc": "Short description"
+          "title": "Пройти опрос",
+          "info": "Название опроса",
+          "desc": "Краткое описание"
         },
         "moodTracker": {
-          "title": "How do you feel right now?",
-          "desc": "Rate your mood level",
-          "titleStepTwo": "What emotions make you feel <styled>good</styled>?",
-          "descStepTwo": "Choose all, what is available",
-          "saveRate": "Save and rate"
+          "title": "Как вы себя чувствуете прямо сейчас?",
+          "desc": "Оцените ваше настроение",
+          "titleStepTwo": "Какие эмоции заставляют вас чувствовать себя <styled>хорошо</styled>?",
+          "descStepTwo": "Выберите все, что подходит",
+          "saveRate": "Сохранить и оценить"
         },
         "moodValues": {
-          "satisfied": "Satisfied",
-          "excited": "Excited",
-          "joyful": "Joyful",
-          "tired": "Tired",
-          "demotivated": "Demotivated",
-          "angry": "Angry"
+          "satisfied": "Довольный",
+          "excited": "Взволнованный",
+          "joyful": "Радостный",
+          "tired": "Уставший",
+          "demotivated": "Демотивированный",
+          "angry": "Злой"
         }
       }
     },
     "activities": {
-      "myActivities": "My activities",
-      "addNewActivity": "Write new activity...",
-      "suggestedActivities": "Suggested activities",
-      "archivedActivities": "Archived activities",
-      "activitySuccessfullyAdded": "Activity successfully added",
-      "warning": "The name of activity should not be less than 10 symbols."
+      "myActivities": "Мои активности",
+      "addNewActivity": "Написать новую активность...",
+      "suggestedActivities": "Предложенные активности",
+      "archivedActivities": "Архивированные активности",
+      "activitySuccessfullyAdded": "Активность успешно добавлена",
+      "warning": "Название активности должно содержать не менее 10 символов."
     },
     "profile": {
       "mood": {
         "loading": "Загрузка настроений..."
       },
       "progress": {
-        "title": "Program progress",
-        "daysStreak": "Days streak",
-        "tasksCompleted": "Tasks completed"
+        "title": "Прогресс программы",
+        "daysStreak": "Дней подряд",
+        "tasksCompleted": "Задач выполнено"
       },
       "settings": {
-        "title": "Settings",
-        "colorScheme": "Color scheme",
-        "personalInfo": "Personal information",
-        "privacyPolicy": "Privacy Policy",
-        "termsConditions": "Terms & Condition",
-        "support": "Support",
-        "subscriptionSettings": "Subscription settings",
-        "deleteAccount": "Delete account",
-        "logOut": "Log out",
-        "areYouSureLogOut": "Are you sure you want to log out?",
-        "areYouSureDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone.",
-        "accountDeleted": "Account Deleted",
-        "accountDeletedMessage": "Your account has been successfully deleted."
+        "title": "Настройки",
+        "colorScheme": "Цветовая схема",
+        "personalInfo": "Личная информация",
+        "privacyPolicy": "Политика конфиденциальности",
+        "termsConditions": "Условия и положения",
+        "support": "Поддержка",
+        "subscriptionSettings": "Настройки подписки",
+        "deleteAccount": "Удалить аккаунт",
+        "logOut": "Выйти",
+        "areYouSureLogOut": "Вы уверены, что хотите выйти?",
+        "areYouSureDeleteAccount": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
+        "accountDeleted": "Аккаунт удален",
+        "accountDeletedMessage": "Ваш аккаунт был успешно удален."
       },
       "personalInfoScreen": {
-        "title": "Personal information",
-        "email": "Your email",
-        "name": "Your name",
-        "password": "Your password",
-        "changePass": "Change password",
-        "currentPass": "Current password",
-        "newPass": "New password",
-        "changeEmail": "Change email",
-        "newEmail": "New email",
-        "confirmEmail": "Confirm email change",
-        "changeName": "Change name",
-        "newName": "New name",
-        "confirmName": "Confirm name change",
+        "title": "Личная информация",
+        "email": "Ваш email",
+        "name": "Ваше имя",
+        "password": "Ваш пароль",
+        "changePass": "Изменить пароль",
+        "currentPass": "Текущий пароль",
+        "newPass": "Новый пароль",
+        "changeEmail": "Изменить email",
+        "newEmail": "Новый email",
+        "confirmEmail": "Подтвердить изменение email",
+        "changeName": "Изменить имя",
+        "newName": "Новое имя",
+        "confirmName": "Подтвердить изменение имени",
         "emailRequired": "Email обязателен",
         "emailInvalid": "Введите корректный email",
         "nameRequired": "Имя обязательно",
@@ -186,45 +210,45 @@
         "confirmEmailChangeDescription": "Введите 6-значный код подтверждения, отправленный на {{email}}"
       },
       "subscriptionSettingsScreen": {
-        "title": "Subscription settings",
-        "mySubscription": "My subscription",
-        "oneMonth": "1 Month plan",
-        "subscription": "Subscription",
-        "lastDay": "Last day",
+        "title": "Настройки подписки",
+        "mySubscription": "Моя подписка",
+        "oneMonth": "План на 1 месяц",
+        "subscription": "Подписка",
+        "lastDay": "Последний день",
         "statuses": {
-          "cancelled": "Cancelled"
+          "cancelled": "Отменена"
         }
       }
     },
     "additionalTasks": {
       "article": {
-        "title": "Article"
+        "title": "Статья"
       }
     },
     "modals": {
       "measureActivity": {
-        "title": "Measure activity",
-        "info": "Good job, now rate activity by this metrics",
+        "title": "Оценить активность",
+        "info": "Отличная работа, теперь оцените активность по этим метрикам",
         "satisfactionLevel": {
-          "label": "Rate satisfaction level",
-          "startLabel": "Unsatisfied",
-          "endLabel": "Satisfied"
+          "label": "Оцените уровень удовлетворенности",
+          "startLabel": "Неудовлетворен",
+          "endLabel": "Удовлетворен"
         },
         "hardnessLevel": {
-          "label": "Rate hardness level",
-          "startLabel": "Too easy",
-          "endLabel": "Very hard"
+          "label": "Оцените уровень сложности",
+          "startLabel": "Слишком легко",
+          "endLabel": "Очень сложно"
         }
       }
     }
   },
-  "send": "Send",
-  "ok": "OK",
-  "close": "Close",
-  "complete": "Complete",
-  "hello": "Hello",
-  "next": "Next",
-  "add": "Add",
-  "cancel": "Cancel",
-  "approve": "Approve"
+  "send": "Отправить",
+  "ok": "ОК",
+  "close": "Закрыть",
+  "complete": "Завершить",
+  "hello": "Привет",
+  "next": "Далее",
+  "add": "Добавить",
+  "cancel": "Отмена",
+  "approve": "Подтвердить"
 }
