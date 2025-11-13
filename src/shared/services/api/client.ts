@@ -249,14 +249,14 @@ export class MoodTrackerService extends ApiService {
 // Сервис для социальных сетей
 export class SocialNetworkService extends ApiService {
   async getSocialNetworks(): Promise<SocialNetwork[]> {
-    return this.get<SocialNetwork[]>('/social-networks');
+    return this.get<SocialNetwork[]>('/public/social-networks');
   }
 }
 
 // Сервис для вопросов онбординга
 export class OnboardingService extends ApiService {
   async getOnboardingQuestions(): Promise<OnboardingQuestion[]> {
-    return this.get<OnboardingQuestion[]>('/onboarding-questions');
+    return this.get<OnboardingQuestion[]>('/public/onboarding-questions');
   }
 }
 
