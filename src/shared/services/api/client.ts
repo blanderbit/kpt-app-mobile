@@ -43,10 +43,6 @@ import {
   RefreshSuggestedActivitiesRequest,
   // Analytics types
   AnalyticsOverview,
-  // Admin types
-  AdminLoginRequest,
-  AdminLoginResponse,
-  AdminStats,
   // Language types
   LanguageResponse,
   // Tooltip types
@@ -57,12 +53,6 @@ import {
   DateRangeParams,
   SearchParams,
   PaginatedResponse,
-  QueueStats,
-  QueueStatus,
-  // Backup types
-  BackupResponse,
-  BackupListResponse,
-  BackupHealthResponse,
 } from './types';
 
 // Базовый класс для API сервисов
@@ -356,21 +346,6 @@ export class AnalyticsService extends ApiService {
   }
 }
 
-// Сервис для администрирования
-export class AdminService extends ApiService {
-  async adminLogin(data: AdminLoginRequest): Promise<AdminLoginResponse> {
-    return this.post<AdminLoginResponse>('/admin/login', data);
-  }
-
-  async getUsers(params?: SearchParams & PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.get<PaginatedResponse<User>>('/admin/users', params);
-  }
-
-  async getStats(): Promise<AdminStats> {
-    return this.get<AdminStats>('/admin/stats');
-  }
-}
-
 // Сервис для языков
 export class LanguageService extends ApiService {
   async getAllLanguages(active?: boolean): Promise<LanguageResponse[]> {
@@ -401,56 +376,6 @@ export class TooltipService extends ApiService {
   }
 }
 
-// Сервис для управления очередью (только для админов)
-export class QueueService extends ApiService {
-  async getQueueStats(): Promise<QueueStats> {
-    return this.get<QueueStats>('/admin/queue/stats');
-  }
-
-  async getQueueStatus(): Promise<QueueStatus> {
-    return this.get<QueueStatus>('/admin/queue/status');
-  }
-
-  async clearQueue(): Promise<{ message: string }> {
-    return this.delete<{ message: string }>('/admin/queue/clear');
-  }
-
-  async pauseQueue(): Promise<{ message: string; status: string }> {
-    return this.post<{ message: string; status: string }>('/admin/queue/pause');
-  }
-
-  async resumeQueue(): Promise<{ message: string; status: string }> {
-    return this.post<{ message: string; status: string }>('/admin/queue/resume');
-  }
-}
-
-// Сервис для бэкапов
-export class BackupService extends ApiService {
-  async createBackup(): Promise<BackupResponse> {
-    return this.post<BackupResponse>('/backup/create');
-  }
-
-  async createLocalBackup(): Promise<BackupResponse> {
-    return this.post<BackupResponse>('/backup/create-local');
-  }
-
-  async listBackups(): Promise<BackupListResponse> {
-    return this.get<BackupListResponse>('/backup/list');
-  }
-
-  async downloadBackup(fileId: string): Promise<Blob> {
-    return this.get<Blob>(`/backup/download/${fileId}`, {}, { responseType: 'blob' });
-  }
-
-  async restoreBackup(fileName: string): Promise<{ success: boolean; message: string }> {
-    return this.post<{ success: boolean; message: string }>(`/backup/restore/${fileName}`);
-  }
-
-  async healthCheck(): Promise<BackupHealthResponse> {
-    return this.get<BackupHealthResponse>('/backup/health');
-  }
-}
-
 // Экспорт всех сервисов
 export const authService = new AuthService();
 export const profileService = new ProfileService();
@@ -460,10 +385,7 @@ export const onboardingService = new OnboardingService();
 export const activityService = new ActivityService();
 export const suggestedActivityService = new SuggestedActivityService();
 export const analyticsService = new AnalyticsService();
-export const adminService = new AdminService();
 export const languageService = new LanguageService();
 export const tooltipService = new TooltipService();
-export const queueService = new QueueService();
-export const backupService = new BackupService();
 
 

@@ -9,7 +9,6 @@ import {
   suggestedActivityService,
   analyticsService,
   tooltipService,
-  backupService,
 } from './client';
 import {
   LoginRequest,
@@ -38,9 +37,6 @@ import {
   SearchParams,
   PaginationParams,
   DateRangeParams,
-  BackupResponse,
-  BackupListResponse,
-  BackupHealthResponse,
 } from './types';
 
 // Query keys
@@ -94,10 +90,6 @@ export const queryKeys = {
   tooltipsByPage: (page: string) => [...queryKeys.tooltips, 'byPage', page] as const,
   tooltipsByPageAndType: (page: string, type: string) => [...queryKeys.tooltips, 'byPageAndType', page, type] as const,
   
-  // Backups
-  backups: ['backups'] as const,
-  backupList: () => [...queryKeys.backups, 'list'] as const,
-  backupHealth: () => [...queryKeys.backups, 'health'] as const,
 };
 
 // Auth hooks
@@ -574,58 +566,3 @@ export const useCloseTooltip = () => {
   });
 };
 
-// Backup hooks
-export const useCreateBackup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: () => backupService.createBackup(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
-    },
-  });
-};
-
-export const useCreateLocalBackup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: () => backupService.createLocalBackup(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
-    },
-  });
-};
-
-export const useBackupList = () => {
-  return useQuery({
-    queryKey: queryKeys.backupList(),
-    queryFn: () => backupService.listBackups(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
-
-export const useDownloadBackup = () => {
-  return useMutation({
-    mutationFn: (fileId: string) => backupService.downloadBackup(fileId),
-  });
-};
-
-export const useRestoreBackup = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (fileName: string) => backupService.restoreBackup(fileName),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.backupList() });
-    },
-  });
-};
-
-export const useBackupHealth = () => {
-  return useQuery({
-    queryKey: queryKeys.backupHealth(),
-    queryFn: () => backupService.healthCheck(),
-    staleTime: 1 * 60 * 1000, // 1 minute
-  });
-};

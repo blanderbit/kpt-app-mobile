@@ -14,9 +14,7 @@ export {
   activityService,
   suggestedActivityService,
   analyticsService,
-  adminService,
   languageService,
   tooltipService,
-  queueService,
 } from './client';
 

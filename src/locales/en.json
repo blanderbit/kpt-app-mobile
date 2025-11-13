@@ -94,11 +94,79 @@
           "errorTitle": "Verification Failed",
           "errorMessage": "Invalid verification code. Please try again."
         }
+      },
+      "subtitle": "Hey, {{ userName }}. It's a great day to deal with your",
+      "weekTotal": {
+        "header": "Your weekly total",
+        "noInfo": "No information yet",
+        "description": "You need to start to see information here",
+        "satisfaction": "Satisfaction",
+        "achieveness": "Achieveness"
+      },
+      "activity": {
+        "title": "Daily activity",
+        "sportActivity": {
+          "label": "Sport activity",
+          "info": "Morning exercises for 10 minutes"
+        },
+        "concentration": {
+          "label": "Concentration",
+          "info": "No social media for an hour"
+        },
+        "healthcare": {
+          "label": "Healthcare",
+          "info": "Eat vegetables for breakfast"
+        }
+      },
+      "additionalTasks": {
+        "title": "Additional tasks",
+        "mood": {
+          "title": "Mood tracker",
+          "info": "Rate your mood",
+          "desc": "Short description"
+        },
+        "article": {
+          "title": "Read an article",
+          "info": "The Power of Habit: Transform Your Life One Step at a Time"
+        },
+        "survey": {
+          "title": "Complete survey",
+          "info": "Survey title",
+          "desc": "Short description"
+        },
+        "moodTracker": {
+          "title": "How do you feel right now?",
+          "desc": "Rate your mood level",
+          "titleStepTwo": "What emotions make you feel <styled>good</styled>?",
+          "descStepTwo": "Choose all, what is available",
+          "saveRate": "Save and rate"
+        },
+        "moodValues": {
+          "satisfied": "Satisfied",
+          "excited": "Excited",
+          "joyful": "Joyful",
+          "tired": "Tired",
+          "demotivated": "Demotivated",
+          "angry": "Angry"
+        }
       }
+    },
+    "activities": {
+      "myActivities": "My activities",
+      "addNewActivity": "Write new activity...",
+      "suggestedActivities": "Suggested activities",
+      "archivedActivities": "Archived activities",
+      "activitySuccessfullyAdded": "Activity successfully added",
+      "warning": "The name of activity should not be less than 10 symbols."
     },
     "profile": {
       "mood": {
         "loading": "Loading moods..."
+      },
+      "progress": {
+        "title": "Program progress",
+        "daysStreak": "Days streak",
+        "tasksCompleted": "Tasks completed"
       },
       "settings": {
         "title": "Settings",
@@ -141,10 +209,47 @@
         "firebaseUserMessage": "You signed in with Google/Apple. Email and password cannot be changed here, but you can change your name.",
         "confirmEmailChange": "Confirm Email Change",
         "confirmEmailChangeDescription": "Enter the 6-digit verification code sent to {{email}}"
+      },
+      "subscriptionSettingsScreen": {
+        "title": "Subscription settings",
+        "mySubscription": "My subscription",
+        "oneMonth": "1 Month plan",
+        "subscription": "Subscription",
+        "lastDay": "Last day",
+        "statuses": {
+          "cancelled": "Cancelled"
+        }
+      }
+    },
+    "additionalTasks": {
+      "article": {
+        "title": "Article"
+      }
+    },
+    "modals": {
+      "measureActivity": {
+        "title": "Measure activity",
+        "info": "Good job, now rate activity by this metrics",
+        "satisfactionLevel": {
+          "label": "Rate satisfaction level",
+          "startLabel": "Unsatisfied",
+          "endLabel": "Satisfied"
+        },
+        "hardnessLevel": {
+          "label": "Rate hardness level",
+          "startLabel": "Too easy",
+          "endLabel": "Very hard"
+        }
       }
     }
   },
   "send": "Send",
   "ok": "OK",
+  "close": "Close",
+  "complete": "Complete",
+  "hello": "Hello",
+  "next": "Next",
+  "add": "Add",
+  "cancel": "Cancel",
   "approve": "Approve"
 }

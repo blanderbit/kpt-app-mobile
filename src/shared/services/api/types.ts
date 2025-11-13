@@ -435,22 +435,6 @@ export interface SearchParams {
   filter?: Record<string, any>;
 }
 
-// Типы для очереди
-export interface QueueStats {
-  waiting: number;
-  active: number;
-  completed: number;
-  failed: number;
-  total: number;
-}
-
-export interface QueueStatus {
-  status: 'active' | 'idle' | 'error';
-  timestamp: string;
-  stats: QueueStats;
-  error?: string;
-}
-
 // Новые типы из swagger spec
 
 // Тип для изменения позиции активности

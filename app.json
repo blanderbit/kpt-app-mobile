@@ -7,7 +7,7 @@
     "scheme": "test",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/plesury-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
