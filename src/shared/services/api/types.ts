@@ -291,6 +291,37 @@ export interface OnboardingQuestion {
   required: boolean;
 }
 
+export interface GenerateActivityRecommendationsRequest {
+  socialNetworks: string[];
+  onboardingQuestionAndAnswers: Record<string, string | string[]>;
+  feelingToday: string;
+  count?: string;
+}
+
+export interface RegisterDeviceTokenRequest {
+  token: string;
+  platform: string;
+  deviceId?: string;
+}
+
+export interface RegisterDeviceTokenResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface ActivityRecommendation {
+  activityName: string;
+  content: string;
+  confidenceScore: number;
+  reasoning: string;
+}
+
+export interface ActivityRecommendationsResponse {
+  recommendations: ActivityRecommendation[];
+  overallReasoning: string;
+  totalCount: number;
+}
+
 // Тип для активности
 export interface ActivityType {
   id: string;

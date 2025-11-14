@@ -1,5 +1,6 @@
 import React, {useState, useMemo, useEffect, useRef} from 'react';
 import {View, StyleSheet, Pressable, SafeAreaView, Text, ActivityIndicator, Animated} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
 import {ArrowIcon} from "@assets/icons/ArrowIcon";
@@ -10,9 +11,9 @@ import {onboardingFirstSectionSteps, onboardingSecondSectionSteps} from "@featur
 import OnboardingQuestionStep from "@features/auth/screens/Onboarding/OnboardingSteps/OnboardingQuestionStep";
 import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
 import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventhStep";
-import {useOnboardingQuestions} from "@shared/services/api/hooks";
+import {useGenerateActivityRecommendations, useOnboardingQuestions} from "@shared/services/api/hooks";
 import {OnboardingQuestion} from "@shared/services/api/types";
-import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress} from "@shared/utils/onboardingStorage";
+import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress, ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
 import TenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/TenthStep";
@@ -31,6 +32,14 @@ export default function OnboardingTemplate({
     const {theme} = useCustomTheme();
     const [currentStep, setCurrentStep] = useState(1);
     const {data: questions, isLoading: questionsLoading} = useOnboardingQuestions();
+    const {
+        mutateAsync: generateActivityRecommendations,
+        data: recommendationsResponse,
+        isPending: isGeneratingRecommendations,
+        isError: isGenerateRecommendationsError,
+        error: generateRecommendationsError,
+        reset: resetGenerateRecommendations,
+    } = useGenerateActivityRecommendations();
     const { showSubscriptionOffering } = useSubscriptionOffering();
     
     // Анимационные значения для переходов между степами
@@ -47,23 +56,22 @@ export default function OnboardingTemplate({
     
     // Анимация для кнопки "Назад"
     const backButtonAnim = useRef(new Animated.Value(1)).current;
+    const lastRecommendationsPayloadRef = useRef<string | null>(null);
     
     const [onboardingData, setOnboardingData] = useState<{
         mood: string | null;
         socialNetworks: string[];
-        questions: Array<{
-            question: OnboardingQuestion;
-            selectedAnswers: string[];
-        }>;
+        questions: Record<string, string[]>;
     }>({
         mood: null,
         socialNetworks: [],
-        questions: []
+        questions: {}
     });
 
     // Восстанавливаем прогресс при монтировании
     useEffect(() => {
         loadOnboardingProgress();
+        loadStoredOnboardingData();
     }, []);
 
     // Анимация загрузки
@@ -111,7 +119,95 @@ export default function OnboardingTemplate({
         }
     };
 
+    const loadStoredOnboardingData = async () => {
+        try {
+            const entries = await AsyncStorage.multiGet([
+                ONBOARDING_KEYS.MOOD,
+                ONBOARDING_KEYS.SOCIAL_NETWORKS,
+                ONBOARDING_KEYS.QUESTIONS,
+            ]);
+
+            const moodValue = entries[0]?.[1] ?? null;
+            const socialNetworksValue = entries[1]?.[1] ?? null;
+            const questionsValue = entries[2]?.[1] ?? null;
+
+            setOnboardingData(prev => ({
+                mood: moodValue ?? prev.mood,
+                socialNetworks: socialNetworksValue ? JSON.parse(socialNetworksValue) : prev.socialNetworks,
+                questions: questionsValue ? JSON.parse(questionsValue) : prev.questions,
+            }));
+        } catch (error) {
+            console.error('Error loading stored onboarding data:', error);
+        }
+    };
+
     const count = 17000;
+
+    const stepNumbers = useMemo(() => {
+        const questionsCount = questions?.length || 0;
+        return {
+            sixthStep: 6 + questionsCount,
+            seventhStep: 6 + questionsCount + 1,
+            eighthStep: 6 + questionsCount + 2,
+            ninthStep: 6 + questionsCount + 3,
+            tenthStep: 6 + questionsCount + 4,
+            eleventhStep: 6 + questionsCount + 5,
+            twelfthStep: 6 + questionsCount + 6,
+            thirteenthStep: 6 + questionsCount + 7,
+            fourteenthStep: 6 + questionsCount + 8,
+            fifteenthStep: 6 + questionsCount + 9,
+            sixteenthStep: 6 + questionsCount + 10,
+            seventeenthStep: 6 + questionsCount + 11,
+        };
+    }, [questions]);
+
+    useEffect(() => {
+        if (currentStep !== stepNumbers.ninthStep) return;
+        if (!recommendationsPayload || !recommendationsPayloadKey) return;
+        if (isGeneratingRecommendations) return;
+        if (lastRecommendationsPayloadRef.current === recommendationsPayloadKey) return;
+
+        lastRecommendationsPayloadRef.current = recommendationsPayloadKey;
+        console.log('[Onboarding] generateActivityRecommendations payload:', recommendationsPayload);
+        generateActivityRecommendations(recommendationsPayload).catch(() => {});
+    }, [
+        currentStep,
+        stepNumbers.ninthStep,
+        recommendationsPayload,
+        recommendationsPayloadKey,
+        isGeneratingRecommendations,
+        generateActivityRecommendations,
+    ]);
+
+    const recommendationsPayload = useMemo(() => {
+        if (!onboardingData.mood) return null;
+        if (!onboardingData.socialNetworks.length) return null;
+
+        const onboardingQuestionAndAnswers = Object.entries(onboardingData.questions).reduce<Record<string, string | string[]>>((acc, [stepName, answers]) => {
+            if (!answers || !answers.length) return acc;
+            acc[stepName] = answers.length === 1 ? answers[0] : answers;
+            return acc;
+        }, {});
+
+        if (!Object.keys(onboardingQuestionAndAnswers).length) return null;
+
+        return {
+            socialNetworks: onboardingData.socialNetworks,
+            onboardingQuestionAndAnswers,
+            feelingToday: onboardingData.mood,
+            count: '3',
+        };
+    }, [onboardingData]);
+
+    const recommendationsPayloadKey = useMemo(
+        () => (recommendationsPayload ? JSON.stringify(recommendationsPayload) : null),
+        [recommendationsPayload]
+    );
+
+    const hasRecommendationInputs = Boolean(recommendationsPayload);
+    const recommendations = recommendationsResponse?.recommendations ?? [];
+    const recommendationsOverallReasoning = recommendationsResponse?.overallReasoning;
+    const recommendationErrorMessage = generateRecommendationsError?.message;
 
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
@@ -272,9 +368,6 @@ export default function OnboardingTemplate({
         if (currentStep < totalSteps) {
             const newStep = currentStep + 1;
             
-            // Получаем номера степов
-            const stepNumbers = getStepNumbers();
-            
             // Если следующий степ - SeventeenthStep (последний), показываем SubscriptionOfferingTemplate
             if (newStep === stepNumbers.seventeenthStep) {
                 showSubscriptionOffering(handleSubscriptionOfferingComplete);
@@ -293,7 +386,10 @@ export default function OnboardingTemplate({
     const handleQuestionAnswer = async (question: OnboardingQuestion, selectedAnswers: string[]) => {
         setOnboardingData(prev => ({
             ...prev,
-            questions: [...prev.questions, { question, selectedAnswers }]
+            questions: {
+                ...prev.questions,
+                [question.stepName]: selectedAnswers,
+            },
         }));
         await onNext();
     };
@@ -314,34 +410,23 @@ export default function OnboardingTemplate({
         await onNext();
     };
 
+    const handleRecommendationsRetry = () => {
+        if (!recommendationsPayload || !recommendationsPayloadKey) return;
+        if (isGeneratingRecommendations) return;
+
+        resetGenerateRecommendations();
+        lastRecommendationsPayloadRef.current = recommendationsPayloadKey;
+        generateActivityRecommendations(recommendationsPayload).catch(() => {});
+    };
+
     // Обработчик завершения SubscriptionOfferingTemplate
     const handleSubscriptionOfferingComplete = async () => {
         // Переходим к последнему степу (SeventeenthStep)
-        const stepNumbers = getStepNumbers();
         const newStep = stepNumbers.seventeenthStep;
         
         animateStepTransition(newStep, 'forward', async () => {
             await saveOnboardingProgress(newStep);
         });
-    };
-
-    // Вычисляем номера степов
-    const getStepNumbers = () => {
-        const questionsCount = questions?.length || 0;
-        return {
-            sixthStep: 6 + questionsCount,
-            seventhStep: 6 + questionsCount + 1,
-            eighthStep: 6 + questionsCount + 2,
-            ninthStep: 6 + questionsCount + 3,
-            tenthStep: 6 + questionsCount + 4,
-            eleventhStep: 6 + questionsCount + 5,
-            twelfthStep: 6 + questionsCount + 6,
-            thirteenthStep: 6 + questionsCount + 7,
-            fourteenthStep: 6 + questionsCount + 8,
-            fifteenthStep: 6 + questionsCount + 9,
-            sixteenthStep: 6 + questionsCount + 10,
-            seventeenthStep: 6 + questionsCount + 11,
-        };
     };
 
     // Рендеринг статических степов (1-5)
@@ -382,13 +467,19 @@ export default function OnboardingTemplate({
 
     // Рендеринг финальных степов (6-11)
     const renderFinalSteps = () => {
-        const stepNumbers = getStepNumbers();
-        
         const stepComponents = {
             [stepNumbers.sixthStep]: <SixthStep onNext={onNext} />,
             [stepNumbers.seventhStep]: <SeventhStep onNext={onNext} />,
             [stepNumbers.eighthStep]: <EighthStep onNext={onNext} />,
-            [stepNumbers.ninthStep]: <NinthStep onNext={onNext} />,
+            [stepNumbers.ninthStep]: <NinthStep
+                onNext={onNext}
+                isLoading={isGeneratingRecommendations}
+                recommendations={recommendations}
+                overallReasoning={recommendationsOverallReasoning}
+                errorMessage={isGenerateRecommendationsError ? recommendationErrorMessage : undefined}
+                onRetry={handleRecommendationsRetry}
+                hasRequiredData={hasRecommendationInputs}
+            />,
             [stepNumbers.tenthStep]: <TenthStep onNext={onNext} />,
             [stepNumbers.eleventhStep]: <EleventhStep onNext={onNext} />,
             [stepNumbers.twelfthStep]: <TwelfthStep onNext={onNext} />,

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ApiError } from './config';
 import {
   authService,
   profileService,
@@ -34,6 +35,10 @@ import {
   CreateRateActivityRequest,
   AddSuggestedActivityRequest,
   RefreshSuggestedActivitiesRequest,
+  GenerateActivityRecommendationsRequest,
+  ActivityRecommendationsResponse,
+  RegisterDeviceTokenRequest,
+  RegisterDeviceTokenResponse,
   SearchParams,
   PaginationParams,
   DateRangeParams,
@@ -90,6 +95,9 @@ export const queryKeys = {
   tooltipsByPage: (page: string) => [...queryKeys.tooltips, 'byPage', page] as const,
   tooltipsByPageAndType: (page: string, type: string) => [...queryKeys.tooltips, 'byPageAndType', page, type] as const,
   
+  // Notifications
+  notifications: ['notifications'] as const,
+  deviceToken: () => [...queryKeys.notifications, 'deviceToken'] as const,
 };
 
 // Auth hooks
@@ -119,6 +127,18 @@ export const useFirebaseAuth = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.currentUser(), data.user);
     },
+  });
+};
+
+export const useGenerateActivityRecommendations = () => {
+  return useMutation<ActivityRecommendationsResponse, ApiError, GenerateActivityRecommendationsRequest>({
+    mutationFn: (data) => authService.generateActivityRecommendations(data),
+  });
+};
+
+export const useRegisterDeviceToken = () => {
+  return useMutation<RegisterDeviceTokenResponse, ApiError, RegisterDeviceTokenRequest>({
+    mutationFn: (data) => authService.registerDeviceToken(data),
   });
 };
 
@@ -537,12 +557,37 @@ export const useAnalyticsOverview = (startDate?: string, endDate?: string) => {
 
 // Tooltip hooks
 export const useTooltipsByPage = (page: string) => {
-  return useQuery({
+  console.log('🔔 [useTooltipsByPage] Вызов хука с page:', page);
+  console.log('🔔 [useTooltipsByPage] Query key:', queryKeys.tooltipsByPage(page));
+  console.log('🔔 [useTooltipsByPage] Enabled:', !!page);
+  
+  const queryResult = useQuery({
     queryKey: queryKeys.tooltipsByPage(page),
-    queryFn: () => tooltipService.getTooltipsByPage(page),
+    queryFn: () => {
+      console.log('🔔 [useTooltipsByPage] Выполнение queryFn для page:', page);
+      return tooltipService.getTooltipsByPage(page);
+    },
     enabled: !!page,
     staleTime: 30 * 60 * 1000, // 30 minutes
   });
+
+  // Логируем результат запроса
+  if (queryResult.data) {
+    console.log('🔔 [useTooltipsByPage] ✅ Данные получены:');
+    console.log('🔔 [useTooltipsByPage] Количество тултипов:', queryResult.data?.length || 0);
+    console.log('🔔 [useTooltipsByPage] Полный ответ data:', JSON.stringify(queryResult.data, null, 2));
+  }
+  if (queryResult.error) {
+    console.error('🔔 [useTooltipsByPage] ❌ Ошибка в хуке:', queryResult.error);
+  }
+  console.log('🔔 [useTooltipsByPage] Статус запроса:', {
+    isLoading: queryResult.isLoading,
+    isError: queryResult.isError,
+    isSuccess: queryResult.isSuccess,
+    isFetching: queryResult.isFetching,
+  });
+
+  return queryResult;
 };
 
 export const useTooltipsByPageAndType = (page: string, type: string) => {
@@ -557,12 +602,6 @@ export const useTooltipsByPageAndType = (page: string, type: string) => {
 export const useCloseTooltip = () => {
   return useMutation({
     mutationFn: (tooltipId: number) => tooltipService.closeTooltip(tooltipId),
-    onSuccess: () => {
-      console.log('🎯 Тултип успешно закрыт');
-    },
-    onError: (error) => {
-      console.error('❌ Ошибка закрытия тултипа:', error);
-    },
   });
 };
 

@@ -40,9 +40,9 @@ export default function TenthStep({onNext}: { onNext: () => void }) {
         }
     };
 
-    const handleAgeSelect = (ageId: number) => {
-        saveData(ageId);
-        onNext(ageId);
+    const handleAgeSelect = (ageLabel: string) => {
+        saveData(ageLabel);
+        onNext();
     };
 
     return (
@@ -59,7 +59,7 @@ export default function TenthStep({onNext}: { onNext: () => void }) {
                                 key={age.id}
                                 label={age.name}
                                 extraStyles={[styles.variantItem]}
-                                onPress={() => handleAgeSelect(age.id)}
+                                onPress={() => handleAgeSelect(age.name)}
                             />
                         ))}
                     </View>

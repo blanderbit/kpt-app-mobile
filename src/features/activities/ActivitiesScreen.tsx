@@ -11,7 +11,7 @@ import {
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
 import { ActivityLabel } from '@shared/components/ActivityLabel';
-import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { ActivitiesScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { InfoPopup } from "@shared/components/InfoPopup/InfoPopup";
 import LayersIcon from "@assets/icons/LayersIcon";
 import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
@@ -33,8 +33,9 @@ import {
     useDeleteSuggestedActivity
 } from '@shared/services/api/hooks';
 import { useQueryClient } from '@tanstack/react-query';
+import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 
-export default function ActivitiesScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
+export default function ActivitiesScreen({ navigation }: { navigation: ActivitiesScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { showToast } = useToast();
@@ -179,7 +180,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
     };
 
     return (
-        <View style={ [ styles.container, theme.flexBlocks.vertical8 ] }>
+        <TabScreenContainer>
+            <View style={ [ styles.container, theme.flexBlocks.vertical8 ] }>
             <View style={ theme.containers.cardRound }>
                 <View
                     style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
@@ -316,6 +318,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: HomeScree
                 </View>
             </View>
         </View>
+        </TabScreenContainer>
     );
 }
 

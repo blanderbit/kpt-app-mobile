@@ -35,6 +35,8 @@ import {
   MoodSurvey,
   SocialNetwork,
   OnboardingQuestion,
+  GenerateActivityRecommendationsRequest,
+  ActivityRecommendationsResponse,
   ActivityType,
   Tooltip,
   // Suggested activities types
@@ -53,6 +55,8 @@ import {
   DateRangeParams,
   SearchParams,
   PaginatedResponse,
+  RegisterDeviceTokenRequest,
+  RegisterDeviceTokenResponse,
 } from './types';
 
 // Базовый класс для API сервисов
@@ -98,12 +102,9 @@ export class ApiService {
   // Базовый метод для POST запросов
   protected async post<T>(url: string, data?: any): Promise<T> {
     try {
-      console.log(`🚀 POST ${url}`, { data });
       const response = await this.client.post<T>(url, data);
-      console.log(`✅ POST ${url} успешно`, { response: response.data });
       return response.data;
     } catch (error) {
-      console.error(`❌ POST ${url} ошибка:`, error);
       this.handleError(error);
     }
   }
@@ -141,6 +142,14 @@ export class AuthService extends ApiService {
 
   async firebaseAuth(firebaseData: FirebaseAuthRequest): Promise<FirebaseAuthResponse> {
     return this.post<FirebaseAuthResponse>('/auth/firebase', firebaseData);
+  }
+
+  async generateActivityRecommendations(data: GenerateActivityRecommendationsRequest): Promise<ActivityRecommendationsResponse> {
+    return this.post<ActivityRecommendationsResponse>('/auth/generate-activity-recommendations', data);
+  }
+
+  async registerDeviceToken(data: RegisterDeviceTokenRequest): Promise<RegisterDeviceTokenResponse> {
+    return this.post<RegisterDeviceTokenResponse>('/notifications/devices', data);
   }
 
   async forgotPassword(data: ForgotPasswordRequest): Promise<{ message: string }> {
@@ -364,15 +373,44 @@ export class LanguageService extends ApiService {
 // Сервис для подсказок
 export class TooltipService extends ApiService {
   async getTooltipsByPage(page: string): Promise<Tooltip[]> {
-    return this.get<Tooltip[]>(`/tooltips/page/${page}`);
+    console.log('🔔 [TooltipService] Запрос тултипов для страницы:', page);
+    console.log('🔔 [TooltipService] URL:', `/tooltips/page/${page}`);
+    try {
+      const result = await this.get<Tooltip[]>(`/tooltips/page/${page}`);
+      console.log('🔔 [TooltipService] ✅ Успешный ответ:');
+      console.log('🔔 [TooltipService] Количество тултипов:', result?.length || 0);
+      console.log('🔔 [TooltipService] Полный ответ:', JSON.stringify(result, null, 2));
+      if (result && result.length > 0) {
+        result.forEach((tooltip, index) => {
+          console.log(`🔔 [TooltipService] Тултип ${index + 1}:`, {
+            id: tooltip.id,
+            type: tooltip.type,
+            page: tooltip.page,
+            json: tooltip.json,
+            createdAt: tooltip.createdAt,
+            updatedAt: tooltip.updatedAt
+          });
+        });
+      }
+      return result;
+    } catch (error) {
+      console.error('🔔 [TooltipService] ❌ Ошибка запроса тултипов:', error);
+      throw error;
+    }
   }
 
   async getTooltipsByPageAndType(page: string, type: string): Promise<Tooltip[]> {
-    return this.get<Tooltip[]>(`/tooltips/page/${page}/type/${type}`);
+    console.log('🔔 [TooltipService] Запрос тултипов для страницы и типа:', page, type);
+    const result = await this.get<Tooltip[]>(`/tooltips/page/${page}/type/${type}`);
+    console.log('🔔 [TooltipService] Получено тултипов:', result?.length || 0);
+    return result;
   }
 
   async closeTooltip(tooltipId: number): Promise<{ message: string }> {
-    return this.post<{ message: string }>(`/tooltips/close/${tooltipId}`);
+    console.log('🔔 [TooltipService] Закрытие тултипа:', tooltipId);
+    const result = await this.post<{ message: string }>(`/tooltips/close/${tooltipId}`);
+    console.log('🔔 [TooltipService] Тултип закрыт:', result);
+    return result;
   }
 }
 

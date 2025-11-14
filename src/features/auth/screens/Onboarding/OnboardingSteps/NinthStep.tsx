@@ -1,116 +1,137 @@
 import React from "react";
-import {StyleSheet, Text, View, ScrollView, Dimensions} from "react-native";
+import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
-import {useTranslation} from "react-i18next";
-import {SuggestedActivitiesIcon} from "@assets/icons/SuggestedActivitiesIcon";
-import {ActivityLabel} from "@shared/components/ActivityLabel";
+import {ActivityRecommendation} from "@shared/services/api/types";
 
-const {height: screenHeight} = Dimensions.get('window');
+interface NinthStepProps {
+    onNext: () => void;
+    isLoading: boolean;
+    recommendations: ActivityRecommendation[];
+    overallReasoning?: string;
+    errorMessage?: string;
+    onRetry: () => void;
+    hasRequiredData: boolean;
+}
 
-export default function NinthStep({onNext}: { onNext: () => void }) {
-    const {t} = useTranslation();
+export default function NinthStep({
+    onNext,
+    isLoading,
+    recommendations,
+    overallReasoning,
+    errorMessage,
+    onRetry,
+    hasRequiredData,
+}: NinthStepProps) {
     const {theme} = useCustomTheme();
 
-    const suggestedActivitiesData = {
-        "data": [
-            {
-                "activityName": "Morning run new",
-                "activityType": "general",
-                "closedAt": null,
-                "content": "Ran 5km in 30 minutes",
-                "createdAt": "2025-09-26T12:48:21.325Z",
-                "id": 12,
-                "position": 0,
-                "rateActivities": [Array],
-                "status": "active",
-                "updatedAt": "2025-09-26T13:06:35.000Z",
-                "userId": 15
-            },
-            {
-                "activityName": "Morning run test 2",
-                "activityType": "general",
-                "closedAt": null,
-                "content": "Ran 5km in 30 minutes",
-                "createdAt": "2025-09-26T13:06:18.788Z",
-                "id": 15,
-                "position": 1,
-                "rateActivities": [Array],
-                "status": "active",
-                "updatedAt": "2025-09-26T13:06:35.000Z",
-                "userId": 15
-            },
-            {
-                "activityName": "Morning run test 2",
-                "activityType": "general",
-                "closedAt": null,
-                "content": "Ran 5km in 30 minutes",
-                "createdAt": "2025-09-26T13:06:18.788Z",
-                "id": 16,
-                "position": 1,
-                "rateActivities": [Array],
-                "status": "active",
-                "updatedAt": "2025-09-26T13:06:35.000Z",
-                "userId": 15
-            }
-        ],
-        "links": {"current": "http://kpt.api.the-displaycontrol.com/profile/activities?page=1&limit=20&sortBy=position:ASC"},
-        "meta": {"currentPage": 1, "itemsPerPage": 20, "sortBy": [[Array]], "totalItems": 2, "totalPages": 1}
-    }
+    const hasRecommendations = recommendations.length > 0;
+    const showError = Boolean(errorMessage);
+    const showMissingData = !hasRequiredData;
+    const showEmptyState = !isLoading && !hasRecommendations && hasRequiredData && !showError;
+
+    const renderRecommendations = () => (
+        <View style={theme.containers.cardRound}>
+            {overallReasoning ? (
+                <Text style={[styles.overallReasoning, theme.fonts.body]}>
+                    {overallReasoning}
+                </Text>
+            ) : null}
+
+            <ScrollView
+                style={styles.recommendationsList}
+                contentContainerStyle={styles.recommendationsContent}
+                showsVerticalScrollIndicator={false}
+            >
+                {recommendations.map((item, index) => {
+                    const confidence = Math.round(Math.min(Math.max(item.confidenceScore ?? 0, 0), 1) * 100);
+                    return (
+                        <View
+                            key={`${item.activityName}-${index}`}
+                            style={[
+                                styles.recommendationCard,
+                                index !== recommendations.length - 1 && styles.recommendationDivider
+                            ]}
+                        >
+                            <Text style={[styles.recommendationTitle, theme.fonts.subtitle]}>
+                                {item.activityName}
+                            </Text>
+                            <Text style={[styles.recommendationContent, theme.fonts.body]}>
+                                {item.content}
+                            </Text>
+                            <Text style={[styles.recommendationMeta, theme.fonts.caption]}>
+                                {`Confidence: ${confidence}%`}
+                            </Text>
+                            <Text style={[styles.recommendationReasoning, theme.fonts.caption]}>
+                                {item.reasoning}
+                            </Text>
+                        </View>
+                    );
+                })}
+            </ScrollView>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <View style={theme.flexBlocks.vertical8}>
-                    <Text style={styles.suggestingText}>
-                        Based on your previous answers we prepared a few first tasks and activities for you.
-                    </Text>
+                <Text style={styles.suggestingText}>
+                    Based on your previous answers we prepared a few first tasks and activities for you.
+                </Text>
 
-                    <View style={theme.containers.cardRound}>
-                        <View style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, {paddingHorizontal: 8}]}>
-                            <SuggestedActivitiesIcon/>
-
-                            <Text style={theme.fonts.subtitle}>
-                                {t('main.activities.suggestedActivities')}
-                            </Text>
-                        </View>
-
-                        <ScrollView 
-                            style={[styles.activitySections, {maxHeight: screenHeight * 0.37}]}
-                            showsVerticalScrollIndicator={false}
-                            nestedScrollEnabled={true}
-                        >
-                            {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 &&
-                                suggestedActivitiesData.data.map((activity, index) => (
-                                    <View
-                                        key={activity.id}
-                                        style={{
-                                            ...styles.activitySection,
-                                            ...(index !== suggestedActivitiesData.data.length - 1
-                                                ? {borderBottomWidth: 1, borderBottomColor: '#E2DDD8'}
-                                                : {}),
-                                        }}
-                                    >
-                                        <ActivityLabel id={activity.activityType}/>
-
-                                        <View style={[styles.activityContent, theme.flexBlocks.alignCenter]}>
-                                            <Text
-                                                style={[styles.activityTitle, theme.fonts.activityTitle]}>
-                                                {activity.activityName}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                ))
-                            }
-                        </ScrollView>
+                {isLoading && (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor}/>
                     </View>
-                </View>
+                )}
+
+                {!isLoading && showMissingData && (
+                    <View style={[styles.messageCard, theme.containers.cardRound]}>
+                        <Text style={[styles.messageText, theme.fonts.body]}>
+                            Please complete previous steps so we can generate tailored activities for you.
+                        </Text>
+                    </View>
+                )}
+
+                {!isLoading && showError && (
+                    <View style={[styles.messageCard, theme.containers.cardRound]}>
+                        <Text style={[styles.errorText, theme.fonts.body]}>
+                            {errorMessage}
+                        </Text>
+
+                        <CustomButton
+                            title={'Try again'}
+                            onPress={onRetry}
+                            themeName={'white_no_border'}
+                            buttonStyle={styles.retryButton}
+                        />
+                    </View>
+                )}
+
+                {!isLoading && showEmptyState && (
+                    <View style={[styles.messageCard, theme.containers.cardRound]}>
+                        <Text style={[styles.messageText, theme.fonts.body]}>
+                            We couldn’t prepare recommendations right now. Try again in a moment.
+                        </Text>
+
+                        <CustomButton
+                            title={'Try again'}
+                            onPress={onRetry}
+                            themeName={'white_no_border'}
+                            buttonStyle={styles.retryButton}
+                        />
+                    </View>
+                )}
+
+                {!isLoading && hasRecommendations && renderRecommendations()}
             </View>
 
             <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
                     title={'Add to my list'}
                     onPress={onNext}
+                    disabled={!hasRecommendations || isLoading}
+                    themeName={!hasRecommendations || isLoading ? 'primary_disabled' : 'primary'}
                 />
 
                 <CustomButton
@@ -131,35 +152,66 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+        gap: 16,
     },
     suggestingText: {
         fontFamily: 'SF Pro Display Bold',
         fontSize: 14,
         lineHeight: 20,
-        opacity: .6,
+        opacity: 0.6,
         textAlign: 'center',
-        letterSpacing: 0
+        letterSpacing: 0,
     },
-    activitySections: {
-        flexDirection: 'column',
-        backgroundColor: '#F5F5F5',
-        borderRadius: 16,
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 32,
     },
-    activitySection: {
+    messageCard: {
         width: '100%',
-        minHeight: 90,
-        flexDirection: 'column',
-        padding: 16,
+        gap: 12,
+    },
+    messageText: {
+        textAlign: 'center',
+        opacity: 0.8,
+    },
+    errorText: {
+        textAlign: 'center',
+        color: '#FF3B30',
+    },
+    retryButton: {
+        alignSelf: 'center',
+        width: '100%',
+    },
+    overallReasoning: {
+        marginBottom: 12,
+        textAlign: 'left',
+    },
+    recommendationsList: {
+        maxHeight: 300,
+    },
+    recommendationsContent: {
+        paddingBottom: 8,
+    },
+    recommendationCard: {
+        paddingVertical: 12,
         gap: 8,
     },
-    activityContent: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 16,
-        width: '100%',
-        marginRight: -30
+    recommendationDivider: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2DDD8',
     },
-    activityTitle: {
-        maxWidth: '70%',
+    recommendationTitle: {
+        fontFamily: 'InterSemibold',
+    },
+    recommendationContent: {
+        opacity: 0.9,
+    },
+    recommendationMeta: {
+        fontFamily: 'InterSemibold',
+    },
+    recommendationReasoning: {
+        opacity: 0.7,
     },
 });

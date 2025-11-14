@@ -20,14 +20,11 @@ export const useFirebaseAuth = () => {
         throw new Error('Не удалось получить токен от Google');
       }
       
-      console.log('✅ Firebase токен получен:', firebaseToken.substring(0, 50) + '...');
-      
       // Логинимся в ваше API с Firebase токеном
       await loginWithFirebase(firebaseToken);
       
       return firebaseToken;
     } catch (error: any) {
-      console.error('❌ Ошибка Google Sign-In:', error);
       const errorMessage = error.message || 'Не удалось войти через Google';
       setError(errorMessage);
       throw error;
@@ -40,8 +37,6 @@ export const useFirebaseAuth = () => {
     try {
       setIsLoading(true);
       setError(null);
-
-      console.log('🍎 Начинаем Apple Sign-In...');
       
       // Получаем Firebase токен от Apple
       const firebaseToken = Platform.OS === "ios" 
@@ -52,16 +47,11 @@ export const useFirebaseAuth = () => {
         throw new Error('Не удалось получить токен от Apple');
       }
       
-      console.log('✅ Firebase токен получен:', firebaseToken.substring(0, 50) + '...');
-      
       // Логинимся в ваше API с Firebase токеном
       await loginWithFirebase(firebaseToken);
       
-      console.log('✅ Apple Sign-In завершен успешно');
-      
       return firebaseToken;
     } catch (error: any) {
-      console.error('❌ Ошибка Apple Sign-In:', error);
       const errorMessage = error.message || 'Не удалось войти через Apple';
       setError(errorMessage);
       throw error;

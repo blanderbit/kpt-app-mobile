@@ -21,7 +21,6 @@ export const usePageTooltips = (page: TooltipPage, options?: { enabled?: boolean
   // Автоматически загружаем тултипы при изменении страницы
   useEffect(() => {
     if (page) {
-      console.log(`Loading tooltips for page: ${page}`);
       refetch();
     }
   }, [page, refetch]);

@@ -8,7 +8,9 @@ import SignUpScreen from '@features/auth/screens/SignUpScreen';
 import ResetPassScreen from "@features/auth/screens/ResetPassScreen";
 import CheckEmailScreen from "@features/auth/screens/CheckEmailScreen";
 
-import MainScreen from "@features/main/screens/MainScreen";
+import TodayScreen from "@features/main/screens/today/TodayScreen";
+import ActivitiesScreen from "@features/activities/ActivitiesScreen";
+import ProfileScreen from "@features/main/screens/profile/ProfileScreen";
 import PersonalInfoScreen from "@features/main/screens/personal-info/PersonalInfoScreen";
 
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -26,7 +28,9 @@ type RootStackParamList = {
     [Routes.SIGN_UP]: undefined;
     [Routes.RESET_PASS]: undefined;
     [Routes.CHECK_EMAIL]: { email: string };
-    [Routes.HOME]: undefined;
+    [Routes.TODAY]: undefined;
+    [Routes.ACTIVITIES]: undefined;
+    [Routes.PROFILE]: undefined;
     [Routes.PERSONAL_INFO]: undefined;
     [Routes.SUBSCRIPTION_SETTINGS]: undefined;
     [Routes.ARTICLE]: { id: string };
@@ -38,7 +42,11 @@ export type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParam
 export type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SIGN_UP>;
 export type ResetPassScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.RESET_PASS>;
 export type CheckEmailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.CHECK_EMAIL>;
-export type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.HOME>;
+export type TodayScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.TODAY>;
+// Общий тип навигации для табов и других экранов
+export type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+export type ActivitiesScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.ACTIVITIES>;
+export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.PROFILE>;
 export type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.PERSONAL_INFO>;
 export type SubscriptionSettingsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SUBSCRIPTION_SETTINGS>;
 export type ArticleScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.ARTICLE>;
@@ -66,38 +74,65 @@ export function AppNavigator() {
     return (
         <View style={styles.main}>
             <Stack.Navigator
-                screenOptions={ {
-                    headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
-                    cardOverlayEnabled: false,
-                    cardStyleInterpolator: ({ current, next, layouts }) => {
-                        const translateX = current.progress.interpolate({
-                            inputRange: [ 0, 1 ],
-                            outputRange: [ layouts.screen.width + 40, 0 ],
-                        });
+                initialRouteName={isAuthenticated ? Routes.TODAY : Routes.LOGIN}
+                screenOptions={ ({ route }) => {
+                    // Список роутов табов, для которых не нужна анимация
+                    const tabRoutes = [Routes.TODAY, Routes.ACTIVITIES, Routes.PROFILE];
+                    const isTabRoute = tabRoutes.includes(route.name as Routes);
+                    
+                    return {
+                        headerShown: false,
+                        cardStyle: { backgroundColor: 'transparent' },
+                        cardOverlayEnabled: false,
+                        // Для табов отключаем анимацию полностью
+                        animationEnabled: !isTabRoute,
+                        transitionSpec: isTabRoute ? {
+                            open: { animation: 'timing', config: { duration: 0 } },
+                            close: { animation: 'timing', config: { duration: 0 } },
+                        } : undefined,
+                        // Для табов - без анимации, для остальных - с анимацией
+                        cardStyleInterpolator: isTabRoute 
+                            ? () => ({ cardStyle: { opacity: 1 } })
+                            : ({ current, next, layouts }) => {
+                                const translateX = current.progress.interpolate({
+                                    inputRange: [ 0, 1 ],
+                                    outputRange: [ layouts.screen.width + 40, 0 ],
+                                });
 
-                        const nextTranslateX = next
-                            ? next.progress.interpolate({
-                                inputRange: [ 0, 1 ],
-                                outputRange: [ 0, -layouts.screen.width - 40 ],
-                            })
-                            : 0;
+                                const nextTranslateX = next
+                                    ? next.progress.interpolate({
+                                        inputRange: [ 0, 1 ],
+                                        outputRange: [ 0, -layouts.screen.width - 40 ],
+                                    })
+                                    : 0;
 
-                        return {
-                            cardStyle: {
-                                transform: [
-                                    {
-                                        translateX: next ? nextTranslateX : translateX,
+                                return {
+                                    cardStyle: {
+                                        transform: [
+                                            {
+                                                translateX: next ? nextTranslateX : translateX,
+                                            },
+                                        ],
                                     },
-                                ],
+                                };
                             },
-                        };
-                    },
+                    };
                 } }
             >
                 { isAuthenticated ? (
                     <>
-                        <Stack.Screen name={ Routes.HOME } component={ MainScreen } />
+                        <Stack.Screen 
+                            name={ Routes.TODAY } 
+                            component={ TodayScreen }
+                        />
+                        <Stack.Screen 
+                            name={ Routes.ACTIVITIES } 
+                            component={ ActivitiesScreen }
+                        />
+                        <Stack.Screen 
+                            name={ Routes.PROFILE } 
+                            component={ ProfileScreen }
+                        />
                         <Stack.Screen name={ Routes.PERSONAL_INFO } component={ PersonalInfoScreen }/>
                         <Stack.Screen name={ Routes.SUBSCRIPTION_SETTINGS } component={ SubscriptionSettingsScreen }/>
                         <Stack.Screen name={ Routes.ARTICLE } component={ ArticleScreen }/>

@@ -37,17 +37,17 @@ export default function EleventhStep({onNext}: { onNext: () => void }) {
         }
     ], []);
 
-    const saveData = async (age: string) => {
+    const saveData = async (method: string) => {
         try {
-            await AsyncStorage.setItem(ONBOARDING_KEYS.AGE, JSON.stringify(age));
+            await AsyncStorage.setItem(ONBOARDING_KEYS.TASK_METHOD, JSON.stringify(method));
         } catch (error) {
-            console.error('Error saving age:', error);
+            console.error('Error saving task tracking method:', error);
         }
     };
 
-    const handleAgeSelect = (ageId: number) => {
-        saveData(ageId);
-        onNext(ageId);
+    const handleMethodSelect = (methodLabel: string) => {
+        saveData(methodLabel);
+        onNext();
     };
 
     return (
@@ -65,7 +65,7 @@ export default function EleventhStep({onNext}: { onNext: () => void }) {
                                 label={answer.text}
                                 icon={<RemoteSvg xml={answer.icon} size={32}/>}
                                 extraStyles={[styles.variantItem]}
-                                onPress={() => handleAgeSelect(answer.id)}
+                                onPress={() => handleMethodSelect(answer.text)}
                             />
                         ))}
                     </View>

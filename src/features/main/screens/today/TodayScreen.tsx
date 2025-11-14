@@ -19,7 +19,7 @@ import { HelloIcon } from "@assets/icons/HelloIcon";
 import SatisfactionSlider from "@shared/components/Slider/Slider";
 import WhiteCheckmarkIcon from "@assets/icons/WhiteCheckmarkIcon";
 import { WhiteCheckmarkIconDisabled } from "@assets/icons/WhiteCheckmarkIconDisabled";
-import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { TodayScreenNavigationProp } from "@app/navigation/AppNavigator";
 import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
 import MoodTracker from "@features/main/screens/mood-tracker/MoodTracker";
 import { Routes } from '@app/navigation/const';
@@ -31,10 +31,11 @@ import {PageTooltips} from "@shared/components/PageTooltips";
 import { useAuth } from '@app/hooks/auth.hook';
 import { EmailVerificationModal } from '@shared/components/EmailVerificationModal';
 import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
+import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 
 const circleSize = 16;
 
-export default function TodayScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
+export default function TodayScreen({ navigation }: { navigation: TodayScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { profile } = useProfile();
@@ -104,7 +105,8 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
     }, [isEmailVerified, isAuthenticated, profile]);
 
     return (
-        <View style={ styles.container }>
+        <TabScreenContainer>
+            <View style={ styles.container }>
             {isAuthenticated && isEmailVerified && (
                 <PageTooltips
                     page={TooltipPage.DASHBOARD}
@@ -368,6 +370,7 @@ export default function TodayScreen({ navigation }: { navigation: HomeScreenNavi
                 }}
             />
         </View>
+        </TabScreenContainer>
     );
 }
 

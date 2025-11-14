@@ -11,14 +11,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import {settingsElements, SettingsItem, weekDays} from "@features/main/screens/profile/const";
 import { COLORS } from "@app/theme";
 import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
-import { HomeScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { ProfileScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { useAuth } from "@app/hooks/auth.hook";
 import { useProfile } from "@app/hooks/profile.hook";
 import { useDeleteAccount, useMoodForLast7Days } from "@shared/services/api";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
+import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
+import { AutoPageTooltips } from '@shared/components/AutoPageTooltips';
 
-export default function ProfileScreen({ navigation }: { navigation: HomeScreenNavigationProp }) {
+export default function ProfileScreen({ navigation }: { navigation: ProfileScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme, themeName, setThemeByName } = useCustomTheme();
     const { logout } = useAuth();
@@ -88,8 +90,6 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
         const days = [];
         const today = new Date();
         
-        console.log('🎭 ProfileScreen: moodData from API:', moodData);
-        
         // Создаем массив дней недели, начиная с сегодняшнего дня
         const todayDayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник, ..., 6 = суббота
         const weekDaysOrdered = [];
@@ -114,9 +114,6 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                 dayName: weekDaysOrdered[6 - i] // Используем переупорядоченные дни недели
             });
         }
-        
-        console.log('🎭 ProfileScreen: last7DaysMood processed:', days);
-        console.log('🎭 ProfileScreen: today is', today.toDateString(), 'day of week:', todayDayOfWeek);
         return days;
     }, [moodData])
 
@@ -142,8 +139,10 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
     };
 
     return (
-        <View style={ [ styles.container ] }>
-            <ScrollView
+        <TabScreenContainer>
+            <View style={ [ styles.container ] }>
+                <AutoPageTooltips autoShow={true} />
+                <ScrollView
                 contentContainerStyle={ [ styles.scrollContent, theme.flexBlocks.vertical8 ] }
                 showsVerticalScrollIndicator={ false }
             >
@@ -334,6 +333,7 @@ export default function ProfileScreen({ navigation }: { navigation: HomeScreenNa
                 </View>
             </ScrollView>
         </View>
+        </TabScreenContainer>
     );
 }
 
