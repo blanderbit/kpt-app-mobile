@@ -7,7 +7,6 @@ export const useActivityTypesLoader = (options?: { enabled?: boolean }) => {
 
   useEffect(() => {
     if (isSuccess && activityTypes && activityTypes.length > 0) {
-      console.log('Updating activity types with backend data:', activityTypes.length, 'types');
       updateActivityTypes(activityTypes);
     }
   }, [activityTypes, isSuccess]);

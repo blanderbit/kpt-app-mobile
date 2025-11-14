@@ -21,13 +21,10 @@ export interface ApiError {
 // Функция для обновления токенов
 const refreshTokens = async (): Promise<boolean> => {
   try {
-    console.log('🔄 Попытка обновления токенов...');
-    
     const refreshToken = await AsyncStorage.getItem('refresh_token');
     const accessToken = await AsyncStorage.getItem('auth_token');
     
     if (!refreshToken || !accessToken) {
-      console.log('⚠️ Нет токенов для обновления');
       return false;
     }
 
@@ -43,8 +40,6 @@ const refreshTokens = async (): Promise<boolean> => {
     
     return true;
   } catch (error: any) {
-    console.error('❌ Ошибка обновления токенов:', error);
-    
     // Если refresh не удался, очищаем все токены
     await apiUtils.removeAuthTokens();
     
@@ -89,25 +84,16 @@ const createApiClient = (): AxiosInstance => {
   client.interceptors.request.use(
     async (config) => {
       try {
-        console.log(`🌐 HTTP ${config.method?.toUpperCase()} ${config.url}`, {
-          baseURL: config.baseURL,
-          data: config.data,
-          headers: config.headers
-        });
         const token = await AsyncStorage.getItem('auth_token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
-          console.log('🔑 Добавлен токен авторизации');
-        } else {
-          console.log('⚠️ Токен авторизации не найден');
         }
       } catch (error) {
-        console.warn('Failed to get auth token:', error);
+        // Игнорируем ошибки получения токена
       }
       return config;
     },
     (error) => {
-      console.error('❌ Ошибка интерцептора запроса:', error);
       return Promise.reject(error);
     }
   );
@@ -115,18 +101,10 @@ const createApiClient = (): AxiosInstance => {
   // Интерцептор для ответов - обрабатываем ошибки и автоматически обновляем токены
   client.interceptors.response.use(
     (response: AxiosResponse) => {
-      console.log(`✅ HTTP ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`, {
-        data: response.data
-      });
       return response;
     },
     async (error: AxiosError) => {
       const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-      
-      console.error(`❌ HTTP ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - ${error.response?.status || 'NETWORK_ERROR'}`, {
-        error: error.response?.data || error.message,
-        status: error.response?.status
-      });
 
       // Если получили 401 и это не refresh запрос
       if (error.response?.status === 401 && !originalRequest._retry) {
@@ -201,7 +179,7 @@ export const apiUtils = {
         ['refresh_token', refreshToken],
       ]);
     } catch (error) {
-      console.error('Failed to save auth tokens:', error);
+      // Игнорируем ошибки сохранения токенов
     }
   },
 
@@ -210,7 +188,7 @@ export const apiUtils = {
     try {
       await AsyncStorage.setItem('auth_token', token);
     } catch (error) {
-      console.error('Failed to save auth token:', error);
+      // Игнорируем ошибки сохранения токена
     }
   },
 
@@ -219,7 +197,6 @@ export const apiUtils = {
     try {
       return await AsyncStorage.getItem('auth_token');
     } catch (error) {
-      console.error('Failed to get auth token:', error);
       return null;
     }
   },
@@ -229,7 +206,6 @@ export const apiUtils = {
     try {
       return await AsyncStorage.getItem('refresh_token');
     } catch (error) {
-      console.error('Failed to get refresh token:', error);
       return null;
     }
   },
@@ -239,7 +215,7 @@ export const apiUtils = {
     try {
       await AsyncStorage.multiRemove(['auth_token', 'refresh_token']);
     } catch (error) {
-      console.error('Failed to remove auth tokens:', error);
+      // Игнорируем ошибки удаления токенов
     }
   },
 
@@ -248,7 +224,7 @@ export const apiUtils = {
     try {
       await AsyncStorage.removeItem('auth_token');
     } catch (error) {
-      console.error('Failed to remove auth token:', error);
+      // Игнорируем ошибки удаления токена
     }
   },
 
@@ -259,7 +235,6 @@ export const apiUtils = {
       const refreshToken = await AsyncStorage.getItem('refresh_token');
       return !!(accessToken && refreshToken);
     } catch (error) {
-      console.error('Failed to check tokens:', error);
       return false;
     }
   },
@@ -276,7 +251,6 @@ export const setOnAuthRequired = (callback: (() => void) | null) => {
 // Функция для вызова callback'а
 export const notifyAuthRequired = () => {
   if (onAuthRequiredCallback) {
-    console.log('🔔 Уведомляем о необходимости логина');
     onAuthRequiredCallback();
   }
 };

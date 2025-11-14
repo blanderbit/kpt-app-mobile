@@ -129,8 +129,6 @@ export const updateActivityTypes = (newActivityTypes: ActivityType[]) => {
     });
 
     ACTIVITY_TYPES = updatedTypes;
-    console.log('Activity types updated from backend:', ACTIVITY_TYPES);
-    console.log('Total types loaded:', Object.keys(ACTIVITY_TYPES).length);
 };
 
 export const getActivityTypeById = (id: string): ActivityType | undefined => {
