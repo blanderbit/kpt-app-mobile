@@ -57,6 +57,18 @@ import {
   PaginatedResponse,
   RegisterDeviceTokenRequest,
   RegisterDeviceTokenResponse,
+  // Article types
+  ArticleResponse,
+  // Survey types
+  SurveyResponse,
+  SubmitSurveyAnswerRequest,
+  SubmitSurveyAnswerResponse,
+  // Subscription types
+  Subscription,
+  CancelSubscriptionRequest,
+  CancelSubscriptionResponse,
+  // Mood tracker stats types
+  MoodTrackerStatsResponse,
 } from './types';
 
 // Базовый класс для API сервисов
@@ -152,6 +164,10 @@ export class AuthService extends ApiService {
     return this.post<RegisterDeviceTokenResponse>('/notifications/devices', data);
   }
 
+  async deleteDeviceToken(token: string): Promise<void> {
+    return this.delete<void>(`/notifications/devices/${token}`);
+  }
+
   async forgotPassword(data: ForgotPasswordRequest): Promise<{ message: string }> {
     return this.post<{ message: string }>('/auth/forgot-password', data);
   }
@@ -192,11 +208,11 @@ export class ProfileService extends ApiService {
   }
 
   async confirmEmailChange(data: ConfirmEmailChangeRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/email/confirm-change', data);
+    return this.put<{ message: string }>('/profile/email/confirm-change', data);
   }
 
   async changePassword(data: ChangePasswordRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/profile/password/change', data);
+    return this.put<{ message: string }>('/profile/password/change', data);
   }
 
   async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
@@ -252,6 +268,14 @@ export class MoodTrackerService extends ApiService {
 
   async getMoodSurveys(): Promise<MoodSurvey[]> {
     return this.get<MoodSurvey[]>('/mood-surveys');
+  }
+
+  async getMoodSurveyById(id: number): Promise<MoodSurvey> {
+    return this.get<MoodSurvey>(`/mood-surveys/${id}`);
+  }
+
+  async getMoodStatsForPeriod(startDate: string, endDate: string): Promise<MoodTrackerStatsResponse> {
+    return this.get<MoodTrackerStatsResponse>('/profile/mood-tracker/stats/period', { startDate, endDate });
   }
 }
 
@@ -358,15 +382,15 @@ export class AnalyticsService extends ApiService {
 // Сервис для языков
 export class LanguageService extends ApiService {
   async getAllLanguages(active?: boolean): Promise<LanguageResponse[]> {
-    return this.get<LanguageResponse[]>('/admin/languages', { active });
+    return this.get<LanguageResponse[]>('/languages', { active });
   }
 
   async getLanguageById(id: string): Promise<LanguageResponse> {
-    return this.get<LanguageResponse>(`/admin/languages/${id}`);
+    return this.get<LanguageResponse>(`/languages/${id}`);
   }
 
   async getLanguageByCode(code: string): Promise<LanguageResponse> {
-    return this.get<LanguageResponse>(`/admin/languages/code/${code}`);
+    return this.get<LanguageResponse>(`/languages/code/${code}`);
   }
 }
 
@@ -414,6 +438,63 @@ export class TooltipService extends ApiService {
   }
 }
 
+// Сервис для статей
+export class ArticleService extends ApiService {
+  async getArticles(params?: PaginationParams): Promise<PaginatedResponse<ArticleResponse>> {
+    return this.get<PaginatedResponse<ArticleResponse>>('/articles', params);
+  }
+
+  async getRandomArticle(): Promise<ArticleResponse> {
+    return this.get<ArticleResponse>('/articles/random');
+  }
+
+  async getTemporaryArticles(): Promise<ArticleResponse[]> {
+    return this.get<ArticleResponse[]>('/articles/temporary');
+  }
+
+  async getArticleById(id: number): Promise<ArticleResponse> {
+    return this.get<ArticleResponse>(`/articles/${id}`);
+  }
+
+  async hideArticle(id: number): Promise<{ message: string }> {
+    return this.post<{ message: string }>(`/articles/${id}/hide`);
+  }
+}
+
+// Сервис для опросов
+export class SurveyService extends ApiService {
+  async getSurveys(): Promise<SurveyResponse[]> {
+    return this.get<SurveyResponse[]>('/surveys');
+  }
+
+  async getRandomSurvey(): Promise<SurveyResponse> {
+    return this.get<SurveyResponse>('/surveys/random');
+  }
+
+  async getTemporarySurveys(): Promise<SurveyResponse[]> {
+    return this.get<SurveyResponse[]>('/surveys/temporary');
+  }
+
+  async getSurveyById(id: number): Promise<SurveyResponse> {
+    return this.get<SurveyResponse>(`/surveys/${id}`);
+  }
+
+  async submitSurveyAnswer(id: number, data: SubmitSurveyAnswerRequest): Promise<SubmitSurveyAnswerResponse> {
+    return this.post<SubmitSurveyAnswerResponse>(`/surveys/${id}/submit`, data);
+  }
+}
+
+// Сервис для подписок
+export class SubscriptionService extends ApiService {
+  async getLatestSubscription(): Promise<Subscription> {
+    return this.get<Subscription>('/subscriptions/latest');
+  }
+
+  async cancelSubscription(data: CancelSubscriptionRequest): Promise<CancelSubscriptionResponse> {
+    return this.post<CancelSubscriptionResponse>('/subscriptions/revenuecat/cancel', data);
+  }
+}
+
 // Экспорт всех сервисов
 export const authService = new AuthService();
 export const profileService = new ProfileService();
@@ -425,5 +506,8 @@ export const suggestedActivityService = new SuggestedActivityService();
 export const analyticsService = new AnalyticsService();
 export const languageService = new LanguageService();
 export const tooltipService = new TooltipService();
+export const articleService = new ArticleService();
+export const surveyService = new SurveyService();
+export const subscriptionService = new SubscriptionService();
 
 

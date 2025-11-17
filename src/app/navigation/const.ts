@@ -9,6 +9,8 @@ export enum Routes {
     PERSONAL_INFO = 'PersonalInfo',
     SUBSCRIPTION_SETTINGS = 'SubscriptionSettings',
     ARTICLE = 'Article',
+    SURVEY = 'Survey',
+    SURVEY_QUESTIONS = 'SurveyQuestions',
     REDIRECT = 'Redirect',
     ONBOARDING = 'Onboarding',
 }

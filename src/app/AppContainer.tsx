@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ImageBackground, StyleSheet, View } from "react-native";
 import { AuthProvider } from "@features/auth/AuthProvider";
 import { ProfileProvider } from "@features/profile/ProfileProvider";
@@ -11,6 +11,8 @@ import { AppNavigator } from "@app/navigation/AppNavigator";
 import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
 import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
+import { revenueCatService } from "@shared/services/revenuecat";
+import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
 function MainApp() {
     const { theme } = useCustomTheme();
@@ -43,6 +45,21 @@ export default function App() {
         InterMedium: require("../../assets/fonts/Inter_18pt-Medium.ttf"),
         InterSemibold: require("../../assets/fonts/Inter_18pt-SemiBold.ttf"),
     });
+
+    // Инициализация RevenueCat
+    useEffect(() => {
+        try {
+            const apiKey = getRevenueCatApiKey();
+            // Проверяем, что ключ не дефолтный
+            if (apiKey && !apiKey.includes('YOUR_') && !apiKey.includes('HERE')) {
+                revenueCatService.initialize({ apiKey });
+            } else {
+                console.warn('RevenueCat API key not configured. Please set REVENUECAT_IOS_API_KEY and REVENUECAT_ANDROID_API_KEY in your environment or update revenuecat.config.ts');
+            }
+        } catch (error) {
+            console.error('Failed to initialize RevenueCat:', error);
+        }
+    }, []);
 
     if ( !fontsLoaded ) return null;
 

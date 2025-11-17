@@ -223,6 +223,9 @@
     "additionalTasks": {
       "article": {
         "title": "Статья"
+      },
+      "survey": {
+        "title": "Опрос"
       }
     },
     "modals": {

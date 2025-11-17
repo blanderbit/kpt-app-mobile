@@ -4,34 +4,45 @@ import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
-import { ArticleScreenNavigationProp, ArticleScreenRouteProp } from "@app/navigation/AppNavigator";
-import { useArticleById } from '@shared/services/api/hooks';
+import { SurveyScreenNavigationProp, SurveyScreenRouteProp } from "@app/navigation/AppNavigator";
+import { Routes } from '@app/navigation/const';
+import { useSurveyById } from '@shared/services/api/hooks';
 import RenderHTML from 'react-native-render-html';
+import CustomButton from "@shared/components/Button/Button";
 
-export default function ArticleScreen({ navigation, route }: { navigation: ArticleScreenNavigationProp, route: ArticleScreenRouteProp }) {
+export default function SurveyScreen({ navigation, route }: { navigation: SurveyScreenNavigationProp, route: SurveyScreenRouteProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { width } = useWindowDimensions();
 
-    // TODO: ВРЕМЕННО для теста - хардкод ID 73
-    const articleId = 73;
-    console.log('📰 [ArticleScreen] ТЕСТОВЫЙ РЕЖИМ - используем хардкод ID:', articleId);
+    // TODO: ВРЕМЕННО для теста - хардкод ID 14
+    const surveyId = 14;
+    console.log('📋 [SurveyScreen] ТЕСТОВЫЙ РЕЖИМ - используем хардкод ID:', surveyId);
     
     // const { id } = route.params;
-    // console.log('📰 [ArticleScreen] Получен ID из route.params:', id);
-    // console.log('📰 [ArticleScreen] ID как число:', Number(id));
-    // const articleId = Number(id);
+    // console.log('📋 [SurveyScreen] Получен ID из route.params:', id);
+    // console.log('📋 [SurveyScreen] ID как число:', Number(id));
+    // const surveyId = Number(id);
     
-    const { data: article, isLoading, error, isFetching } = useArticleById(articleId);
+    const { data: survey, isLoading, error, isFetching } = useSurveyById(surveyId);
 
     useEffect(() => {
-        console.log('📰 [ArticleScreen] useEffect - article изменился:', article);
-        console.log('📰 [ArticleScreen] isLoading:', isLoading);
-        console.log('📰 [ArticleScreen] error:', error);
-        console.log('📰 [ArticleScreen] isFetching:', isFetching);
-    }, [article, isLoading, error, isFetching]);
+        console.log('📋 [SurveyScreen] useEffect - survey изменился:', survey);
+        console.log('📋 [SurveyScreen] isLoading:', isLoading);
+        console.log('📋 [SurveyScreen] error:', error);
+        console.log('📋 [SurveyScreen] isFetching:', isFetching);
+    }, [survey, isLoading, error, isFetching]);
 
     const onBack = () => navigation.goBack();
+
+    const onStart = () => {
+        console.log('📋 [SurveyScreen] Нажата кнопка Let\'s start для опроса:', surveyId);
+        if (survey && survey.questions && survey.questions.length > 0) {
+            navigation.navigate(Routes.SURVEY_QUESTIONS, { survey });
+        } else {
+            console.log('📋 [SurveyScreen] ⚠️ У опроса нет вопросов');
+        }
+    };
 
     if (isLoading || isFetching) {
         return (
@@ -47,20 +58,20 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
                         <ArrowIcon />
                     </Pressable>
                     <Text style={theme.fonts.subtitle}>
-                        {t('main.additionalTasks.article.title')}
+                        {t('main.additionalTasks.survey.title')}
                     </Text>
                 </>
             }>
                 <View style={[styles.center, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
                     <ActivityIndicator size="large" />
-                    <Text style={[theme.fonts.regular, { marginTop: 16 }]}>Загрузка статьи...</Text>
+                    <Text style={[theme.fonts.regular, { marginTop: 16 }]}>Загрузка опроса...</Text>
                 </View>
             </PageWithHeader>
         );
     }
 
-    if (error || !article) {
-        console.log('📰 [ArticleScreen] ❌ Ошибка или статья не найдена:', error);
+    if (error || !survey) {
+        console.log('📋 [SurveyScreen] ❌ Ошибка или опрос не найден:', error);
         return (
             <PageWithHeader headerContent={
                 <>
@@ -74,13 +85,13 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
                         <ArrowIcon />
                     </Pressable>
                     <Text style={theme.fonts.subtitle}>
-                        {t('main.additionalTasks.article.title')}
+                        {t('main.additionalTasks.survey.title')}
                     </Text>
                 </>
             }>
                 <View style={styles.center}>
                     <Text style={theme.fonts.subheader}>
-                        {error ? 'Ошибка загрузки статьи' : 'Статья не найдена'}
+                        {error ? 'Ошибка загрузки опроса' : 'Опрос не найден'}
                     </Text>
                     {error && (
                         <Text style={[theme.fonts.regular, { marginTop: 8, opacity: 0.6 }]}>
@@ -92,15 +103,17 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
         );
     }
 
-    console.log('📰 [ArticleScreen] ✅ Отображаем статью:', {
-        id: article.id,
-        title: article.title,
-        text: article.text?.substring(0, 100) + '...',
-        textLength: article.text?.length || 0,
-        files: article.files?.length || 0,
-        hasImage: !!(article.files && article.files.length > 0 && article.files[0]?.fileUrl),
-        imageUrl: article.files?.[0]?.fileUrl,
+    console.log('📋 [SurveyScreen] ✅ Отображаем опрос:', {
+        id: survey.id,
+        title: survey.title,
+        description: survey.description,
+        questionsCount: survey.questions?.length || 0,
+        hasImage: !!(survey.file?.fileUrl),
+        imageUrl: survey.file?.fileUrl,
     });
+
+    // Обработка description - может быть строкой или null
+    const descriptionText = survey.description || null;
 
     return (
         <PageWithHeader headerContent={
@@ -115,7 +128,7 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
                     <ArrowIcon />
                 </Pressable>
                 <Text style={theme.fonts.subtitle}>
-                    {t('main.additionalTasks.article.title')}
+                    {t('main.additionalTasks.survey.title')}
                 </Text>
             </>
         }>
@@ -124,23 +137,23 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
                 contentContainerStyle={{ flex: 1, paddingBottom: 24, marginTop: 10 }}
             >
                 <View style={[theme.flexBlocks.vertical8, { flex: 1, paddingBottom: 24 }]}>
-                    {/* Изображение в самом верху, если есть файлы */}
-                    {article.files && article.files.length > 0 && article.files[0]?.fileUrl && (
+                    {/* Изображение в самом верху, если есть файл */}
+                    {survey.file?.fileUrl && (
                         <Image
-                            source={{ uri: article.files[0].fileUrl }}
+                            source={{ uri: survey.file.fileUrl }}
                             style={styles.image}
                             resizeMode="cover"
                         />
                     )}
                     
                     {/* Заголовок */}
-                    <Text style={[theme.fonts.title]}>{article.title}</Text>
+                    <Text style={[theme.fonts.title]}>{survey.title}</Text>
                     
-                    {/* HTML контент */}
-                    {article.text && (
+                    {/* Описание опроса */}
+                    {descriptionText && (
                         <RenderHTML
                             contentWidth={width - 48}
-                            source={{ html: article.text }}
+                            source={{ html: descriptionText }}
                             baseStyle={{
                                 fontSize: 16,
                                 lineHeight: 24,
@@ -156,6 +169,15 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
                             }}
                         />
                     )}
+                </View>
+
+                {/* Кнопка Let's start в конце страницы */}
+                <View style={styles.buttonContainer}>
+                    <CustomButton
+                        title="Let's start"
+                        onPress={onStart}
+                        themeName="primary"
+                    />
                 </View>
             </ScrollView>
         </PageWithHeader>
@@ -183,4 +205,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 24,
     },
+    buttonContainer: {
+        paddingTop: 24,
+        paddingHorizontal: 16,
+    },
 });
+

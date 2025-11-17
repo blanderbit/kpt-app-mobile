@@ -32,6 +32,7 @@ import { useAuth } from '@app/hooks/auth.hook';
 import { EmailVerificationModal } from '@shared/components/EmailVerificationModal';
 import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
+import { useRandomArticle, useRandomSurvey } from '@shared/services/api/hooks';
 
 const circleSize = 16;
 
@@ -41,6 +42,10 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     const { profile } = useProfile();
     const { hasMoodForToday, currentMood } = useCurrentMoodContext();
     const { isEmailVerified, isAuthenticated } = useAuth();
+    
+    // Загружаем случайную статью и опрос при монтировании экрана
+    const { data: randomArticle } = useRandomArticle();
+    const { data: randomSurvey } = useRandomSurvey();
 
     console.log('TodayScreen state:', { 
         isEmailVerified, 
@@ -82,7 +87,20 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
             // Если настроение уже записано, ничего не делаем (секция заблокирована)
         }
         if ( section.mode === AdditionalActivityType.ARTICLE ) {
-            navigation.navigate(Routes.ARTICLE, { id: '1' });
+            if (randomArticle?.id) {
+                console.log('📰 [TodayScreen] Переход к статье с ID:', randomArticle.id);
+                navigation.navigate(Routes.ARTICLE, { id: randomArticle.id.toString() });
+            } else {
+                console.log('📰 [TodayScreen] ⚠️ Статья не загружена, ID отсутствует');
+            }
+        }
+        if ( section.mode === AdditionalActivityType.SURVEY ) {
+            if (randomSurvey?.id) {
+                console.log('📋 [TodayScreen] Переход к опросу с ID:', randomSurvey.id);
+                navigation.navigate(Routes.SURVEY, { id: randomSurvey.id.toString() });
+            } else {
+                console.log('📋 [TodayScreen] ⚠️ Опрос не загружен, ID отсутствует');
+            }
         }
     }
 
@@ -232,7 +250,42 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                         {
                             additionalTaskSections.map((section, index) => {
                                 const isMoodSection = section.mode === AdditionalActivityType.MOOD_TRACKER;
+                                const isArticleSection = section.mode === AdditionalActivityType.ARTICLE;
+                                const isSurveySection = section.mode === AdditionalActivityType.SURVEY;
                                 const isBlocked = isMoodSection && hasMoodForToday;
+                                
+                                // Получаем данные для article и survey
+                                const articleData = isArticleSection ? randomArticle : null;
+                                const surveyData = isSurveySection ? randomSurvey : null;
+                                
+                                // Определяем текст для отображения
+                                let displayTitle = t(section.label);
+                                let displayInfo = t(section.info);
+                                let displayDescription = section.description ? t(section.description) : null;
+                                
+                                // Если есть данные из API, используем их
+                                if (articleData) {
+                                    displayInfo = articleData.title || displayInfo;
+                                    if (articleData.text) {
+                                        displayDescription = articleData.text.length > 100 
+                                            ? articleData.text.substring(0, 100) + '...' 
+                                            : articleData.text;
+                                    }
+                                }
+                                
+                                if (surveyData) {
+                                    displayInfo = surveyData.title || displayInfo;
+                                    if (surveyData.description) {
+                                        if (typeof surveyData.description === 'string') {
+                                            displayDescription = surveyData.description.length > 100 
+                                                ? surveyData.description.substring(0, 100) + '...' 
+                                                : surveyData.description;
+                                        } else {
+                                            // Если description - объект, используем fallback
+                                            displayDescription = displayDescription;
+                                        }
+                                    }
+                                }
                                 
                                 return (
                                     <Pressable 
@@ -252,7 +305,7 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                             <Text style={ [ 
                                                 theme.fonts.subtitle,
                                             ] }>
-                                                { t(section.label) }
+                                                { displayTitle }
                                             </Text>
                                             
                                             { isBlocked && (
@@ -269,15 +322,15 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                                     opacity: 0.3
                                                 }
                                             ] }>
-                                                { t(section.info) }
+                                                { displayInfo }
                                             </Text>
 
-                                            { section.description &&
+                                            { displayDescription &&
                                                 <Text style={ [ 
                                                     theme.fonts.regular, 
                                                     { opacity: .6 },
-                                                ] }>
-                                                    { t(section.description) }
+                                                ] } numberOfLines={2}>
+                                                    { displayDescription }
                                                 </Text> 
                                             }
                                         </View>

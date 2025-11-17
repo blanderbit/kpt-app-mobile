@@ -224,6 +224,9 @@
     "additionalTasks": {
       "article": {
         "title": "Article"
+      },
+      "survey": {
+        "title": "Survey"
       }
     },
     "modals": {

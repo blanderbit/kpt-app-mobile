@@ -10,6 +10,8 @@ import {
   suggestedActivityService,
   analyticsService,
   tooltipService,
+  articleService,
+  surveyService,
 } from './client';
 import {
   LoginRequest,
@@ -98,6 +100,16 @@ export const queryKeys = {
   // Notifications
   notifications: ['notifications'] as const,
   deviceToken: () => [...queryKeys.notifications, 'deviceToken'] as const,
+  
+  // Articles
+  articles: ['articles'] as const,
+  randomArticle: () => [...queryKeys.articles, 'random'] as const,
+  articleById: (id: number) => [...queryKeys.articles, 'byId', id] as const,
+  
+  // Surveys
+  surveys: ['surveys'] as const,
+  randomSurvey: () => [...queryKeys.surveys, 'random'] as const,
+  surveyById: (id: number) => [...queryKeys.surveys, 'byId', id] as const,
 };
 
 // Auth hooks
@@ -479,10 +491,24 @@ export const useSearchActivityTypes = (query: string) => {
 
 // Suggested Activities hooks
 export const useSuggestedActivities = (date?: string) => {
+  console.log('🎯 [useSuggestedActivities] Запрос suggested activities, date:', date);
+  
   return useQuery({
     queryKey: queryKeys.suggestedActivitiesForDate(date),
-    queryFn: () => suggestedActivityService.getSuggestedActivities(date),
+    queryFn: async () => {
+      console.log('🎯 [useSuggestedActivities] Выполнение запроса для date:', date);
+      const result = await suggestedActivityService.getSuggestedActivities(date);
+      console.log('🎯 [useSuggestedActivities] ✅ Получены suggested activities:', JSON.stringify(result, null, 2));
+      console.log('🎯 [useSuggestedActivities] Количество:', result?.length || 0);
+      return result;
+    },
     staleTime: 5 * 60 * 1000,
+    onSuccess: (data) => {
+      console.log('🎯 [useSuggestedActivities] onSuccess - данные:', data);
+    },
+    onError: (error) => {
+      console.error('🎯 [useSuggestedActivities] ❌ Ошибка:', error);
+    },
   });
 };
 
@@ -603,5 +629,85 @@ export const useCloseTooltip = () => {
   return useMutation({
     mutationFn: (tooltipId: number) => tooltipService.closeTooltip(tooltipId),
   });
+};
+
+// Article hooks
+export const useRandomArticle = () => {
+  return useQuery({
+    queryKey: queryKeys.randomArticle(),
+    queryFn: () => articleService.getRandomArticle(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useArticleById = (id: number) => {
+  console.log('📰 [useArticleById] Запрос статьи с ID:', id);
+  
+  const queryResult = useQuery({
+    queryKey: queryKeys.articleById(id),
+    queryFn: async () => {
+      console.log('📰 [useArticleById] Выполнение запроса для ID:', id);
+      const result = await articleService.getArticleById(id);
+      console.log('📰 [useArticleById] ✅ Получена статья:', JSON.stringify(result, null, 2));
+      return result;
+    },
+    enabled: !!id && !isNaN(id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  if (queryResult.data) {
+    console.log('📰 [useArticleById] Данные в кэше:', queryResult.data);
+  }
+  if (queryResult.error) {
+    console.error('📰 [useArticleById] ❌ Ошибка:', queryResult.error);
+  }
+  console.log('📰 [useArticleById] Статус запроса:', {
+    isLoading: queryResult.isLoading,
+    isError: queryResult.isError,
+    isSuccess: queryResult.isSuccess,
+    isFetching: queryResult.isFetching,
+  });
+
+  return queryResult;
+};
+
+// Survey hooks
+export const useRandomSurvey = () => {
+  return useQuery({
+    queryKey: queryKeys.randomSurvey(),
+    queryFn: () => surveyService.getRandomSurvey(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+export const useSurveyById = (id: number) => {
+  console.log('📋 [useSurveyById] Запрос опроса с ID:', id);
+  
+  const queryResult = useQuery({
+    queryKey: queryKeys.surveyById(id),
+    queryFn: async () => {
+      console.log('📋 [useSurveyById] Выполнение запроса для ID:', id);
+      const result = await surveyService.getSurveyById(id);
+      console.log('📋 [useSurveyById] ✅ Получен опрос:', JSON.stringify(result, null, 2));
+      return result;
+    },
+    enabled: !!id && !isNaN(id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  if (queryResult.data) {
+    console.log('📋 [useSurveyById] Данные в кэше:', queryResult.data);
+  }
+  if (queryResult.error) {
+    console.error('📋 [useSurveyById] ❌ Ошибка:', queryResult.error);
+  }
+  console.log('📋 [useSurveyById] Статус запроса:', {
+    isLoading: queryResult.isLoading,
+    isError: queryResult.isError,
+    isSuccess: queryResult.isSuccess,
+    isFetching: queryResult.isFetching,
+  });
+
+  return queryResult;
 };
 

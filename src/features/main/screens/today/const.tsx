@@ -11,6 +11,7 @@ export enum DailyActivityType {
 export enum AdditionalActivityType {
     MOOD_TRACKER = 'MOOD_TRACKER',
     ARTICLE = 'ARTICLE',
+    SURVEY = 'SURVEY',
 }
 
 export const DailyActivitySections = [
@@ -52,5 +53,6 @@ export const additionalTaskSections = [
         label: 'main.today.additionalTasks.survey.title',
         info: 'main.today.additionalTasks.survey.info',
         description: 'main.today.additionalTasks.survey.desc',
+        mode: AdditionalActivityType.SURVEY,
     }
 ]

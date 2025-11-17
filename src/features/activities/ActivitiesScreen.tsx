@@ -64,11 +64,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     console.log('myActivities.data length:', myActivities?.data?.length);
     console.log('isLoading:', isLoading);
     console.log('error:', error);
-
-    // Log when myActivities changes
-    React.useEffect(() => {
-        console.log('🔄 myActivities data changed:', myActivities?.data);
-    }, [myActivities]);
+    
+    // Suggested Activities logs
+    console.log('🎯 suggestedActivitiesData:', suggestedActivitiesData);
+    console.log('🎯 suggestedActivitiesData?.data:', suggestedActivitiesData?.data);
+    console.log('🎯 suggestedActivitiesData?.data length:', suggestedActivitiesData?.data?.length);
 
     // Function to force re-render of DraggableList
     const forceActivitiesRerender = () => {

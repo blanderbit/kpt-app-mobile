@@ -20,8 +20,11 @@ import SubscriptionSettingsScreen from "@features/main/screens/subscription-sett
 import { RouteProp } from "@react-navigation/native";
 import { useTheme } from '@react-navigation/native';
 import ArticleScreen from "@features/main/screens/article/ArticleScreen";
+import SurveyScreen from "@features/main/screens/survey/SurveyScreen";
+import SurveyQuestionsScreen from "@features/main/screens/survey/SurveyQuestionsScreen";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 import OnboardingTemplate from "@features/auth/screens/Onboarding/OnboardingTemplate";
+import { SurveyResponse } from "@shared/services/api/types";
 
 type RootStackParamList = {
     [Routes.LOGIN]: undefined;
@@ -34,6 +37,8 @@ type RootStackParamList = {
     [Routes.PERSONAL_INFO]: undefined;
     [Routes.SUBSCRIPTION_SETTINGS]: undefined;
     [Routes.ARTICLE]: { id: string };
+    [Routes.SURVEY]: { id: string };
+    [Routes.SURVEY_QUESTIONS]: { survey: SurveyResponse };
     [Routes.REDIRECT]: undefined;
     [Routes.ONBOARDING]: undefined;
 };
@@ -50,8 +55,12 @@ export type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackPar
 export type PersonalInfoScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.PERSONAL_INFO>;
 export type SubscriptionSettingsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SUBSCRIPTION_SETTINGS>;
 export type ArticleScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.ARTICLE>;
+export type SurveyScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SURVEY>;
+export type SurveyQuestionsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, Routes.SURVEY_QUESTIONS>;
 
 export type ArticleScreenRouteProp = RouteProp<RootStackParamList, Routes.ARTICLE>;
+export type SurveyScreenRouteProp = RouteProp<RootStackParamList, Routes.SURVEY>;
+export type SurveyQuestionsScreenRouteProp = RouteProp<RootStackParamList, Routes.SURVEY_QUESTIONS>;
 export type CheckEmailScreenRouteProp = RouteProp<RootStackParamList, Routes.CHECK_EMAIL>;
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -136,6 +145,8 @@ export function AppNavigator() {
                         <Stack.Screen name={ Routes.PERSONAL_INFO } component={ PersonalInfoScreen }/>
                         <Stack.Screen name={ Routes.SUBSCRIPTION_SETTINGS } component={ SubscriptionSettingsScreen }/>
                         <Stack.Screen name={ Routes.ARTICLE } component={ ArticleScreen }/>
+                        <Stack.Screen name={ Routes.SURVEY } component={ SurveyScreen }/>
+                        <Stack.Screen name={ Routes.SURVEY_QUESTIONS } component={ SurveyQuestionsScreen }/>
                     </>
                 ) : (
                     <>

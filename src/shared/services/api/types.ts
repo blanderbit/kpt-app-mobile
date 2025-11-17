@@ -473,6 +473,115 @@ export interface ChangePositionRequest {
   position: number;
 }
 
+// Типы для статей (Articles)
+export interface FileDto {
+  id: number;
+  fileUrl: string;
+  fileKey: string;
+  fileName: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface ArticleResponse {
+  id: number;
+  title: string;
+  text: string;
+  status: 'active' | 'archived' | 'available';
+  files?: FileDto[];
+  createdAt: string;
+  updatedBy?: string | null;
+  updatedAt: string;
+  archivedAt?: string | null;
+  archivedBy?: string | null;
+  isHidden?: boolean;
+}
+
+// Типы для опросов (Surveys)
+export interface SurveyQuestionOption {
+  id: string;
+  text: string;
+}
+
+export interface SurveyQuestion {
+  id: string;
+  text: string;
+  type: 'single' | 'multiple' | 'text';
+  options: SurveyQuestionOption[];
+}
+
+export interface SurveyResponse {
+  id: number;
+  title: string;
+  description?: string | null;
+  questions?: SurveyQuestion[];
+  status: 'active' | 'archived' | 'available';
+  createdBy?: string | null;
+  updatedBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  archivedAt?: string | null;
+  archivedBy?: string | null;
+  isCompleted?: boolean;
+  file?: FileDto | null;
+}
+
+export interface SurveyAnswer {
+  questionId: string;
+  answer: string | string[];
+}
+
+export interface SubmitSurveyAnswerRequest {
+  answers: SurveyAnswer[];
+}
+
+export interface SubmitSurveyAnswerResponse {
+  success: boolean;
+  message: string;
+}
+
+// Типы для подписок (Subscriptions)
+export interface Subscription {
+  id?: string;
+  userId?: number;
+  subscriptionId?: string;
+  status?: string;
+  productId?: string;
+  expiresAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CancelSubscriptionRequest {
+  subscriptionId: string;
+  reason?: string;
+}
+
+export interface CancelSubscriptionResponse {
+  success: boolean;
+  message: string;
+}
+
+// Типы для статистики настроения
+export interface MoodTrackerStatsResponse {
+  period: {
+    startDate: string;
+    endDate: string;
+  };
+  totalEntries: number;
+  averageMoodScore: number;
+  moodDistribution: Array<{
+    moodType: string;
+    count: number;
+    percentage: number;
+  }>;
+  moodByDate: Array<{
+    date: string;
+    moodType: string;
+    moodScore: number;
+  }>;
+}
+
 // Типы для бэкапов
 export interface BackupResponse {
   success: boolean;
