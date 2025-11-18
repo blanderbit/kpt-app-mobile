@@ -21,6 +21,7 @@ import { useToast } from "@shared/components/Toast/ToastProvider";
 import { SuggestedActivitiesIcon } from "@assets/icons/SuggestedActivitiesIcon";
 import { ArchiveIcon } from "@assets/icons/ArchiveIcon";
 import { ReturnIcon } from "@assets/icons/ReturnIcon";
+import { ArchiveBackIcon } from "@assets/icons/ArchiveBackIcon";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
 import DraggableList from "@features/activities/draggable-activities/DraggableActivities";
@@ -357,11 +358,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 <View style={ styles.activitySections }>
                     {archivedActivities?.data && archivedActivities.data.length > 0 && 
                         archivedActivities.data.map((activity, index) => {
-                            // Получаем satisfactionLevel и hardnessLevel из первого элемента rateActivities
-                            const firstRateActivity = activity.rateActivities && activity.rateActivities.length > 0 
-                                ? activity.rateActivities[0] 
-                                : null;
-                            
                             return (
                                 <View
                                     key={ activity.id }
@@ -387,12 +383,15 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                             { activity.activityName }
                                         </Text>
 
-                                        {firstRateActivity && (
-                                            <SemiCircleSplit 
-                                                valueA={ firstRateActivity.satisfactionLevel } 
-                                                valueB={ firstRateActivity.hardnessLevel }
-                                            />
-                                        )}
+                                        <CustomButton 
+                                            onPress={ () => {
+                                                // TODO: Add restore activity functionality
+                                                console.log('Restore activity:', activity.id);
+                                            } }
+                                            buttonStyle={ styles.roundBtn }
+                                            contentStyle={ { gap: 0 } }>
+                                            <ArchiveBackIcon color="#fff" size={ 20 }/>
+                                        </CustomButton>
                                     </View>
                                 </View>
                             );
@@ -462,6 +461,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#8100851A',
         borderRadius: 12,
         padding: 6,
+    },
+    roundBtn: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        padding: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 
