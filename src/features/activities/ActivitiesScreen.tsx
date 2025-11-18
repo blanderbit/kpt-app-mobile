@@ -31,7 +31,8 @@ import {
     useSuggestedActivities,
     useAddSuggestedActivityToActivities,
     useDeleteSuggestedActivity,
-    useChangeActivityPosition
+    useChangeActivityPosition,
+    useArchivedActivities
 } from '@shared/services/api/hooks';
 import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -53,6 +54,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     // API hooks
     const { data: myActivities, isLoading, error } = useMyActivities();
     const { data: suggestedActivitiesData } = useSuggestedActivities();
+    const { data: archivedActivities } = useArchivedActivities();
 
     const createActivityMutation = useCreateActivity();
     const deleteActivityMutation = useDeleteActivity();
@@ -353,6 +355,49 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
 
                 <View style={ styles.activitySections }>
+                    {archivedActivities?.data && archivedActivities.data.length > 0 && 
+                        archivedActivities.data.map((activity, index) => {
+                            // Получаем satisfactionLevel и hardnessLevel из первого элемента rateActivities
+                            const firstRateActivity = activity.rateActivities && activity.rateActivities.length > 0 
+                                ? activity.rateActivities[0] 
+                                : null;
+                            
+                            return (
+                                <View
+                                    key={ activity.id }
+                                    style={ {
+                                        ...styles.activitySection,
+                                        ...(index !== archivedActivities.data.length - 1
+                                            ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                            : {}),
+                                    } }
+                                >
+                                    <ActivityLabel id={activity.activityType} />
+
+                                    <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
+                                        <Text
+                                            style={ [ 
+                                                styles.activityTitle, 
+                                                theme.fonts.activityTitle,
+                                                {
+                                                    textDecorationLine: 'line-through',
+                                                    opacity: 0.3
+                                                }
+                                            ] }>
+                                            { activity.activityName }
+                                        </Text>
+
+                                        {firstRateActivity && (
+                                            <SemiCircleSplit 
+                                                valueA={ firstRateActivity.satisfactionLevel } 
+                                                valueB={ firstRateActivity.hardnessLevel }
+                                            />
+                                        )}
+                                    </View>
+                                </View>
+                            );
+                        })
+                    }
                 </View>
             </View>
         </View>

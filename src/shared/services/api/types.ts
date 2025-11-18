@@ -174,6 +174,7 @@ export interface Activity {
   closedAt?: string;
   createdAt: string;
   updatedAt: string;
+  rateActivities?: RateActivity[];
 }
 
 export interface ActivityResponse {
@@ -215,6 +216,20 @@ export interface CreateRateActivityRequest {
   activityId: number;
   satisfactionLevel: number;
   hardnessLevel: number;
+}
+
+export interface CloseActivityRequest {
+  satisfactionLevel: number;
+  hardnessLevel: number;
+}
+
+export interface ActivityStatisticsResponse {
+  averageSatisfactionLevel: number;
+  averageHardnessLevel: number;
+  totalRatedActivities: number;
+  relationship: string;
+  satisfactionPercentage: number;
+  hardnessPercentage: number;
 }
 
 // Типы для трекинга настроения

@@ -33,6 +33,8 @@ import {
   CreateActivityRequest,
   UpdateActivityRequest,
   ChangePositionRequest,
+  CloseActivityRequest,
+  ActivityStatisticsResponse,
   AddSuggestedActivityRequest,
   RefreshSuggestedActivitiesRequest,
   GenerateActivityRecommendationsRequest,
@@ -378,6 +380,14 @@ export const useMyActivities = (params?: SearchParams & PaginationParams) => {
   });
 };
 
+export const useArchivedActivities = (params?: SearchParams & PaginationParams) => {
+  return useQuery({
+    queryKey: [...queryKeys.activities, 'archived', params],
+    queryFn: () => activityService.getArchivedActivities(params),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+};
+
 export const useCreateActivity = () => {
   const queryClient = useQueryClient();
   
@@ -428,6 +438,28 @@ export const useDeleteActivity = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activities });
     },
+  });
+};
+
+export const useCloseActivity = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: CloseActivityRequest }) => 
+      activityService.closeActivity(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.activities });
+      queryClient.invalidateQueries({ queryKey: queryKeys.myActivities() });
+      queryClient.invalidateQueries({ queryKey: [...queryKeys.activities, 'statistics'] });
+    },
+  });
+};
+
+export const useActivityStatistics = () => {
+  return useQuery({
+    queryKey: [...queryKeys.activities, 'statistics'],
+    queryFn: () => activityService.getActivityStatistics(),
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
 

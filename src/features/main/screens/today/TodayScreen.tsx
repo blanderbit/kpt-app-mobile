@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, LayoutChangeEvent, Pressable } from 'react-native';
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -33,7 +33,7 @@ import { useAuth } from '@app/hooks/auth.hook';
 import { EmailVerificationModal } from '@shared/components/EmailVerificationModal';
 import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
-import { useRandomArticle, useRandomSurvey } from '@shared/services/api/hooks';
+import { useRandomArticle, useRandomSurvey, useMyActivities, useCloseActivity, useActivityStatistics } from '@shared/services/api/hooks';
 
 const circleSize = 16;
 
@@ -47,6 +47,17 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     // Загружаем случайную статью и опрос при монтировании экрана
     const { data: randomArticle, refetch: refetchArticle } = useRandomArticle();
     const { data: randomSurvey, refetch: refetchSurvey } = useRandomSurvey();
+    
+    // Загружаем активности пользователя с бекенда
+    const { data: myActivitiesData, isLoading: isLoadingActivities } = useMyActivities();
+    const myActivities = myActivitiesData?.data || [];
+    const closeActivityMutation = useCloseActivity();
+    
+    // Загружаем статистику активностей для виджета "Your weekly total"
+    const { data: activityStatistics } = useActivityStatistics();
+    
+    // Сохраняем ID выбранной активности
+    const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
 
     // При каждом попадании на TodayScreen делаем refetch для получения новых случайных значений
     useFocusEffect(
@@ -66,8 +77,6 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
         shouldShowTooltip: isAuthenticated && !isEmailVerified
     })
 
-    const [ activitySections, setActivitySections ] = useState([ ...DailyActivitySections ])
-
     const [ circlesCount, setCirclesCount ] = useState(0);
     const [ weeklyTotalModalOpen, setWeeklyTotalModalOpen ] = useState(false);
     const [ activityModalOpen, setActivityModalOpen ] = useState(false);
@@ -85,7 +94,8 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
 
     const onSectionClick = (section) => {
         if ( section.mode === DailyActivityType.MEASURE_ACTIVITY && !section.done ) {
-            setActivityModalOpen(true)
+            setSelectedActivityId(section.id);
+            setActivityModalOpen(true);
         }
     };
 
@@ -114,15 +124,31 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
         }
     }
 
-    useEffect(() => {
-        if ( !activityModalOpen && satisfactionLevel > 0 && hardnessLevel > 0 ) {
-            setActivitySections((prev) =>
-                prev.map((section, index) =>
-                    index === 0 ? { ...section, done: true } : section
-                )
-            );
+    // Преобразуем активности с бекенда в формат для отображения
+    const activitySections = useMemo(() => {
+        if (!myActivities || myActivities.length === 0) {
+            return [];
         }
-    }, [ activityModalOpen ]);
+        
+        return myActivities
+            .sort((a, b) => a.position - b.position) // Сортируем по position
+            .map((activity) => {
+                // Получаем satisfactionLevel и hardnessLevel из первого элемента rateActivities
+                const firstRateActivity = activity.rateActivities && activity.rateActivities.length > 0 
+                    ? activity.rateActivities[0] 
+                    : null;
+                
+                return {
+                    id: activity.id,
+                    activityName: activity.activityName,
+                    activityType: activity.activityType,
+                    done: activity.status === 'closed', // Определяем done по статусу
+                    mode: DailyActivityType.MEASURE_ACTIVITY,
+                    satisfactionLevel: firstRateActivity?.satisfactionLevel || 0,
+                    hardnessLevel: firstRateActivity?.hardnessLevel || 0,
+                };
+            });
+    }, [myActivities]);
 
     // Показываем tooltip для неподтвержденного email
     useEffect(() => {
@@ -167,7 +193,7 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                 </Text>
 
                 <Text style={ theme.fonts.title }>
-                    Program name
+                    Kpt App
                 </Text>
             </View>
 
@@ -197,7 +223,10 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                         </Text>
                     </View>
 
-                    <SegmentedProgressBar/>
+                    <SegmentedProgressBar
+                        satisfactionLevel={activityStatistics?.averageSatisfactionLevel || 0}
+                        hardnessLevel={activityStatistics?.averageHardnessLevel || 0}
+                    />
 
                     { circlesCount > 0 && (
                         <View style={ styles.circlesRow }>
@@ -232,15 +261,27 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                     id={section.activityType}
                                 />
 
-                                <Pressable style={ styles.activityContent } onPress={ () => onSectionClick(section) }>
+                                <Pressable 
+                                    style={ styles.activityContent } 
+                                    onPress={ () => onSectionClick(section) }
+                                    disabled={ section.done }
+                                >
                                     <Text
-                                        style={ [ styles.activityTitle, theme.fonts.subheader, section.done ? styles.activitySectionDone : {} ] }>
-                                        { t(section.info) }
+                                        style={ [ 
+                                            styles.activityTitle, 
+                                            theme.fonts.subheader, 
+                                            section.done ? {
+                                                ...styles.activitySectionDone,
+                                                textDecorationLine: 'line-through',
+                                                opacity: 0.3
+                                            } : {} 
+                                        ] }>
+                                        { section.activityName }
                                     </Text>
 
                                     {
                                         section.done ?
-                                            <SemiCircleSplit valueA={ satisfactionLevel } valueB={ hardnessLevel }/> :
+                                            <SemiCircleSplit valueA={ section.satisfactionLevel } valueB={ section.hardnessLevel }/> :
                                             <AddButton done/>
                                     }
                                 </Pressable>
@@ -393,13 +434,42 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
             </BottomSheet>
 
             <BottomSheet title={ t('main.modals.measureActivity.title') } visible={ activityModalOpen }
-                         onClose={ () => setActivityModalOpen(false) }
+                         onClose={ () => {
+                             setActivityModalOpen(false);
+                             setSelectedActivityId(null);
+                             setSatisfactionLevel(0);
+                             setHardnessLevel(0);
+                         } }
                          button={
                              <CustomButton
                                  title={ t('complete') }
                                  themeName={ !satisfactionLevel || !hardnessLevel ? 'primary_disabled' : 'primary' }
-                                 disabled={ !satisfactionLevel || !hardnessLevel }
-                                 onPress={ () => setActivityModalOpen(false) }
+                                 disabled={ !satisfactionLevel || !hardnessLevel || closeActivityMutation.isPending }
+                                 loading={ closeActivityMutation.isPending }
+                                 onPress={ () => {
+                                     if (selectedActivityId && satisfactionLevel && hardnessLevel) {
+                                         closeActivityMutation.mutate(
+                                             {
+                                                 id: selectedActivityId,
+                                                 data: {
+                                                     satisfactionLevel,
+                                                     hardnessLevel,
+                                                 },
+                                             },
+                                             {
+                                                 onSuccess: () => {
+                                                     setActivityModalOpen(false);
+                                                     setSelectedActivityId(null);
+                                                     setSatisfactionLevel(0);
+                                                     setHardnessLevel(0);
+                                                 },
+                                                 onError: (error) => {
+                                                     console.error('Ошибка при закрытии активности:', error);
+                                                 },
+                                             }
+                                         );
+                                     }
+                                 } }
                              >
                                  { !satisfactionLevel || !hardnessLevel ? <WhiteCheckmarkIconDisabled/> :
                                      <WhiteCheckmarkIcon/> }

@@ -25,6 +25,8 @@ import {
   CreateActivityRequest,
   UpdateActivityRequest,
   ChangePositionRequest,
+  CloseActivityRequest,
+  ActivityStatisticsResponse,
   // Mood tracker types
   MoodTrackerResponse,
   CreateMoodTrackerRequest,
@@ -297,6 +299,10 @@ export class ActivityService extends ApiService {
     return this.get<PaginatedResponse<Activity>>('/profile/activities', params);
   }
 
+  async getArchivedActivities(params?: SearchParams & PaginationParams): Promise<PaginatedResponse<Activity>> {
+    return this.get<PaginatedResponse<Activity>>('/profile/activities/archived', params);
+  }
+
   async createActivity(data: CreateActivityRequest): Promise<ActivityResponse> {
     return this.post<ActivityResponse>('/profile/activities', data);
   }
@@ -315,6 +321,14 @@ export class ActivityService extends ApiService {
 
   async changeActivityPosition(id: number, data: ChangePositionRequest): Promise<ActivityResponse> {
     return this.put<ActivityResponse>(`/profile/activities/${id}/position`, data);
+  }
+
+  async closeActivity(id: number, data: CloseActivityRequest): Promise<ActivityResponse> {
+    return this.post<ActivityResponse>(`/profile/activities/${id}/close`, data);
+  }
+
+  async getActivityStatistics(): Promise<ActivityStatisticsResponse> {
+    return this.get<ActivityStatisticsResponse>('/profile/activities/statistics');
   }
 }
 
