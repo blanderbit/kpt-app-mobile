@@ -340,8 +340,13 @@ export interface SuggestedActivity {
   id: number;
   activityName: string;
   activityType: string;
-  content?: Record<string, any>;
+  content?: string | Record<string, any>;
   isUsed: boolean;
+  confidenceScore?: string;
+  reasoning?: string;
+  suggestedDate?: string;
+  usedAt?: string | null;
+  userId?: number;
   createdAt: string;
   updatedAt: string;
 }

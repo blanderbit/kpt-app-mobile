@@ -1,131 +1,83 @@
-import React, { useState, useRef } from 'react';
-import {
-    View,
-    StyleSheet,
-    Animated,
-    PanResponder,
-    LayoutAnimation,
-    UIManager,
-    Platform,
-} from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 import { useScrollBlocker } from "@app/scroll-blocker/ScrollBlockerContext";
 
-if (Platform.OS === 'android') {
-    UIManager.setLayoutAnimationEnabledExperimental &&
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+interface DraggableActivitiesProps<T> {
+  itemsArr: T[];
+  itemHeight?: number;
+  renderItem: (item: T, index: number, drag: () => void) => React.ReactNode;
+  onDragEnd?: (data: T[], from: number, to: number) => void;
+  keyExtractor?: (item: T, index: number) => string;
 }
 
-export default function DraggableActivities({
-                                                itemsArr,
-                                                itemHeight,
-                                                renderItem,
-                                            }: {
-    itemsArr: any[];
-    itemHeight: number;
-    renderItem: (section, index) => any;
-}) {
-    const { blockScroll, allowScroll } = useScrollBlocker();
+export default function DraggableActivities<T extends { id: number }>({
+  itemsArr,
+  itemHeight = 90,
+  renderItem,
+  onDragEnd,
+  keyExtractor = (item: T) => `activity-${item.id}`,
+}: DraggableActivitiesProps<T>) {
+  const { blockScroll, allowScroll } = useScrollBlocker();
 
-    const [items, setItems] = useState(itemsArr);
-    const [isDragging, setIsDragging] = useState(false);
+  const handleDragBegin = () => {
+    blockScroll();
+  };
 
-    const positions = useRef(
-        items.map((_, i) => new Animated.ValueXY({ x: 0, y: i * (itemHeight) }))
-    ).current;
-    const [movingIndex, setMovingIndex] = useState<number | null>(null);
+  const handleDragEnd = ({ data, from, to }: { data: T[]; from: number; to: number }) => {
+    allowScroll();
+    if (onDragEnd && from !== to) {
+      onDragEnd(data, from, to);
+    }
+  };
 
-    const panResponders = items.map((_, index) =>
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                blockScroll();
-                setMovingIndex(index)
-            },
-            onPanResponderMove: (_, gesture) => {
-                if (movingIndex === null) return;
-                positions[index].setValue({
-                    x: 0,
-                    y: gesture.dy + index * (itemHeight),
-                });
-            },
-            onPanResponderRelease: (_, gesture) => {
-                if (movingIndex === null) return;
-                setIsDragging(true);
-
-                const newIndex = Math.min(
-                    items.length - 1,
-                    Math.max(
-                        0,
-                        Math.round(
-                            (gesture.dy + index * (itemHeight)) / (itemHeight)
-                        )
-                    )
-                );
-
-                const newItems = [...items];
-                const movedItem = newItems.splice(index, 1)[0];
-                newItems.splice(newIndex, 0, movedItem);
-
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                setIsDragging(false);
-
-                setTimeout(() => {
-                    setItems(newItems);
-                    newItems.forEach((_, i) => {
-                        positions[i].setValue({ x: 0, y: i * (itemHeight) });
-                    });
-                }, 50);
-
-                setMovingIndex(null);
-
-                allowScroll();
-            },
-        })
-    );
-
+  const renderDraggableItem = ({ item, index, drag, isActive }: RenderItemParams<T>) => {
     return (
-        <View style={[styles.container, { height: items.length * itemHeight }]}>
-            {items.map((item, index) => {
-                const isActive = movingIndex === index;
-
-                return (
-                    (!isDragging || isActive) && (
-                        <Animated.View
-                            {...panResponders[index].panHandlers}
-                            key={index}
-                            style={[
-                                styles.item,
-                                { minHeight: itemHeight },
-                                positions[index].getLayout(),
-                                isActive && {
-                                    zIndex: 9999,
-                                    elevation: 10,
-                                    shadowOpacity: 0.3,
-                                },
-                            ]}
-                        >
-                            {renderItem(item, index)}
-                        </Animated.View>
-                    )
-                );
-            })}
+      <ScaleDecorator>
+        <View
+          style={[
+            styles.item,
+            { minHeight: itemHeight },
+            isActive && styles.activeItem,
+          ]}
+        >
+          {renderItem(item, index, drag)}
         </View>
+      </ScaleDecorator>
     );
+  };
+
+  return (
+    <View style={styles.container}>
+      <DraggableFlatList
+        data={itemsArr}
+        onDragBegin={handleDragBegin}
+        onDragEnd={handleDragEnd}
+        keyExtractor={keyExtractor}
+        renderItem={renderDraggableItem}
+        activationDistance={10}
+        scrollEnabled={false}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    item: {
-        position: 'absolute',
-        left: 0,
-        width: '100%',
-        backgroundColor: '#f0f0f0',
-        borderRadius: 12,
-        flexDirection: 'row',
-        alignItems: 'center',
-        elevation: 2,
-        zIndex: 1
-    },
+  container: {
+    flex: 1,
+  },
+  item: {
+    width: '100%',
+    backgroundColor: 'transparent',
+  },
+  activeItem: {
+    zIndex: 9999,
+    elevation: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+  },
 });

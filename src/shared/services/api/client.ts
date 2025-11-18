@@ -8,7 +8,6 @@ import {
   FirebaseAuthResponse,
   ForgotPasswordRequest,
   ResetPasswordRequest,
-  VerifyEmailRequest,
   VerifyEmailProfileRequest,
   RefreshTokenRequest,
   RefreshTokenResponse,
@@ -26,7 +25,6 @@ import {
   CreateActivityRequest,
   UpdateActivityRequest,
   ChangePositionRequest,
-  CreateRateActivityRequest,
   // Mood tracker types
   MoodTrackerResponse,
   CreateMoodTrackerRequest,
@@ -176,10 +174,6 @@ export class AuthService extends ApiService {
     return this.post<{ message: string }>('/auth/reset-password', data);
   }
 
-  async verifyEmail(data: VerifyEmailRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/auth/verify-email', data);
-  }
-
   async refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
     return this.post<RefreshTokenResponse>('/auth/refresh', data);
   }
@@ -321,23 +315,6 @@ export class ActivityService extends ApiService {
 
   async changeActivityPosition(id: number, data: ChangePositionRequest): Promise<ActivityResponse> {
     return this.put<ActivityResponse>(`/profile/activities/${id}/position`, data);
-  }
-
-  async closeActivity(id: number, data: CreateRateActivityRequest): Promise<ActivityResponse> {
-    return this.post<ActivityResponse>(`/profile/activities/${id}/close`, data);
-  }
-
-
-  async getRecommendedTypes(name: string, limit?: number): Promise<string[]> {
-    return this.get<string[]>('/profile/activities/types/recommended', { name, limit });
-  }
-
-  async getActivityTypesByCategory(category: string): Promise<string[]> {
-    return this.get<string[]>(`/profile/activities/types/category/${category}`);
-  }
-
-  async searchActivityTypes(query: string): Promise<string[]> {
-    return this.get<string[]>('/profile/activities/types/search', { q: query });
   }
 }
 

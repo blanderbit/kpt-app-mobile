@@ -30,8 +30,10 @@ import {
     useDeleteActivity,
     useSuggestedActivities,
     useAddSuggestedActivityToActivities,
-    useDeleteSuggestedActivity
+    useDeleteSuggestedActivity,
+    useChangeActivityPosition
 } from '@shared/services/api/hooks';
+import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 
@@ -44,7 +46,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const [ achieveness, setAchieveness ] = useState(0)
     const [ newActivity, setNewActivity ] = useState('');
     const [ inputHeight, setInputHeight ] = useState(28);
-    const [ activitiesKey, setActivitiesKey ] = useState(0);
 
     // Query client for cache invalidation
     const queryClient = useQueryClient();
@@ -57,6 +58,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const deleteActivityMutation = useDeleteActivity();
     const addSuggestedActivityMutation = useAddSuggestedActivityToActivities();
     const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
+    const changePositionMutation = useChangeActivityPosition();
 
     // Debug logs
     console.log('myActivities:', myActivities);
@@ -67,13 +69,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     
     // Suggested Activities logs
     console.log('🎯 suggestedActivitiesData:', suggestedActivitiesData);
-    console.log('🎯 suggestedActivitiesData?.data:', suggestedActivitiesData?.data);
-    console.log('🎯 suggestedActivitiesData?.data length:', suggestedActivitiesData?.data?.length);
-
-    // Function to force re-render of DraggableList
-    const forceActivitiesRerender = () => {
-        setActivitiesKey(prev => prev + 1);
-    };
+    console.log('🎯 suggestedActivitiesData length:', suggestedActivitiesData?.length);
 
     const handleAddNewActivity = () => {
         if ( newActivity.trim().length < 10 ) {
@@ -95,9 +91,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 // Force refetch
                 queryClient.refetchQueries({ queryKey: ['activities', 'my'] });
-                
-                // Force re-render of DraggableList
-                forceActivitiesRerender();
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });
@@ -113,9 +106,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
-                
-                // Force re-render of DraggableList
-                forceActivitiesRerender();
             },
             onError: (error) => {
                 showToast({ message: "Failed to archive activity", type: "error" });
@@ -134,9 +124,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 queryClient.invalidateQueries({ queryKey: ['suggestedActivities'] });
-                
-                // Force re-render of DraggableList
-                forceActivitiesRerender();
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });
@@ -155,10 +142,59 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         });
     };
 
+    const handleDragEnd = (data: Activity[], from: number, to: number) => {
+        if (from === to) return;
+
+        const movedActivity = data[to];
+        // Передаем индекс напрямую (0-based), как ожидает бэкенд
+        const newPosition = to;
+
+        console.log('🔄 [handleDragEnd] Перемещение активности:', {
+            activityId: movedActivity.id,
+            activityName: movedActivity.activityName,
+            from,
+            to,
+            oldPosition: movedActivity.position,
+            newPosition,
+        });
+
+        changePositionMutation.mutate(
+            {
+                id: movedActivity.id,
+                data: { position: newPosition },
+            },
+            {
+                onSuccess: () => {
+                    console.log('✅ [handleDragEnd] Позиция успешно обновлена');
+                    // Инвалидируем кэш для обновления списка
+                    queryClient.invalidateQueries({ queryKey: ['activities'] });
+                    queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                },
+                onError: (error) => {
+                    console.error('❌ [handleDragEnd] Ошибка обновления позиции:', error);
+                    showToast({ message: "Failed to update activity position", type: "error" });
+                    // Откатываем изменения в UI
+                    queryClient.invalidateQueries({ queryKey: ['activities'] });
+                    queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                },
+            }
+        );
+    };
+
     const renderRightActions = (progress, dragX, activityId: number) => {
-        const scale = dragX.interpolate({
-            inputRange: [ -150, 0 ],
-            outputRange: [ 1, 1 ],
+        // Используем progress (0-1) для масштабирования
+        // progress = 0 (закрыто) -> scale = 0.2
+        // progress = 1 (полностью открыто) -> scale = 1
+        const scale = progress.interpolate({
+            inputRange: [ 0, 1 ],
+            outputRange: [ 0.2, 1 ],
+            extrapolate: 'clamp',
+        });
+
+        // Прозрачность также увеличивается при свайпе
+        const opacity = progress.interpolate({
+            inputRange: [ 0, 0.5, 1 ],
+            outputRange: [ 0.3, 0.6, 1 ],
             extrapolate: 'clamp',
         });
 
@@ -166,6 +202,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             <Animated.View
                 style={ {
                     transform: [ { scale } ],
+                    opacity,
                     justifyContent: "center",
                     marginLeft: 10,
                 } }
@@ -194,41 +231,42 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                 <View style={ styles.activitySections }>
                     {myActivities?.data && myActivities.data.length > 0 ? (
-                        <View style={ { minHeight: 90 * myActivities.data.length } }>
-                            <DraggableList 
-                                key={`activities-${activitiesKey}-${myActivities.data.length}`}
-                                itemsArr={ myActivities.data }
-                                itemHeight={ 90 }
-                                renderItem={ (activity, index) =>
-                                               <View style={ {
-                                                   ...styles.activitySection,
-                                                   borderBottomWidth: 1,
-                                                   borderBottomColor: '#E2DDD8',
-                                               } }>
-                                                   <Swipeable
-                                                       renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
-                                                       overshootRight={ false }>
-                                                       <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
-                                                           <BurgerIcon/>
+                        <DraggableList 
+                            itemsArr={ myActivities.data }
+                            itemHeight={ 90 }
+                            onDragEnd={ handleDragEnd }
+                            renderItem={ (activity, index, drag) => (
+                                <View style={ {
+                                    ...styles.activitySection,
+                                    ...(index !== myActivities.data.length - 1
+                                        ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                        : {}),
+                                } }>
+                                    <Swipeable
+                                        renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
+                                        overshootRight={ false }>
+                                        <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
+                                            <Pressable onPressIn={drag}>
+                                                <BurgerIcon/>
+                                            </Pressable>
 
-                                                           <View style={theme.flexBlocks.vertical8}>
-                                                               <ActivityLabel id={activity.activityType} />
+                                            <View style={theme.flexBlocks.vertical8}>
+                                                <ActivityLabel id={activity.activityType} />
 
-                                                               <Pressable style={ styles.activityContent }>
-                                                                   <Text
-                                                                       style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
-                                                                       { activity.activityName } 
-                                                                   </Text>
-                                                                   <SemiCircleSplit valueA={ satisfaction }
-                                                                                    valueB={ achieveness }/>
-                                                               </Pressable>
-                                                           </View>
-                                                       </View>
-                                                   </Swipeable>
-                                               </View>
-                                           }
-                            />
-                        </View>
+                                                <Pressable style={ styles.activityContent }>
+                                                    <Text
+                                                        style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
+                                                        { activity.activityName } 
+                                                    </Text>
+                                                    <SemiCircleSplit valueA={ satisfaction }
+                                                                     valueB={ achieveness }/>
+                                                </Pressable>
+                                            </View>
+                                        </View>
+                                    </Swipeable>
+                                </View>
+                            )}
+                        />
                     ) : null}
 
                     <View
@@ -272,13 +310,13 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
 
                 <View style={ styles.activitySections }>
-                    {suggestedActivitiesData?.data && suggestedActivitiesData.data.length > 0 && 
-                        suggestedActivitiesData.data.map((activity, index) => (
+                    {suggestedActivitiesData && suggestedActivitiesData.length > 0 && 
+                        suggestedActivitiesData.map((activity, index) => (
                             <View
                                 key={ activity.id }
                                 style={ {
                                     ...styles.activitySection,
-                                    ...(index !== suggestedActivitiesData.data.length - 1
+                                    ...(index !== suggestedActivitiesData.length - 1
                                         ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
                                         : {}),
                                 } }

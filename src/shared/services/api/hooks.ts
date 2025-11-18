@@ -19,7 +19,6 @@ import {
   FirebaseAuthRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
-  VerifyEmailRequest,
   VerifyEmailProfileRequest,
   RefreshTokenRequest,
   UpdateProfileRequest,
@@ -34,7 +33,6 @@ import {
   CreateActivityRequest,
   UpdateActivityRequest,
   ChangePositionRequest,
-  CreateRateActivityRequest,
   AddSuggestedActivityRequest,
   RefreshSuggestedActivitiesRequest,
   GenerateActivityRecommendationsRequest,
@@ -78,8 +76,6 @@ export const queryKeys = {
   activityTypes: () => [...queryKeys.activities, 'types'] as const,
   myActivities: (params?: SearchParams & PaginationParams) => [...queryKeys.activities, 'my', params] as const,
   activityById: (id: number) => [...queryKeys.activities, 'byId', id] as const,
-  recommendedTypes: (name: string) => [...queryKeys.activities, 'recommended', name] as const,
-  activityTypesByCategory: (category: string) => [...queryKeys.activities, 'byCategory', category] as const,
   
   // Suggested Activities
   suggestedActivities: ['suggestedActivities'] as const,
@@ -445,47 +441,6 @@ export const useChangeActivityPosition = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.activityById(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.activities });
     },
-  });
-};
-
-export const useCloseActivity = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: CreateRateActivityRequest }) => 
-      activityService.closeActivity(id, data),
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.activityById(id) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.activities });
-    },
-  });
-};
-
-
-export const useRecommendedTypes = (name: string, limit?: number) => {
-  return useQuery({
-    queryKey: queryKeys.recommendedTypes(name),
-    queryFn: () => activityService.getRecommendedTypes(name, limit),
-    enabled: !!name,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-export const useActivityTypesByCategory = (category: string) => {
-  return useQuery({
-    queryKey: queryKeys.activityTypesByCategory(category),
-    queryFn: () => activityService.getActivityTypesByCategory(category),
-    enabled: !!category,
-    staleTime: 30 * 60 * 1000,
-  });
-};
-
-export const useSearchActivityTypes = (query: string) => {
-  return useQuery({
-    queryKey: [...queryKeys.activityTypes(), 'search', query],
-    queryFn: () => activityService.searchActivityTypes(query),
-    enabled: !!query && query.length > 2,
-    staleTime: 10 * 60 * 1000,
   });
 };
 

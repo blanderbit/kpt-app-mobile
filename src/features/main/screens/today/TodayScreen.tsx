@@ -248,7 +248,23 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
 
                     <View style={ theme.flexBlocks.vertical8 }>
                         {
-                            additionalTaskSections.map((section, index) => {
+                            additionalTaskSections
+                                .filter((section) => {
+                                    // Фильтруем секции: если для ARTICLE или SURVEY нет данных, не показываем секцию
+                                    const isArticleSection = section.mode === AdditionalActivityType.ARTICLE;
+                                    const isSurveySection = section.mode === AdditionalActivityType.SURVEY;
+                                    
+                                    if (isArticleSection && !randomArticle) {
+                                        return false; // Не показываем секцию ARTICLE, если нет данных
+                                    }
+                                    
+                                    if (isSurveySection && !randomSurvey) {
+                                        return false; // Не показываем секцию SURVEY, если нет данных
+                                    }
+                                    
+                                    return true; // Показываем все остальные секции
+                                })
+                                .map((section, index) => {
                                 const isMoodSection = section.mode === AdditionalActivityType.MOOD_TRACKER;
                                 const isArticleSection = section.mode === AdditionalActivityType.ARTICLE;
                                 const isSurveySection = section.mode === AdditionalActivityType.SURVEY;
