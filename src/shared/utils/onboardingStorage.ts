@@ -86,6 +86,8 @@ export const loadAllOnboardingData = async (): Promise<{
     onboardingQuestionAndAnswers?: Record<string, string | string[]>;
     activities?: Array<{ activityName: string; content?: string }>;
     taskTrackingMethod?: string;
+    satisfactionLevel?: number;
+    hardnessLevel?: number;
 }> => {
     try {
         const entries = await AsyncStorage.multiGet([
@@ -95,6 +97,8 @@ export const loadAllOnboardingData = async (): Promise<{
             ONBOARDING_KEYS.AGE,
             ONBOARDING_KEYS.TASK_METHOD,
             ONBOARDING_KEYS.SELECTED_ACTIVITIES,
+            ONBOARDING_KEYS.SATISFACTION_LEVEL,
+            ONBOARDING_KEYS.HARDNESS_LEVEL,
         ]);
 
         const moodValue = entries[0]?.[1];
@@ -103,6 +107,8 @@ export const loadAllOnboardingData = async (): Promise<{
         const ageValue = entries[3]?.[1];
         const taskMethodValue = entries[4]?.[1];
         const selectedActivitiesValue = entries[5]?.[1];
+        const satisfactionLevelValue = entries[6]?.[1];
+        const hardnessLevelValue = entries[7]?.[1];
 
         // Преобразуем questions в правильный формат
         let onboardingQuestionAndAnswers: Record<string, string | string[]> | undefined;
@@ -144,6 +150,25 @@ export const loadAllOnboardingData = async (): Promise<{
             }
         }
 
+        // Парсим satisfactionLevel и hardnessLevel
+        let parsedSatisfactionLevel: number | undefined;
+        if (satisfactionLevelValue) {
+            try {
+                parsedSatisfactionLevel = JSON.parse(satisfactionLevelValue);
+            } catch {
+                parsedSatisfactionLevel = undefined;
+            }
+        }
+
+        let parsedHardnessLevel: number | undefined;
+        if (hardnessLevelValue) {
+            try {
+                parsedHardnessLevel = JSON.parse(hardnessLevelValue);
+            } catch {
+                parsedHardnessLevel = undefined;
+            }
+        }
+
         return {
             age: parsedAge,
             feelingToday: parsedMood,
@@ -151,6 +176,8 @@ export const loadAllOnboardingData = async (): Promise<{
             onboardingQuestionAndAnswers: onboardingQuestionAndAnswers && Object.keys(onboardingQuestionAndAnswers).length > 0 ? onboardingQuestionAndAnswers : undefined,
             activities: selectedActivitiesValue ? JSON.parse(selectedActivitiesValue) : undefined,
             taskTrackingMethod: parsedTaskMethod,
+            satisfactionLevel: parsedSatisfactionLevel,
+            hardnessLevel: parsedHardnessLevel,
         };
     } catch (error) {
         console.error('❌ Error loading onboarding data:', error);

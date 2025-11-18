@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigationState } from '@react-navigation/native';
 import { Routes, TooltipPagesConfig } from '@app/navigation/const';
 import { useTooltipsByPage } from '@shared/services/api/hooks';
@@ -25,6 +26,7 @@ export const useCurrentPageTooltips = () => {
   const tooltipPage = currentRoute ? TooltipPagesConfig[currentRoute] : undefined;
 
   // Загружаем тултипы для этой страницы (конвертируем enum в строку)
+  // TooltipPage это enum, поэтому используем String() для конвертации в строковое значение
   const tooltipPageString = tooltipPage ? String(tooltipPage) : '';
   
   console.log('🔔 [useCurrentPageTooltips] Текущий роут:', currentRoute);
@@ -33,6 +35,14 @@ export const useCurrentPageTooltips = () => {
   console.log('🔔 [useCurrentPageTooltips] Будет ли выполнен запрос (enabled):', !!tooltipPageString);
   
   const { data: tooltips, isLoading, error, refetch } = useTooltipsByPage(tooltipPageString);
+  
+  // При каждом изменении страницы делаем refetch
+  React.useEffect(() => {
+    if (tooltipPageString) {
+      console.log('🔔 [useCurrentPageTooltips] Страница изменилась, делаем refetch для:', tooltipPageString);
+      refetch();
+    }
+  }, [tooltipPageString, refetch]);
   
   console.log('🔔 [useCurrentPageTooltips] Статус загрузки:', isLoading);
   console.log('🔔 [useCurrentPageTooltips] Количество тултипов:', tooltips?.length || 0);

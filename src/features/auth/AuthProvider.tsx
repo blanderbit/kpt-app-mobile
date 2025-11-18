@@ -198,11 +198,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const onboardingData = await loadAllOnboardingData();
 
             // Формируем payload для регистрации
+            const { satisfactionLevel, hardnessLevel, ...restOnboardingData } = onboardingData;
             const registerPayload: RegisterRequest = {
                 email,
                 password,
                 firstName,
-                ...onboardingData,
+                ...restOnboardingData,
+                activities: onboardingData.activities || [], // Всегда массив, даже если пустой
+                initSatisfactionLevel: satisfactionLevel,
+                initHardnessLevel: hardnessLevel,
                 appUserId: 'test-app-user-id', // Тестовое значение
             };
 

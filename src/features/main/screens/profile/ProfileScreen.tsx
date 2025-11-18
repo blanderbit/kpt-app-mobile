@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Pressable, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Pressable, Alert, Linking } from 'react-native';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
 import LayersIcon from "@assets/icons/LayersIcon";
@@ -135,6 +135,52 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
             handleLogout();
         } else if (nested.label === 'main.profile.settings.deleteAccount') {
             handleDeleteAccount();
+        } else if (nested.label === 'main.profile.settings.support') {
+            // Открываем почтовый клиент
+            const email = 'support@plesury.app';
+            const mailtoUrl = `mailto:${email}`;
+            Linking.canOpenURL(mailtoUrl)
+                .then((supported) => {
+                    if (supported) {
+                        Linking.openURL(mailtoUrl);
+                    } else {
+                        Alert.alert('Ошибка', 'Не удалось открыть почтовый клиент');
+                    }
+                })
+                .catch((err) => {
+                    console.error('Ошибка при открытии почты:', err);
+                    Alert.alert('Ошибка', 'Не удалось открыть почтовый клиент');
+                });
+        } else if (nested.label === 'main.profile.settings.privacyPolicy') {
+            // Открываем Privacy Policy в браузере устройства
+            const url = 'https://kpt.api.the-displaycontrol.com/static/privacy-policy.html';
+            Linking.canOpenURL(url)
+                .then((supported) => {
+                    if (supported) {
+                        Linking.openURL(url);
+                    } else {
+                        Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                    }
+                })
+                .catch((err) => {
+                    console.error('Ошибка при открытии ссылки:', err);
+                    Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                });
+        } else if (nested.label === 'main.profile.settings.termsConditions') {
+            // Открываем Terms & Conditions в браузере устройства
+            const url = 'https://kpt.api.the-displaycontrol.com/static/terms-conditions.html';
+            Linking.canOpenURL(url)
+                .then((supported) => {
+                    if (supported) {
+                        Linking.openURL(url);
+                    } else {
+                        Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                    }
+                })
+                .catch((err) => {
+                    console.error('Ошибка при открытии ссылки:', err);
+                    Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                });
         }
     };
 
@@ -323,7 +369,13 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                             />
                                         ) }
                                         extraStyles={ [ styles.settingsElementsSingle ] }
-                                        onPress={ () => element.path ? navigation.navigate(element.path) : null }
+                                        onPress={ () => {
+                                            if (element.path) {
+                                                navigation.navigate(element.path);
+                                            } else {
+                                                handlePress(element);
+                                            }
+                                        } }
                                     />
                                 );
                             }) }

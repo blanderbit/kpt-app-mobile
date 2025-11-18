@@ -221,7 +221,7 @@ export default function OnboardingTemplate({
     const recommendationsPayload = useMemo(() => {
         if (!onboardingData.mood) return null;
         if (!onboardingData.socialNetworks.length) return null;
-        // if (onboardingData.satisfactionLevel === undefined || onboardingData.hardnessLevel === undefined) return null;
+        if (onboardingData.satisfactionLevel === undefined || onboardingData.hardnessLevel === undefined) return null;
 
         const onboardingQuestionAndAnswers = Object.entries(onboardingData.questions).reduce<Record<string, string | string[]>>((acc, [stepName, answers]) => {
             if (!answers || !answers.length) return acc;
@@ -235,8 +235,8 @@ export default function OnboardingTemplate({
             socialNetworks: onboardingData.socialNetworks,
             onboardingQuestionAndAnswers,
             feelingToday: onboardingData.mood,
-            // satisfactionLevel: onboardingData.satisfactionLevel,
-            // hardnessLevel: onboardingData.hardnessLevel,
+            satisfactionLevel: onboardingData.satisfactionLevel,
+            hardnessLevel: onboardingData.hardnessLevel,
             count: '3',
         };
     }, [onboardingData]);
@@ -247,9 +247,31 @@ export default function OnboardingTemplate({
     );
 
     const hasRecommendationInputs = Boolean(recommendationsPayload);
-    const recommendations = recommendationsResponse?.recommendations ?? [];
+    
+    // Хардкодные активности для fallback при ошибке
+    const fallbackRecommendations: ActivityRecommendation[] = [
+        {
+            activityName: "Energy-Boosting Stretch Routine",
+            content: "Stretch for 5 minutes to increase vitality and feel energized throughout the day.",
+            activityType: "fitness"
+        },
+        {
+            activityName: "Mindful Breathing Exercise",
+            content: "Practice deep breathing for 5 minutes to reduce burnout and feel more relaxed.",
+            activityType: "health"
+        },
+        {
+            activityName: "Gratitude Journaling",
+            content: "Spend 5 minutes reflecting on achievements to boost positivity and well-being.",
+            activityType: "personal growth"
+        }
+    ];
+    
+    // Используем хардкодные активности если есть ошибка, иначе данные с бекенда
+    const recommendations = isGenerateRecommendationsError 
+        ? fallbackRecommendations 
+        : (recommendationsResponse?.recommendations ?? []);
     const recommendationsOverallReasoning = recommendationsResponse?.overallReasoning;
-    const recommendationErrorMessage = generateRecommendationsError?.message;
 
     // Вычисляем общее количество шагов (5 статических + динамические вопросы + финальные степпы)
     const totalSteps = useMemo(() => {
@@ -541,7 +563,7 @@ export default function OnboardingTemplate({
                 isLoading={isGeneratingRecommendations}
                 recommendations={recommendations}
                 overallReasoning={recommendationsOverallReasoning}
-                errorMessage={isGenerateRecommendationsError ? recommendationErrorMessage : undefined}
+                errorMessage={undefined}
                 onRetry={handleRecommendationsRetry}
                 hasRequiredData={hasRecommendationInputs}
                 onAddToMyList={handleAddActivitiesToMyList}

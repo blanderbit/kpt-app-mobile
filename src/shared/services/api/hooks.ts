@@ -549,7 +549,9 @@ export const useTooltipsByPage = (page: string) => {
       return tooltipService.getTooltipsByPage(page);
     },
     enabled: !!page,
-    staleTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: 0, // Не кэшируем, всегда запрашиваем свежие данные
+    refetchOnMount: true, // Всегда запрашиваем при монтировании компонента
+    refetchOnWindowFocus: false, // Не запрашиваем при фокусе окна
   });
 
   // Логируем результат запроса
@@ -590,7 +592,11 @@ export const useCloseTooltip = () => {
 export const useRandomArticle = () => {
   return useQuery({
     queryKey: queryKeys.randomArticle(),
-    queryFn: () => articleService.getRandomArticle(),
+    queryFn: async () => {
+      const articles = await articleService.getRandomArticle();
+      // Возвращаем поле article из первого элемента массива, если массив не пустой
+      return articles && articles.length > 0 && articles[0].article ? articles[0].article : null;
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
@@ -626,11 +632,21 @@ export const useArticleById = (id: number) => {
   return queryResult;
 };
 
+export const useHideArticle = () => {
+  return useMutation({
+    mutationFn: (id: number) => articleService.hideArticle(id),
+  });
+};
+
 // Survey hooks
 export const useRandomSurvey = () => {
   return useQuery({
     queryKey: queryKeys.randomSurvey(),
-    queryFn: () => surveyService.getRandomSurvey(),
+    queryFn: async () => {
+      const surveys = await surveyService.getRandomSurvey();
+      // Возвращаем поле survey из первого элемента массива, если массив не пустой
+      return surveys && surveys.length > 0 && surveys[0].survey ? surveys[0].survey : null;
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

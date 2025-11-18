@@ -15,14 +15,10 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
     const { theme } = useCustomTheme();
     const { width } = useWindowDimensions();
 
-    // TODO: ВРЕМЕННО для теста - хардкод ID 14
-    const surveyId = 14;
-    console.log('📋 [SurveyScreen] ТЕСТОВЫЙ РЕЖИМ - используем хардкод ID:', surveyId);
-    
-    // const { id } = route.params;
-    // console.log('📋 [SurveyScreen] Получен ID из route.params:', id);
-    // console.log('📋 [SurveyScreen] ID как число:', Number(id));
-    // const surveyId = Number(id);
+    const { id } = route.params;
+    console.log('📋 [SurveyScreen] Получен ID из route.params:', id);
+    console.log('📋 [SurveyScreen] ID как число:', Number(id));
+    const surveyId = Number(id);
     
     const { data: survey, isLoading, error, isFetching } = useSurveyById(surveyId);
 

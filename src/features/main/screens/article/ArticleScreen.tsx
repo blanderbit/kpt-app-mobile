@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useFocusEffect } from '@react-navigation/native';
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { ArticleScreenNavigationProp, ArticleScreenRouteProp } from "@app/navigation/AppNavigator";
-import { useArticleById } from '@shared/services/api/hooks';
+import { useArticleById, useHideArticle } from '@shared/services/api/hooks';
 import RenderHTML from 'react-native-render-html';
 
 export default function ArticleScreen({ navigation, route }: { navigation: ArticleScreenNavigationProp, route: ArticleScreenRouteProp }) {
@@ -13,23 +14,44 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
     const { theme } = useCustomTheme();
     const { width } = useWindowDimensions();
 
-    // TODO: ВРЕМЕННО для теста - хардкод ID 73
-    const articleId = 73;
-    console.log('📰 [ArticleScreen] ТЕСТОВЫЙ РЕЖИМ - используем хардкод ID:', articleId);
-    
-    // const { id } = route.params;
-    // console.log('📰 [ArticleScreen] Получен ID из route.params:', id);
-    // console.log('📰 [ArticleScreen] ID как число:', Number(id));
-    // const articleId = Number(id);
+    const { id } = route.params;
+    const articleId = Number(id);
     
     const { data: article, isLoading, error, isFetching } = useArticleById(articleId);
+    const hideArticleMutation = useHideArticle();
+    const hasCalledHideRef = React.useRef(false);
+
+    // Вызываем hideArticle при каждом попадании на экран (только один раз)
+    useFocusEffect(
+        React.useCallback(() => {
+            if (articleId && !isNaN(articleId) && !hasCalledHideRef.current) {
+                hasCalledHideRef.current = true;
+                console.log('📰 [ArticleScreen] Вызываем hideArticle для ID:', articleId);
+                hideArticleMutation.mutate(articleId, {
+                    onSuccess: () => {
+                        console.log('📰 [ArticleScreen] ✅ Статья успешно скрыта');
+                    },
+                    onError: (error) => {
+                        console.error('📰 [ArticleScreen] ❌ Ошибка при скрытии статьи:', error);
+                    },
+                });
+            }
+            
+            // Сбрасываем флаг при размонтировании (когда уходим с экрана)
+            return () => {
+                hasCalledHideRef.current = false;
+            };
+        }, [articleId]) // Убрали hideArticleMutation из зависимостей
+    );
 
     useEffect(() => {
-        console.log('📰 [ArticleScreen] useEffect - article изменился:', article);
-        console.log('📰 [ArticleScreen] isLoading:', isLoading);
-        console.log('📰 [ArticleScreen] error:', error);
-        console.log('📰 [ArticleScreen] isFetching:', isFetching);
-    }, [article, isLoading, error, isFetching]);
+        if (article) {
+            console.log('📰 [ArticleScreen] ✅ Статья загружена:', {
+                id: article.id,
+                title: article.title,
+            });
+        }
+    }, [article]);
 
     const onBack = () => navigation.goBack();
 
@@ -60,7 +82,6 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
     }
 
     if (error || !article) {
-        console.log('📰 [ArticleScreen] ❌ Ошибка или статья не найдена:', error);
         return (
             <PageWithHeader headerContent={
                 <>
@@ -91,16 +112,6 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
             </PageWithHeader>
         );
     }
-
-    console.log('📰 [ArticleScreen] ✅ Отображаем статью:', {
-        id: article.id,
-        title: article.title,
-        text: article.text?.substring(0, 100) + '...',
-        textLength: article.text?.length || 0,
-        files: article.files?.length || 0,
-        hasImage: !!(article.files && article.files.length > 0 && article.files[0]?.fileUrl),
-        imageUrl: article.files?.[0]?.fileUrl,
-    });
 
     return (
         <PageWithHeader headerContent={

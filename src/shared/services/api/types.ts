@@ -53,6 +53,8 @@ export interface RegisterRequest {
     content?: string;
   }>;
   taskTrackingMethod?: string;
+  initSatisfactionLevel?: number;
+  initHardnessLevel?: number;
   appUserId?: string;
 }
 

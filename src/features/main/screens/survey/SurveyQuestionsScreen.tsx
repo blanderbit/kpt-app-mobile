@@ -11,6 +11,7 @@ import { SurveyQuestion, SurveyResponse, SubmitSurveyAnswerRequest } from '@shar
 import { BlackCheckmarkIcon } from '@assets/icons/BlackCheckmarkIcon';
 import { GrayCircleIcon } from '@assets/icons/GrayCircleIcon';
 import { surveyService } from '@shared/services/api/client';
+import { Routes } from '@app/navigation/const';
 
 export default function SurveyQuestionsScreen({ navigation, route }: { navigation: SurveyQuestionsScreenNavigationProp, route: SurveyQuestionsScreenRouteProp }) {
     const { t } = useTranslation();
@@ -62,6 +63,7 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
                     setCurrentQuestionIndex(prev => prev + 1);
                 }, 300);
             }
+            // Если это последний вопрос, кнопка Finish появится автоматически
         } else {
             // Для множественного выбора добавляем/удаляем
             const currentAnswers = selectedAnswers[questionId] || [];
@@ -115,7 +117,8 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
                 const response = await surveyService.submitSurveyAnswer(survey.id, payload);
                 console.log('📋 [SurveyQuestionsScreen] ✅ Ответы успешно отправлены:', response);
                 
-                navigation.goBack();
+                // Переходим на Today страницу после успешной отправки
+                navigation.navigate(Routes.TODAY);
             } catch (error) {
                 console.error('📋 [SurveyQuestionsScreen] ❌ Ошибка отправки ответов:', error);
                 // TODO: Показать ошибку пользователю
@@ -216,7 +219,7 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
                     </View>
                 </View>
 
-                {canProceed && currentQuestion.type === 'multiple' && (
+                {canProceed && (
                     <View style={styles.buttonContainer}>
                         <CustomButton
                             title={isLastQuestion ? 'Finish' : 'Next'}

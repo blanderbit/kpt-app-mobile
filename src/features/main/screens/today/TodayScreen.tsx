@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet, LayoutChangeEvent, Pressable } from 'react-native';
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { useTranslation } from "react-i18next";
@@ -44,8 +45,17 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     const { isEmailVerified, isAuthenticated } = useAuth();
     
     // Загружаем случайную статью и опрос при монтировании экрана
-    const { data: randomArticle } = useRandomArticle();
-    const { data: randomSurvey } = useRandomSurvey();
+    const { data: randomArticle, refetch: refetchArticle } = useRandomArticle();
+    const { data: randomSurvey, refetch: refetchSurvey } = useRandomSurvey();
+
+    // При каждом попадании на TodayScreen делаем refetch для получения новых случайных значений
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log('📅 [TodayScreen] Попадание на экран, запрашиваем новые random article и survey');
+            refetchArticle();
+            refetchSurvey();
+        }, [refetchArticle, refetchSurvey])
+    );
 
     console.log('TodayScreen state:', { 
         isEmailVerified, 

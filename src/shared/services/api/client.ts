@@ -421,8 +421,8 @@ export class ArticleService extends ApiService {
     return this.get<PaginatedResponse<ArticleResponse>>('/articles', params);
   }
 
-  async getRandomArticle(): Promise<ArticleResponse> {
-    return this.get<ArticleResponse>('/articles/random');
+  async getRandomArticle(): Promise<ArticleResponse[]> {
+    return this.get<ArticleResponse[]>('/articles/random');
   }
 
   async getTemporaryArticles(): Promise<ArticleResponse[]> {
@@ -444,8 +444,8 @@ export class SurveyService extends ApiService {
     return this.get<SurveyResponse[]>('/surveys');
   }
 
-  async getRandomSurvey(): Promise<SurveyResponse> {
-    return this.get<SurveyResponse>('/surveys/random');
+  async getRandomSurvey(): Promise<SurveyResponse[]> {
+    return this.get<SurveyResponse[]>('/surveys/random');
   }
 
   async getTemporarySurveys(): Promise<SurveyResponse[]> {
