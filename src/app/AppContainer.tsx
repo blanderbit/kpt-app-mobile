@@ -11,8 +11,8 @@ import { AppNavigator } from "@app/navigation/AppNavigator";
 import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
 import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
-import { revenueCatService } from "@shared/services/revenuecat";
-import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
+// import { revenueCatService } from "@shared/services/revenuecat";
+// import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
 function MainApp() {
     const { theme } = useCustomTheme();
@@ -46,20 +46,20 @@ export default function App() {
         InterSemibold: require("../../assets/fonts/Inter_18pt-SemiBold.ttf"),
     });
 
-    // Инициализация RevenueCat
-    useEffect(() => {
-        try {
-            const apiKey = getRevenueCatApiKey();
-            // Проверяем, что ключ не дефолтный
-            if (apiKey && !apiKey.includes('YOUR_') && !apiKey.includes('HERE')) {
-                revenueCatService.initialize({ apiKey });
-            } else {
-                console.warn('RevenueCat API key not configured. Please set REVENUECAT_IOS_API_KEY and REVENUECAT_ANDROID_API_KEY in your environment or update revenuecat.config.ts');
-            }
-        } catch (error) {
-            console.error('Failed to initialize RevenueCat:', error);
-        }
-    }, []);
+    // Инициализация RevenueCat - временно отключено
+    // useEffect(() => {
+    //     try {
+    //         const apiKey = getRevenueCatApiKey();
+    //         // Проверяем, что ключ не дефолтный
+    //         if (apiKey && !apiKey.includes('YOUR_') && !apiKey.includes('HERE')) {
+    //             revenueCatService.initialize({ apiKey });
+    //         } else {
+    //             console.warn('RevenueCat API key not configured. Please set REVENUECAT_IOS_API_KEY and REVENUECAT_ANDROID_API_KEY in your environment or update revenuecat.config.ts');
+    //         }
+    //     } catch (error) {
+    //         console.error('Failed to initialize RevenueCat:', error);
+    //     }
+    // }, []);
 
     if ( !fontsLoaded ) return null;
 
