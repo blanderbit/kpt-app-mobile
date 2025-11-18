@@ -141,11 +141,11 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
     return (
         <TabScreenContainer>
             <View style={ [ styles.container ] }>
-                <AutoPageTooltips autoShow={true} />
                 <ScrollView
                 contentContainerStyle={ [ styles.scrollContent, theme.flexBlocks.vertical8 ] }
                 showsVerticalScrollIndicator={ false }
             >
+                <AutoPageTooltips autoShow={true} />
                 <View style={ theme.flexBlocks.vertical8 }>
                     <Text style={ { ...theme.fonts.subtitle, textAlign: 'left' } }>
                         { t('hello') }
@@ -343,6 +343,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
+        paddingBottom: 100, // Отступ снизу для BottomSwitcher
     },
     progressContainer: {
         borderRadius: 16,

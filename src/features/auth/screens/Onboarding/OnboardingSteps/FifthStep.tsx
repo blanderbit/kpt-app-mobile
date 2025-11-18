@@ -3,8 +3,6 @@ import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from "react-nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
-import {BlackCheckmarkIcon} from "@assets/icons/BlackCheckmarkIcon";
-import {GrayCircleIcon} from "@assets/icons/GrayCircleIcon";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {useSocialNetworks} from "@shared/services/api/hooks";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
