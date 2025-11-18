@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, Text, StyleSheet, SafeAreaView, Alert, Platform} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -15,6 +15,7 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
+import { clearOnboardingData } from '@shared/utils/onboardingStorage';
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -35,6 +36,13 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const { signInWithGoogle, signInWithApple, isLoading: firebaseLoading, error: firebaseError } = useFirebaseAuth();
     const { theme, themeName } = useCustomTheme();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Очищаем данные онбординга при попадании на страницу логина
+    useEffect(() => {
+        clearOnboardingData().catch(error => {
+            console.error('Error clearing onboarding data on login screen:', error);
+        });
+    }, []);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema(t)),
@@ -139,7 +147,6 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                         ) }
                     />
 
-                    <ErrorMessage message={ error || firebaseError || '' } visible={ !!(error || firebaseError) } />
 
                     <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
                         { t('auth.forgotPass') }

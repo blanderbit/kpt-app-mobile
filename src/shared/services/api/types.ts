@@ -43,7 +43,17 @@ export interface LoginResponse {
 export interface RegisterRequest {
   email: string;
   password: string;
-  firstName?: string;
+  firstName: string;
+  age?: string;
+  feelingToday?: string;
+  socialNetworks?: string[];
+  onboardingQuestionAndAnswers?: Record<string, string | string[]>;
+  activities?: Array<{
+    activityName: string;
+    content?: string;
+  }>;
+  taskTrackingMethod?: string;
+  appUserId?: string;
 }
 
 export interface FirebaseAuthRequest {
@@ -295,6 +305,8 @@ export interface GenerateActivityRecommendationsRequest {
   socialNetworks: string[];
   onboardingQuestionAndAnswers: Record<string, string | string[]>;
   feelingToday: string;
+  satisfactionLevel: number;
+  hardnessLevel: number;
   count?: string;
 }
 

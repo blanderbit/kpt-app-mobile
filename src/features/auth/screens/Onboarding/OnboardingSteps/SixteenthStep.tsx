@@ -92,15 +92,15 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
             // }
 
             console.log('Registering device token', { storedToken, platform: Platform.OS /*, deviceId*/ });
-            await registerDeviceToken({
-                token: storedToken,
-                platform: Platform.OS,
-                // deviceId,
-            });
+            // await registerDeviceToken({
+            //     token: storedToken,
+            //     platform: Platform.OS,
+            //     // deviceId,
+            // });
         } catch (error) {
             console.log('Failed to register device token:', error);
         }
-    }, [registerDeviceToken]);
+    }, []);
 
     useEffect(() => {
         checkNotificationPermission();

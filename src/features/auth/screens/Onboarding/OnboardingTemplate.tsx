@@ -12,7 +12,7 @@ import OnboardingQuestionStep from "@features/auth/screens/Onboarding/Onboarding
 import SixthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixthStep";
 import SeventhStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventhStep";
 import {useGenerateActivityRecommendations, useOnboardingQuestions} from "@shared/services/api/hooks";
-import {OnboardingQuestion} from "@shared/services/api/types";
+import {OnboardingQuestion, ActivityRecommendation} from "@shared/services/api/types";
 import {clearOnboardingData, getOnboardingProgress, saveOnboardingProgress, ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 import EighthStep from "@features/auth/screens/Onboarding/OnboardingSteps/EighthStep";
 import NinthStep from "@features/auth/screens/Onboarding/OnboardingSteps/NinthStep";
@@ -62,10 +62,16 @@ export default function OnboardingTemplate({
         mood: string | null;
         socialNetworks: string[];
         questions: Record<string, string[]>;
+        selectedActivities: Array<{ activityName: string; content?: string }>;
+        satisfactionLevel?: number;
+        hardnessLevel?: number;
     }>({
         mood: null,
         socialNetworks: [],
-        questions: {}
+        questions: {},
+        selectedActivities: [],
+        satisfactionLevel: undefined,
+        hardnessLevel: undefined,
     });
 
     // Восстанавливаем прогресс при монтировании
@@ -125,19 +131,52 @@ export default function OnboardingTemplate({
                 ONBOARDING_KEYS.MOOD,
                 ONBOARDING_KEYS.SOCIAL_NETWORKS,
                 ONBOARDING_KEYS.QUESTIONS,
+                ONBOARDING_KEYS.SELECTED_ACTIVITIES,
+                ONBOARDING_KEYS.SATISFACTION_LEVEL,
+                ONBOARDING_KEYS.HARDNESS_LEVEL,
             ]);
 
             const moodValue = entries[0]?.[1] ?? null;
             const socialNetworksValue = entries[1]?.[1] ?? null;
             const questionsValue = entries[2]?.[1] ?? null;
+            const selectedActivitiesValue = entries[3]?.[1] ?? null;
+            const satisfactionLevelValue = entries[4]?.[1] ?? null;
+            const hardnessLevelValue = entries[5]?.[1] ?? null;
 
             setOnboardingData(prev => ({
                 mood: moodValue ?? prev.mood,
                 socialNetworks: socialNetworksValue ? JSON.parse(socialNetworksValue) : prev.socialNetworks,
                 questions: questionsValue ? JSON.parse(questionsValue) : prev.questions,
+                selectedActivities: selectedActivitiesValue ? JSON.parse(selectedActivitiesValue) : prev.selectedActivities,
+                satisfactionLevel: satisfactionLevelValue ? JSON.parse(satisfactionLevelValue) : prev.satisfactionLevel,
+                hardnessLevel: hardnessLevelValue ? JSON.parse(hardnessLevelValue) : prev.hardnessLevel,
             }));
         } catch (error) {
             console.error('Error loading stored onboarding data:', error);
+        }
+    };
+
+    // Функция для сохранения выбранных активностей
+    const handleAddActivitiesToMyList = async (recommendations: ActivityRecommendation[]) => {
+        const activitiesToSave = recommendations.map(rec => ({
+            activityName: rec.activityName,
+            content: rec.content,
+        }));
+
+        setOnboardingData(prev => ({
+            ...prev,
+            selectedActivities: activitiesToSave,
+        }));
+
+        // Сохраняем в AsyncStorage
+        try {
+            await AsyncStorage.setItem(
+                ONBOARDING_KEYS.SELECTED_ACTIVITIES,
+                JSON.stringify(activitiesToSave)
+            );
+            console.log('✅ Selected activities saved:', activitiesToSave);
+        } catch (error) {
+            console.error('❌ Error saving selected activities:', error);
         }
     };
 
@@ -182,6 +221,7 @@ export default function OnboardingTemplate({
     const recommendationsPayload = useMemo(() => {
         if (!onboardingData.mood) return null;
         if (!onboardingData.socialNetworks.length) return null;
+        // if (onboardingData.satisfactionLevel === undefined || onboardingData.hardnessLevel === undefined) return null;
 
         const onboardingQuestionAndAnswers = Object.entries(onboardingData.questions).reduce<Record<string, string | string[]>>((acc, [stepName, answers]) => {
             if (!answers || !answers.length) return acc;
@@ -195,6 +235,8 @@ export default function OnboardingTemplate({
             socialNetworks: onboardingData.socialNetworks,
             onboardingQuestionAndAnswers,
             feelingToday: onboardingData.mood,
+            // satisfactionLevel: onboardingData.satisfactionLevel,
+            // hardnessLevel: onboardingData.hardnessLevel,
             count: '3',
         };
     }, [onboardingData]);
@@ -353,7 +395,12 @@ export default function OnboardingTemplate({
 
     const onBack = async () => {
         if (currentStep > 1) {
-            const newStep = currentStep - 1;
+            // Если мы на шаге "Balance your life" (thirteenthStep), переходим на два шага назад
+            let newStep = currentStep - 1;
+            if (currentStep === stepNumbers.thirteenthStep) {
+                newStep = stepNumbers.eleventhStep;
+            }
+            
             animateStepTransition(newStep, 'backward', async () => {
                 await saveOnboardingProgress(newStep);
             });
@@ -470,7 +517,25 @@ export default function OnboardingTemplate({
         const stepComponents = {
             [stepNumbers.sixthStep]: <SixthStep onNext={onNext} />,
             [stepNumbers.seventhStep]: <SeventhStep onNext={onNext} />,
-            [stepNumbers.eighthStep]: <EighthStep onNext={onNext} />,
+            [stepNumbers.eighthStep]: <EighthStep 
+                onNext={onNext}
+                initialSatisfactionLevel={onboardingData.satisfactionLevel}
+                initialHardnessLevel={onboardingData.hardnessLevel}
+                onSaveLevels={(satisfactionLevel, hardnessLevel) => {
+                    setOnboardingData(prev => ({
+                        ...prev,
+                        satisfactionLevel,
+                        hardnessLevel,
+                    }));
+                    // Сохраняем в AsyncStorage
+                    AsyncStorage.multiSet([
+                        [ONBOARDING_KEYS.SATISFACTION_LEVEL, JSON.stringify(satisfactionLevel)],
+                        [ONBOARDING_KEYS.HARDNESS_LEVEL, JSON.stringify(hardnessLevel)],
+                    ]).catch(error => {
+                        console.error('Error saving satisfaction/hardness levels:', error);
+                    });
+                }}
+            />,
             [stepNumbers.ninthStep]: <NinthStep
                 onNext={onNext}
                 isLoading={isGeneratingRecommendations}
@@ -479,6 +544,7 @@ export default function OnboardingTemplate({
                 errorMessage={isGenerateRecommendationsError ? recommendationErrorMessage : undefined}
                 onRetry={handleRecommendationsRetry}
                 hasRequiredData={hasRecommendationInputs}
+                onAddToMyList={handleAddActivitiesToMyList}
             />,
             [stepNumbers.tenthStep]: <TenthStep onNext={onNext} />,
             [stepNumbers.eleventhStep]: <EleventhStep onNext={onNext} />,

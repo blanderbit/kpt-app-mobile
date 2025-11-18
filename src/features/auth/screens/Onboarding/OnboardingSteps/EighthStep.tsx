@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {StyleSheet, Text, View, Image} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
@@ -12,12 +12,32 @@ const SWIPE_THE_LINES_SVG = `
 </svg>
 `;
 
-export default function EighthStep({onNext}: { onNext: () => void }) {
+interface EighthStepProps {
+    onNext: () => void;
+    onSaveLevels?: (satisfactionLevel: number, hardnessLevel: number) => void;
+    initialSatisfactionLevel?: number;
+    initialHardnessLevel?: number;
+}
+
+export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLevel, initialHardnessLevel}: EighthStepProps) {
     const { t } = useTranslation();
     const {theme} = useCustomTheme();
 
-    const [ satisfactionLevel, setSatisfactionLevel ] = useState(0);
-    const [ hardnessLevel, setHardnessLevel ] = useState(0);
+    const [ satisfactionLevel, setSatisfactionLevel ] = useState(initialSatisfactionLevel || 0);
+    const [ hardnessLevel, setHardnessLevel ] = useState(initialHardnessLevel || 0);
+
+    // Обновляем значения слайдеров при изменении начальных значений (когда возвращаемся на этот шаг)
+    useEffect(() => {
+        if (initialSatisfactionLevel !== undefined) {
+            setSatisfactionLevel(initialSatisfactionLevel);
+        }
+    }, [initialSatisfactionLevel]);
+
+    useEffect(() => {
+        if (initialHardnessLevel !== undefined) {
+            setHardnessLevel(initialHardnessLevel);
+        }
+    }, [initialHardnessLevel]);
 
     return (
         <View style={styles.container}>
@@ -26,6 +46,7 @@ export default function EighthStep({onNext}: { onNext: () => void }) {
                     <View style={theme.flexBlocks.vertical16}>
                         <View>
                             <SatisfactionSlider
+                                key={`satisfaction-${initialSatisfactionLevel ?? 'new'}`}
                                 label={ t('main.modals.measureActivity.satisfactionLevel.label') }
                                 startLabel={ t('main.modals.measureActivity.satisfactionLevel.startLabel') }
                                 endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
@@ -38,6 +59,7 @@ export default function EighthStep({onNext}: { onNext: () => void }) {
 
                         <View>
                             <SatisfactionSlider
+                                key={`hardness-${initialHardnessLevel ?? 'new'}`}
                                 label={ t('main.modals.measureActivity.hardnessLevel.label') }
                                 startLabel={ t('main.modals.measureActivity.hardnessLevel.startLabel') }
                                 endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
@@ -60,7 +82,16 @@ export default function EighthStep({onNext}: { onNext: () => void }) {
                 <CustomButton
                     disabled={ !satisfactionLevel || !hardnessLevel }
                     title={'Complete'}
-                    onPress={onNext}
+                    onPress={() => {
+                        if (onSaveLevels && satisfactionLevel && hardnessLevel) {
+                            // Преобразуем значения в диапазон 1-100
+                            // Если значение 0, преобразуем в 1, иначе округляем и ограничиваем диапазоном 1-100
+                            const satisfactionValue = Math.max(1, Math.min(100, Math.round(satisfactionLevel)));
+                            const hardnessValue = Math.max(1, Math.min(100, Math.round(hardnessLevel)));
+                            onSaveLevels(satisfactionValue, hardnessValue);
+                        }
+                        onNext();
+                    }}
                 />
             </View>
         </View>

@@ -1,8 +1,10 @@
 import React from "react";
-import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from "react-native";
+import {StyleSheet, Text, View, ActivityIndicator, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {ActivityRecommendation} from "@shared/services/api/types";
+import { ActivityLabel } from '@shared/components/ActivityLabel';
+import { SuggestedActivitiesIcon } from "@assets/icons/SuggestedActivitiesIcon";
 
 interface NinthStepProps {
     onNext: () => void;
@@ -12,6 +14,7 @@ interface NinthStepProps {
     errorMessage?: string;
     onRetry: () => void;
     hasRequiredData: boolean;
+    onAddToMyList?: (recommendations: ActivityRecommendation[]) => void;
 }
 
 export default function NinthStep({
@@ -22,6 +25,7 @@ export default function NinthStep({
     errorMessage,
     onRetry,
     hasRequiredData,
+    onAddToMyList,
 }: NinthStepProps) {
     const {theme} = useCustomTheme();
 
@@ -38,39 +42,80 @@ export default function NinthStep({
                 </Text>
             ) : null}
 
+            <View
+                style={[theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 }]}>
+                <SuggestedActivitiesIcon/>
+
+                <Text style={theme.fonts.subtitle}>
+                    Suggested activities
+                </Text>
+            </View>
+
             <ScrollView
-                style={styles.recommendationsList}
-                contentContainerStyle={styles.recommendationsContent}
+                style={styles.activitySections}
+                contentContainerStyle={styles.activitySectionsContent}
                 showsVerticalScrollIndicator={false}
             >
                 {recommendations.map((item, index) => {
-                    const confidence = Math.round(Math.min(Math.max(item.confidenceScore ?? 0, 0), 1) * 100);
+                    // Определяем тип активности по содержимому или используем дефолтный
+                    const activityType = determineActivityType(item);
+                    
                     return (
                         <View
                             key={`${item.activityName}-${index}`}
                             style={[
-                                styles.recommendationCard,
-                                index !== recommendations.length - 1 && styles.recommendationDivider
+                                styles.activitySection,
+                                index !== recommendations.length - 1 && styles.activityDivider
                             ]}
                         >
-                            <Text style={[styles.recommendationTitle, theme.fonts.subtitle]}>
-                                {item.activityName}
-                            </Text>
-                            <Text style={[styles.recommendationContent, theme.fonts.body]}>
-                                {item.content}
-                            </Text>
-                            <Text style={[styles.recommendationMeta, theme.fonts.caption]}>
-                                {`Confidence: ${confidence}%`}
-                            </Text>
-                            <Text style={[styles.recommendationReasoning, theme.fonts.caption]}>
-                                {item.reasoning}
-                            </Text>
+                            <ActivityLabel id={activityType} />
+
+                            <View style={[styles.activityContent]}>
+                                <Text style={[styles.activityTitle, theme.fonts.activityTitle]}>
+                                    {item.activityName}
+                                </Text>
+                                {item.content && (
+                                    <Text style={[styles.activityDescription, theme.fonts.regular]}>
+                                        {item.content}
+                                    </Text>
+                                )}
+                            </View>
                         </View>
                     );
                 })}
             </ScrollView>
         </View>
     );
+
+    // Функция для определения типа активности по содержимому
+    const determineActivityType = (item: ActivityRecommendation): string => {
+        const name = item.activityName.toLowerCase();
+        const content = item.content.toLowerCase();
+        const text = `${name} ${content}`;
+
+        // Определяем тип по ключевым словам
+        if (text.includes('yoga') || text.includes('meditation') || text.includes('mindful')) {
+            return 'health';
+        }
+        if (text.includes('fitness') || text.includes('workout') || text.includes('exercise') || text.includes('gym')) {
+            return 'fitness';
+        }
+        if (text.includes('read') || text.includes('book') || text.includes('learn') || text.includes('study')) {
+            return 'education';
+        }
+        if (text.includes('social') || text.includes('friend') || text.includes('meet')) {
+            return 'social';
+        }
+        if (text.includes('work') || text.includes('career') || text.includes('business')) {
+            return 'work';
+        }
+        if (text.includes('hobby') || text.includes('creative') || text.includes('art')) {
+            return 'hobby';
+        }
+        
+        // Дефолтный тип
+        return 'health';
+    };
 
     return (
         <View style={styles.container}>
@@ -129,7 +174,12 @@ export default function NinthStep({
             <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
                     title={'Add to my list'}
-                    onPress={onNext}
+                    onPress={() => {
+                        if (hasRecommendations && onAddToMyList) {
+                            onAddToMyList(recommendations);
+                        }
+                        onNext();
+                    }}
                     disabled={!hasRecommendations || isLoading}
                     themeName={!hasRecommendations || isLoading ? 'primary_disabled' : 'primary'}
                 />
@@ -188,30 +238,38 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         textAlign: 'left',
     },
-    recommendationsList: {
+    activitySections: {
+        flexDirection: 'column',
+        backgroundColor: '#F5F5F5',
+        borderRadius: 16,
         maxHeight: 300,
+        overflow: 'hidden',
     },
-    recommendationsContent: {
-        paddingBottom: 8,
+    activitySectionsContent: {
+        flexGrow: 1,
+        paddingTop: 1, // Небольшой отступ сверху, чтобы контент не обрезался
     },
-    recommendationCard: {
-        paddingVertical: 12,
+    activitySection: {
+        width: '100%',
+        minHeight: 90,
+        flexDirection: 'column',
+        padding: 16,
         gap: 8,
     },
-    recommendationDivider: {
+    activityDivider: {
         borderBottomWidth: 1,
         borderBottomColor: '#E2DDD8',
     },
-    recommendationTitle: {
-        fontFamily: 'InterSemibold',
+    activityContent: {
+        flexDirection: 'column',
+        gap: 4,
     },
-    recommendationContent: {
-        opacity: 0.9,
+    activityTitle: {
+        maxWidth: '100%',
     },
-    recommendationMeta: {
-        fontFamily: 'InterSemibold',
-    },
-    recommendationReasoning: {
+    activityDescription: {
         opacity: 0.7,
+        fontSize: 14,
+        lineHeight: 20,
     },
 });

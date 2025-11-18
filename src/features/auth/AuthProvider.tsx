@@ -2,6 +2,7 @@ import React, { useState, ReactNode, useEffect } from 'react';
 import { AuthContext } from '@app/hooks/auth.hook';
 import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
+import { RegisterRequest } from '@shared/services/api/types';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
@@ -187,13 +188,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const register = async (email: string, password: string, firstName?: string) => {
+    const register = async (email: string, password: string, firstName: string) => {
         try {
             setIsLoading(true);
             setError(null);
 
+            // Загружаем данные онбординга из AsyncStorage
+            const { loadAllOnboardingData } = await import('@shared/utils/onboardingStorage');
+            const onboardingData = await loadAllOnboardingData();
+
+            // Формируем payload для регистрации
+            const registerPayload: RegisterRequest = {
+                email,
+                password,
+                firstName,
+                ...onboardingData,
+                appUserId: 'test-app-user-id', // Тестовое значение
+            };
+
+            console.log('📝 Register payload:', registerPayload);
+
             // Вызываем API регистрации
-            await authService.register({ email, password, firstName });
+            await authService.register(registerPayload);
 
             // После успешной регистрации автоматически входим
             await login(email, password);
