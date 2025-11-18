@@ -100,7 +100,12 @@
         "noInfo": "Пока нет информации",
         "description": "Нужно начать, чтобы увидеть информацию здесь",
         "satisfaction": "Удовлетворенность",
-        "achieveness": "Достижения"
+        "achieveness": "Достижения",
+        "relationship": {
+          "satisfaction_dominant": "Доминирует удовлетворенность",
+          "hardness_dominant": "Доминирует сложность",
+          "balanced": "Сбалансировано"
+        }
       },
       "activity": {
         "title": "Ежедневная активность",

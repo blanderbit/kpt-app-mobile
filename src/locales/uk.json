@@ -101,7 +101,12 @@
         "noInfo": "Поки немає інформації",
         "description": "Потрібно почати, щоб побачити інформацію тут",
         "satisfaction": "Задоволеність",
-        "achieveness": "Досягнення"
+        "achieveness": "Досягнення",
+        "relationship": {
+          "satisfaction_dominant": "Домінує задоволеність",
+          "hardness_dominant": "Домінує складність",
+          "balanced": "Збалансовано"
+        }
       },
       "activity": {
         "title": "Щоденна активність",

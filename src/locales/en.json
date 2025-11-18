@@ -101,7 +101,12 @@
         "noInfo": "No information yet",
         "description": "You need to start to see information here",
         "satisfaction": "Satisfaction",
-        "achieveness": "Achieveness"
+        "achieveness": "Achieveness",
+        "relationship": {
+          "satisfaction_dominant": "Satisfaction Dominant",
+          "hardness_dominant": "Hardness Dominant",
+          "balanced": "Balanced"
+        }
       },
       "activity": {
         "title": "Daily activity",

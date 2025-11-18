@@ -214,13 +214,21 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                     </View>
 
                     <View style={ styles.weekInfo }>
-                        <Text style={ theme.fonts.subheader }>
-                            { t('main.today.weekTotal.noInfo') }
-                        </Text>
+                        {activityStatistics?.relationship ? (
+                            <Text style={ theme.fonts.subheader }>
+                                { t(`main.today.weekTotal.relationship.${activityStatistics.relationship}`) }
+                            </Text>
+                        ) : (
+                            <>
+                                <Text style={ theme.fonts.subheader }>
+                                    { t('main.today.weekTotal.noInfo') }
+                                </Text>
 
-                        <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
-                            { t('main.today.weekTotal.description') }
-                        </Text>
+                                <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
+                                    { t('main.today.weekTotal.description') }
+                                </Text>
+                            </>
+                        )}
                     </View>
 
                     <SegmentedProgressBar
