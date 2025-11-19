@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
+import * as Crypto from 'expo-crypto';
 
 export const signInGoogle = async (): Promise<string> => {
     try {
@@ -29,33 +30,43 @@ export const logoutGoogle = async () => {
 export const signInAppleIos = async (): Promise<string> => {
     console.log('signInAppleIos called');
     try {
+        // Generate a random nonce (raw nonce)
+        // According to @invertase/react-native-apple-authentication docs,
+        // the library may hash the nonce automatically if we pass raw nonce
+        const rawNonce = uuid();
+        console.log('Raw nonce generated:', rawNonce);
+
+        // Pass raw nonce to the library - it should hash it automatically
         const appleAuthRequestResponse = await appleAuth.performRequest({
             requestedOperation: appleAuth.Operation.LOGIN,
             requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+            nonce: rawNonce,
         });
 
         if (!appleAuthRequestResponse.identityToken) {
             throw new Error('Apple Sign-In failed - no identify token returned');
         }
 
-        console.log(appleAuthRequestResponse)
+        console.log('Apple auth response received');
 
         // Create a Firebase credential from the response
-        const {identityToken, nonce} = appleAuthRequestResponse;
+        // Use the same raw nonce that we passed to the library
+        const {identityToken} = appleAuthRequestResponse;
         const appleCredential = auth.AppleAuthProvider.credential(
             identityToken,
-            nonce,
+            rawNonce,
         );
 
-        console.log(appleCredential)
+        console.log('Apple credential created with raw nonce');
 
         const {user} = await auth().signInWithCredential(appleCredential);
 
-        console.log(user)
+        console.log('Firebase user signed in:', user.uid);
 
         return await user.getIdToken();
     } catch (e) {
-        console.log(e)
+        console.error('Apple Sign-In error:', e);
+        throw e;
     }
 };
 
