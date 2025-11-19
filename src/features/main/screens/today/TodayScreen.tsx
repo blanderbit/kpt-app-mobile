@@ -193,7 +193,7 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                 </Text>
 
                 <Text style={ theme.fonts.title }>
-                    Kpt App
+                    Plesury
                 </Text>
             </View>
 

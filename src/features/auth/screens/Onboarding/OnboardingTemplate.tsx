@@ -464,6 +464,14 @@ export default function OnboardingTemplate({
     };
 
     const handleMoodSelection = async (mood: string) => {
+        // Сохраняем mood в AsyncStorage
+        try {
+            await AsyncStorage.setItem(ONBOARDING_KEYS.MOOD, mood);
+            console.log('💾 [OnboardingTemplate] Saved mood to AsyncStorage:', mood);
+        } catch (error) {
+            console.error('❌ [OnboardingTemplate] Error saving mood:', error);
+        }
+        
         setOnboardingData(prev => ({
             ...prev,
             mood: mood

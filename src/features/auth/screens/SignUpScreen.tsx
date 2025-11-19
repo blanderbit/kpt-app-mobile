@@ -8,12 +8,10 @@ import { LoginIcon } from '@assets/icons/LoginIcon';
 import { Input } from '@shared/components/Input/Input';
 import { useTranslation } from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
-import { AppleIcon } from "@assets/icons/AppleLogo";
 import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { SignUpScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
-import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
 
 const schema = (t: any) => yup.object().shape({
     name: yup.string()
@@ -41,7 +39,6 @@ type FormData = {
 export default function SignUpScreen({ navigation }: { navigation: SignUpScreenNavigationProp }) {
     const { t } = useTranslation();
     const { register, isLoading, error } = useAuth();
-    const { signInWithGoogle, signInWithApple, isLoading: firebaseLoading, error: firebaseError } = useFirebaseAuth();
     const { theme, themeName } = useCustomTheme();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,29 +70,6 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
         }
     };
 
-    const handleGoogleSignIn = async () => {
-        try {
-            await signInWithGoogle();
-        } catch (error: any) {
-            Alert.alert(
-                t('auth.signUp.googleSignInError'),
-                error.message || t('auth.signUp.googleSignInErrorMessage'),
-                [{ text: 'OK' }]
-            );
-        }
-    };
-
-    const handleAppleSignIn = async () => {
-        try {
-            await signInWithApple();
-        } catch (error: any) {
-            Alert.alert(
-                t('auth.signUp.appleSignInError'),
-                error.message || t('auth.signUp.appleSignInErrorMessage'),
-                [{ text: 'OK' }]
-            );
-        }
-    };
 
     const handleNavigateToLogin = () => {
         navigation.navigate(Routes.LOGIN);
@@ -191,22 +165,6 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
                         disabled={ isSubmitting || isLoading }
                         loading={ isSubmitting || isLoading }
                     />
-
-                    <CustomButton 
-                        title={ t('auth.appleSignIn') } 
-                        onPress={ handleAppleSignIn }
-                        themeName="white"
-                        disabled={ isSubmitting || isLoading || firebaseLoading }
-                    >
-                        <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
-                    </CustomButton>
-
-                    <CustomButton
-                        title={ t('auth.googleSignIn') }
-                        onPress={ handleGoogleSignIn }
-                        themeName="white"
-                        disabled={ isSubmitting || isLoading || firebaseLoading }>
-                    </CustomButton>
                 </View>
             </View>
         </SafeAreaView>

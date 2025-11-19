@@ -1,5 +1,5 @@
 import React from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
+import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
@@ -9,10 +9,14 @@ import GoogleIcon from "@assets/icons/GoogleIcon";
 import { Routes } from "@app/navigation/const";
 import { useNavigation } from "@react-navigation/native";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
+import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
+import { useTranslation } from 'react-i18next';
 
 export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
+    const { t } = useTranslation();
     const navigation = useNavigation<LoginScreenNavigationProp>();
+    const { signUpWithGoogle, signUpWithApple, isLoading: firebaseLoading } = useFirebaseAuth();
 
     const handleSignUp = () => {
         navigation.navigate(Routes.SIGN_UP);
@@ -20,6 +24,38 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
 
     const handleLogin = () => {
         navigation.navigate(Routes.LOGIN);
+    };
+
+    const handleGoogleSignIn = async () => {
+        console.log('🔵 [SeventeenthStep] Google sign up clicked');
+        try {
+            console.log('🔵 [SeventeenthStep] Calling signUpWithGoogle...');
+            await signUpWithGoogle();
+            console.log('✅ [SeventeenthStep] Google sign up successful');
+        } catch (error: any) {
+            console.error('❌ [SeventeenthStep] Google sign up error:', error);
+            Alert.alert(
+                t('auth.signUp.googleSignInError'),
+                error.message || t('auth.signUp.googleSignInErrorMessage'),
+                [{ text: 'OK' }]
+            );
+        }
+    };
+
+    const handleAppleSignIn = async () => {
+        console.log('🍎 [SeventeenthStep] Apple sign up clicked');
+        try {
+            console.log('🍎 [SeventeenthStep] Calling signUpWithApple...');
+            await signUpWithApple();
+            console.log('✅ [SeventeenthStep] Apple sign up successful');
+        } catch (error: any) {
+            console.error('❌ [SeventeenthStep] Apple sign up error:', error);
+            Alert.alert(
+                t('auth.signUp.appleSignInError'),
+                error.message || t('auth.signUp.appleSignInErrorMessage'),
+                [{ text: 'OK' }]
+            );
+        }
     };
 
     return (
@@ -35,16 +71,12 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                 </View>
 
                 <View style={theme.flexBlocks.vertical16}>
-                    <CustomButton
-                        title={'Create account'}
-                        onPress={handleSignUp}
-                    />
-                    
-                    <View style={theme.flexBlocks.vertical8}>
                     <View style={theme.flexBlocks.vertical8}>
                         <Pressable
                             style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                            onPress={() => {}}>
+                            onPress={handleAppleSignIn}
+                            disabled={firebaseLoading}
+                        >
                             <AppleIcon/>
 
                             <Text style={styles.logInBtnText}>
@@ -54,7 +86,9 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
 
                         <Pressable
                             style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                            onPress={() => {}}>
+                            onPress={handleGoogleSignIn}
+                            disabled={firebaseLoading}
+                        >
                             <GoogleIcon/>
 
                             <Text style={styles.logInBtnText}>
@@ -63,12 +97,11 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                         </Pressable>
                     </View>
 
-                        <CustomButton
-                            title={'Skip'}
-                            onPress={onNext}
-                            themeName={'white_no_border'}
-                        />
-                    </View>
+                    <CustomButton
+                        title={'Skip'}
+                        onPress={handleSignUp}
+                        themeName={'white_no_border'}
+                    />
                 </View>
             </View>
 

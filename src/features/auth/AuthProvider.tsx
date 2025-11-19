@@ -279,18 +279,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             onboardingQuestionAndAnswers?: Record<string, string>;
             activities?: Array<{ activityName: string; content?: string }>;
             taskTrackingMethod?: string;
+            satisfactionLevel?: number;
+            hardnessLevel?: number;
         }
     ) => {
         try {
             setIsLoading(true);
             setError(null);
 
-            // Вызываем API Firebase регистрации
-            const response = await authService.firebaseAuth({
+            // Извлекаем satisfactionLevel и hardnessLevel для преобразования в initSatisfactionLevel и initHardnessLevel
+            const { satisfactionLevel, hardnessLevel, ...restOnboardingData } = onboardingData;
+
+            // Формируем данные для запроса
+            const firebaseAuthData: any = {
                 idToken,
                 authType: 'register',
-                ...onboardingData
-            });
+            };
+
+            // Добавляем все поля онбординга явно
+            if (onboardingData.age) {
+                firebaseAuthData.age = onboardingData.age;
+            }
+            if (onboardingData.feelingToday) {
+                firebaseAuthData.feelingToday = onboardingData.feelingToday;
+            }
+            if (onboardingData.socialNetworks && onboardingData.socialNetworks.length > 0) {
+                firebaseAuthData.socialNetworks = onboardingData.socialNetworks;
+            }
+            if (onboardingData.onboardingQuestionAndAnswers && Object.keys(onboardingData.onboardingQuestionAndAnswers).length > 0) {
+                firebaseAuthData.onboardingQuestionAndAnswers = onboardingData.onboardingQuestionAndAnswers;
+            }
+            if (onboardingData.activities && onboardingData.activities.length > 0) {
+                firebaseAuthData.activities = onboardingData.activities;
+            }
+            if (onboardingData.taskTrackingMethod) {
+                firebaseAuthData.taskTrackingMethod = onboardingData.taskTrackingMethod;
+            }
+            if (satisfactionLevel !== undefined) {
+                firebaseAuthData.initSatisfactionLevel = satisfactionLevel;
+            }
+            if (hardnessLevel !== undefined) {
+                firebaseAuthData.initHardnessLevel = hardnessLevel;
+            }
+
+            console.log('📤 [registerWithFirebase] Отправляем данные в API:', JSON.stringify(firebaseAuthData, null, 2));
+            console.log('📤 [registerWithFirebase] feelingToday из onboardingData:', onboardingData.feelingToday);
+            console.log('📤 [registerWithFirebase] feelingToday в запросе:', firebaseAuthData.feelingToday);
+
+            // Вызываем API Firebase регистрации
+            const response = await authService.firebaseAuth(firebaseAuthData);
             console.log('✅ Получен ответ от Firebase API:', response);
 
             // Сохраняем токены

@@ -110,6 +110,13 @@ export const loadAllOnboardingData = async (): Promise<{
         const satisfactionLevelValue = entries[6]?.[1];
         const hardnessLevelValue = entries[7]?.[1];
 
+        console.log('📦 [loadAllOnboardingData] Raw values from AsyncStorage:');
+        console.log('  - moodValue:', moodValue);
+        console.log('  - ageValue:', ageValue);
+        console.log('  - taskMethodValue:', taskMethodValue);
+        console.log('  - satisfactionLevelValue:', satisfactionLevelValue);
+        console.log('  - hardnessLevelValue:', hardnessLevelValue);
+
         // Преобразуем questions в правильный формат
         let onboardingQuestionAndAnswers: Record<string, string | string[]> | undefined;
         if (questionsValue) {
@@ -144,10 +151,16 @@ export const loadAllOnboardingData = async (): Promise<{
         let parsedMood: string | undefined;
         if (moodValue) {
             try {
+                // Пытаемся распарсить как JSON (на случай если сохранено через JSON.stringify)
                 parsedMood = JSON.parse(moodValue);
+                console.log('📦 [loadAllOnboardingData] Parsed mood as JSON:', parsedMood);
             } catch {
-                parsedMood = moodValue; // Если не JSON, используем как есть
+                // Если не JSON, используем как есть (строка)
+                parsedMood = moodValue;
+                console.log('📦 [loadAllOnboardingData] Using mood as string:', parsedMood);
             }
+        } else {
+            console.warn('⚠️ [loadAllOnboardingData] moodValue is null or undefined!');
         }
 
         // Парсим satisfactionLevel и hardnessLevel
@@ -169,7 +182,7 @@ export const loadAllOnboardingData = async (): Promise<{
             }
         }
 
-        return {
+        const result = {
             age: parsedAge,
             feelingToday: parsedMood,
             socialNetworks: socialNetworksValue ? JSON.parse(socialNetworksValue) : undefined,
@@ -179,6 +192,13 @@ export const loadAllOnboardingData = async (): Promise<{
             satisfactionLevel: parsedSatisfactionLevel,
             hardnessLevel: parsedHardnessLevel,
         };
+
+        console.log('📦 [loadAllOnboardingData] Final result:', {
+            ...result,
+            feelingToday: result.feelingToday,
+        });
+
+        return result;
     } catch (error) {
         console.error('❌ Error loading onboarding data:', error);
         return {};

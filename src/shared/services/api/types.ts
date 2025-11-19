@@ -70,6 +70,8 @@ export interface FirebaseAuthRequest {
     content?: string;
   }>;
   taskTrackingMethod?: string;
+  initSatisfactionLevel?: number;
+  initHardnessLevel?: number;
 }
 
 export interface FirebaseAuthResponse {
