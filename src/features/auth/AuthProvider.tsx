@@ -6,6 +6,7 @@ import { RegisterRequest } from '@shared/services/api/types';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
+import { loadAllOnboardingData } from '@shared/utils/onboardingStorage';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -194,7 +195,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setError(null);
 
             // Загружаем данные онбординга из AsyncStorage
-            const { loadAllOnboardingData } = await import('@shared/utils/onboardingStorage');
             const onboardingData = await loadAllOnboardingData();
 
             // Формируем payload для регистрации
