@@ -33,7 +33,8 @@ import {
     useAddSuggestedActivityToActivities,
     useDeleteSuggestedActivity,
     useChangeActivityPosition,
-    useArchivedActivities
+    useArchivedActivities,
+    useRestoreActivity
 } from '@shared/services/api/hooks';
 import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,6 +63,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const addSuggestedActivityMutation = useAddSuggestedActivityToActivities();
     const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
     const changePositionMutation = useChangeActivityPosition();
+    const restoreActivityMutation = useRestoreActivity();
 
     // Debug logs
     console.log('myActivities:', myActivities);
@@ -385,8 +387,19 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                                         <CustomButton 
                                             onPress={ () => {
-                                                // TODO: Add restore activity functionality
-                                                console.log('Restore activity:', activity.id);
+                                                restoreActivityMutation.mutate(activity.id, {
+                                                    onSuccess: () => {
+                                                        showToast({ message: "Activity restored", type: "success" });
+                                                        
+                                                        // Invalidate and refetch activities data
+                                                        queryClient.invalidateQueries({ queryKey: ['activities'] });
+                                                        queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                                                        queryClient.invalidateQueries({ queryKey: ['activities', 'archived'] });
+                                                    },
+                                                    onError: (error) => {
+                                                        showToast({ message: "Failed to restore activity", type: "error" });
+                                                    }
+                                                });
                                             } }
                                             buttonStyle={ styles.roundBtn }
                                             contentStyle={ { gap: 0 } }>

@@ -441,6 +441,17 @@ export const useDeleteActivity = () => {
   });
 };
 
+export const useRestoreActivity = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id: number) => activityService.restoreActivity(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.activities });
+    },
+  });
+};
+
 export const useCloseActivity = () => {
   const queryClient = useQueryClient();
   

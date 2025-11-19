@@ -330,6 +330,10 @@ export class ActivityService extends ApiService {
   async getActivityStatistics(): Promise<ActivityStatisticsResponse> {
     return this.get<ActivityStatisticsResponse>('/profile/activities/statistics');
   }
+
+  async restoreActivity(id: number): Promise<ActivityResponse> {
+    return this.post<ActivityResponse>(`/profile/activities/${id}/restore`);
+  }
 }
 
 // Сервис для предложенных активностей
