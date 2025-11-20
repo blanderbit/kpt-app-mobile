@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
     View,
     StyleSheet,
@@ -49,6 +49,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const [ achieveness, setAchieveness ] = useState(0)
     const [ newActivity, setNewActivity ] = useState('');
     const [ inputHeight, setInputHeight ] = useState(28);
+    const [ inputKey, setInputKey ] = useState(0);
+    const inputRef = useRef<TextInput>(null);
+    const activityValueRef = useRef('');
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     // Query client for cache invalidation
     const queryClient = useQueryClient();
@@ -76,19 +80,39 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     console.log('🎯 suggestedActivitiesData:', suggestedActivitiesData);
     console.log('🎯 suggestedActivitiesData length:', suggestedActivitiesData?.length);
 
+    const updateActivityState = useCallback((value: string) => {
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+        debounceTimerRef.current = setTimeout(() => {
+            setNewActivity(value);
+        }, 100);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
+
     const handleAddNewActivity = () => {
-        if ( newActivity.trim().length < 10 ) {
+        const activityValue = activityValueRef.current.trim();
+        if ( activityValue.length < 10 ) {
             showToast({ message: "The name of activity should not be less than 10 symbols.", type: "error" })
             return;
         }
         
         createActivityMutation.mutate({
-            activityName: newActivity.trim()
+            activityName: activityValue
         }, {
             onSuccess: (data) => {
                 console.log('✅ Activity created successfully:', data);
                 showToast({ message: "Activity successfully added", type: "success" });
+                activityValueRef.current = '';
                 setNewActivity("");
+                setInputKey(prev => prev + 1);
                 Keyboard.dismiss();
                 
                 // Invalidate and refetch activities data
@@ -276,19 +300,21 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                     <View
                         style={ [ styles.activitySection, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, { height: 'auto' } ] }>
-                        <TextInput style={ [ styles.textInput, { height: inputHeight } ] }
-                                   placeholder={ t('main.activities.addNewActivity') } multiline value={ newActivity }
-                                   onContentSizeChange={ (e) => {
-                                       const newHeight = e.nativeEvent.contentSize.height;
-                                       setInputHeight(Math.min(newHeight, 56));
-                                   } }
-                                   onChangeText={ (val) => {
-                                       if ( val.endsWith('\n') ) {
-                                           handleAddNewActivity();
-                                       } else {
-                                           setNewActivity(val);
-                                       }
-                                   } }/>
+                        <TextInput 
+                            key={inputKey}
+                            ref={inputRef}
+                            style={ [ styles.textInput ] }
+                            placeholder={ t('main.activities.addNewActivity') } 
+                            multiline 
+                            defaultValue=""
+                            onChangeText={ (val) => {
+                                activityValueRef.current = val;
+                                if ( val.endsWith('\n') ) {
+                                    handleAddNewActivity();
+                                } else {
+                                    updateActivityState(val);
+                                }
+                            } }/>
 
                         <CustomButton title={ t('add') }
                                       onPress={ handleAddNewActivity }
@@ -457,6 +483,9 @@ const styles = StyleSheet.create({
         lineHeight: 28,
         maxWidth: '70%',
         padding: 0,
+        height: '100%',
+        minHeight: 28,
+        maxHeight: 56
     },
     addBtn: {
         width: 'auto',
