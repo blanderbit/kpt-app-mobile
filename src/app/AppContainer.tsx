@@ -11,6 +11,7 @@ import { AppNavigator } from "@app/navigation/AppNavigator";
 import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
 import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
+import { Routes } from "@app/navigation/const";
 // import { revenueCatService } from "@shared/services/revenuecat";
 // import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
@@ -24,7 +25,42 @@ function MainApp() {
             resizeMode="cover"
             imageStyle={ { opacity: 1 } }>
             <View style={ [ styles.container ] }>
-                <NavigationContainer>
+                <NavigationContainer
+                    linking={{
+                        prefixes: ['kptapp://', 'exp+kptapp://'],
+                        config: {
+                            screens: {
+                                Today: 'today',
+                                Activities: 'activities',
+                                Profile: 'profile',
+                                PersonalInfo: 'personal-info',
+                                SubscriptionSettings: 'subscription-settings',
+                                Article: {
+                                    path: 'article',
+                                    parse: {
+                                        id: (id: string) => id,
+                                    },
+                                },
+                                Survey: {
+                                    path: 'survey',
+                                    parse: {
+                                        id: (id: string) => id,
+                                    },
+                                },
+                                Login: 'login',
+                                SignUp: 'sign-up',
+                                ResetPass: 'reset-pass',
+                                CheckEmail: {
+                                    path: 'check-email',
+                                    parse: {
+                                        email: (email: string) => decodeURIComponent(email),
+                                    },
+                                },
+                                Onboarding: 'onboarding',
+                            },
+                        },
+                    }}
+                >
                     <ScrollBlockerProvider>
                         <AppNavigator/>
                     </ScrollBlockerProvider>

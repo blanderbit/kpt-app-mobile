@@ -4,7 +4,7 @@
     "slug": "KptApp",
     "owner": "wexis",
     "originalFullName": "@wexis/KptApp",
-    "scheme": "test",
+    "scheme": "kptapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/plesury-icon.png",

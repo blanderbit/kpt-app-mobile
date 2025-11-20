@@ -160,33 +160,57 @@ export class NotificationService {
 
   /**
    * Проверяет изменения разрешений и обрабатывает их
+   * Вызывается при возврате приложения в активное состояние
    */
   private async checkPermissionChanges(): Promise<void> {
     try {
       const { status } = await Notifications.getPermissionsAsync();
+      const hasTokens = await apiUtils.hasTokens();
+      const storedToken = await AsyncStorage.getItem(DEVICE_TOKEN_KEY);
+      
+      console.log('[NotificationService] Checking permissions on app resume:', {
+        currentStatus: status,
+        lastStatus: this.lastPermissionStatus,
+        hasTokens,
+        hasStoredToken: !!storedToken
+      });
       
       // Если статус изменился
       if (this.lastPermissionStatus !== status) {
         console.log('[NotificationService] Permission status changed:', this.lastPermissionStatus, '->', status);
-        
-        if (status === 'granted') {
-          // Разрешения предоставлены - регистрируем устройство (если пользователь авторизован)
-          // registerDevice() сам проверит авторизацию, но проверяем здесь для оптимизации
-          const hasTokens = await apiUtils.hasTokens();
-          if (hasTokens) {
+      }
+      
+      // Если разрешения предоставлены
+      if (status === 'granted') {
+        // Проверяем, нужно ли регистрировать устройство
+        // Регистрируем если:
+        // 1. Пользователь авторизован
+        // 2. Нет сохраненного токена ИЛИ статус изменился на 'granted'
+        if (hasTokens) {
+          if (!storedToken || this.lastPermissionStatus !== status) {
             console.log('[NotificationService] Permissions granted, registering device');
             await this.registerDevice();
           } else {
-            console.log('[NotificationService] Permissions granted but user not authenticated, skipping registration');
+            console.log('[NotificationService] Device already registered, skipping');
           }
-        } else if (this.lastPermissionStatus === 'granted' && status !== 'granted') {
-          // Разрешения отозваны - удаляем регистрацию
-          console.log('[NotificationService] Permissions revoked, unregistering device');
-          await this.unregisterDevice();
+        } else {
+          console.log('[NotificationService] Permissions granted but user not authenticated, skipping registration');
         }
-        
-        this.lastPermissionStatus = status;
+      } 
+      // Если разрешения были отозваны (были granted, стали не granted)
+      else if (this.lastPermissionStatus === 'granted' && status !== 'granted') {
+        // Разрешения отозваны - удаляем регистрацию
+        console.log('[NotificationService] Permissions revoked, unregistering device');
+        await this.unregisterDevice();
       }
+      // Если разрешения не предоставлены и есть сохраненный токен - удаляем его
+      else if (status !== 'granted' && storedToken) {
+        console.log('[NotificationService] Permissions not granted but token exists, cleaning up');
+        await AsyncStorage.removeItem(DEVICE_TOKEN_KEY);
+      }
+      
+      // Обновляем последний известный статус
+      this.lastPermissionStatus = status;
     } catch (error) {
       console.error('[NotificationService] Error checking permission changes:', error);
     }

@@ -28,6 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>test</string>
+				<string>kptapp</string>
 				<string>com.simplify.kpt</string>
 			</array>
 		</dict>
