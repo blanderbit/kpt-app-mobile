@@ -2,11 +2,10 @@ import React, { useState, ReactNode, useEffect } from 'react';
 import { AuthContext } from '@app/hooks/auth.hook';
 import { useProfile } from '@app/hooks/profile.hook';
 import { authService, apiUtils, setOnAuthRequired } from '@shared/services/api';
-import { RegisterRequest } from '@shared/services/api/types';
 import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
-import { loadAllOnboardingData } from '@shared/utils/onboardingStorage';
+import { notificationService } from '@shared/services/notifications/NotificationService';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -112,6 +111,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         
                         // Обновляем профиль после успешной аутентификации
                         await refreshProfile();
+                        
+                        // Регистрируем нотификации после успешной аутентификации
+                        await notificationService.registerDevice();
                     } catch (error) {
                         // Токен недействителен, очищаем его
                         await apiUtils.removeAuthTokens();
@@ -133,6 +135,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
 
         checkAuthStatus();
+        
+        // Устанавливаем слушатель изменений разрешений на нотификации
+        notificationService.setupPermissionsListener();
+        
+        // Очищаем слушатель при размонтировании
+        return () => {
+            notificationService.removePermissionsListener();
+        };
     }, []);
 
     // Устанавливаем callback для уведомления о необходимости логина
@@ -179,6 +189,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsEmailVerified(response.user.emailVerified);
             // Обновляем профиль после успешного входа
             await refreshProfile();
+            // Регистрируем нотификации после успешного входа
+            await notificationService.registerDevice();
         } catch (error: any) {
             console.error('❌ Ошибка входа:', error);
             const errorMessage = error.message || 'Ошибка входа в систему';
@@ -189,31 +201,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const register = async (email: string, password: string, firstName: string) => {
+    const register = async (email: string, password: string, firstName?: string) => {
         try {
             setIsLoading(true);
             setError(null);
 
-            // Загружаем данные онбординга из AsyncStorage
-            const onboardingData = await loadAllOnboardingData();
-
-            // Формируем payload для регистрации
-            const { satisfactionLevel, hardnessLevel, ...restOnboardingData } = onboardingData;
-            const registerPayload: RegisterRequest = {
-                email,
-                password,
-                firstName,
-                ...restOnboardingData,
-                activities: onboardingData.activities || [], // Всегда массив, даже если пустой
-                initSatisfactionLevel: satisfactionLevel,
-                initHardnessLevel: hardnessLevel,
-                appUserId: 'test-app-user-id', // Тестовое значение
-            };
-
-            console.log('📝 Register payload:', registerPayload);
-
             // Вызываем API регистрации
-            await authService.register(registerPayload);
+            await authService.register({ email, password, firstName });
 
             // После успешной регистрации автоматически входим
             await login(email, password);
@@ -259,6 +253,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsEmailVerified(true);
             // Обновляем профиль после успешного входа
             await refreshProfile();
+            // Регистрируем нотификации после успешного входа
+            await notificationService.registerDevice();
             console.log('✅ Firebase вход выполнен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка Firebase входа:', error);
@@ -279,55 +275,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             onboardingQuestionAndAnswers?: Record<string, string>;
             activities?: Array<{ activityName: string; content?: string }>;
             taskTrackingMethod?: string;
-            satisfactionLevel?: number;
-            hardnessLevel?: number;
         }
     ) => {
         try {
             setIsLoading(true);
             setError(null);
 
-            // Извлекаем satisfactionLevel и hardnessLevel для преобразования в initSatisfactionLevel и initHardnessLevel
-            const { satisfactionLevel, hardnessLevel, ...restOnboardingData } = onboardingData;
-
-            // Формируем данные для запроса
-            const firebaseAuthData: any = {
+            // Вызываем API Firebase регистрации
+            const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
-            };
-
-            // Добавляем все поля онбординга явно
-            if (onboardingData.age) {
-                firebaseAuthData.age = onboardingData.age;
-            }
-            if (onboardingData.feelingToday) {
-                firebaseAuthData.feelingToday = onboardingData.feelingToday;
-            }
-            if (onboardingData.socialNetworks && onboardingData.socialNetworks.length > 0) {
-                firebaseAuthData.socialNetworks = onboardingData.socialNetworks;
-            }
-            if (onboardingData.onboardingQuestionAndAnswers && Object.keys(onboardingData.onboardingQuestionAndAnswers).length > 0) {
-                firebaseAuthData.onboardingQuestionAndAnswers = onboardingData.onboardingQuestionAndAnswers;
-            }
-            if (onboardingData.activities && onboardingData.activities.length > 0) {
-                firebaseAuthData.activities = onboardingData.activities;
-            }
-            if (onboardingData.taskTrackingMethod) {
-                firebaseAuthData.taskTrackingMethod = onboardingData.taskTrackingMethod;
-            }
-            if (satisfactionLevel !== undefined) {
-                firebaseAuthData.initSatisfactionLevel = satisfactionLevel;
-            }
-            if (hardnessLevel !== undefined) {
-                firebaseAuthData.initHardnessLevel = hardnessLevel;
-            }
-
-            console.log('📤 [registerWithFirebase] Отправляем данные в API:', JSON.stringify(firebaseAuthData, null, 2));
-            console.log('📤 [registerWithFirebase] feelingToday из onboardingData:', onboardingData.feelingToday);
-            console.log('📤 [registerWithFirebase] feelingToday в запросе:', firebaseAuthData.feelingToday);
-
-            // Вызываем API Firebase регистрации
-            const response = await authService.firebaseAuth(firebaseAuthData);
+                ...onboardingData
+            });
             console.log('✅ Получен ответ от Firebase API:', response);
 
             // Сохраняем токены
@@ -346,6 +305,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsEmailVerified(true);
             // Обновляем профиль после успешной регистрации
             await refreshProfile();
+            // Регистрируем нотификации после успешной регистрации
+            await notificationService.registerDevice();
         } catch (error: any) {
             console.error('❌ Ошибка Firebase регистрации:', error);
             const errorMessage = error.message || 'Ошибка регистрации через Firebase';
@@ -359,6 +320,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         try {
             setIsLoading(true);
+            
+            // Удаляем регистрацию нотификаций перед выходом
+            await notificationService.unregisterDevice();
             
             // Вызываем API выхода
             await authService.logout();
@@ -383,6 +347,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             console.error('Ошибка выхода:', error);
             // Даже если API вызов не удался, очищаем локальное состояние
+            // Удаляем регистрацию нотификаций
+            await notificationService.unregisterDevice();
             await apiUtils.removeAuthTokens();
             await clearFirebaseFlag();
             await clearEmailVerifiedFlag();

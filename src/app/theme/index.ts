@@ -60,7 +60,7 @@ export interface Theme {
 }
 
 export const pinkTheme: Theme = {
-    backgroundImage: require('@assets/images/2x@Background Rose.png'),
+    backgroundImage: require('@assets/images/2x@BackgroundRose.png'),
     background: '#F3D2D5',
     buttons: {
         primary: {
@@ -220,7 +220,7 @@ export const pinkTheme: Theme = {
 };
 
 export const greenTheme: Theme = {
-    backgroundImage: require('@assets/images/2x@Background Green.png'),
+    backgroundImage: require('@assets/images/2x@BackgroundGreen.png'),
     background: '#EFFAE1',
     buttons: {
         primary: {
