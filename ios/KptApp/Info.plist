@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>KptApp</string>
+	<string>Plesury</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -28,8 +28,8 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>test</string>
-				<string>kptapp</string>
-				<string>com.simplify.kpt</string>
+				<string>plesury</string>
+				<string>com.simplify.plesury</string>
 			</array>
 		</dict>
 		<dict>
@@ -41,7 +41,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>exp+kptapp</string>
+				<string>exp+plesury</string>
 			</array>
 		</dict>
 	</array>

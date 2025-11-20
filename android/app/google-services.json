@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:78984716511:android:0dd0c6a996aae402d5496a",
         "android_client_info": {
-          "package_name": "com.simplify.kpt"
+          "package_name": "com.simplify.plesury"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "78984716511-jjjhbdahb217cof0dla5u6t2njlsuorn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.simplify.kpt",
+            "package_name": "com.simplify.plesury",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
@@ -42,7 +42,7 @@
               "client_id": "78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.simplify.kpt"
+                "bundle_id": "com.simplify.plesury"
               }
             }
           ]

@@ -12,7 +12,7 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 
 prepare_react_native_project!
 
-target 'KptApp' do
+target 'Plesury' do
   use_expo_modules!
 
   config = use_native_modules!

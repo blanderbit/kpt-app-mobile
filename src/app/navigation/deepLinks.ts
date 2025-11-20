@@ -3,15 +3,15 @@ import { Routes } from './const';
 /**
  * Конфигурация Deep Links для нотификаций
  * 
- * Формат deep link: kptapp://route?param1=value1&param2=value2
+ * Формат deep link: plesury://route?param1=value1&param2=value2
  * 
  * Примеры:
- * - kptapp://today
- * - kptapp://article?id=123
- * - kptapp://survey?id=456
+ * - plesury://today
+ * - plesury://article?id=123
+ * - plesury://survey?id=456
  */
 
-export const DEEP_LINK_SCHEME = 'kptapp';
+export const DEEP_LINK_SCHEME = 'plesury';
 
 /**
  * Типы параметров для каждого роута
@@ -39,7 +39,7 @@ export const DEEP_LINKS = {
   /**
    * Главный экран (Today/Dashboard)
    * Использование: для нотификаций общего характера, напоминаний
-   * Пример: kptapp://today
+   * Пример: plesury://today
    */
   TODAY: {
     route: Routes.TODAY,
@@ -52,7 +52,7 @@ export const DEEP_LINKS = {
   /**
    * Экран активностей
    * Использование: для нотификаций о новых активностях, напоминаний об активностях
-   * Пример: kptapp://activities
+   * Пример: plesury://activities
    */
   ACTIVITIES: {
     route: Routes.ACTIVITIES,
@@ -65,7 +65,7 @@ export const DEEP_LINKS = {
   /**
    * Экран профиля
    * Использование: для нотификаций о настройках профиля, подписке
-   * Пример: kptapp://profile
+   * Пример: plesury://profile
    */
   PROFILE: {
     route: Routes.PROFILE,
@@ -78,7 +78,7 @@ export const DEEP_LINKS = {
   /**
    * Экран личной информации
    * Использование: для нотификаций о необходимости обновить профиль
-   * Пример: kptapp://personal-info
+   * Пример: plesury://personal-info
    */
   PERSONAL_INFO: {
     route: Routes.PERSONAL_INFO,
@@ -91,7 +91,7 @@ export const DEEP_LINKS = {
   /**
    * Экран настроек подписки
    * Использование: для нотификаций о подписке, истечении подписки, промо-акциях
-   * Пример: kptapp://subscription-settings
+   * Пример: plesury://subscription-settings
    */
   SUBSCRIPTION_SETTINGS: {
     route: Routes.SUBSCRIPTION_SETTINGS,
@@ -104,7 +104,7 @@ export const DEEP_LINKS = {
   /**
    * Экран статьи
    * Использование: для нотификаций о новых статьях, рекомендуемых статьях
-   * Пример: kptapp://article?id=123
+   * Пример: plesury://article?id=123
    * 
    * @param id - ID статьи (обязательный параметр)
    */
@@ -120,7 +120,7 @@ export const DEEP_LINKS = {
   /**
    * Экран опроса
    * Использование: для нотификаций о новых опросах, напоминаний об опросах
-   * Пример: kptapp://survey?id=456
+   * Пример: plesury://survey?id=456
    * 
    * @param id - ID опроса (обязательный параметр)
    */
@@ -137,7 +137,7 @@ export const DEEP_LINKS = {
   /**
    * Экран входа
    * Использование: для нотификаций, требующих авторизации (редко используется)
-   * Пример: kptapp://login
+   * Пример: plesury://login
    */
   LOGIN: {
     route: Routes.LOGIN,
@@ -150,7 +150,7 @@ export const DEEP_LINKS = {
   /**
    * Экран регистрации
    * Использование: для нотификаций о приглашении зарегистрироваться
-   * Пример: kptapp://sign-up
+   * Пример: plesury://sign-up
    */
   SIGN_UP: {
     route: Routes.SIGN_UP,
@@ -163,7 +163,7 @@ export const DEEP_LINKS = {
   /**
    * Экран сброса пароля
    * Использование: для нотификаций о сбросе пароля
-   * Пример: kptapp://reset-pass
+   * Пример: plesury://reset-pass
    */
   RESET_PASS: {
     route: Routes.RESET_PASS,
@@ -176,7 +176,7 @@ export const DEEP_LINKS = {
   /**
    * Экран проверки email
    * Использование: для нотификаций о подтверждении email
-   * Пример: kptapp://check-email?email=user@example.com
+   * Пример: plesury://check-email?email=user@example.com
    * 
    * @param email - Email пользователя (обязательный параметр)
    */
@@ -192,7 +192,7 @@ export const DEEP_LINKS = {
   /**
    * Экран онбординга
    * Использование: для нотификаций новым пользователям
-   * Пример: kptapp://onboarding
+   * Пример: plesury://onboarding
    */
   ONBOARDING: {
     route: Routes.ONBOARDING,
@@ -257,7 +257,7 @@ export class DeepLinkBuilder {
 /**
  * Парсит deep link URL и возвращает роут с параметрами
  * 
- * @param url - Deep link URL (например, "kptapp://article?id=123")
+ * @param url - Deep link URL (например, "plesury://article?id=123")
  * @returns Объект с роутом и параметрами или null если URL невалидный
  */
 export function parseDeepLink(url: string): { route: Routes; params: any } | null {
@@ -310,27 +310,27 @@ export function parseDeepLink(url: string): { route: Routes; params: any } | nul
  * Примеры использования для документации:
  * 
  * 1. Открыть главный экран:
- *    kptapp://today
+ *    plesury://today
  * 
  * 2. Открыть статью с ID 123:
- *    kptapp://article?id=123
+ *    plesury://article?id=123
  * 
  * 3. Открыть опрос с ID 456:
- *    kptapp://survey?id=456
+ *    plesury://survey?id=456
  * 
  * 4. Открыть опрос с ID 456 (затем пользователь может начать прохождение):
- *    kptapp://survey?id=456
+ *    plesury://survey?id=456
  * 
  * 5. Открыть экран проверки email:
- *    kptapp://check-email?email=user@example.com
+ *    plesury://check-email?email=user@example.com
  * 
  * 6. Открыть экран активностей:
- *    kptapp://activities
+ *    plesury://activities
  * 
  * 7. Открыть профиль:
- *    kptapp://profile
+ *    plesury://profile
  * 
  * 8. Открыть настройки подписки:
- *    kptapp://subscription-settings
+ *    plesury://subscription-settings
  */
 

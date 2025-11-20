@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "KptApp",
-    "slug": "KptApp",
+    "name": "Plesury",
+    "slug": "Plesury",
     "owner": "wexis",
-    "originalFullName": "@wexis/KptApp",
-    "scheme": "kptapp",
+    "originalFullName": "@wexis/Plesury",
+    "scheme": "plesury",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/plesury-icon.png",
@@ -17,7 +17,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.simplify.kpt",
+      "bundleIdentifier": "com.simplify.plesury",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -26,7 +26,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.siplify.kpt",
+      "package": "com.simplify.plesury",
       "googleServicesFile": "./google-services.json"
     },
     "web": {

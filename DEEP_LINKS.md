@@ -1,15 +1,15 @@
 # Deep Links для нотификаций
 
-Документация по использованию deep links в приложении KptApp для навигации из push-нотификаций.
+Документация по использованию deep links в приложении Plesury для навигации из push-нотификаций.
 
 ## Схема URL
 
-Все deep links используют схему: `kptapp://`
+Все deep links используют схему: `plesury://`
 
 ## Список доступных Deep Links
 
 ### 1. Главный экран (Today)
-**URL:** `kptapp://today`  
+**URL:** `plesury://today`  
 **Параметры:** нет  
 **Требует авторизации:** да  
 **Описание:** Открывает главный экран приложения (Dashboard)  
@@ -18,7 +18,7 @@
 ---
 
 ### 2. Экран активностей
-**URL:** `kptapp://activities`  
+**URL:** `plesury://activities`  
 **Параметры:** нет  
 **Требует авторизации:** да  
 **Описание:** Открывает экран со списком активностей  
@@ -27,7 +27,7 @@
 ---
 
 ### 3. Экран профиля
-**URL:** `kptapp://profile`  
+**URL:** `plesury://profile`  
 **Параметры:** нет  
 **Требует авторизации:** да  
 **Описание:** Открывает экран профиля пользователя  
@@ -36,7 +36,7 @@
 ---
 
 ### 4. Экран личной информации
-**URL:** `kptapp://personal-info`  
+**URL:** `plesury://personal-info`  
 **Параметры:** нет  
 **Требует авторизации:** да  
 **Описание:** Открывает экран редактирования личной информации  
@@ -45,7 +45,7 @@
 ---
 
 ### 5. Экран настроек подписки
-**URL:** `kptapp://subscription-settings`  
+**URL:** `plesury://subscription-settings`  
 **Параметры:** нет  
 **Требует авторизации:** да  
 **Описание:** Открывает экран настроек подписки  
@@ -54,7 +54,7 @@
 ---
 
 ### 6. Экран статьи
-**URL:** `kptapp://article?id={articleId}`  
+**URL:** `plesury://article?id={articleId}`  
 **Параметры:** 
 - `id` (обязательный) - ID статьи  
 **Требует авторизации:** да  
@@ -62,13 +62,13 @@
 **Использование:** Для нотификаций о новых статьях, рекомендуемых статьях
 
 **Примеры:**
-- `kptapp://article?id=123`
-- `kptapp://article?id=456`
+- `plesury://article?id=123`
+- `plesury://article?id=456`
 
 ---
 
 ### 7. Экран опроса
-**URL:** `kptapp://survey?id={surveyId}`  
+**URL:** `plesury://survey?id={surveyId}`  
 **Параметры:** 
 - `id` (обязательный) - ID опроса  
 **Требует авторизации:** да  
@@ -76,17 +76,17 @@
 **Использование:** Для нотификаций о новых опросах, напоминаний об опросах
 
 **Примеры:**
-- `kptapp://survey?id=456`
-- `kptapp://survey?id=789`
+- `plesury://survey?id=456`
+- `plesury://survey?id=789`
 
 ---
 
-**Примечание:** Прямых deep links на экран прохождения опроса (`SurveyQuestions`) нет. Переход на этот экран возможен только со страницы `Survey`. Используйте `kptapp://survey?id={id}` для перехода к опросу, затем пользователь может начать прохождение.
+**Примечание:** Прямых deep links на экран прохождения опроса (`SurveyQuestions`) нет. Переход на этот экран возможен только со страницы `Survey`. Используйте `plesury://survey?id={id}` для перехода к опросу, затем пользователь может начать прохождение.
 
 ---
 
 ### 9. Экран входа
-**URL:** `kptapp://login`  
+**URL:** `plesury://login`  
 **Параметры:** нет  
 **Требует авторизации:** нет  
 **Описание:** Открывает экран входа в приложение  
@@ -95,7 +95,7 @@
 ---
 
 ### 10. Экран регистрации
-**URL:** `kptapp://sign-up`  
+**URL:** `plesury://sign-up`  
 **Параметры:** нет  
 **Требует авторизации:** нет  
 **Описание:** Открывает экран регистрации  
@@ -104,7 +104,7 @@
 ---
 
 ### 11. Экран сброса пароля
-**URL:** `kptapp://reset-pass`  
+**URL:** `plesury://reset-pass`  
 **Параметры:** нет  
 **Требует авторизации:** нет  
 **Описание:** Открывает экран сброса пароля  
@@ -113,7 +113,7 @@
 ---
 
 ### 12. Экран проверки email
-**URL:** `kptapp://check-email?email={userEmail}`  
+**URL:** `plesury://check-email?email={userEmail}`  
 **Параметры:** 
 - `email` (обязательный) - Email пользователя  
 **Требует авторизации:** нет  
@@ -121,13 +121,13 @@
 **Использование:** Для нотификаций о подтверждении email
 
 **Примеры:**
-- `kptapp://check-email?email=user@example.com`
-- `kptapp://check-email?email=test%40example.com` (URL-encoded)
+- `plesury://check-email?email=user@example.com`
+- `plesury://check-email?email=test%40example.com` (URL-encoded)
 
 ---
 
 ### 13. Экран онбординга
-**URL:** `kptapp://onboarding`  
+**URL:** `plesury://onboarding`  
 **Параметры:** нет  
 **Требует авторизации:** нет  
 **Описание:** Открывает экран онбординга  
@@ -148,30 +148,30 @@ import { DeepLinkBuilder, parseDeepLink, DEEP_LINKS } from '@app/navigation/deep
 ```typescript
 // Статья
 const articleLink = DeepLinkBuilder.article('123');
-// Результат: "kptapp://article?id=123"
+// Результат: "plesury://article?id=123"
 
 // Опрос
 const surveyLink = DeepLinkBuilder.survey('456');
-// Результат: "kptapp://survey?id=456"
+// Результат: "plesury://survey?id=456"
 
 // Опрос (пользователь может начать прохождение со страницы опроса)
 const surveyLink = DeepLinkBuilder.survey('456');
-// Результат: "kptapp://survey?id=456"
+// Результат: "plesury://survey?id=456"
 // Примечание: DeepLinkBuilder.surveyQuestions() также перенаправляет на survey
 
 // Проверка email
 const checkEmailLink = DeepLinkBuilder.checkEmail('user@example.com');
-// Результат: "kptapp://check-email?email=user%40example.com"
+// Результат: "plesury://check-email?email=user%40example.com"
 
 // Роут без параметров
 const todayLink = DeepLinkBuilder.route(Routes.TODAY);
-// Результат: "kptapp://today"
+// Результат: "plesury://today"
 ```
 
 ### Парсинг Deep Links
 
 ```typescript
-const url = 'kptapp://article?id=123';
+const url = 'plesury://article?id=123';
 const parsed = parseDeepLink(url);
 
 if (parsed) {
@@ -188,7 +188,7 @@ if (parsed) {
   "title": "Новая статья",
   "body": "Прочитайте нашу новую статью",
   "data": {
-    "deepLink": "kptapp://article?id=123"
+    "deepLink": "plesury://article?id=123"
   }
 }
 ```
@@ -199,7 +199,7 @@ if (parsed) {
   "title": "Новый опрос",
   "body": "Пройдите опрос",
   "data": {
-    "deepLink": "kptapp://survey?id=456"
+    "deepLink": "plesury://survey?id=456"
   }
 }
 ```
@@ -210,7 +210,7 @@ if (parsed) {
   "title": "Напоминание",
   "body": "Не забудьте выполнить активности",
   "data": {
-    "deepLink": "kptapp://activities"
+    "deepLink": "plesury://activities"
   }
 }
 ```
@@ -221,7 +221,7 @@ if (parsed) {
   "title": "Подписка истекает",
   "body": "Обновите подписку",
   "data": {
-    "deepLink": "kptapp://subscription-settings"
+    "deepLink": "plesury://subscription-settings"
   }
 }
 ```
@@ -242,7 +242,7 @@ Deep links обрабатываются автоматически через Re
 ```json
 {
   "expo": {
-    "scheme": "kptapp"
+    "scheme": "plesury"
   }
 }
 ```
@@ -251,20 +251,20 @@ Deep links обрабатываются автоматически через Re
 
 ### iOS Simulator
 ```bash
-xcrun simctl openurl booted "kptapp://article?id=123"
+xcrun simctl openurl booted "plesury://article?id=123"
 ```
 
 ### Android Emulator
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "kptapp://article?id=123" com.siplify.kpt
+adb shell am start -W -a android.intent.action.VIEW -d "plesury://article?id=123" com.simplify.plesury
 ```
 
 ### Через терминал (если приложение запущено)
 ```bash
 # iOS
-xcrun simctl openurl booted "kptapp://today"
+xcrun simctl openurl booted "plesury://today"
 
 # Android
-adb shell am start -W -a android.intent.action.VIEW -d "kptapp://today" com.siplify.kpt
+adb shell am start -W -a android.intent.action.VIEW -d "plesury://today" com.simplify.plesury
 ```
 

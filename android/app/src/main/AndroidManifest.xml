@@ -25,8 +25,8 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="test"/>
-        <data android:scheme="kptapp"/>
-        <data android:scheme="exp+kptapp"/>
+        <data android:scheme="plesury"/>
+        <data android:scheme="exp+plesury"/>
       </intent-filter>
     </activity>
   </application>

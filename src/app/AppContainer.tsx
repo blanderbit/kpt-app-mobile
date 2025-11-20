@@ -27,7 +27,7 @@ function MainApp() {
             <View style={ [ styles.container ] }>
                 <NavigationContainer
                     linking={{
-                        prefixes: ['kptapp://', 'exp+kptapp://'],
+                        prefixes: ['plesury://', 'exp+plesury://'],
                         config: {
                             screens: {
                                 Today: 'today',

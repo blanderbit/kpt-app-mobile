@@ -11,7 +11,7 @@
 		07436F50A4664F42B8B129F8 /* TiltWarp-Regular-VariableFont_XROT,YROT.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC447AA99C01481C9F209210 /* TiltWarp-Regular-VariableFont_XROT,YROT.ttf */; };
 		0815A4BC48F343939167C098 /* SF-Pro-Display-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99379B175BEE4DE3A1D799A9 /* SF-Pro-Display-BoldItalic.otf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13D5EBC2A4365746684C66DC /* Pods_KptApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA4CBA62DECE4E0BD66EBE9 /* Pods_KptApp.framework */; };
+		13D5EBC2A4365746684C66DC /* Pods_Plesury.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FA4CBA62DECE4E0BD66EBE9 /* Pods_Plesury.framework */; };
 		17556A4D18E54745A094A27C /* SF-Pro-Display-SemiboldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 35182155A2664FF5A751C79D /* SF-Pro-Display-SemiboldItalic.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		43E621ECD160409CA7B9CC7B /* Inter_18pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C300E62BF086417DB6A72AFD /* Inter_18pt-Regular.ttf */; };
@@ -39,21 +39,22 @@
 		EDEE9A3400B246A4ADC43197 /* SF-Pro-Display-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 59250BAE2E564B68ABCDBF54 /* SF-Pro-Display-LightItalic.otf */; };
 		EE64AC44309F4EEDBCD8DB4B /* PPEditorialNew-UltralightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA684DF284144C8FBF925393 /* PPEditorialNew-UltralightItalic.otf */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F7688AF1D3A3C966B72563B9 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80D4C6C9438254FE9A3F3F2 /* ExpoModulesProvider.swift */; };
 		F8B8818F5A124EB7A5C3CAC9 /* SF-Pro-Display-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A7C14399F549434AB56B54E2 /* SF-Pro-Display-Ultralight.otf */; };
 		FD2A0B4178FF4808BA26CB21 /* SF-Pro-Display-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 66ACE14C55C54DF0B06BE831 /* SF-Pro-Display-Semibold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		106B146C87BDB7EC990E0AAB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = KptApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* KptApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KptApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* Plesury.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Plesury.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = KptApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = KptApp/Info.plist; sourceTree = "<group>"; };
 		17E557F4FB554553939CAB68 /* SF-Pro-Display-ThinItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-ThinItalic.otf"; path = "../assets/fonts/SF-Pro-Display-ThinItalic.otf"; sourceTree = "<group>"; };
 		1C96F08FDED846DB88021CFB /* PPEditorialNew-UltraboldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PPEditorialNew-UltraboldItalic.otf"; path = "../assets/fonts/PPEditorialNew-UltraboldItalic.otf"; sourceTree = "<group>"; };
-		1FA4CBA62DECE4E0BD66EBE9 /* Pods_KptApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_KptApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FA4CBA62DECE4E0BD66EBE9 /* Pods_Plesury.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Plesury.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C7C2D9C4F374A5E94042B1B /* PPEditorialNew-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PPEditorialNew-Ultralight.otf"; path = "../assets/fonts/PPEditorialNew-Ultralight.otf"; sourceTree = "<group>"; };
 		2D0844411D114A3799C2F08B /* SF-Pro-Display-UltralightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-UltralightItalic.otf"; path = "../assets/fonts/SF-Pro-Display-UltralightItalic.otf"; sourceTree = "<group>"; };
-		2F9CD1F0B3B6E306F1EA79A7 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-KptApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		2F9CD1F0B3B6E306F1EA79A7 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Plesury/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		34D8C0850C134D81897E583F /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Regular.otf"; path = "../assets/fonts/SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
 		35182155A2664FF5A751C79D /* SF-Pro-Display-SemiboldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-SemiboldItalic.otf"; path = "../assets/fonts/SF-Pro-Display-SemiboldItalic.otf"; sourceTree = "<group>"; };
 		394C3402282A4768877FB5A5 /* SF-Pro-Display-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Thin.otf"; path = "../assets/fonts/SF-Pro-Display-Thin.otf"; sourceTree = "<group>"; };
@@ -61,7 +62,7 @@
 		66ACE14C55C54DF0B06BE831 /* SF-Pro-Display-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Semibold.otf"; path = "../assets/fonts/SF-Pro-Display-Semibold.otf"; sourceTree = "<group>"; };
 		735E3E3A2CB04EB8BAE3DF32 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "KptApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7EE7648A56AC449793AA261A /* SF-Pro-Display-BlackItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-BlackItalic.otf"; path = "../assets/fonts/SF-Pro-Display-BlackItalic.otf"; sourceTree = "<group>"; };
-		8445669AEEF4125CEEB69510 /* Pods-KptApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KptApp.debug.xcconfig"; path = "Target Support Files/Pods-KptApp/Pods-KptApp.debug.xcconfig"; sourceTree = "<group>"; };
+		8445669AEEF4125CEEB69510 /* Pods-Plesury.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plesury.debug.xcconfig"; path = "Target Support Files/Pods-Plesury/Pods-Plesury.debug.xcconfig"; sourceTree = "<group>"; };
 		8777CBE7376A4354B202D355 /* PPEditorialNew-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PPEditorialNew-Italic.otf"; path = "../assets/fonts/PPEditorialNew-Italic.otf"; sourceTree = "<group>"; };
 		91CB0D74DEC24C1BB65C63AE /* SF-Pro-Display-Heavy.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Heavy.otf"; path = "../assets/fonts/SF-Pro-Display-Heavy.otf"; sourceTree = "<group>"; };
 		98A6F5A7D5EA46619CFE948D /* SF-Pro-Display-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Light.otf"; path = "../assets/fonts/SF-Pro-Display-Light.otf"; sourceTree = "<group>"; };
@@ -74,14 +75,15 @@
 		AF9F07959E8842BA9F14CAB5 /* SF-Pro-Display-HeavyItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-HeavyItalic.otf"; path = "../assets/fonts/SF-Pro-Display-HeavyItalic.otf"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		C300E62BF086417DB6A72AFD /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter_18pt-Regular.ttf"; path = "../assets/fonts/Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
-		C70EC19017FEF2C8AD13DE97 /* Pods-KptApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KptApp.release.xcconfig"; path = "Target Support Files/Pods-KptApp/Pods-KptApp.release.xcconfig"; sourceTree = "<group>"; };
+		C70EC19017FEF2C8AD13DE97 /* Pods-Plesury.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plesury.release.xcconfig"; path = "Target Support Files/Pods-Plesury/Pods-Plesury.release.xcconfig"; sourceTree = "<group>"; };
+		C80D4C6C9438254FE9A3F3F2 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Plesury/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		CA684DF284144C8FBF925393 /* PPEditorialNew-UltralightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PPEditorialNew-UltralightItalic.otf"; path = "../assets/fonts/PPEditorialNew-UltralightItalic.otf"; sourceTree = "<group>"; };
 		D0D9FDA3F39D422691541CE0 /* SF-Pro-Display-MediumItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-MediumItalic.otf"; path = "../assets/fonts/SF-Pro-Display-MediumItalic.otf"; sourceTree = "<group>"; };
 		D3BC0692901A44DEA41561AE /* PPEditorialNew-Ultrabold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PPEditorialNew-Ultrabold.otf"; path = "../assets/fonts/PPEditorialNew-Ultrabold.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EF3C5FE3EE424138AC016271 /* SF-Pro-Display-RegularItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-RegularItalic.otf"; path = "../assets/fonts/SF-Pro-Display-RegularItalic.otf"; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = KptApp/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* KptApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "KptApp-Bridging-Header.h"; path = "KptApp/KptApp-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* Plesury-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Plesury-Bridging-Header.h"; path = "KptApp/Plesury-Bridging-Header.h"; sourceTree = "<group>"; };
 		F986DD03D9F2477BB1DFB801 /* SF-Pro-Display-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Display-Black.otf"; path = "../assets/fonts/SF-Pro-Display-Black.otf"; sourceTree = "<group>"; };
 		FC447AA99C01481C9F209210 /* TiltWarp-Regular-VariableFont_XROT,YROT.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "TiltWarp-Regular-VariableFont_XROT,YROT.ttf"; path = "../assets/fonts/TiltWarp-Regular-VariableFont_XROT,YROT.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -91,26 +93,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13D5EBC2A4365746684C66DC /* Pods_KptApp.framework in Frameworks */,
+				13D5EBC2A4365746684C66DC /* Pods_Plesury.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		112527E9040EC060D02C7D79 /* KptApp */ = {
+		112527E9040EC060D02C7D79 /* Plesury */ = {
 			isa = PBXGroup;
 			children = (
 				2F9CD1F0B3B6E306F1EA79A7 /* ExpoModulesProvider.swift */,
+				C80D4C6C9438254FE9A3F3F2 /* ExpoModulesProvider.swift */,
 			);
-			name = KptApp;
+			name = Plesury;
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* KptApp */ = {
+		13B07FAE1A68108700A75B9A /* Plesury */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* KptApp-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* Plesury-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -118,14 +121,14 @@
 				735E3E3A2CB04EB8BAE3DF32 /* GoogleService-Info.plist */,
 				106B146C87BDB7EC990E0AAB /* PrivacyInfo.xcprivacy */,
 			);
-			name = KptApp;
+			name = Plesury;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1FA4CBA62DECE4E0BD66EBE9 /* Pods_KptApp.framework */,
+				1FA4CBA62DECE4E0BD66EBE9 /* Pods_Plesury.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -133,7 +136,7 @@
 		363AB341D36A1E1ADA6024D6 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				112527E9040EC060D02C7D79 /* KptApp */,
+				112527E9040EC060D02C7D79 /* Plesury */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -148,7 +151,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* KptApp */,
+				13B07FAE1A68108700A75B9A /* Plesury */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -164,7 +167,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* KptApp.app */,
+				13B07F961A680F5B00A75B9A /* Plesury.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,8 +184,8 @@
 		F07967D73A2EB5F96C338385 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8445669AEEF4125CEEB69510 /* Pods-KptApp.debug.xcconfig */,
-				C70EC19017FEF2C8AD13DE97 /* Pods-KptApp.release.xcconfig */,
+				8445669AEEF4125CEEB69510 /* Pods-Plesury.debug.xcconfig */,
+				C70EC19017FEF2C8AD13DE97 /* Pods-Plesury.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -223,9 +226,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* KptApp */ = {
+		13B07F861A680F5B00A75B9A /* Plesury */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "KptApp" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Plesury" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				F034AB7EDE50869BA72660EF /* [Expo] Configure project */,
@@ -241,9 +244,9 @@
 			);
 			dependencies = (
 			);
-			name = KptApp;
-			productName = KptApp;
-			productReference = 13B07F961A680F5B00A75B9A /* KptApp.app */;
+			name = Plesury;
+			productName = Plesury;
+			productReference = 13B07F961A680F5B00A75B9A /* Plesury.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -272,7 +275,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* KptApp */,
+				13B07F861A680F5B00A75B9A /* Plesury */,
 			);
 		};
 /* End PBXProject section */
@@ -351,7 +354,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-KptApp-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Plesury-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -377,7 +380,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KptApp/Pods-KptApp-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Plesury/Pods-Plesury-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/AppAuth/AppAuthCore_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
@@ -432,7 +435,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KptApp/Pods-KptApp-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Plesury/Pods-Plesury-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CCD203D0A4FB9738C9AEE762 /* [CP] Embed Pods Frameworks */ = {
@@ -441,7 +444,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KptApp/Pods-KptApp-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Plesury/Pods-Plesury-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
@@ -454,7 +457,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KptApp/Pods-KptApp-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Plesury/Pods-Plesury-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F034AB7EDE50869BA72660EF /* [Expo] Configure project */ = {
@@ -468,18 +471,18 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/KptApp/KptApp.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-KptApp/expo-configure-project.sh",
+				"$(SRCROOT)/KptApp/Plesury.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Plesury/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-KptApp/ExpoModulesProvider.swift",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Plesury/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-KptApp/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Plesury/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -490,6 +493,7 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				926310BB93F9592518E8CE5E /* ExpoModulesProvider.swift in Sources */,
+				F7688AF1D3A3C966B72563B9 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,11 +502,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8445669AEEF4125CEEB69510 /* Pods-KptApp.debug.xcconfig */;
+			baseConfigurationReference = 8445669AEEF4125CEEB69510 /* Pods-Plesury.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = KptApp/KptApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KptApp/Plesury.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9FZNC95PU8;
 				ENABLE_BITCODE = NO;
@@ -524,8 +528,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.simplify.plesury;
-				PRODUCT_NAME = KptApp;
-				SWIFT_OBJC_BRIDGING_HEADER = "KptApp/KptApp-Bridging-Header.h";
+				PRODUCT_NAME = Plesury;
+				SWIFT_OBJC_BRIDGING_HEADER = "KptApp/Plesury-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -535,11 +539,11 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C70EC19017FEF2C8AD13DE97 /* Pods-KptApp.release.xcconfig */;
+			baseConfigurationReference = C70EC19017FEF2C8AD13DE97 /* Pods-Plesury.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = KptApp/KptApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = KptApp/Plesury.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9FZNC95PU8;
 				INFOPLIST_FILE = KptApp/Info.plist;
@@ -556,8 +560,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.simplify.plesury;
-				PRODUCT_NAME = KptApp;
-				SWIFT_OBJC_BRIDGING_HEADER = "KptApp/KptApp-Bridging-Header.h";
+				PRODUCT_NAME = Plesury;
+				SWIFT_OBJC_BRIDGING_HEADER = "KptApp/Plesury-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -743,7 +747,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "KptApp" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Plesury" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,

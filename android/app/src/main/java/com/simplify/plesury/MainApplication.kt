@@ -1,4 +1,4 @@
-package com.siplify.kpt
+package com.simplify.plesury
 
 import android.app.Application
 import android.content.res.Configuration
