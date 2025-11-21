@@ -6,6 +6,7 @@ import { CurrentMoodProvider } from '@features/mood-tracker/CurrentMoodProvider'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 import { notificationService } from '@shared/services/notifications/NotificationService';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -114,6 +115,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         
                         // Регистрируем нотификации после успешной аутентификации
                         await notificationService.registerDevice();
+                        
+                        // Устанавливаем userId в аналитике
+                        if (userData?.id) {
+                            amplitudeAnalyticsService.setUser(userData.id.toString());
+                            amplitudeAnalyticsService.setUserProperties({
+                                email: userData.email || '',
+                                email_verified: emailVerifiedFlag,
+                                is_firebase_user: firebaseFlag,
+                            });
+                        }
                     } catch (error) {
                         // Токен недействителен, очищаем его
                         await apiUtils.removeAuthTokens();
@@ -191,6 +202,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
+            
+            // Устанавливаем userId в аналитике и отслеживаем событие входа
+            if (response.user?.id) {
+                amplitudeAnalyticsService.setUser(response.user.id.toString());
+                amplitudeAnalyticsService.setUserProperties({
+                    email: response.user.email || '',
+                    email_verified: response.user.emailVerified,
+                    is_firebase_user: false,
+                });
+                amplitudeAnalyticsService.trackEvent('User Logged In', {
+                    method: 'email',
+                    email_verified: response.user.emailVerified,
+                });
+            }
         } catch (error: any) {
             console.error('❌ Ошибка входа:', error);
             const errorMessage = error.message || 'Ошибка входа в систему';
@@ -255,6 +280,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
+            
+            // Устанавливаем userId в аналитике и отслеживаем событие входа
+            if (response.user?.id) {
+                amplitudeAnalyticsService.setUser(response.user.id.toString());
+                amplitudeAnalyticsService.setUserProperties({
+                    email: response.user.email || '',
+                    email_verified: true,
+                    is_firebase_user: true,
+                });
+                amplitudeAnalyticsService.trackEvent('User Logged In', {
+                    method: 'firebase',
+                });
+            }
             console.log('✅ Firebase вход выполнен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка Firebase входа:', error);
@@ -307,6 +345,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешной регистрации
             await notificationService.registerDevice();
+            
+            // Устанавливаем userId в аналитике и отслеживаем событие регистрации
+            if (response.user?.id) {
+                amplitudeAnalyticsService.setUser(response.user.id.toString());
+                amplitudeAnalyticsService.setUserProperties({
+                    email: response.user.email || '',
+                    email_verified: true,
+                    is_firebase_user: true,
+                });
+                amplitudeAnalyticsService.trackEvent('User Registered', {
+                    method: 'firebase',
+                });
+            }
         } catch (error: any) {
             console.error('❌ Ошибка Firebase регистрации:', error);
             const errorMessage = error.message || 'Ошибка регистрации через Firebase';
@@ -320,6 +371,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         try {
             setIsLoading(true);
+            
+            // Отслеживаем событие выхода перед очисткой
+            amplitudeAnalyticsService.trackEvent('User Logged Out');
             
             // Удаляем регистрацию нотификаций перед выходом
             await notificationService.unregisterDevice();
@@ -335,6 +389,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             // Очищаем флаг emailVerified
             await clearEmailVerifiedFlag();
+            
+            // Очищаем данные пользователя в аналитике
+            amplitudeAnalyticsService.clearUser();
             
             // Обновляем состояние
             setIsAuthenticated(false);

@@ -12,6 +12,7 @@ import { ToastProvider } from "@shared/components/Toast/ToastProvider";
 import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext";
 import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 import { Routes } from "@app/navigation/const";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 // import { revenueCatService } from "@shared/services/revenuecat";
 // import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
@@ -81,6 +82,11 @@ export default function App() {
         InterMedium: require("../../assets/fonts/Inter_18pt-Medium.ttf"),
         InterSemibold: require("../../assets/fonts/Inter_18pt-SemiBold.ttf"),
     });
+
+    // Инициализация Amplitude Analytics
+    useEffect(() => {
+        amplitudeAnalyticsService.initialize();
+    }, []);
 
     // Инициализация RevenueCat - временно отключено
     // useEffect(() => {
