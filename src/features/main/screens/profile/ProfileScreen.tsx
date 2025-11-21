@@ -153,7 +153,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                 });
         } else if (nested.label === 'main.profile.settings.privacyPolicy') {
             // Открываем Privacy Policy в браузере устройства
-            const url = 'https://kpt.api.the-displaycontrol.com/static/privacy-policy.html';
+            const url = 'https://api.plesury.com/static/privacy-policy.html';
             Linking.canOpenURL(url)
                 .then((supported) => {
                     if (supported) {
@@ -168,7 +168,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                 });
         } else if (nested.label === 'main.profile.settings.termsConditions') {
             // Открываем Terms & Conditions в браузере устройства
-            const url = 'https://kpt.api.the-displaycontrol.com/static/terms-conditions.html';
+            const url = 'https://api.plesury.com/static/terms-conditions.html';
             Linking.canOpenURL(url)
                 .then((supported) => {
                     if (supported) {

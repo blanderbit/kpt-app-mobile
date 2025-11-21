@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } f
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Базовый URL для API
-export const API_BASE_URL = 'https://kpt.api.the-displaycontrol.com';
+export const API_BASE_URL = 'https://api.plesury.com';
 
 // Интерфейс для ответа API
 export interface ApiResponse<T = any> {

@@ -13,6 +13,7 @@ import { ScrollBlockerProvider } from "@app/scroll-blocker/ScrollBlockerContext"
 import { SubscriptionOfferingProvider } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 import { Routes } from "@app/navigation/const";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { appsFlyerService } from "@shared/services/appsflyer";
 // import { revenueCatService } from "@shared/services/revenuecat";
 // import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
@@ -83,9 +84,15 @@ export default function App() {
         InterSemibold: require("../../assets/fonts/Inter_18pt-SemiBold.ttf"),
     });
 
-    // Инициализация Amplitude Analytics
+    // Amplitude Analytics будет инициализирован в AuthProvider после логина
+
+    // Инициализация AppsFlyer
     useEffect(() => {
-        amplitudeAnalyticsService.initialize();
+        appsFlyerService.initialize((deepLink, data) => {
+            console.log('[App] AppsFlyer deep link received:', deepLink, data);
+            // AppsFlyer уже обработал ссылку и откроет её через Linking
+            // React Navigation автоматически обработает deep link
+        });
     }, []);
 
     // Инициализация RevenueCat - временно отключено

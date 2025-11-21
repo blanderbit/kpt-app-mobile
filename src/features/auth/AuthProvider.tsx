@@ -116,9 +116,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         // Регистрируем нотификации после успешной аутентификации
                         await notificationService.registerDevice();
                         
-                        // Устанавливаем userId в аналитике
-                        if (userData?.id) {
-                            amplitudeAnalyticsService.setUser(userData.id.toString());
+                        // Инициализируем Amplitude Analytics с email пользователя
+                        if (userData?.email) {
+                            await amplitudeAnalyticsService.initialize(userData.email);
                             amplitudeAnalyticsService.setUserProperties({
                                 email: userData.email || '',
                                 email_verified: emailVerifiedFlag,
@@ -203,9 +203,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
             
-            // Устанавливаем userId в аналитике и отслеживаем событие входа
-            if (response.user?.id) {
-                amplitudeAnalyticsService.setUser(response.user.id.toString());
+            // Инициализируем Amplitude Analytics с email и отслеживаем событие входа
+            if (response.user?.email) {
+                await amplitudeAnalyticsService.initialize(response.user.email);
                 amplitudeAnalyticsService.setUserProperties({
                     email: response.user.email || '',
                     email_verified: response.user.emailVerified,
@@ -281,9 +281,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
             
-            // Устанавливаем userId в аналитике и отслеживаем событие входа
-            if (response.user?.id) {
-                amplitudeAnalyticsService.setUser(response.user.id.toString());
+            // Инициализируем Amplitude Analytics с email и отслеживаем событие входа
+            if (response.user?.email) {
+                await amplitudeAnalyticsService.initialize(response.user.email);
                 amplitudeAnalyticsService.setUserProperties({
                     email: response.user.email || '',
                     email_verified: true,
@@ -346,9 +346,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Регистрируем нотификации после успешной регистрации
             await notificationService.registerDevice();
             
-            // Устанавливаем userId в аналитике и отслеживаем событие регистрации
-            if (response.user?.id) {
-                amplitudeAnalyticsService.setUser(response.user.id.toString());
+            // Инициализируем Amplitude Analytics с email и отслеживаем событие регистрации
+            if (response.user?.email) {
+                await amplitudeAnalyticsService.initialize(response.user.email);
                 amplitudeAnalyticsService.setUserProperties({
                     email: response.user.email || '',
                     email_verified: true,

@@ -49,6 +49,13 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "react-native-appsflyer",
+        {
+          "shouldUseStrictMode": false,
+          "shouldUsePurchaseConnector": true
+        }
       ]
     ],
     "extra": {

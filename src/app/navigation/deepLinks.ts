@@ -214,43 +214,84 @@ export type DeepLinkConfig = typeof DEEP_LINKS[keyof typeof DEEP_LINKS];
 export class DeepLinkBuilder {
   /**
    * Строит URL для статьи
+   * @param useAppsFlyer - Если true, вернет AppsFlyer OneLink (для маркетинговых кампаний)
    */
-  static article(id: string): string {
-    return `${DEEP_LINK_SCHEME}://article?id=${id}`;
+  static article(id: string, useAppsFlyer: boolean = false): string {
+    const deepLink = `${DEEP_LINK_SCHEME}://article?id=${id}`;
+    
+    if (useAppsFlyer) {
+      // Импортируем динамически, чтобы избежать циклических зависимостей
+      const { appsFlyerService } = require('@shared/services/appsflyer');
+      return appsFlyerService.generateOneLink(deepLink, {
+        campaign: 'article',
+      });
+    }
+    
+    return deepLink;
   }
 
   /**
    * Строит URL для опроса
+   * @param useAppsFlyer - Если true, вернет AppsFlyer OneLink (для маркетинговых кампаний)
    */
-  static survey(id: string): string {
-    return `${DEEP_LINK_SCHEME}://survey?id=${id}`;
+  static survey(id: string, useAppsFlyer: boolean = false): string {
+    const deepLink = `${DEEP_LINK_SCHEME}://survey?id=${id}`;
+    
+    if (useAppsFlyer) {
+      const { appsFlyerService } = require('@shared/services/appsflyer');
+      return appsFlyerService.generateOneLink(deepLink, {
+        campaign: 'survey',
+      });
+    }
+    
+    return deepLink;
   }
 
   /**
    * Строит URL для прохождения опроса
    * ВАЖНО: Прямых deep links на SurveyQuestions нет, используйте survey() для перехода к опросу
    */
-  static surveyQuestions(surveyId: string): string {
+  static surveyQuestions(surveyId: string, useAppsFlyer: boolean = false): string {
     // Перенаправляем на Survey, откуда пользователь может начать прохождение
-    return this.survey(surveyId);
+    return this.survey(surveyId, useAppsFlyer);
   }
 
   /**
    * Строит URL для проверки email
    */
-  static checkEmail(email: string): string {
-    return `${DEEP_LINK_SCHEME}://check-email?email=${encodeURIComponent(email)}`;
+  static checkEmail(email: string, useAppsFlyer: boolean = false): string {
+    const deepLink = `${DEEP_LINK_SCHEME}://check-email?email=${encodeURIComponent(email)}`;
+    
+    if (useAppsFlyer) {
+      const { appsFlyerService } = require('@shared/services/appsflyer');
+      return appsFlyerService.generateOneLink(deepLink, {
+        campaign: 'email_verification',
+      });
+    }
+    
+    return deepLink;
   }
 
   /**
    * Строит URL для любого роута без параметров
+   * @param useAppsFlyer - Если true, вернет AppsFlyer OneLink (для маркетинговых кампаний)
    */
-  static route(route: Routes): string {
+  static route(route: Routes, useAppsFlyer: boolean = false): string {
     const config = Object.values(DEEP_LINKS).find(link => link.route === route);
     if (!config) {
       throw new Error(`Deep link config not found for route: ${route}`);
     }
-    return `${DEEP_LINK_SCHEME}://${config.path}`;
+    
+    const deepLink = `${DEEP_LINK_SCHEME}://${config.path}`;
+    
+    if (useAppsFlyer) {
+      const { appsFlyerService } = require('@shared/services/appsflyer');
+      return appsFlyerService.generateOneLink(deepLink, {
+        campaign: config.path,
+      });
+    }
+    
+    return deepLink;
   }
 }
 

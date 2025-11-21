@@ -9,7 +9,7 @@ import {
     BigNewsIcon,
     discountForeverIcon,
     radialGradientIcon
-} from "@features/auth/screens/SubcriptionOffering/screens/const";
+} from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import ToggleSwitch from "@shared/components/ToggleSwitch";
 
 const STAR_ICON_SVG = `

@@ -5,7 +5,7 @@ import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {COLORS} from "@app/theme";
-import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/const";
+import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/icons";
 
 export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();

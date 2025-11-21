@@ -17,18 +17,28 @@ class AmplitudeAnalyticsService {
 
   /**
    * Инициализация Amplitude Analytics
+   * @param userEmail - Email пользователя (опционально)
    */
-  async initialize(): Promise<void> {
+  async initialize(userEmail?: string): Promise<void> {
     if (this.isInitialized) {
       console.log('[Analytics] Already initialized');
+      // Если уже инициализирован, но передан новый email, обновляем его
+      if (userEmail) {
+        this.setUser(userEmail);
+      }
       return;
     }
 
     try {
-      await init(AMPLITUDE_API_KEY, '', { disableCookies: true }).promise;
+      await init(AMPLITUDE_API_KEY, userEmail || '', { disableCookies: true }).promise;
 
       this.isInitialized = true;
       console.log('[Analytics] Amplitude initialized successfully');
+      
+      // Устанавливаем email как userId сразу после инициализации, если он передан
+      if (userEmail) {
+        this.setUser(userEmail);
+      }
     } catch (error) {
       console.error('[Analytics] Failed to initialize Amplitude:', error);
     }
