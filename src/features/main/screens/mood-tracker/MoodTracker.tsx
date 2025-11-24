@@ -13,6 +13,7 @@ import { BlackCheckmarkIcon } from "@assets/icons/BlackCheckmarkIcon";
 import { useMoodTypes, useMoodSurveys, useSetMoodForDay } from '@shared/services/api';
 import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
 import {useToast} from "@shared/components/Toast/ToastProvider";
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
@@ -65,6 +66,12 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                 };
                 
                 await setMoodForDay.mutateAsync(payload);
+                
+                // Событие: муд трекер + ответ
+                amplitudeAnalyticsService.trackEvent('Mood Tracker Answer', {
+                    mood_type: selectedMoodType,
+                    surveys_count: selectedSurveys.length,
+                });
                 
                 // Обновляем текущее настроение после сохранения
                 await refreshCurrentMood();

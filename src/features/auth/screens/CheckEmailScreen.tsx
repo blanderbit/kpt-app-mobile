@@ -65,6 +65,10 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
 
             await authService.resetPassword({ email, code: data.verificationCode, newPassword: data.newPassword });
             
+            // Событие: ресет пароля
+            const { amplitudeAnalyticsService } = await import('@shared/services/analytics');
+            amplitudeAnalyticsService.trackEvent('Login Reset Password');
+            
             Alert.alert(
                 t('auth.checkEmailScreen.successTitle'),
                 t('auth.checkEmailScreen.successMessage'),

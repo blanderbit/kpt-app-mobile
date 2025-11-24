@@ -8,6 +8,7 @@ import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { ArticleScreenNavigationProp, ArticleScreenRouteProp } from "@app/navigation/AppNavigator";
 import { useArticleById, useHideArticle } from '@shared/services/api/hooks';
 import RenderHTML from 'react-native-render-html';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 export default function ArticleScreen({ navigation, route }: { navigation: ArticleScreenNavigationProp, route: ArticleScreenRouteProp }) {
     const { t } = useTranslation();
@@ -24,6 +25,11 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
     // Вызываем hideArticle при каждом попадании на экран (только один раз)
     useFocusEffect(
         React.useCallback(() => {
+            // Событие: открытие артикла
+            amplitudeAnalyticsService.trackEvent('Article Opened', {
+                article_id: articleId,
+            });
+            
             if (articleId && !isNaN(articleId) && !hasCalledHideRef.current) {
                 hasCalledHideRef.current = true;
                 console.log('📰 [ArticleScreen] Вызываем hideArticle для ID:', articleId);
@@ -53,7 +59,13 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
         }
     }, [article]);
 
-    const onBack = () => navigation.goBack();
+    const onBack = () => {
+        // Событие: закрытие артикла
+        amplitudeAnalyticsService.trackEvent('Article Closed', {
+            article_id: articleId,
+        });
+        navigation.goBack();
+    };
 
     if (isLoading || isFetching) {
         return (

@@ -12,6 +12,7 @@ import { BlackCheckmarkIcon } from '@assets/icons/BlackCheckmarkIcon';
 import { GrayCircleIcon } from '@assets/icons/GrayCircleIcon';
 import { surveyService } from '@shared/services/api/client';
 import { Routes } from '@app/navigation/const';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 export default function SurveyQuestionsScreen({ navigation, route }: { navigation: SurveyQuestionsScreenNavigationProp, route: SurveyQuestionsScreenRouteProp }) {
     const { t } = useTranslation();
@@ -116,6 +117,12 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
                 
                 const response = await surveyService.submitSurveyAnswer(survey.id, payload);
                 console.log('📋 [SurveyQuestionsScreen] ✅ Ответы успешно отправлены:', response);
+                
+                // Событие: ответ на сюрвей
+                amplitudeAnalyticsService.trackEvent('Survey Answer Submitted', {
+                    survey_id: survey.id,
+                    questions_count: questions.length,
+                });
                 
                 // Переходим на Today страницу после успешной отправки
                 navigation.navigate(Routes.TODAY);

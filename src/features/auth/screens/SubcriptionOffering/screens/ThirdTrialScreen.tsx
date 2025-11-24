@@ -11,6 +11,7 @@ import {
     radialGradientIcon
 } from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import ToggleSwitch from "@shared/components/ToggleSwitch";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 const STAR_ICON_SVG = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -120,7 +121,14 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={theme.flexBlocks.vertical16}>
                     <CustomButton
                         title="Start Your FREE Week"
-                        onPress={onNext}
+                        onPress={() => {
+                            // Событие: оплата + план
+                            amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
+                                plan: 'yearly',
+                                free_trial_enabled: freeTrialEnabled,
+                            });
+                            onNext();
+                        }}
                     />
                 </View>
             </View>

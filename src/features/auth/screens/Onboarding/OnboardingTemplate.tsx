@@ -25,6 +25,7 @@ import FifteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Fif
 import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SixteenthStep";
 import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventeenthStep";
 import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -78,6 +79,8 @@ export default function OnboardingTemplate({
     useEffect(() => {
         loadOnboardingProgress();
         loadStoredOnboardingData();
+        // Событие: загрузка скрин онбоардинга
+        amplitudeAnalyticsService.trackEvent('Onboarding Screen Loaded');
     }, []);
 
     // Анимация загрузки
@@ -208,6 +211,11 @@ export default function OnboardingTemplate({
 
         lastRecommendationsPayloadRef.current = recommendationsPayloadKey;
         console.log('[Onboarding] generateActivityRecommendations payload:', recommendationsPayload);
+        // Событие: генерация саджестед
+        amplitudeAnalyticsService.trackEvent('Onboarding Generate Suggested', {
+            mood: recommendationsPayload.feelingToday,
+            socialNetworks: recommendationsPayload.socialNetworks?.length || 0,
+        });
         generateActivityRecommendations(recommendationsPayload).catch(() => {});
     }, [
         currentStep,

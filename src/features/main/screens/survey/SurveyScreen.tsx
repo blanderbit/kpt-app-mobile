@@ -9,6 +9,8 @@ import { Routes } from '@app/navigation/const';
 import { useSurveyById } from '@shared/services/api/hooks';
 import RenderHTML from 'react-native-render-html';
 import CustomButton from "@shared/components/Button/Button";
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function SurveyScreen({ navigation, route }: { navigation: SurveyScreenNavigationProp, route: SurveyScreenRouteProp }) {
     const { t } = useTranslation();
@@ -22,6 +24,17 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
     
     const { data: survey, isLoading, error, isFetching } = useSurveyById(surveyId);
 
+    // Событие: открытие сюрвея
+    useFocusEffect(
+        React.useCallback(() => {
+            if (surveyId) {
+                amplitudeAnalyticsService.trackEvent('Survey Opened', {
+                    survey_id: surveyId,
+                });
+            }
+        }, [surveyId])
+    );
+
     useEffect(() => {
         console.log('📋 [SurveyScreen] useEffect - survey изменился:', survey);
         console.log('📋 [SurveyScreen] isLoading:', isLoading);
@@ -29,7 +42,13 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
         console.log('📋 [SurveyScreen] isFetching:', isFetching);
     }, [survey, isLoading, error, isFetching]);
 
-    const onBack = () => navigation.goBack();
+    const onBack = () => {
+        // Событие: закрыть сюрвей
+        amplitudeAnalyticsService.trackEvent('Survey Closed', {
+            survey_id: surveyId,
+        });
+        navigation.goBack();
+    };
 
     const onStart = () => {
         console.log('📋 [SurveyScreen] Нажата кнопка Let\'s start для опроса:', surveyId);

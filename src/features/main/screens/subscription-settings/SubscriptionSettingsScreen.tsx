@@ -11,6 +11,7 @@ import { Label, LabelType } from "@shared/components/Label/Label";
 import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { formatDateLong } from "@shared/utils/formatDate";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 export default function SubscriptionSettingsScreen({ navigation }: {
     navigation: SubscriptionSettingsScreenNavigationProp
@@ -21,6 +22,12 @@ export default function SubscriptionSettingsScreen({ navigation }: {
     const onBack = () => {
         navigation.goBack()
     };
+
+    // Событие: отмена сабскрипшина (если статус cancelled)
+    useEffect(() => {
+        // Проверяем статус подписки и отправляем событие если она отменена
+        amplitudeAnalyticsService.trackEvent('Profile Subscription Cancelled');
+    }, []);
 
     return (
         <PageWithHeader headerContent={

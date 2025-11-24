@@ -6,6 +6,7 @@ import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {COLORS} from "@app/theme";
 import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/icons";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -43,11 +44,23 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={theme.flexBlocks.vertical16}>
                     <CustomButton
                         title="Start my FREE offer"
-                        onPress={onNext}
+                        onPress={() => {
+                            // Событие: оплата + план
+                            amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
+                                plan: 'second_trial',
+                            });
+                            onNext();
+                        }}
                         variant="primary"
                     />
 
-                    <Pressable>
+                    <Pressable
+                        onPress={() => {
+                            // Событие: скип оплаты
+                            amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
+                            onNext();
+                        }}
+                    >
                         <Text style={styles.skipTitle}>
                             Skip this one-time offer
                         </Text>

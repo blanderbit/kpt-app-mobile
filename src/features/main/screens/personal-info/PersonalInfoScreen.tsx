@@ -16,6 +16,7 @@ import { useUpdateProfile, useChangePassword, useChangeEmail } from "@features/p
 import { useProfile } from "@app/hooks/profile.hook";
 import { useAuth } from "@app/hooks/auth.hook";
 import { EmailChangeConfirmationModal } from "@shared/components/EmailChangeConfirmationModal";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 const createPasswordSchema = (t: any) => yup.object().shape({
     currentPassword: yup.string()
@@ -147,6 +148,11 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             console.log('✅ Пароль успешно изменен');
             Alert.alert('Успех', 'Пароль успешно изменен');
             passwordForm.reset();
+            // Событие: смена данных профиля
+            amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
+                field: 'password',
+            });
+            
             setPasswordDisabled(true);
         } catch (error: any) {
             console.error('❌ Ошибка смены пароля:', error);
@@ -195,6 +201,11 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             // Немедленно обновляем профиль в контексте с новыми данными
             updateProfileContext(updatedProfile);
             
+            // Событие: смена данных профиля
+            amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
+                field: 'name',
+            });
+            
             // Сбрасываем форму с новыми значениями
             nameForm.reset({
                 newName: updatedProfile.firstName || '',
@@ -215,6 +226,11 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             
             // Обновляем изначальный email для будущих изменений
             setOriginalEmail(newEmailToConfirm);
+            
+            // Событие: смена данных профиля
+            amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
+                field: 'email',
+            });
             
             // Закрываем модал
             setEmailChangeModalOpen(false);

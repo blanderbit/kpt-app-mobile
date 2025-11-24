@@ -39,6 +39,8 @@ import {
 import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ActivitiesScreen({ navigation }: { navigation: ActivitiesScreenNavigationProp }) {
     const { t } = useTranslation();
@@ -68,6 +70,13 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
     const changePositionMutation = useChangeActivityPosition();
     const restoreActivityMutation = useRestoreActivity();
+
+    // Событие: открытие страницы активностей
+    useFocusEffect(
+        React.useCallback(() => {
+            amplitudeAnalyticsService.trackEvent('Activities Screen Opened');
+        }, [])
+    );
 
     // Debug logs
     console.log('myActivities:', myActivities);
@@ -108,6 +117,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             activityName: activityValue
         }, {
             onSuccess: (data) => {
+                // Событие: создать активность
+                amplitudeAnalyticsService.trackEvent('Activities Create Activity', {
+                    activity_name: activityValue,
+                });
                 console.log('✅ Activity created successfully:', data);
                 showToast({ message: "Activity successfully added", type: "success" });
                 activityValueRef.current = '';
@@ -130,6 +143,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const handleArchiveActivity = (activityId: number) => {
         deleteActivityMutation.mutate(activityId, {
             onSuccess: () => {
+                // Событие: архивация активности
+                amplitudeAnalyticsService.trackEvent('Activities Archive Activity', {
+                    activity_id: activityId,
+                });
                 showToast({ message: "Activity archived", type: "success" });
                 
                 // Invalidate and refetch activities data
@@ -147,6 +164,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             id: suggestedActivityId
         }, {
             onSuccess: () => {
+                // Событие: перенести с саджестед в активити
+                amplitudeAnalyticsService.trackEvent('Activities Add From Suggested', {
+                    suggested_activity_id: suggestedActivityId,
+                });
                 showToast({ message: "Activity added to your list", type: "success" });
                 
                 // Invalidate and refetch activities data
@@ -194,6 +215,12 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             },
             {
                 onSuccess: () => {
+                    // Событие: смена позиции активности
+                    amplitudeAnalyticsService.trackEvent('Activities Change Position', {
+                        activity_id: movedActivity.id,
+                        from_position: from,
+                        to_position: to,
+                    });
                     console.log('✅ [handleDragEnd] Позиция успешно обновлена');
                     // Инвалидируем кэш для обновления списка
                     queryClient.invalidateQueries({ queryKey: ['activities'] });

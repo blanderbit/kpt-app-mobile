@@ -6,6 +6,7 @@ import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {LinearGradient} from "expo-linear-gradient";
 import {COLORS} from "@app/theme";
+import { amplitudeAnalyticsService } from "@shared/services/analytics";
 
 export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -223,11 +224,23 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={theme.flexBlocks.vertical8}>
                     <CustomButton
                         title={selectedSubscription === 'yearly' ? 'Start my FREE trial now' : 'Subscribe'}
-                        onPress={onNext}
+                        onPress={() => {
+                            // Событие: оплата + план
+                            amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
+                                plan: selectedSubscription,
+                            });
+                            onNext();
+                        }}
                         variant="primary"
                     />
 
-                    <Pressable>
+                    <Pressable
+                        onPress={() => {
+                            // Событие: скип оплаты
+                            amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
+                            onNext();
+                        }}
+                    >
                         <Text style={styles.skipTitle}>
                             Skip this one-time offer
                         </Text>

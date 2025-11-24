@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Text, Pressable, Alert, Linking } from 'react-native';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ import { useDeleteAccount, useMoodForLast7Days } from "@shared/services/api";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 import { AutoPageTooltips } from '@shared/components/AutoPageTooltips';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 export default function ProfileScreen({ navigation }: { navigation: ProfileScreenNavigationProp }) {
     const { t } = useTranslation();
@@ -30,6 +31,11 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
 
     const [ satisfaction, setSatisfaction ] = useState(75)
     const [ achieveness, setAchieveness ] = useState(25)
+
+    // Событие: загрузка странички профиля
+    useEffect(() => {
+        amplitudeAnalyticsService.trackEvent('Profile Screen Loaded');
+    }, []);
 
     const handleLogout = () => {
         Alert.alert(
@@ -136,6 +142,10 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
         } else if (nested.label === 'main.profile.settings.deleteAccount') {
             handleDeleteAccount();
         } else if (nested.label === 'main.profile.settings.support') {
+            // Событие: переход по ссылкам
+            amplitudeAnalyticsService.trackEvent('Profile Link Clicked', {
+                link: 'support',
+            });
             // Открываем почтовый клиент
             const email = 'support@plesury.app';
             const mailtoUrl = `mailto:${email}`;
@@ -152,6 +162,10 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     Alert.alert('Ошибка', 'Не удалось открыть почтовый клиент');
                 });
         } else if (nested.label === 'main.profile.settings.privacyPolicy') {
+            // Событие: переход по ссылкам
+            amplitudeAnalyticsService.trackEvent('Profile Link Clicked', {
+                link: 'privacy_policy',
+            });
             // Открываем Privacy Policy в браузере устройства
             const url = 'https://api.plesury.com/static/privacy-policy.html';
             Linking.canOpenURL(url)
@@ -167,6 +181,10 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     Alert.alert('Ошибка', 'Не удалось открыть ссылку');
                 });
         } else if (nested.label === 'main.profile.settings.termsConditions') {
+            // Событие: переход по ссылкам
+            amplitudeAnalyticsService.trackEvent('Profile Link Clicked', {
+                link: 'terms_conditions',
+            });
             // Открываем Terms & Conditions в браузере устройства
             const url = 'https://api.plesury.com/static/terms-conditions.html';
             Linking.canOpenURL(url)
@@ -365,7 +383,13 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                                     { label: 'Pink', value: 'Pink' }
                                                 ]}
                                                 value={themeName}
-                                                onChange={(value) => setThemeByName(value as any)}
+                                                onChange={(value) => {
+                                                    // Событие: смена теми
+                                                    amplitudeAnalyticsService.trackEvent('Profile Theme Changed', {
+                                                        theme: value,
+                                                    });
+                                                    setThemeByName(value as any);
+                                                }}
                                             />
                                         ) }
                                         extraStyles={ [ styles.settingsElementsSingle ] }

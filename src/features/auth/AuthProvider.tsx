@@ -211,7 +211,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     email_verified: response.user.emailVerified,
                     is_firebase_user: false,
                 });
-                amplitudeAnalyticsService.trackEvent('User Logged In', {
+                amplitudeAnalyticsService.trackEvent('Login', {
                     method: 'email',
                     email_verified: response.user.emailVerified,
                 });
@@ -289,7 +289,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     email_verified: true,
                     is_firebase_user: true,
                 });
-                amplitudeAnalyticsService.trackEvent('User Logged In', {
+                amplitudeAnalyticsService.trackEvent('Login', {
                     method: 'firebase',
                 });
             }
@@ -354,7 +354,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     email_verified: true,
                     is_firebase_user: true,
                 });
-                amplitudeAnalyticsService.trackEvent('User Registered', {
+                amplitudeAnalyticsService.trackEvent('Onboarding Registration', {
                     method: 'firebase',
                 });
             }

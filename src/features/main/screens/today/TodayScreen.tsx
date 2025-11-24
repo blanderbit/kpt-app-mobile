@@ -34,6 +34,7 @@ import { EmailVerificationModal } from '@shared/components/EmailVerificationModa
 import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 import { useRandomArticle, useRandomSurvey, useMyActivities, useCloseActivity, useActivityStatistics } from '@shared/services/api/hooks';
+import { amplitudeAnalyticsService } from '@shared/services/analytics';
 
 const circleSize = 16;
 
@@ -63,6 +64,8 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     useFocusEffect(
         React.useCallback(() => {
             console.log('📅 [TodayScreen] Попадание на экран, запрашиваем новые random article и survey');
+            // Событие: открытие главной страницы
+            amplitudeAnalyticsService.trackEvent('Today Screen Opened');
             refetchArticle();
             refetchSurvey();
         }, [refetchArticle, refetchSurvey])
