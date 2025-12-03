@@ -256,7 +256,7 @@ xcrun simctl openurl booted "plesury://article?id=123"
 
 ### Android Emulator
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "plesury://article?id=123" com.simplify.plesury
+adb shell am start -W -a android.intent.action.VIEW -d "plesury://article?id=123" app.plesury
 ```
 
 ### Через терминал (если приложение запущено)
@@ -265,6 +265,6 @@ adb shell am start -W -a android.intent.action.VIEW -d "plesury://article?id=123
 xcrun simctl openurl booted "plesury://today"
 
 # Android
-adb shell am start -W -a android.intent.action.VIEW -d "plesury://today" com.simplify.plesury
+adb shell am start -W -a android.intent.action.VIEW -d "plesury://today" app.plesury
 ```
 

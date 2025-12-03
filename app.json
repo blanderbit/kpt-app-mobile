@@ -17,7 +17,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.simplify.plesury",
+      "bundleIdentifier": "app.plesury",
+      "buildNumber": "4",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -26,7 +27,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.simplify.plesury",
+      "package": "app.plesury",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -60,7 +61,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "d33a75f1-12e9-4587-8250-dc5deaa83b14"
+        "projectId": "6e7f5b27-54a8-4c35-820a-2b4230b47e83"
       }
     }
   }

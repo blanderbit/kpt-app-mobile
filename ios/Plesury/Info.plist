@@ -29,7 +29,7 @@
 			<array>
 				<string>test</string>
 				<string>plesury</string>
-				<string>com.simplify.plesury</string>
+				<string>app.plesury</string>
 			</array>
 		</dict>
 		<dict>
@@ -46,7 +46,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>4</string>
 	<key>GIDClientID</key>
 	<string>78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>

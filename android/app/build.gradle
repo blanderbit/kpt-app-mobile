@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.simplify.plesury'
+    namespace 'app.plesury'
     defaultConfig {
-        applicationId 'com.simplify.plesury'
+        applicationId 'app.plesury'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

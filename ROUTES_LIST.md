@@ -299,7 +299,7 @@ xcrun simctl openurl booted "plesury://activities"
 
 ### Android Emulator
 ```bash
-adb shell am start -W -a android.intent.action.VIEW -d "plesury://activities" com.simplify.plesury
+adb shell am start -W -a android.intent.action.VIEW -d "plesury://activities" app.plesury
 ```
 
 ### Через браузер
