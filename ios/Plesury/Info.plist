@@ -35,7 +35,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4</string>
+				<string>com.googleusercontent.apps.78984716511-s4bgot52hv0f0njf3f9ltn1ka9ro8v9o</string>
 			</array>
 		</dict>
 		<dict>
@@ -48,7 +48,7 @@
 	<key>CFBundleVersion</key>
 	<string>4</string>
 	<key>GIDClientID</key>
-	<string>78984716511-c9qpmkopeeg6gqh8ooslst21q3gvrdh4.apps.googleusercontent.com</string>
+	<string>78984716511-s4bgot52hv0f0njf3f9ltn1ka9ro8v9o.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>

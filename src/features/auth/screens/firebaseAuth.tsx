@@ -1,24 +1,69 @@
 import appleAuth, {appleAuthAndroid,} from '@invertase/react-native-apple-authentication';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Platform} from 'react-native';
 import 'react-native-get-random-values';
 import {v4 as uuid} from 'uuid';
 import * as Crypto from 'expo-crypto';
 
+// Web Client ID для Google Sign In (OAuth 2.0 Client ID типа "Web application" из Firebase Console)
+// Для iOS и Android используется один и тот же Web Client ID
+// Это должен быть Client ID типа "Web application", а не iOS или Android client
+const WEB_CLIENT_ID = '78984716511-4fdfc5l4afgtag2hsbn3puvllmfc1v4h.apps.googleusercontent.com';
+
+// Инициализация Google Sign In (должна быть вызвана один раз при запуске приложения)
+export const configureGoogleSignIn = async () => {
+    try {
+        const config: any = {
+            webClientId: WEB_CLIENT_ID,
+            offlineAccess: true,
+        };
+
+        // Для iOS может потребоваться iosClientId
+        if (Platform.OS === 'ios') {
+            // iOS Client ID из GoogleService-Info.plist (CLIENT_ID)
+            config.iosClientId = '78984716511-s4bgot52hv0f0njf3f9ltn1ka9ro8v9o.apps.googleusercontent.com';
+        }
+
+        await GoogleSignin.configure(config);
+        console.log('Google Sign In configured successfully');
+    } catch (error) {
+        console.error('Failed to configure Google Sign In:', error);
+        throw error;
+    }
+};
+
 export const signInGoogle = async (): Promise<string> => {
     try {
-        await GoogleSignin.hasPlayServices({
-            showPlayServicesUpdateDialog: true,
-        });
+        // Убеждаемся, что Google Sign In сконфигурирован
+        await configureGoogleSignIn();
 
-        const { data } = await GoogleSignin.signIn();
+        if (Platform.OS === 'android') {
+            await GoogleSignin.hasPlayServices({
+                showPlayServicesUpdateDialog: true,
+            });
+        }
 
-        const googleCredential = auth.GoogleAuthProvider.credential(data.idToken);
+        const response = await GoogleSignin.signIn();
+        
+        // Логируем ответ для отладки
+        console.log('Google Sign-In response:', JSON.stringify(response, null, 2));
+
+        // В зависимости от версии библиотеки, idToken может быть в разных местах
+        const idToken = response.data?.idToken || response.idToken;
+
+        if (!idToken) {
+            console.error('Google Sign-In response structure:', response);
+            throw new Error('Google Sign-In failed - no ID token returned. Response: ' + JSON.stringify(response));
+        }
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
         const {user} = await auth().signInWithCredential(googleCredential);
 
         return await user.getIdToken();
     } catch (error) {
-        console.log(error)
+        console.error('Google Sign-In error:', error);
+        throw error;
     }
 };
 

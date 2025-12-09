@@ -7,20 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:78984716511:android:0dd0c6a996aae402d5496a",
+        "mobilesdk_app_id": "1:78984716511:android:a2a347263b88065bd5496a",
         "android_client_info": {
           "package_name": "app.plesury"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "78984716511-jjjhbdahb217cof0dla5u6t2njlsuorn.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "app.plesury",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
         {
           "client_id": "78984716511-4fdfc5l4afgtag2hsbn3puvllmfc1v4h.apps.googleusercontent.com",
           "client_type": 3

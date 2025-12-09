@@ -14,6 +14,7 @@ import { SubscriptionOfferingProvider } from "@features/auth/screens/Subcription
 import { Routes } from "@app/navigation/const";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { appsFlyerService } from "@shared/services/appsflyer";
+import { configureGoogleSignIn } from "@features/auth/screens/firebaseAuth";
 // import { revenueCatService } from "@shared/services/revenuecat";
 // import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
@@ -92,6 +93,13 @@ export default function App() {
             console.log('[App] AppsFlyer deep link received:', deepLink, data);
             // AppsFlyer уже обработал ссылку и откроет её через Linking
             // React Navigation автоматически обработает deep link
+        });
+    }, []);
+
+    // Инициализация Google Sign In
+    useEffect(() => {
+        configureGoogleSignIn().catch((error) => {
+            console.error('[App] Failed to configure Google Sign In:', error);
         });
     }, []);
 
