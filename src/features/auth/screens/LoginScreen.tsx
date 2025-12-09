@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Alert, Platform} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Alert, Platform, ScrollView, KeyboardAvoidingView} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,6 +16,7 @@ import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
 import { clearOnboardingData } from '@shared/utils/onboardingStorage';
+import { getResponsivePadding, getResponsiveGap, isSmallScreen } from '@shared/utils/screenUtils';
 
 const schema =  (t: any) => yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -101,86 +102,139 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         }
     };
 
+    const isSmall = isSmallScreen();
+
+    // Контент формы
+    const formContent = (
+        <>
+            <LoginIcon/>
+
+            <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
+                <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.welcome') }</Text>
+                <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>{ t('auth.info') }</Text>
+            </View>
+
+            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
+                <Controller
+                    control={ control }
+                    name="email"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.email') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            error={ errors.email?.message }
+                            keyboardType="email-address"
+                            spellCheck={false}
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            autoCorrect={false}
+                            textContentType="none"
+                        />
+                    ) }
+                />
+
+                <Controller
+                    control={ control }
+                    name="password"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.password') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            secureTextEntry
+                            showPasswordToggle
+                            error={ errors.password?.message }
+                            autoComplete="password"
+                        />
+                    ) }
+                />
+
+                <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
+                    { t('auth.forgotPass') }
+                </Text>
+
+                <Text style={ [ styles.signUpLink, { paddingBottom: isSmall ? 12 : 20 } ] } onPress={ handleNavigateToSignUp }>
+                    { t('auth.dontHaveAccount') }
+                </Text>
+            </View>
+
+            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
+                <CustomButton 
+                    title={ t('auth.login') } 
+                    onPress={ handleSubmit(onSubmit) }
+                    disabled={ isSubmitting || isLoading }
+                    loading={ isSubmitting || isLoading }
+                />
+
+                <CustomButton 
+                    title={ t('auth.appleSignIn') } 
+                    onPress={ handleAppleSignIn }
+                    themeName="white"
+                    disabled={ isSubmitting || isLoading || firebaseLoading }
+                >
+                    <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
+                </CustomButton>
+
+                <CustomButton
+                    title={ t('auth.googleSignIn') }
+                    onPress={ handleGoogleSignIn }
+                    themeName="white"
+                    disabled={ isSubmitting || isLoading || firebaseLoading }>
+                </CustomButton>
+            </View>
+        </>
+    );
+
+    // Для маленьких экранов используем ScrollView + KeyboardAvoidingView
+    if (isSmall) {
+        const responsivePadding = getResponsivePadding(24);
+        const responsiveGap = getResponsiveGap(16);
+        const containerPaddingTop = 16;
+        const containerPaddingBottom = 12;
+        const containerPaddingHorizontal = 8;
+
+        return (
+            <SafeAreaView style={ [ styles.safeArea ] }>
+                <KeyboardAvoidingView 
+                    style={ { flex: 1 } }
+                    behavior={ Platform.OS === 'ios' ? 'padding' : 'height' }
+                    keyboardVerticalOffset={ Platform.OS === 'ios' ? 0 : 20 }
+                >
+                    <ScrollView
+                        contentContainerStyle={ [
+                            styles.scrollContent,
+                            { 
+                                paddingTop: responsivePadding,
+                                paddingBottom: responsivePadding,
+                                gap: responsiveGap 
+                            }
+                        ] }
+                        showsVerticalScrollIndicator={ false }
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <View style={ [ 
+                            styles.mainContainer, 
+                            { 
+                                gap: responsiveGap,
+                                paddingTop: containerPaddingTop,
+                                paddingBottom: containerPaddingBottom,
+                                paddingHorizontal: containerPaddingHorizontal
+                            } 
+                        ] }>
+                            {formContent}
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        );
+    }
+
+    // Для средних и больших экранов - оригинальная структура
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
             <View style={ styles.mainContainer }>
-                <LoginIcon/>
-
-                <View style={ styles.head }>
-                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.welcome') }</Text>
-                    <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>{ t('auth.info') }</Text>
-                </View>
-
-                <View style={ styles.container }>
-                    <Controller
-                        control={ control }
-                        name="email"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.email') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                error={ errors.email?.message }
-                                keyboardType="email-address"
-                                spellCheck={false}
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                autoCorrect={false}
-                                textContentType="none"
-                            />
-                        ) }
-                    />
-
-                    <Controller
-                        control={ control }
-                        name="password"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.password') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                secureTextEntry
-                                showPasswordToggle
-                                error={ errors.password?.message }
-                                autoComplete="password"
-                            />
-                        ) }
-                    />
-
-
-                    <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
-                        { t('auth.forgotPass') }
-                    </Text>
-
-                    <Text style={ styles.signUpLink } onPress={ handleNavigateToSignUp }>
-                        { t('auth.dontHaveAccount') }
-                    </Text>
-                </View>
-
-                <View style={styles.container}>
-                    <CustomButton 
-                        title={ t('auth.login') } 
-                        onPress={ handleSubmit(onSubmit) }
-                        disabled={ isSubmitting || isLoading }
-                        loading={ isSubmitting || isLoading }
-                    />
-
-                    <CustomButton 
-                        title={ t('auth.appleSignIn') } 
-                        onPress={ handleAppleSignIn }
-                        themeName="white"
-                        disabled={ isSubmitting || isLoading || firebaseLoading }
-                    >
-                        <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
-                    </CustomButton>
-
-                    <CustomButton
-                        title={ t('auth.googleSignIn') }
-                        onPress={ handleGoogleSignIn }
-                        themeName="white"
-                        disabled={ isSubmitting || isLoading || firebaseLoading }>
-                    </CustomButton>
-                </View>
+                {formContent}
             </View>
         </SafeAreaView>
     );
@@ -189,6 +243,12 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 8,
     },
     mainContainer: {
         width: '100%',
@@ -207,7 +267,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         gap: 4,
-        marginBottom: 10
     },
     title: {
         textAlign: 'center',

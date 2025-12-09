@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '@app/hooks/auth.hook';
+import { getResponsiveHorizontalPadding, getResponsiveTopPadding } from '@shared/utils/screenUtils';
 
 import LoginScreen from '@features/auth/screens/LoginScreen';
 import SignUpScreen from '@features/auth/screens/SignUpScreen';
@@ -72,16 +73,19 @@ export function AppNavigator() {
     const { colors } = useTheme();
     colors.background = 'transparent';
 
+    const horizontalPadding = getResponsiveHorizontalPadding(14);
+    const topPadding = getResponsiveTopPadding(60);
+
     if (isLoading) {
         return (
-            <View style={styles.main}>
+            <View style={[styles.main, { paddingHorizontal: horizontalPadding, paddingTop: topPadding }]}>
                 <LoadingSpinner visible={true} />
             </View>
         );
     }
 
     return (
-        <View style={styles.main}>
+        <View style={[styles.main, { paddingHorizontal: horizontalPadding, paddingTop: topPadding }]}>
             <Stack.Navigator
                 initialRouteName={isAuthenticated ? Routes.TODAY : Routes.LOGIN}
                 screenOptions={ ({ route }) => {
@@ -167,10 +171,9 @@ const styles = StyleSheet.create({
         flex: 1,
         height: "100%",
         width: "100%",
-        paddingTop: 60,
-        paddingHorizontal: 14,
         backgroundColor: 'transparent',
         flexDirection: 'row',
         alignItems: 'center',
+        // paddingTop будет добавлен динамически через inline стили
     },
 });

@@ -6,10 +6,8 @@ import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 
-const { width: screenWidth } = Dimensions.get('window');
 const GAP = 8;
 const NUM_COLUMNS = 5;
-const ITEM_WIDTH = (screenWidth - 60 - (GAP * (NUM_COLUMNS - 1))) / NUM_COLUMNS;
 
 interface FourthStepProps {
     onNext: (selectedMood: string) => void;
@@ -113,7 +111,8 @@ export default function FourthStep({onNext}: FourthStepProps) {
                                     style={ [
                                         styles.gridItem,
                                         {
-                                            width: ITEM_WIDTH,
+                                            flex: 1,
+                                            minWidth: 0, // Позволяет flex элементам сжиматься
                                             borderColor: selectedMoodType === moodType.id ? moodType.color : '#F2F1F6',
                                             backgroundColor: selectedMoodType === moodType.id ? `${moodType.color}20` : COLORS.gray_light
                                         }
@@ -136,12 +135,11 @@ export default function FourthStep({onNext}: FourthStepProps) {
 const styles = StyleSheet.create({
     gridContainer: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 8,
-        paddingHorizontal: 8
+        gap: GAP,
+        paddingHorizontal: 8,
+        width: '100%',
     },
     gridItem: {
-        marginBottom: 8,
         height: 80,
         borderRadius: 12,
         alignItems: "center",

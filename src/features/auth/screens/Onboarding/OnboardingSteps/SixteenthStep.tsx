@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {StyleSheet, View, Text, Platform} from "react-native";
+import {StyleSheet, View, Text, Platform, ScrollView} from "react-native";
 import * as Notifications from 'expo-notifications';
 import * as Application from 'expo-application';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,7 @@ import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {NOTIFICATIONS_SVG} from "@features/auth/screens/Onboarding/OnboardingSteps/icons";
 import {useRegisterDeviceToken} from "@shared/services/api/hooks";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 const DEVICE_TOKEN_KEY = 'push_device_token';
 const DEVICE_ID_KEY = 'push_device_id';
@@ -114,11 +115,27 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
         return () => clearTimeout(timer);
     }, [requestNotificationPermission]);
 
+    const isSmall = isSmallScreen();
+
+    const content = (
+        <View style={[styles.content, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
+            <RemoteSvg xml={NOTIFICATIONS_SVG}/>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={[styles.content, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
-                <RemoteSvg xml={NOTIFICATIONS_SVG}/>
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <View style={theme.flexBlocks.vertical8}>
                 <Text style={styles.centerBlockText}>
@@ -140,6 +157,13 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
     },
     content: {
         flex: 1,

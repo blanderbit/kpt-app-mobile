@@ -2,6 +2,7 @@ import React from "react";
 import {StyleSheet, Text, View, ActivityIndicator, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 import {ActivityRecommendation} from "@shared/services/api/types";
 import { ActivityLabel } from '@shared/components/ActivityLabel';
 import { SuggestedActivitiesIcon } from "@assets/icons/SuggestedActivitiesIcon";
@@ -28,6 +29,7 @@ export default function NinthStep({
     onAddToMyList,
 }: NinthStepProps) {
     const {theme} = useCustomTheme();
+    const isSmall = isSmallScreen();
 
     const hasRecommendations = recommendations.length > 0;
     const showError = Boolean(errorMessage);
@@ -117,59 +119,73 @@ export default function NinthStep({
         return 'health';
     };
 
+    const content = (
+        <View style={styles.content}>
+                    <Text style={styles.suggestingText}>
+                        Based on your previous answers we prepared a few first tasks and activities for you.
+                    </Text>
+
+                    {isLoading && (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor}/>
+                        </View>
+                    )}
+
+                    {!isLoading && showMissingData && (
+                        <View style={[styles.messageCard, theme.containers.cardRound]}>
+                            <Text style={[styles.messageText, theme.fonts.body]}>
+                                Please complete previous steps so we can generate tailored activities for you.
+                            </Text>
+                        </View>
+                    )}
+
+                    {!isLoading && showError && (
+                        <View style={[styles.messageCard, theme.containers.cardRound]}>
+                            <Text style={[styles.errorText, theme.fonts.body]}>
+                                {errorMessage}
+                            </Text>
+
+                            <CustomButton
+                                title={'Try again'}
+                                onPress={onRetry}
+                                themeName={'white_no_border'}
+                                buttonStyle={styles.retryButton}
+                            />
+                        </View>
+                    )}
+
+                    {!isLoading && showEmptyState && (
+                        <View style={[styles.messageCard, theme.containers.cardRound]}>
+                            <Text style={[styles.messageText, theme.fonts.body]}>
+                                We couldn't prepare recommendations right now. Try again in a moment.
+                            </Text>
+
+                            <CustomButton
+                                title={'Try again'}
+                                onPress={onRetry}
+                                themeName={'white_no_border'}
+                                buttonStyle={styles.retryButton}
+                            />
+                        </View>
+                    )}
+
+                    {!isLoading && hasRecommendations && renderRecommendations()}
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.suggestingText}>
-                    Based on your previous answers we prepared a few first tasks and activities for you.
-                </Text>
-
-                {isLoading && (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor}/>
-                    </View>
-                )}
-
-                {!isLoading && showMissingData && (
-                    <View style={[styles.messageCard, theme.containers.cardRound]}>
-                        <Text style={[styles.messageText, theme.fonts.body]}>
-                            Please complete previous steps so we can generate tailored activities for you.
-                        </Text>
-                    </View>
-                )}
-
-                {!isLoading && showError && (
-                    <View style={[styles.messageCard, theme.containers.cardRound]}>
-                        <Text style={[styles.errorText, theme.fonts.body]}>
-                            {errorMessage}
-                        </Text>
-
-                        <CustomButton
-                            title={'Try again'}
-                            onPress={onRetry}
-                            themeName={'white_no_border'}
-                            buttonStyle={styles.retryButton}
-                        />
-                    </View>
-                )}
-
-                {!isLoading && showEmptyState && (
-                    <View style={[styles.messageCard, theme.containers.cardRound]}>
-                        <Text style={[styles.messageText, theme.fonts.body]}>
-                            We couldn’t prepare recommendations right now. Try again in a moment.
-                        </Text>
-
-                        <CustomButton
-                            title={'Try again'}
-                            onPress={onRetry}
-                            themeName={'white_no_border'}
-                            buttonStyle={styles.retryButton}
-                        />
-                    </View>
-                )}
-
-                {!isLoading && hasRecommendations && renderRecommendations()}
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
@@ -199,6 +215,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     content: {
         flex: 1,

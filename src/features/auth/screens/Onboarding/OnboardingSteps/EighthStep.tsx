@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from "react";
-import {StyleSheet, Text, View, Image} from "react-native";
+import {StyleSheet, Text, View, Image, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import SatisfactionSlider from "@shared/components/Slider/Slider";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
+import {isSmallScreen} from "@shared/utils/screenUtils";
 
 const SWIPE_THE_LINES_SVG = `
     <svg width="119" height="23" viewBox="0 0 119 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,44 +40,60 @@ export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLev
         }
     }, [initialHardnessLevel]);
 
+    const isSmall = isSmallScreen();
+
+    const content = (
+        <View style={styles.content}>
+            <View style={isSmall ? theme.flexBlocks.vertical32 : theme.flexBlocks.vertical64}>
+                        <View style={theme.flexBlocks.vertical16}>
+                            <View>
+                                <SatisfactionSlider
+                                    key={`satisfaction-${initialSatisfactionLevel ?? 'new'}`}
+                                    label={ t('main.modals.measureActivity.satisfactionLevel.label') }
+                                    startLabel={ t('main.modals.measureActivity.satisfactionLevel.startLabel') }
+                                    endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
+                                    initialValue={ satisfactionLevel }
+                                    onChange={ setSatisfactionLevel }
+                                    colors={ [ '#DD583D', '#FFC372' ] }
+                                    labelStyle={styles.sliderLabel}
+                                />
+                            </View>
+
+                            <View>
+                                <SatisfactionSlider
+                                    key={`hardness-${initialHardnessLevel ?? 'new'}`}
+                                    label={ t('main.modals.measureActivity.hardnessLevel.label') }
+                                    startLabel={ t('main.modals.measureActivity.hardnessLevel.startLabel') }
+                                    endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
+                                    initialValue={ hardnessLevel }
+                                    onChange={ setHardnessLevel }
+                                    colors={ [ '#CA21D0', '#810085' ] }
+                                    labelStyle={styles.sliderLabel}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
+                            <RemoteSvg xml={SWIPE_THE_LINES_SVG} />
+                            <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
+                        </View>
+                    </View>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
-                <View style={theme.flexBlocks.vertical64}>
-                    <View style={theme.flexBlocks.vertical16}>
-                        <View>
-                            <SatisfactionSlider
-                                key={`satisfaction-${initialSatisfactionLevel ?? 'new'}`}
-                                label={ t('main.modals.measureActivity.satisfactionLevel.label') }
-                                startLabel={ t('main.modals.measureActivity.satisfactionLevel.startLabel') }
-                                endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
-                                initialValue={ satisfactionLevel }
-                                onChange={ setSatisfactionLevel }
-                                colors={ [ '#DD583D', '#FFC372' ] }
-                                labelStyle={styles.sliderLabel}
-                            />
-                        </View>
-
-                        <View>
-                            <SatisfactionSlider
-                                key={`hardness-${initialHardnessLevel ?? 'new'}`}
-                                label={ t('main.modals.measureActivity.hardnessLevel.label') }
-                                startLabel={ t('main.modals.measureActivity.hardnessLevel.startLabel') }
-                                endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
-                                initialValue={ hardnessLevel }
-                                onChange={ setHardnessLevel }
-                                colors={ [ '#CA21D0', '#810085' ] }
-                                labelStyle={styles.sliderLabel}
-                            />
-                        </View>
-                    </View>
-
-                    <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
-                        <RemoteSvg xml={SWIPE_THE_LINES_SVG} />
-                        <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
-                    </View>
-                </View>
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
@@ -103,6 +120,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     content: {
         flex: 1,

@@ -28,6 +28,7 @@ import {useProfile} from "@app/hooks/profile.hook";
 import { useCurrentMoodContext } from '@app/hooks/current-mood.hook';
 import { ActivityLabel } from '@shared/components/ActivityLabel';
 import {TooltipPage} from "@shared/components/InfoPopup/InfoPopup";
+import {getResponsiveActivityMaxWidth} from "@shared/utils/screenUtils";
 import {PageTooltips} from "@shared/components/PageTooltips";
 import { useAuth } from '@app/hooks/auth.hook';
 import { EmailVerificationModal } from '@shared/components/EmailVerificationModal';
@@ -598,7 +599,7 @@ const styles = StyleSheet.create({
         gap: 16
     },
     activityTitle: {
-        maxWidth: '70%'
+        maxWidth: getResponsiveActivityMaxWidth()
     },
     activitySectionDone: {
         opacity: .3,

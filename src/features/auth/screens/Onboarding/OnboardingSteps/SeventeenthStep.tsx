@@ -1,5 +1,5 @@
 import React from "react";
-import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
+import {Pressable, StyleSheet, Text, View, Alert, ScrollView} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
 import { useTranslation } from 'react-i18next';
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
@@ -58,52 +59,68 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
         }
     };
 
-    return (
-        <View style={styles.container}>
-            <View style={[styles.content, theme.flexBlocks.vertical32]}>
-                <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
-                    <View style={theme.flexBlocks.alignCenter}>
-                        <Text style={styles.haveAnAccText}>Already have an account?</Text>
-                        <Pressable onPress={handleLogin}>
-                            <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
-                        </Pressable>
-                    </View>
-                </View>
+    const isSmall = isSmallScreen();
 
-                <View style={theme.flexBlocks.vertical16}>
-                    <View style={theme.flexBlocks.vertical8}>
-                        <Pressable
-                            style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                            onPress={handleAppleSignIn}
-                            disabled={firebaseLoading}
-                        >
-                            <AppleIcon/>
-
-                            <Text style={styles.logInBtnText}>
-                                Continue with Apple
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                            onPress={handleGoogleSignIn}
-                            disabled={firebaseLoading}
-                        >
-                            <GoogleIcon/>
-
-                            <Text style={styles.logInBtnText}>
-                                Continue with Google
-                            </Text>
-                        </Pressable>
-                    </View>
-
-                    <CustomButton
-                        title={'Skip'}
-                        onPress={handleSignUp}
-                        themeName={'white_no_border'}
-                    />
+    const scrollContent = (
+        <View style={[styles.content, theme.flexBlocks.vertical32]}>
+            <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
+                <View style={theme.flexBlocks.alignCenter}>
+                    <Text style={styles.haveAnAccText}>Already have an account?</Text>
+                    <Pressable onPress={handleLogin}>
+                        <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                    </Pressable>
                 </View>
             </View>
+
+            <View style={theme.flexBlocks.vertical16}>
+                <View style={theme.flexBlocks.vertical8}>
+                    <Pressable
+                        style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                        onPress={handleAppleSignIn}
+                        disabled={firebaseLoading}
+                    >
+                        <AppleIcon/>
+
+                        <Text style={styles.logInBtnText}>
+                            Continue with Apple
+                        </Text>
+                    </Pressable>
+
+                    <Pressable
+                        style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                        onPress={handleGoogleSignIn}
+                        disabled={firebaseLoading}
+                    >
+                        <GoogleIcon/>
+
+                        <Text style={styles.logInBtnText}>
+                            Continue with Google
+                        </Text>
+                    </Pressable>
+                </View>
+
+                <CustomButton
+                    title={'Skip'}
+                    onPress={handleSignUp}
+                    themeName={'white_no_border'}
+                />
+            </View>
+        </View>
+    );
+
+    return (
+        <View style={styles.container}>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {scrollContent}
+                </ScrollView>
+            ) : (
+                scrollContent
+            )}
 
             <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8]}>
                 <RemoteSvg xml={`
@@ -127,6 +144,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'space-between',
         padding: 8
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     content: {
         paddingVertical: 20,

@@ -1,18 +1,34 @@
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, View, ScrollView} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {REMINDER_SVG} from "@features/auth/screens/Onboarding/OnboardingSteps/icons";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function FifteenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
+    const isSmall = isSmallScreen();
+
+    const content = (
+        <View style={[styles.content, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
+            <RemoteSvg xml={REMINDER_SVG} />
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <View style={[styles.content, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter]}>
-                <RemoteSvg xml={REMINDER_SVG} />
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <CustomButton
                 title={'See my FREE offer'}
@@ -27,6 +43,13 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
     },
     content: {
         flex: 1,

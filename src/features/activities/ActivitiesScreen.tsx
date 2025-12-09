@@ -25,6 +25,7 @@ import { ArchiveBackIcon } from "@assets/icons/ArchiveBackIcon";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
 import DraggableList from "@features/activities/draggable-activities/DraggableActivities";
+import {getResponsiveActivityMaxWidth, isSmallScreen} from "@shared/utils/screenUtils";
 import { 
     useMyActivities, 
     useCreateActivity, 
@@ -46,6 +47,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { showToast } = useToast();
+    const isSmall = isSmallScreen();
+    const activityMaxWidth = isSmall ? getResponsiveActivityMaxWidth() : '70%';
 
     const [ satisfaction, setSatisfaction ] = useState(0)
     const [ achieveness, setAchieveness ] = useState(0)
@@ -311,7 +314,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                                                 <Pressable style={ styles.activityContent }>
                                                     <Text
-                                                        style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
+                                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
                                                         { activity.activityName } 
                                                     </Text>
                                                     <SemiCircleSplit valueA={ satisfaction }
@@ -330,7 +333,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         <TextInput 
                             key={inputKey}
                             ref={inputRef}
-                            style={ [ styles.textInput ] }
+                            style={ [ styles.textInput, { maxWidth: activityMaxWidth } ] }
                             placeholder={ t('main.activities.addNewActivity') } 
                             multiline 
                             defaultValue=""
@@ -383,7 +386,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                                 <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                     <Text
-                                        style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
+                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
                                         { activity.activityName }
                                     </Text>
 
@@ -431,6 +434,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                                 styles.activityTitle, 
                                                 theme.fonts.activityTitle,
                                                 {
+                                                    maxWidth: activityMaxWidth,
                                                     textDecorationLine: 'line-through',
                                                     opacity: 0.3
                                                 }
@@ -502,13 +506,13 @@ const styles = StyleSheet.create({
         marginRight: -30
     },
     activityTitle: {
-        maxWidth: '70%',
+        maxWidth: '70%', // Оригинальное значение для средних/больших экранов
     },
     textInput: {
         backgroundColor: '#F5F5F5',
         fontSize: 20,
         lineHeight: 28,
-        maxWidth: '70%',
+        maxWidth: '70%', // Оригинальное значение для средних/больших экранов
         padding: 0,
         height: '100%',
         minHeight: 28,

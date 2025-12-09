@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Alert, Platform} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Alert, Platform, ScrollView, KeyboardAvoidingView} from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,6 +12,7 @@ import { COLORS } from "@app/theme";
 import { useCustomTheme } from "@app/theme/ThemeContext";
 import { SignUpScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
+import { getResponsivePadding, getResponsiveGap, isSmallScreen } from '@shared/utils/screenUtils';
 
 const schema = (t: any) => yup.object().shape({
     name: yup.string()
@@ -75,97 +76,150 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
         navigation.navigate(Routes.LOGIN);
     };
 
+    const isSmall = isSmallScreen();
+
+    // Контент формы
+    const formContent = (
+        <>
+            <LoginIcon/>
+
+            <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
+                <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.signUp.title') }</Text>
+            </View>
+
+            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
+                <Controller
+                    control={ control }
+                    name="name"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.signUp.name') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            error={ errors.name?.message }
+                            autoCapitalize="words"
+                            autoComplete="name"
+                            textContentType="name"
+                        />
+                    ) }
+                />
+
+                <Controller
+                    control={ control }
+                    name="email"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.email') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            error={ errors.email?.message }
+                            keyboardType="email-address"
+                            spellCheck={false}
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            autoCorrect={false}
+                            textContentType="none"
+                        />
+                    ) }
+                />
+
+                <Controller
+                    control={ control }
+                    name="password"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.password') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            secureTextEntry
+                            showPasswordToggle
+                            error={ errors.password?.message }
+                            autoComplete="password"
+                        />
+                    ) }
+                />
+
+                <Controller
+                    control={ control }
+                    name="repeat_password"
+                    render={ ({ field: { value, onChange } }) => (
+                        <Input
+                            label={ t('auth.signUp.repeatPassword') }
+                            value={ value }
+                            onChangeText={ onChange }
+                            secureTextEntry
+                            showPasswordToggle
+                            error={ errors.repeat_password?.message }
+                            autoComplete="password"
+                        />
+                    ) }
+                />
+
+                <Text style={ [ styles.loginLink, { paddingBottom: isSmall ? 12 : 20 } ] } onPress={ handleNavigateToLogin }>
+                    { t('auth.signUp.alreadyHaveAccount') }
+                </Text>
+            </View>
+
+            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
+                <CustomButton 
+                    title={ t('auth.signUp.button') } 
+                    onPress={ handleSubmit(onSubmit) }
+                    disabled={ isSubmitting || isLoading }
+                    loading={ isSubmitting || isLoading }
+                />
+            </View>
+        </>
+    );
+
+    // Для маленьких экранов используем ScrollView + KeyboardAvoidingView
+    if (isSmall) {
+        const responsivePadding = getResponsivePadding(24);
+        const responsiveGap = getResponsiveGap(16);
+        const containerPaddingTop = 16;
+        const containerPaddingBottom = 12;
+        const containerPaddingHorizontal = 8;
+
+        return (
+            <SafeAreaView style={ [ styles.safeArea ] }>
+                <KeyboardAvoidingView 
+                    style={ { flex: 1 } }
+                    behavior={ Platform.OS === 'ios' ? 'padding' : 'height' }
+                    keyboardVerticalOffset={ Platform.OS === 'ios' ? 0 : 20 }
+                >
+                    <ScrollView
+                        contentContainerStyle={ [
+                            styles.scrollContent,
+                            { 
+                                paddingTop: responsivePadding,
+                                paddingBottom: responsivePadding,
+                                gap: responsiveGap 
+                            }
+                        ] }
+                        showsVerticalScrollIndicator={ false }
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <View style={ [ 
+                            styles.mainContainer, 
+                            { 
+                                gap: responsiveGap,
+                                paddingTop: containerPaddingTop,
+                                paddingBottom: containerPaddingBottom,
+                                paddingHorizontal: containerPaddingHorizontal
+                            } 
+                        ] }>
+                            {formContent}
+                        </View>
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        );
+    }
+
+    // Для средних и больших экранов - оригинальная структура
     return (
         <SafeAreaView style={ [ styles.safeArea, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter ] }>
             <View style={ styles.mainContainer }>
-                <LoginIcon/>
-
-                <View style={ styles.head }>
-                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.signUp.title') }</Text>
-                </View>
-
-                <View style={ styles.container }>
-                    <Controller
-                        control={ control }
-                        name="name"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.signUp.name') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                error={ errors.name?.message }
-                                autoCapitalize="words"
-                                autoComplete="name"
-                                textContentType="name"
-                            />
-                        ) }
-                    />
-
-                    <Controller
-                        control={ control }
-                        name="email"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.email') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                error={ errors.email?.message }
-                                keyboardType="email-address"
-                                spellCheck={false}
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                autoCorrect={false}
-                                textContentType="none"
-                            />
-                        ) }
-                    />
-
-                    <Controller
-                        control={ control }
-                        name="password"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.password') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                secureTextEntry
-                                showPasswordToggle
-                                error={ errors.password?.message }
-                                autoComplete="password"
-                            />
-                        ) }
-                    />
-
-                    <Controller
-                        control={ control }
-                        name="repeat_password"
-                        render={ ({ field: { value, onChange } }) => (
-                            <Input
-                                label={ t('auth.signUp.repeatPassword') }
-                                value={ value }
-                                onChangeText={ onChange }
-                                secureTextEntry
-                                showPasswordToggle
-                                error={ errors.repeat_password?.message }
-                                autoComplete="password"
-                            />
-                        ) }
-                    />
-
-
-                    <Text style={ styles.loginLink } onPress={ handleNavigateToLogin }>
-                        { t('auth.signUp.alreadyHaveAccount') }
-                    </Text>
-                </View>
-
-                <View style={styles.container}>
-                    <CustomButton 
-                        title={ t('auth.signUp.button') } 
-                        onPress={ handleSubmit(onSubmit) }
-                        disabled={ isSubmitting || isLoading }
-                        loading={ isSubmitting || isLoading }
-                    />
-                </View>
+                {formContent}
             </View>
         </SafeAreaView>
     );
@@ -174,6 +228,12 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 8,
     },
     mainContainer: {
         width: '100%',
@@ -192,7 +252,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         gap: 4,
-        marginBottom: 10
     },
     title: {
         textAlign: 'center',

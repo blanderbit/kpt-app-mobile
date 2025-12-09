@@ -21,7 +21,7 @@ import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/S
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
         id: 1,
-        title: "Welcome to AppName",
+        title: "Welcome to Plesury",
         infoText: "Choose ready-made or create you own tasks, activities and habits. Track achievement and satisfaction. Discover your balance!",
         content: (<FirstStep onNext={() => {}} onBack={() => {}} />)
     },
@@ -34,7 +34,7 @@ export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
         id: 3,
         title: "That's great!",
-        infoText: "93% of users report AppName has seamlessly helped them to stay balanced and live fulfilled life.",
+        infoText: "93% of users report Plesury has seamlessly helped them to stay balanced and live fulfilled life.",
         content: (<ThirdStep onNext={() => {}} />)
     },
     {
@@ -53,7 +53,7 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
     {
         id: 6,
         title: "Awesome",
-        infoText: "With AppName you don't need to put too much time to track your achievement and satisfaction level.",
+        infoText: "With Plesury you don't need to put too much time to track your achievement and satisfaction level.",
         content: (<SixthStep onNext={() => {}} />)
     },
     {
@@ -91,13 +91,13 @@ export const onboardingSecondSectionSteps: OnboardingStep[] = [
     },
     {
         id: 13,
-        title: "Balance your life with AppName",
+        title: "Balance your life with Plesury",
         content: (<ThirteenthStep onNext={() => {}} />)
     },
     {
         id: 14,
-        title: "But we'd love for you to try AppName Plus for 7 days free too!",
-        infoText: "AppName is free to use",
+        title: "But we'd love for you to try Plesury Plus for 7 days free too!",
+        infoText: "Plesury is free to use",
         content: (<FourteenthStep onNext={() => {}} />)
     },
     {

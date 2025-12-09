@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, View, ScrollView} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import LottieView from "lottie-react-native";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function TwelfthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
     const hasCalledNext = useRef(false);
+    const isSmall = isSmallScreen();
 
     useEffect(() => {
         // Предотвращаем множественные вызовы onNext
@@ -22,16 +24,30 @@ export default function TwelfthStep({onNext}: { onNext: () => void }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const content = (
+        <View style={styles.content}>
+            <LottieView
+                source={require('../../../../../assets/Slider.json')}
+                autoPlay
+                loop
+                style={styles.lottie}
+            />
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={styles.content}>
-                <LottieView
-                    source={require('../../../../../assets/Slider.json')}
-                    autoPlay
-                    loop
-                    style={styles.lottie}
-                />
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
         </View>
     );
 }
@@ -41,6 +57,13 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
     },
     content: {
         flex: 1,

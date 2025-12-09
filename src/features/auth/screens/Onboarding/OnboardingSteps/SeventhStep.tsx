@@ -1,11 +1,12 @@
 import React from "react";
-import {StyleSheet, Text, View, Image} from "react-native";
+import {StyleSheet, Text, View, Image, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import { ActivityLabel } from '@shared/components/ActivityLabel';
 import {PlusIcon} from "@assets/icons/PlusIcon";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
+import {getResponsiveActivityMaxWidth, isSmallScreen} from "@shared/utils/screenUtils";
 
 const CLICK_ADD_BUTTON_SVG = `
     <svg width="155" height="17" viewBox="0 0 155 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,36 +17,51 @@ const CLICK_ADD_BUTTON_SVG = `
 export default function SeventhStep({onNext}: { onNext: () => void }) {
     const { t } = useTranslation();
     const {theme} = useCustomTheme();
+    const isSmall = isSmallScreen();
+
+    const content = (
+        <View style={theme.flexBlocks.vertical16}>
+                    <View style={ styles.activitySections }>
+                            <View
+                                style={styles.activitySection}>
+                                <ActivityLabel id={"general"}/>
+
+                                <View style={ [ theme.flexBlocks.alignCenter, styles.activityContent ] }>
+                                    <Text
+                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: isSmall ? getResponsiveActivityMaxWidth() : '70%' } ] }>
+                                        { t("main.today.activity.sportActivity.info") }
+                                    </Text>
+
+                                    <CustomButton title={ t('add') }
+                                                  onPress={ () => {onNext()} }
+                                                  buttonStyle={ styles.addBtn}
+                                                  contentStyle={ { gap: 4 } }>
+                                        <PlusIcon color="#fff" size={ 20 }/>
+                                    </CustomButton>
+                                </View>
+                            </View>
+                    </View>
+
+                    <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
+                        <RemoteSvg xml={CLICK_ADD_BUTTON_SVG} />
+                        <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
+                    </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <View style={theme.flexBlocks.vertical16}>
-                <View style={ styles.activitySections }>
-                        <View
-                            style={styles.activitySection}>
-                            <ActivityLabel id={"general"}/>
-
-                            <View style={ [ theme.flexBlocks.alignCenter, styles.activityContent ] }>
-                                <Text
-                                    style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
-                                    { t("main.today.activity.sportActivity.info") }
-                                </Text>
-
-                                <CustomButton title={ t('add') }
-                                              onPress={ () => {onNext()} }
-                                              buttonStyle={ styles.addBtn}
-                                              contentStyle={ { gap: 4 } }>
-                                    <PlusIcon color="#fff" size={ 20 }/>
-                                </CustomButton>
-                            </View>
-                        </View>
-                </View>
-
-                <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.horizontal16]}>
-                    <RemoteSvg xml={CLICK_ADD_BUTTON_SVG} />
-                    <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
-                </View>
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
         </View>
     );
 }
@@ -53,8 +69,16 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: 'center',
-        marginBottom: '25%'
+        paddingBottom: '25%'
     },
     activitySections: {
         backgroundColor: '#F5F5F5',
@@ -79,7 +103,7 @@ const styles = StyleSheet.create({
         gap: 16
     },
     activityTitle: {
-        maxWidth: '70%'
+        maxWidth: '70%', // Оригинальное значение для средних/больших экранов
     },
     addBtn: {
         width: 'auto',

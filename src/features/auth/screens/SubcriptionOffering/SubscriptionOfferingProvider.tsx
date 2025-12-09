@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Modal, View, StyleSheet } from 'react-native';
 import SubscriptionOfferingTemplate from './SubscriptionOfferingTemplate';
+import { getResponsiveHorizontalPadding, getResponsiveTopPadding } from '@shared/utils/screenUtils';
 
 interface SubscriptionOfferingContextType {
     showSubscriptionOffering: (onComplete?: () => void) => void;
@@ -25,6 +26,8 @@ interface SubscriptionOfferingProviderProps {
 export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProviderProps> = ({ children }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [onCompleteCallback, setOnCompleteCallback] = useState<(() => void) | undefined>(undefined);
+    const horizontalPadding = getResponsiveHorizontalPadding(14);
+    const topPadding = getResponsiveTopPadding(60);
 
     const showSubscriptionOffering = (onComplete?: () => void) => {
         setIsVisible(true);
@@ -75,7 +78,7 @@ export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProvider
             
             {/* Рендерим SubscriptionOfferingTemplate поверх всего */}
             {isVisible && (
-                <View style={styles.overlay}>
+                <View style={[styles.overlay, { paddingHorizontal: horizontalPadding, paddingTop: topPadding }]}>
                     <SubscriptionOfferingTemplate 
                         navigation={mockNavigation}
                         onComplete={hideSubscriptionOffering}
@@ -94,8 +97,7 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         zIndex: 9999,
-        paddingTop: 60, // Добавляем padding сверху для устройств с notch
-        paddingHorizontal: 14, // Добавляем padding по бокам как в AppNavigator
+        // paddingTop будет добавлен динамически через inline стили
     },
 });
 

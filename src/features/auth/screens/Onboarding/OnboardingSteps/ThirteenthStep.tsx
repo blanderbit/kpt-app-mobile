@@ -1,8 +1,9 @@
 import React from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View, ScrollView} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 const BALANCE_CHART_SVG = `
 <svg width="305" height="236" viewBox="0 0 305 236" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,18 +33,33 @@ const BALANCE_CHART_SVG = `
 
 export default function ThirteenthStep({onNext}: { onNext: () => void }) {
     const {theme} = useCustomTheme();
+    const isSmall = isSmallScreen();
+
+    const content = (
+        <View style={[styles.content, theme.flexBlocks.alignCenter]}>
+            <View style={[styles.centerBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16]}>
+                <RemoteSvg xml={BALANCE_CHART_SVG}/>
+
+                <Text style={styles.centerBlockText}>
+                    You're on your way! Watch as your daily habits shift and your life feels more balanced.
+                </Text>
+            </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <View style={[styles.content, theme.flexBlocks.alignCenter]}>
-                <View style={[styles.centerBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16]}>
-                    <RemoteSvg xml={BALANCE_CHART_SVG}/>
-
-                    <Text style={styles.centerBlockText}>
-                        You’re on your way! Watch as your daily habits shift and your life feels more balanced.
-                    </Text>
-                </View>
-            </View>
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
@@ -60,6 +76,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     content: {
         flex: 1,

@@ -1,8 +1,9 @@
 import React from "react";
-import {StyleSheet, Text, View, Pressable} from "react-native";
+import {StyleSheet, Text, View, Pressable, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
+import { isSmallScreen } from "@shared/utils/screenUtils";
 
 interface FirstStepProps {
     onNext: () => void;
@@ -12,10 +13,23 @@ interface FirstStepProps {
 export default function FirstStep({ onNext, onBack }: FirstStepProps) {
 
     const {theme} = useCustomTheme();
+    const isSmall = isSmallScreen();
+
+    const content = <View style={styles.content} />;
 
     return (
         <View style={styles.container}>
-            <View style={styles.content} />
+            {isSmall ? (
+                <ScrollView 
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {content}
+                </ScrollView>
+            ) : (
+                content
+            )}
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
@@ -41,6 +55,12 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
+    },
+    scrollView: {
+        flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
     },
     content: {
         flex: 1,

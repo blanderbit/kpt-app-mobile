@@ -26,6 +26,7 @@ import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Six
 import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventeenthStep";
 import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { isSmallScreen, getResponsivePadding } from "@shared/utils/screenUtils";
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -639,7 +640,10 @@ export default function OnboardingTemplate({
                     </Animated.View>
                 </View>
             }>
-                <View style={styles.mainContainer}>
+                <View style={[
+                    styles.mainContainer,
+                    isSmallScreen() && styles.mainContainerSmall
+                ]}>
                     {questionsLoading ? (
                         <Animated.View 
                             style={[
@@ -670,7 +674,10 @@ export default function OnboardingTemplate({
                                 if (!stepConfig) return null;
                                 
                                 return (
-                                    <View style={styles.commonHeader}>
+                                    <View style={[
+                                        styles.commonHeader,
+                                        isSmallScreen() && styles.commonHeaderSmall
+                                    ]}>
                                         <View style={[styles.head, theme.flexBlocks.vertical8, stepConfig.id === 14 ? { flexDirection: 'column-reverse' } : {}]}>
                                             {stepConfig.title && (
                                                 <Text style={[styles.title, {...theme.fonts.title}]}>
@@ -713,6 +720,9 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         backgroundColor: '#fff',
     },
+    mainContainerSmall: {
+        flex: 0.98
+    },
     stepContainer: {
         flex: 1,
     },
@@ -722,6 +732,11 @@ const styles = StyleSheet.create({
         gap: 16,
         paddingTop: 10,
         marginBottom: 8,
+    },
+    commonHeaderSmall: {
+        gap: 8, // Уменьшаем gap на маленьких экранах
+        paddingTop: 6, // Уменьшаем верхний отступ
+        marginBottom: 4, // Уменьшаем нижний отступ
     },
     head: {
         flexDirection: 'column',

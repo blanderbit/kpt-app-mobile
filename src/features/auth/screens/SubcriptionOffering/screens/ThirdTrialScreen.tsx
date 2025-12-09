@@ -12,6 +12,7 @@ import {
 } from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import ToggleSwitch from "@shared/components/ToggleSwitch";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import {isSmallScreen} from "@shared/utils/screenUtils";
 
 const STAR_ICON_SVG = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +26,7 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
     const [freeTrialEnabled, setFreeTrialEnabled] = React.useState(true);
 
     return (
-        <View style={[styles.container, theme.flexBlocks.vertical64]}>
+        <View style={[styles.container, isSmallScreen() ? theme.flexBlocks.vertical32 : theme.flexBlocks.vertical64]}>
             <View style={[styles.content, theme.flexBlocks.vertical8]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, theme.fonts.title]}>
