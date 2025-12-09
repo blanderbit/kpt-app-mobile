@@ -127,56 +127,56 @@ export default function NinthStep({
     return (
         <View style={styles.container}>
             <View style={[styles.content, { gap: isSmall ? getResponsiveGap(16) : 16 }]}>
-                <Text style={styles.suggestingText}>
-                    Based on your previous answers we prepared a few first tasks and activities for you.
-                </Text>
+                    <Text style={styles.suggestingText}>
+                        Based on your previous answers we prepared a few first tasks and activities for you.
+                    </Text>
 
-                {isLoading && (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor}/>
-                    </View>
-                )}
+                    {isLoading && (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor}/>
+                        </View>
+                    )}
 
-                {!isLoading && showMissingData && (
+                    {!isLoading && showMissingData && (
                     <View style={[styles.messageCard, theme.containers.cardRound, { gap: isSmall ? getResponsiveGap(12) : 12 }]}>
-                        <Text style={[styles.messageText, theme.fonts.body]}>
-                            Please complete previous steps so we can generate tailored activities for you.
-                        </Text>
-                    </View>
-                )}
+                            <Text style={[styles.messageText, theme.fonts.body]}>
+                                Please complete previous steps so we can generate tailored activities for you.
+                            </Text>
+                        </View>
+                    )}
 
-                {!isLoading && showError && (
+                    {!isLoading && showError && (
                     <View style={[styles.messageCard, theme.containers.cardRound, { gap: isSmall ? getResponsiveGap(12) : 12 }]}>
-                        <Text style={[styles.errorText, theme.fonts.body]}>
-                            {errorMessage}
-                        </Text>
+                            <Text style={[styles.errorText, theme.fonts.body]}>
+                                {errorMessage}
+                            </Text>
 
-                        <CustomButton
-                            title={'Try again'}
-                            onPress={onRetry}
-                            themeName={'white_no_border'}
-                            buttonStyle={styles.retryButton}
-                        />
-                    </View>
-                )}
+                            <CustomButton
+                                title={'Try again'}
+                                onPress={onRetry}
+                                themeName={'white_no_border'}
+                                buttonStyle={styles.retryButton}
+                            />
+                        </View>
+                    )}
 
-                {!isLoading && showEmptyState && (
+                    {!isLoading && showEmptyState && (
                     <View style={[styles.messageCard, theme.containers.cardRound, { gap: isSmall ? getResponsiveGap(12) : 12 }]}>
-                        <Text style={[styles.messageText, theme.fonts.body]}>
-                            We couldn't prepare recommendations right now. Try again in a moment.
-                        </Text>
+                            <Text style={[styles.messageText, theme.fonts.body]}>
+                                We couldn't prepare recommendations right now. Try again in a moment.
+                            </Text>
 
-                        <CustomButton
-                            title={'Try again'}
-                            onPress={onRetry}
-                            themeName={'white_no_border'}
-                            buttonStyle={styles.retryButton}
-                        />
-                    </View>
-                )}
+                            <CustomButton
+                                title={'Try again'}
+                                onPress={onRetry}
+                                themeName={'white_no_border'}
+                                buttonStyle={styles.retryButton}
+                            />
+                        </View>
+                    )}
 
-                {!isLoading && hasRecommendations && renderRecommendations()}
-            </View>
+                    {!isLoading && hasRecommendations && renderRecommendations()}
+                </View>
 
             <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
