@@ -64,59 +64,59 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
     const isSmall = isSmallScreen();
 
     const headerContent = (
-        <>
-            <Pressable
-                onPress={onBack}
-                style={({ pressed }) => [
-                    styles.smallBtn,
-                    { ...theme.buttons.smallBtn },
-                    pressed && { opacity: 0.6 }
-                ]}>
-                <ArrowIcon/>
-            </Pressable>
-            <Text style={ theme.fonts.subtitle }>
-                { t('auth.resetPassScreen.header') }
-            </Text>
-        </>
+                    <>
+                        <Pressable
+                            onPress={onBack}
+                            style={({ pressed }) => [
+                                styles.smallBtn,
+                                { ...theme.buttons.smallBtn },
+                                pressed && { opacity: 0.6 }
+                            ]}>
+                            <ArrowIcon/>
+                        </Pressable>
+                        <Text style={ theme.fonts.subtitle }>
+                            { t('auth.resetPassScreen.header') }
+                        </Text>
+                    </>
     );
 
     const formContent = (
         <>
             <View style={ [ styles.formTop, { gap: isSmall ? getResponsiveGap(16) : 16 } ] }>
-                <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
-                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>
-                        { t('auth.resetPassScreen.title') }
-                    </Text>
-                    <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>
-                        { t('auth.resetPassScreen.info') }
-                    </Text>
-                </View>
+                                <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
+                                    <Text style={ [ styles.title, { ...theme.fonts.title } ] }>
+                                        { t('auth.resetPassScreen.title') }
+                                    </Text>
+                                    <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>
+                                        { t('auth.resetPassScreen.info') }
+                                    </Text>
+                                </View>
 
-                <Controller
-                    control={ control }
-                    name="email"
-                    render={ ({ field: { value, onChange } }) => (
-                        <Input
-                            label={ t('auth.email') }
-                            value={ value }
-                            onChangeText={ onChange }
-                            error={ errors.email?.message }
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoComplete="email"
-                        />
-                    ) }
-                />
-            </View>
+                                <Controller
+                                    control={ control }
+                                    name="email"
+                                    render={ ({ field: { value, onChange } }) => (
+                                        <Input
+                                            label={ t('auth.email') }
+                                            value={ value }
+                                            onChangeText={ onChange }
+                                            error={ errors.email?.message }
+                                            keyboardType="email-address"
+                                            autoCapitalize="none"
+                                            autoComplete="email"
+                                        />
+                                    ) }
+                                />
+                            </View>
 
-            <View style={ styles.formBottom }>
-                <CustomButton
-                    title={ t('send') }
-                    onPress={ handleSubmit(onSubmit) }
-                    loading={ isLoading }
-                    disabled={ isLoading }
-                />
-            </View>
+                            <View style={ styles.formBottom }>
+                                <CustomButton
+                                    title={ t('send') }
+                                    onPress={ handleSubmit(onSubmit) }
+                                    loading={ isLoading }
+                                    disabled={ isLoading }
+                                />
+                            </View>
         </>
     );
 
@@ -158,10 +158,10 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
                                 } 
                             ] }>
                                 {formContent}
-                            </View>
-                        </ScrollView>
-                    </PageWithHeader>
-                </KeyboardAvoidingView>
+                        </View>
+                    </ScrollView>
+                </PageWithHeader>
+            </KeyboardAvoidingView>
             </SafeAreaView>
         );
     }

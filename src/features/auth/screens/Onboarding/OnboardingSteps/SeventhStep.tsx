@@ -20,7 +20,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={theme.flexBlocks.vertical16}>
+                <View style={theme.flexBlocks.vertical16}>
                     <View style={ styles.activitySections }>
                             <View
                                 style={styles.activitySection}>
@@ -46,7 +46,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
                         <RemoteSvg xml={CLICK_ADD_BUTTON_SVG} />
                         <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
                     </View>
-        </View>
+                </View>
     );
 
     return (
@@ -58,7 +58,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

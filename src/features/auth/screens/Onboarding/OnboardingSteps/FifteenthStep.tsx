@@ -19,13 +19,13 @@ export default function FifteenthStep({onNext}: { onNext: () => void }) {
     return (
         <View style={styles.container}>
             {isSmall ? (
-                <ScrollView 
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}
-                >
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

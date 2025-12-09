@@ -15,35 +15,35 @@ export default function SecondStep({onNext}: SecondStepProps) {
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={styles.content}>
-            <View style={styles.feedbackContainer}>
-                <View style={[theme.flexBlocks.vertical8, styles.feedbackSection]}>
-                    <View style={styles.starsSection}>
-                        <StarRating rating={5}/>
+                <View style={styles.content}>
+                    <View style={styles.feedbackContainer}>
+                        <View style={[theme.flexBlocks.vertical8, styles.feedbackSection]}>
+                            <View style={styles.starsSection}>
+                                <StarRating rating={5}/>
+                            </View>
+
+                            <Text style={styles.feedbackTitle}>
+                                Life-changing for my balance!
+                            </Text>
+
+                            <Text style={styles.feedbackInfo}>
+                                "I used to feel scattered between work, family, and personal time, always losing track of
+                                small but important things. Now, with Plesury, I can bring everything into one clear space
+                                and finally feel lighter and focused"
+                            </Text>
+                        </View>
+
+                        <View
+                            style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, styles.personContainer]}>
+                            <Text style={styles.personName}>Jessica M.</Text>
+
+                            <Image
+                                style={styles.personPhoto}
+                                source={require('@assets/images/jessica-img.png')}
+                            />
+                        </View>
                     </View>
-
-                    <Text style={styles.feedbackTitle}>
-                        Life-changing for my balance!
-                    </Text>
-
-                    <Text style={styles.feedbackInfo}>
-                        "I used to feel scattered between work, family, and personal time, always losing track of
-                        small but important things. Now, with Plesury, I can bring everything into one clear space
-                        and finally feel lighter and focused"
-                    </Text>
                 </View>
-
-                <View
-                    style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, styles.personContainer]}>
-                    <Text style={styles.personName}>Jessica M.</Text>
-
-                    <Image
-                        style={styles.personPhoto}
-                        source={require('@assets/images/jessica-img.png')}
-                    />
-                </View>
-            </View>
-        </View>
     );
 
     return (
@@ -55,7 +55,7 @@ export default function SecondStep({onNext}: SecondStepProps) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

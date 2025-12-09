@@ -10,15 +10,15 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={styles.content}>
-            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16, styles.centerBlock]}>
-                <Image
-                    source={require('@assets/images/onboarding-awesome.png')}/>
-                <Text style={styles.centerBlockText}>
-                    Let's discover how it works!
-                </Text>
-            </View>
-        </View>
+                <View style={styles.content}>
+                    <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16, styles.centerBlock]}>
+                        <Image
+                            source={require('@assets/images/onboarding-awesome.png')}/>
+                        <Text style={styles.centerBlockText}>
+                            Let's discover how it works!
+                        </Text>
+                    </View>
+                </View>
     );
 
     return (
@@ -30,7 +30,7 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

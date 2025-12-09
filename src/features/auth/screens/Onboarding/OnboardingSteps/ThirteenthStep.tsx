@@ -36,15 +36,15 @@ export default function ThirteenthStep({onNext}: { onNext: () => void }) {
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={[styles.content, theme.flexBlocks.alignCenter]}>
-            <View style={[styles.centerBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16]}>
-                <RemoteSvg xml={BALANCE_CHART_SVG}/>
+                <View style={[styles.content, theme.flexBlocks.alignCenter]}>
+                    <View style={[styles.centerBlock, theme.flexBlocks.alignCenter, theme.flexBlocks.vertical16]}>
+                        <RemoteSvg xml={BALANCE_CHART_SVG}/>
 
-                <Text style={styles.centerBlockText}>
-                    You're on your way! Watch as your daily habits shift and your life feels more balanced.
-                </Text>
-            </View>
-        </View>
+                        <Text style={styles.centerBlockText}>
+                            You're on your way! Watch as your daily habits shift and your life feels more balanced.
+                        </Text>
+                    </View>
+                </View>
     );
 
     return (
@@ -56,7 +56,7 @@ export default function ThirteenthStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

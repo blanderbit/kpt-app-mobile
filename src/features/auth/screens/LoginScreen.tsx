@@ -107,82 +107,82 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     // Контент формы
     const formContent = (
         <>
-            <LoginIcon/>
+                        <LoginIcon/>
 
-            <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
-                <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.welcome') }</Text>
-                <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>{ t('auth.info') }</Text>
-            </View>
-
-            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
-                <Controller
-                    control={ control }
-                    name="email"
-                    render={ ({ field: { value, onChange } }) => (
-                        <Input
-                            label={ t('auth.email') }
-                            value={ value }
-                            onChangeText={ onChange }
-                            error={ errors.email?.message }
-                            keyboardType="email-address"
-                            spellCheck={false}
-                            autoCapitalize="none"
-                            autoComplete="email"
-                            autoCorrect={false}
-                            textContentType="none"
-                        />
-                    ) }
-                />
-
-                <Controller
-                    control={ control }
-                    name="password"
-                    render={ ({ field: { value, onChange } }) => (
-                        <Input
-                            label={ t('auth.password') }
-                            value={ value }
-                            onChangeText={ onChange }
-                            secureTextEntry
-                            showPasswordToggle
-                            error={ errors.password?.message }
-                            autoComplete="password"
-                        />
-                    ) }
-                />
-
-                <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
-                    { t('auth.forgotPass') }
-                </Text>
-
-                <Text style={ [ styles.signUpLink, { paddingBottom: isSmall ? 12 : 20 } ] } onPress={ handleNavigateToSignUp }>
-                    { t('auth.dontHaveAccount') }
-                </Text>
-            </View>
+                        <View style={ [ styles.head, { marginBottom: isSmall ? 8 : 10 } ] }>
+                            <Text style={ [ styles.title, { ...theme.fonts.title } ] }>{ t('auth.welcome') }</Text>
+                            <Text style={ [ styles.info, { ...theme.fonts.regular } ] }>{ t('auth.info') }</Text>
+                        </View>
 
             <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
-                <CustomButton 
-                    title={ t('auth.login') } 
-                    onPress={ handleSubmit(onSubmit) }
-                    disabled={ isSubmitting || isLoading }
-                    loading={ isSubmitting || isLoading }
-                />
+                            <Controller
+                                control={ control }
+                                name="email"
+                                render={ ({ field: { value, onChange } }) => (
+                                    <Input
+                                        label={ t('auth.email') }
+                                        value={ value }
+                                        onChangeText={ onChange }
+                                        error={ errors.email?.message }
+                                        keyboardType="email-address"
+                                        spellCheck={false}
+                                        autoCapitalize="none"
+                                        autoComplete="email"
+                                        autoCorrect={false}
+                                        textContentType="none"
+                                    />
+                                ) }
+                            />
 
-                <CustomButton 
-                    title={ t('auth.appleSignIn') } 
-                    onPress={ handleAppleSignIn }
-                    themeName="white"
-                    disabled={ isSubmitting || isLoading || firebaseLoading }
-                >
-                    <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
-                </CustomButton>
+                            <Controller
+                                control={ control }
+                                name="password"
+                                render={ ({ field: { value, onChange } }) => (
+                                    <Input
+                                        label={ t('auth.password') }
+                                        value={ value }
+                                        onChangeText={ onChange }
+                                        secureTextEntry
+                                        showPasswordToggle
+                                        error={ errors.password?.message }
+                                        autoComplete="password"
+                                    />
+                                ) }
+                            />
 
-                <CustomButton
-                    title={ t('auth.googleSignIn') }
-                    onPress={ handleGoogleSignIn }
-                    themeName="white"
-                    disabled={ isSubmitting || isLoading || firebaseLoading }>
-                </CustomButton>
-            </View>
+                            <Text style={ styles.forgotPassword } onPress={ handleForgotPassword }>
+                                { t('auth.forgotPass') }
+                            </Text>
+
+                            <Text style={ [ styles.signUpLink, { paddingBottom: isSmall ? 12 : 20 } ] } onPress={ handleNavigateToSignUp }>
+                                { t('auth.dontHaveAccount') }
+                            </Text>
+                        </View>
+
+            <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
+                            <CustomButton 
+                                title={ t('auth.login') } 
+                                onPress={ handleSubmit(onSubmit) }
+                                disabled={ isSubmitting || isLoading }
+                                loading={ isSubmitting || isLoading }
+                            />
+
+                            <CustomButton 
+                                title={ t('auth.appleSignIn') } 
+                                onPress={ handleAppleSignIn }
+                                themeName="white"
+                                disabled={ isSubmitting || isLoading || firebaseLoading }
+                            >
+                                <AppleIcon fill={ themeName === 'Green' ? 'white' : 'black' }/>
+                            </CustomButton>
+
+                            <CustomButton
+                                title={ t('auth.googleSignIn') }
+                                onPress={ handleGoogleSignIn }
+                                themeName="white"
+                                disabled={ isSubmitting || isLoading || firebaseLoading }>
+                            </CustomButton>
+                        </View>
         </>
     );
 
@@ -223,9 +223,9 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                             } 
                         ] }>
                             {formContent}
-                        </View>
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
             </SafeAreaView>
         );
     }

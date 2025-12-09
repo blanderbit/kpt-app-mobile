@@ -43,7 +43,7 @@ export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLev
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={styles.content}>
+                <View style={styles.content}>
             <View style={isSmall ? theme.flexBlocks.vertical32 : theme.flexBlocks.vertical64}>
                         <View style={theme.flexBlocks.vertical16}>
                             <View>
@@ -78,7 +78,7 @@ export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLev
                             <Image style={styles.pointArrow} source={require('@assets/images/pointing_arrow.png')}/>
                         </View>
                     </View>
-        </View>
+                </View>
     );
 
     return (
@@ -90,7 +90,7 @@ export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLev
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

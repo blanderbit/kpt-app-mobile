@@ -25,14 +25,14 @@ export default function TwelfthStep({onNext}: { onNext: () => void }) {
     }, []);
 
     const content = (
-        <View style={styles.content}>
-            <LottieView
-                source={require('../../../../../assets/Slider.json')}
-                autoPlay
-                loop
-                style={styles.lottie}
-            />
-        </View>
+                <View style={styles.content}>
+                    <LottieView
+                        source={require('../../../../../assets/Slider.json')}
+                        autoPlay
+                        loop
+                        style={styles.lottie}
+                    />
+                </View>
     );
 
     return (
@@ -44,7 +44,7 @@ export default function TwelfthStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}

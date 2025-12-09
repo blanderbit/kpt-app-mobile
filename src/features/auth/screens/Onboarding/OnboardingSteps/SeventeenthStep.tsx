@@ -62,50 +62,50 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     const isSmall = isSmallScreen();
 
     const scrollContent = (
-        <View style={[styles.content, theme.flexBlocks.vertical32]}>
-            <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
-                <View style={theme.flexBlocks.alignCenter}>
-                    <Text style={styles.haveAnAccText}>Already have an account?</Text>
-                    <Pressable onPress={handleLogin}>
-                        <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
-                    </Pressable>
+                <View style={[styles.content, theme.flexBlocks.vertical32]}>
+                    <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
+                        <View style={theme.flexBlocks.alignCenter}>
+                            <Text style={styles.haveAnAccText}>Already have an account?</Text>
+                            <Pressable onPress={handleLogin}>
+                                <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+
+                    <View style={theme.flexBlocks.vertical16}>
+                        <View style={theme.flexBlocks.vertical8}>
+                            <Pressable
+                                style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                                onPress={handleAppleSignIn}
+                                disabled={firebaseLoading}
+                            >
+                                <AppleIcon/>
+
+                                <Text style={styles.logInBtnText}>
+                                    Continue with Apple
+                                </Text>
+                            </Pressable>
+
+                            <Pressable
+                                style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
+                                onPress={handleGoogleSignIn}
+                                disabled={firebaseLoading}
+                            >
+                                <GoogleIcon/>
+
+                                <Text style={styles.logInBtnText}>
+                                    Continue with Google
+                                </Text>
+                            </Pressable>
+                        </View>
+
+                        <CustomButton
+                            title={'Skip'}
+                            onPress={handleSignUp}
+                            themeName={'white_no_border'}
+                        />
+                    </View>
                 </View>
-            </View>
-
-            <View style={theme.flexBlocks.vertical16}>
-                <View style={theme.flexBlocks.vertical8}>
-                    <Pressable
-                        style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                        onPress={handleAppleSignIn}
-                        disabled={firebaseLoading}
-                    >
-                        <AppleIcon/>
-
-                        <Text style={styles.logInBtnText}>
-                            Continue with Apple
-                        </Text>
-                    </Pressable>
-
-                    <Pressable
-                        style={[theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.logInBtn]}
-                        onPress={handleGoogleSignIn}
-                        disabled={firebaseLoading}
-                    >
-                        <GoogleIcon/>
-
-                        <Text style={styles.logInBtnText}>
-                            Continue with Google
-                        </Text>
-                    </Pressable>
-                </View>
-
-                <CustomButton
-                    title={'Skip'}
-                    onPress={handleSignUp}
-                    themeName={'white_no_border'}
-                />
-            </View>
-        </View>
     );
 
     return (
@@ -117,7 +117,7 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {scrollContent}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 scrollContent
             )}

@@ -10,15 +10,15 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
     const isSmall = isSmallScreen();
 
     const content = (
-        <View style={styles.content}>
-            <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8, styles.centerBlock]}>
-                <Image
-                    source={require('@assets/images/onboarding-img.png')}/>
-                <Text style={styles.centerBlockText}>
-                    A few quick questions to better understand your current state and goals 🤝
-                </Text>
-            </View>
-        </View>
+                <View style={styles.content}>
+                    <View style={[theme.flexBlocks.alignCenter, theme.flexBlocks.vertical8, styles.centerBlock]}>
+                        <Image
+                            source={require('@assets/images/onboarding-img.png')}/>
+                        <Text style={styles.centerBlockText}>
+                            A few quick questions to better understand your current state and goals 🤝
+                        </Text>
+                    </View>
+                </View>
     );
 
     return (
@@ -30,7 +30,7 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
                     showsVerticalScrollIndicator={false}
                 >
                     {content}
-                </ScrollView>
+            </ScrollView>
             ) : (
                 content
             )}
