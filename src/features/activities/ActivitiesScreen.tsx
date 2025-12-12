@@ -333,7 +333,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         <TextInput 
                             key={inputKey}
                             ref={inputRef}
-                            style={ [ styles.textInput, { maxWidth: activityMaxWidth } ] }
+                            style={ [ styles.textInput, styles.textInputWithButton ] }
                             placeholder={ t('main.activities.addNewActivity') } 
                             multiline 
                             defaultValue=""
@@ -350,6 +350,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                       onPress={ handleAddNewActivity }
                                       buttonStyle={ {
                                           ...styles.addBtn,
+                                          ...styles.addBtnFixed,
                                           ...(newActivity ? {} : { opacity: 0 }),
                                       } }
                                       contentStyle={ { gap: 4 } }
@@ -386,13 +387,13 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                                 <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                     <Text
-                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
+                                        style={ [ styles.activityTitle, styles.activityTitleWithButton, theme.fonts.activityTitle ] }>
                                         { activity.activityName }
                                     </Text>
 
                                     <CustomButton title={ t('add') }
                                                   onPress={ () => handleAddSuggestedActivity(activity.id) }
-                                                  buttonStyle={ styles.addBtn }
+                                                  buttonStyle={ [ styles.addBtn, styles.addBtnFixed ] }
                                                   contentStyle={ { gap: 4 } }>
                                         <PlusIcon color="#fff" size={ 20 }/>
                                     </CustomButton>
@@ -432,9 +433,9 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                         <Text
                                             style={ [ 
                                                 styles.activityTitle, 
+                                                styles.activityTitleWithButton,
                                                 theme.fonts.activityTitle,
                                                 {
-                                                    maxWidth: activityMaxWidth,
                                                     textDecorationLine: 'line-through',
                                                     opacity: 0.3
                                                 }
@@ -458,7 +459,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                                     }
                                                 });
                                             } }
-                                            buttonStyle={ styles.roundBtn }
+                                            buttonStyle={ [ styles.roundBtn, styles.addBtnFixed ] }
                                             contentStyle={ { gap: 0 } }>
                                             <ArchiveBackIcon color="#fff" size={ 20 }/>
                                         </CustomButton>
@@ -508,6 +509,14 @@ const styles = StyleSheet.create({
     activityTitle: {
         maxWidth: '70%', // Оригинальное значение для средних/больших экранов
     },
+    activityTitleWithButton: {
+        flex: 1,
+        flexShrink: 1,
+        maxWidth: undefined, // Убираем maxWidth когда есть кнопка
+    },
+    addBtnFixed: {
+        flexShrink: 0, // Кнопка не должна сжиматься
+    },
     textInput: {
         backgroundColor: '#F5F5F5',
         fontSize: 20,
@@ -517,6 +526,11 @@ const styles = StyleSheet.create({
         height: '100%',
         minHeight: 28,
         maxHeight: 56
+    },
+    textInputWithButton: {
+        flex: 1,
+        flexShrink: 1,
+        maxWidth: undefined, // Убираем maxWidth когда есть кнопка
     },
     addBtn: {
         width: 'auto',
