@@ -387,6 +387,44 @@ export class LanguageService extends ApiService {
   async getLanguageByCode(code: string): Promise<LanguageResponse> {
     return this.get<LanguageResponse>(`/languages/code/${code}`);
   }
+
+  /**
+   * Получает переводы для языка по коду
+   * Использует поле translations.translations из LanguageResponse (JSON строка)
+   */
+  async getTranslationsByCode(code: string): Promise<Record<string, any>> {
+    try {
+      console.log(`[LanguageService] Fetching language info for code: ${code}`);
+      // Получаем информацию о языке
+      const languageInfo = await this.getLanguageByCode(code);
+      console.log(`[LanguageService] Language info received:`, {
+        code: languageInfo.code,
+        hasTranslations: !!languageInfo.translations?.translations
+      });
+      
+      // Проверяем наличие переводов в ответе
+      if (!languageInfo.translations?.translations) {
+        throw new Error(`No translations found in response for language code: ${code}`);
+      }
+
+      // Парсим JSON строку в объект
+      try {
+        const translations = JSON.parse(languageInfo.translations.translations);
+        console.log(`[LanguageService] ✅ Translations parsed successfully for code: ${code}`);
+        return translations;
+      } catch (parseError) {
+        console.error(`[LanguageService] ❌ Failed to parse translations JSON for code ${code}:`, parseError);
+        throw new Error(`Invalid translations JSON format for language code: ${code}`);
+      }
+    } catch (error: any) {
+      console.error(`[LanguageService] ❌ Error fetching translations for code ${code}:`, {
+        message: error.message,
+        status: error.status || error.response?.status,
+        response: error.response?.data
+      });
+      throw error;
+    }
+  }
 }
 
 // Сервис для подсказок

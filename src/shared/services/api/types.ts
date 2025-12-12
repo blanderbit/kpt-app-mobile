@@ -440,14 +440,27 @@ export interface LanguageResponse {
   isActive: boolean;
   isDefault: boolean;
   version: string;
-  googleDriveFileId: string;
-  googleDriveFileUrl: string;
-  googleDriveFolderId: string;
-  googleDriveFolderUrl: string;
+  googleDriveFileId?: string;
+  googleDriveFileUrl?: string;
+  googleDriveFolderId?: string;
+  googleDriveFolderUrl?: string;
   totalKeys: number;
   totalTranslations: number;
   completionRate: number;
   notes?: string;
+  translations?: {
+    translations: string; // JSON строка с переводами
+    language?: {
+      code: string;
+      name: string;
+      svgLogo?: string;
+      nativeName: string;
+      direction: string;
+      isActive: string;
+      isDefault: string;
+      version: string;
+    };
+  };
   createdBy: string;
   updatedBy: string;
   createdAt: string;
