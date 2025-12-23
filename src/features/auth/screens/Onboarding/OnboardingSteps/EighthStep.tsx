@@ -98,7 +98,7 @@ export default function EighthStep({onNext, onSaveLevels, initialSatisfactionLev
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
                     disabled={ !satisfactionLevel || !hardnessLevel }
-                    title={'Complete'}
+                    title={t('onboarding.buttons.complete')}
                     onPress={() => {
                         if (onSaveLevels && satisfactionLevel && hardnessLevel) {
                             // Преобразуем значения в диапазон 1-100

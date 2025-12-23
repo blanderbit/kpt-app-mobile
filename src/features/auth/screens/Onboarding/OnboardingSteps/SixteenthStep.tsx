@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {StyleSheet, View, Text, Platform, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import * as Notifications from 'expo-notifications';
 import * as Application from 'expo-application';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +15,7 @@ const DEVICE_TOKEN_KEY = 'push_device_token';
 const DEVICE_ID_KEY = 'push_device_id';
 
 export default function SixteenthStep({onNext}: { onNext: () => void }) {
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [isPermissionChecked, setIsPermissionChecked] = useState(false);
     const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'undetermined'>('unknown');
@@ -139,11 +141,11 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <Text style={styles.centerBlockText}>
-                    * Turn off notifications anytime
+                    {t('onboarding.texts.step16NotificationText')}
                 </Text>
 
                 <CustomButton
-                    title={"See my FREE offer"}
+                    title={t('onboarding.buttons.seeMyFreeOffer')}
                     onPress={onNext}
                     disabled={!isPermissionChecked || isPending}
                 />

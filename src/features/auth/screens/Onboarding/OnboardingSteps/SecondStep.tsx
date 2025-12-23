@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, Text, View, Image, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import StarRating from "@shared/components/StarRating/StarRating";
@@ -10,7 +11,7 @@ interface SecondStepProps {
 }
 
 export default function SecondStep({onNext}: SecondStepProps) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -23,19 +24,17 @@ export default function SecondStep({onNext}: SecondStepProps) {
                             </View>
 
                             <Text style={styles.feedbackTitle}>
-                                Life-changing for my balance!
+                                {t('onboarding.texts.step2FeedbackTitle')}
                             </Text>
 
                             <Text style={styles.feedbackInfo}>
-                                "I used to feel scattered between work, family, and personal time, always losing track of
-                                small but important things. Now, with Plesury, I can bring everything into one clear space
-                                and finally feel lighter and focused"
+                                {t('onboarding.texts.step2FeedbackText')}
                             </Text>
                         </View>
 
                         <View
                             style={[theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, styles.personContainer]}>
-                            <Text style={styles.personName}>Jessica M.</Text>
+                            <Text style={styles.personName}>{t('onboarding.texts.step2PersonName')}</Text>
 
                             <Image
                                 style={styles.personPhoto}
@@ -62,7 +61,7 @@ export default function SecondStep({onNext}: SecondStepProps) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
-                    title={'Continue'}
+                    title={t('onboarding.buttons.continue')}
                     onPress={onNext}
                 />
             </View>

@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, Text, View, Pressable, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
@@ -11,7 +12,7 @@ interface FirstStepProps {
 }
 
 export default function FirstStep({ onNext, onBack }: FirstStepProps) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -33,15 +34,15 @@ export default function FirstStep({ onNext, onBack }: FirstStepProps) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
-                    title={ 'Get started' }
+                    title={t('onboarding.buttons.getStarted')}
                     onPress={onNext}
                 />
 
                 <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
                     <View style={theme.flexBlocks.alignCenter}>
-                        <Text style={styles.haveAnAccText}>Already have an account?</Text>
+                        <Text style={styles.haveAnAccText}>{t('onboarding.texts.alreadyHaveAccount')}</Text>
                         <Pressable onPress={onBack}>
-                            <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                            <Text style={[styles.haveAnAccText, styles.logIn]}>{t('onboarding.buttons.logIn')}</Text>
                         </Pressable>
                     </View>
                 </View>

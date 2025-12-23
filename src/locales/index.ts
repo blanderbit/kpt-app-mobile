@@ -45,7 +45,7 @@ async function loadTranslationsFromBackend(languageCode: string): Promise<Record
 /**
  * Инициализирует i18n с переводами с бекенда
  */
-async function initializeI18n() {
+export async function initializeI18n() {
     const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'en';
     const normalizedLanguage = normalizeLanguageCode(deviceLanguage);
     
@@ -86,24 +86,5 @@ async function initializeI18n() {
 
     console.log(`🌐 [i18n] ✅ i18n initialized successfully with language: ${normalizedLanguage.toUpperCase()} (from backend)`);
 }
-
-// Инициализируем асинхронно
-initializeI18n().catch((error) => {
-    console.error('🌐 [i18n] ❌ Critical error initializing i18n:', error);
-    // В случае критической ошибки инициализируем с пустыми ресурсами
-    i18n
-        .use(initReactI18next)
-        .init({
-            compatibilityJSON: "v4",
-            lng: 'en',
-            fallbackLng: 'en',
-            resources: {
-                en: { translation: {} }
-            },
-            interpolation: {
-                escapeValue: false
-            }
-        });
-});
 
 export default i18n;

@@ -132,9 +132,9 @@ export class ApiService {
   }
 
   // Базовый метод для DELETE запросов
-  protected async delete<T>(url: string): Promise<T> {
+  protected async delete<T>(url: string, data?: any): Promise<T> {
     try {
-      const response = await this.client.delete<ApiResponse<T>>(url);
+      const response = await this.client.delete<ApiResponse<T>>(url, { data });
       return response.data;
     } catch (error) {
       this.handleError(error);

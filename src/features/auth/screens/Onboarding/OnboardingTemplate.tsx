@@ -1,6 +1,7 @@
 import React, {useState, useMemo, useEffect, useRef} from 'react';
 import {View, StyleSheet, Pressable, SafeAreaView, Text, ActivityIndicator, Animated} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTranslation} from 'react-i18next';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {COLORS} from "@app/theme";
 import {ArrowIcon} from "@assets/icons/ArrowIcon";
@@ -31,6 +32,7 @@ import { isSmallScreen, getResponsivePadding } from "@shared/utils/screenUtils";
 export default function OnboardingTemplate({
                                                navigation,
                                            }: OnboardingTemplateProps) {
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [currentStep, setCurrentStep] = useState(1);
     const {data: questions, isLoading: questionsLoading} = useOnboardingQuestions();
@@ -296,10 +298,17 @@ export default function OnboardingTemplate({
         // Статические шаги (1-5)
         if (currentStep <= onboardingFirstSectionSteps.length) {
             const stepConfig = onboardingFirstSectionSteps.find(step => step.id === currentStep);
-            if (stepConfig && currentStep === 2) {
+            if (stepConfig) {
+                // Для step2 с hasStyledNumber не применяем перевод здесь, сделаем это в рендере
+                if (stepConfig.hasStyledNumber) {
+                    return stepConfig;
+                }
+                const translatedTitle = stepConfig.title ? t(stepConfig.title) : undefined;
+                const translatedInfoText = stepConfig.infoText ? t(stepConfig.infoText) : undefined;
                 return {
                     ...stepConfig,
-                    title: stepConfig.title?.replace('{count}', count.toString()),
+                    title: translatedTitle,
+                    infoText: translatedInfoText,
                 };
             }
             return stepConfig;
@@ -332,40 +341,136 @@ export default function OnboardingTemplate({
         const seventeenthStepNumber = 6 + questionsCount + 11;
 
         if (currentStep === sixthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 6);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 6);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === seventhStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 7);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 7);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === eighthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 8);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 8);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === ninthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 9);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 9);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === tenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 10);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 10);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === eleventhStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 11);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 11);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === twelfthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 12);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 12);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === thirteenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 13);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 13);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === fourteenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 14);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 14);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === fifteenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 15);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 15);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === sixteenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 16);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 16);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         if (currentStep === seventeenthStepNumber) {
-            return onboardingSecondSectionSteps.find(step => step.id === 17);
+            const stepConfig = onboardingSecondSectionSteps.find(step => step.id === 17);
+            if (stepConfig) {
+                return {
+                    ...stepConfig,
+                    title: stepConfig.title ? t(stepConfig.title) : undefined,
+                    infoText: stepConfig.infoText ? t(stepConfig.infoText) : undefined,
+                };
+            }
+            return stepConfig;
         }
         
         return null;
@@ -681,11 +786,21 @@ export default function OnboardingTemplate({
                                         <View style={[styles.head, theme.flexBlocks.vertical8, stepConfig.id === 14 ? { flexDirection: 'column-reverse' } : {}]}>
                                             {stepConfig.title && (
                                                 <Text style={[styles.title, {...theme.fonts.title}]}>
-                                                    {stepConfig.hasStyledNumber ? (
-                                                        <>
-                                                            We've helped <Text style={{color: COLORS.warning}}>17,000</Text> busy minds feel more balanced
-                                                        </>
-                                                    ) : (
+                                                    {stepConfig.hasStyledNumber ? (() => {
+                                                        const translatedTitle = t('onboarding.step2.title', {count: count.toString()});
+                                                        const countStr = count.toString();
+                                                        const parts = translatedTitle.split(countStr);
+                                                        if (parts.length === 2) {
+                                                            return (
+                                                                <>
+                                                                    {parts[0]}
+                                                                    <Text style={{color: COLORS.warning}}>{countStr}</Text>
+                                                                    {parts[1]}
+                                                                </>
+                                                            );
+                                                        }
+                                                        return translatedTitle;
+                                                    })() : (
                                                         stepConfig.title
                                                     )}
                                                 </Text>

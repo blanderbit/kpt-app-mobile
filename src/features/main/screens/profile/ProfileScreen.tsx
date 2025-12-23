@@ -15,7 +15,7 @@ import { ProfileScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { useAuth } from "@app/hooks/auth.hook";
 import { useProfile } from "@app/hooks/profile.hook";
-import { useDeleteAccount, useMoodForLast7Days } from "@shared/services/api";
+import { useDeleteAccount, useMoodForLast7Days, useAnalyticsOverview } from "@shared/services/api";
 import { LoadingSpinner } from "@shared/components/LoadingSpinner/LoadingSpinner";
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 import { AutoPageTooltips } from '@shared/components/AutoPageTooltips';
@@ -28,9 +28,16 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
     const { profile, isLoading, error, refreshProfile } = useProfile();
     const deleteAccount = useDeleteAccount();
     const { data: moodData, isLoading: isLoadingMood } = useMoodForLast7Days();
-
-    const [ satisfaction, setSatisfaction ] = useState(75)
-    const [ achieveness, setAchieveness ] = useState(25)
+    
+    // Загружаем аналитику профиля (за все время, без параметров дат)
+    const { data: analyticsData, isLoading: isLoadingAnalytics } = useAnalyticsOverview();
+    
+    // Получаем данные из аналитики или используем значения по умолчанию
+    // Округляем до целых чисел для отображения
+    const satisfaction = Math.round(analyticsData?.rateActivityAverages?.satisfactionLevel || 0);
+    const achieveness = Math.round(analyticsData?.rateActivityAverages?.hardnessLevel || 0);
+    const daysStreak = analyticsData?.completedTasksDays || 0;
+    const tasksCompleted = analyticsData?.completedTasksCount || 0;
 
     // Событие: загрузка странички профиля
     useEffect(() => {
@@ -236,17 +243,21 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                 style={ [ styles.progressMain, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter ] }>
                                 <Progress leftPercent={ satisfaction } rightPercent={ achieveness }/>
 
-                                <View style={ theme.flexBlocks.vertical16 }>
+                                <View style={ [ theme.flexBlocks.vertical16, { flex: 1, maxWidth: '50%', marginLeft: 8 } ] }>
                                     <View style={ theme.flexBlocks.vertical8 }>
-                                        <View style={ theme.flexBlocks.horizontal4 }>
+                                        <View style={ [ theme.flexBlocks.horizontal4, { flexShrink: 1 } ] }>
                                             <LinearGradient
                                                 colors={ [ '#DD583D', '#FFC372' ] }
                                                 start={ { x: 0, y: 0 } }
                                                 end={ { x: 1, y: 0 } }
-                                                style={ { width: 18, height: 18, borderRadius: 50 } }
+                                                style={ { width: 18, height: 18, borderRadius: 50, flexShrink: 0 } }
                                             />
 
-                                            <Text style={ theme.fonts.subtitle }>
+                                            <Text 
+                                                style={ [ theme.fonts.subtitle, { flexShrink: 1 } ] }
+                                                numberOfLines={ 2 }
+                                                ellipsizeMode="tail"
+                                            >
                                                 { t('main.today.weekTotal.satisfaction') }
                                             </Text>
                                         </View>
@@ -255,15 +266,19 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                     </View>
 
                                     <View style={ theme.flexBlocks.vertical8 }>
-                                        <View style={ theme.flexBlocks.horizontal4 }>
+                                        <View style={ [ theme.flexBlocks.horizontal4, { flexShrink: 1 } ] }>
                                             <LinearGradient
                                                 colors={ [ '#CA21D0', '#810085' ] }
                                                 start={ { x: 0, y: 0 } }
                                                 end={ { x: 1, y: 0 } }
-                                                style={ { width: 18, height: 18, borderRadius: 50 } }
+                                                style={ { width: 18, height: 18, borderRadius: 50, flexShrink: 0 } }
                                             />
 
-                                            <Text style={ theme.fonts.subtitle }>
+                                            <Text 
+                                                style={ [ theme.fonts.subtitle, { flexShrink: 1 } ] }
+                                                numberOfLines={ 2 }
+                                                ellipsizeMode="tail"
+                                            >
                                                 { t('main.today.weekTotal.achieveness') }
                                             </Text>
                                         </View>
@@ -278,7 +293,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                 <View
                                     style={ [ styles.progressCounter, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, { flex: 1 } ] }>
                                     <Text style={ theme.fonts.titleSecond }>
-                                        14
+                                        { isLoadingAnalytics ? '...' : daysStreak }
                                     </Text>
 
                                     <Text style={ styles.progressLabel }>
@@ -289,7 +304,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                 <View
                                     style={ [ styles.progressCounter, theme.flexBlocks.alignCenter, theme.flexBlocks.justifyCenter, theme.flexBlocks.vertical4, { flex: 1 } ] }>
                                     <Text style={ theme.fonts.titleSecond }>
-                                        24
+                                        { isLoadingAnalytics ? '...' : tasksCompleted }
                                     </Text>
 
                                     <Text style={ styles.progressLabel }>

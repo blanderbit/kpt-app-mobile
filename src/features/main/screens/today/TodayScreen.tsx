@@ -36,6 +36,7 @@ import { InfoPopup } from '@shared/components/InfoPopup/InfoPopup';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
 import { useRandomArticle, useRandomSurvey, useMyActivities, useCloseActivity, useActivityStatistics } from '@shared/services/api/hooks';
 import { amplitudeAnalyticsService } from '@shared/services/analytics';
+import { JoyfulIcon } from '@assets/icons/smiles/JoyfulIcon';
 
 const circleSize = 16;
 
@@ -259,46 +260,65 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                     </View>
 
                     <View style={ styles.activitySections }>
-                        { activitySections.map((section, index) => (
-                            <View
-                                key={ index }
-                                style={ {
-                                    ...styles.activitySection,
-                                    ...(index !== activitySections.length - 1
-                                        ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
-                                        : {}),
-                                } }
-                            >
-                                <ActivityLabel
-                                    id={section.activityType}
-                                />
-
-                                <Pressable 
-                                    style={ styles.activityContent } 
-                                    onPress={ () => onSectionClick(section) }
-                                    disabled={ section.done }
-                                >
-                                    <Text
-                                        style={ [ 
-                                            styles.activityTitle, 
-                                            theme.fonts.subheader, 
-                                            section.done ? {
-                                                ...styles.activitySectionDone,
-                                                textDecorationLine: 'line-through',
-                                                opacity: 0.3
-                                            } : {} 
-                                        ] }>
-                                        { section.activityName }
+                        { activitySections.length === 0 ? (
+                            <View style={ styles.emptyActivityContainer }>
+                                <JoyfulIcon />
+                                <View style={ styles.emptyActivityTextContainer }>
+                                    <Text style={ [ theme.fonts.subheader, styles.emptyActivityText ] }>
+                                        { t('main.today.activity.empty.title') }
                                     </Text>
-
-                                    {
-                                        section.done ?
-                                            <SemiCircleSplit valueA={ section.satisfactionLevel } valueB={ section.hardnessLevel }/> :
-                                            <AddButton done/>
-                                    }
-                                </Pressable>
+                                    <Text style={ [ theme.fonts.subheader, styles.emptyActivityText ] }>
+                                        { t('main.today.activity.empty.description') }
+                                    </Text>
+                                </View>
+                                <CustomButton
+                                    title={ t('main.today.activity.empty.button') }
+                                    onPress={ () => navigation.navigate(Routes.ACTIVITIES) }
+                                    themeName="primary"
+                                />
                             </View>
-                        )) }
+                        ) : (
+                            activitySections.map((section, index) => (
+                                <View
+                                    key={ index }
+                                    style={ {
+                                        ...styles.activitySection,
+                                        ...(index !== activitySections.length - 1
+                                            ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                            : {}),
+                                    } }
+                                >
+                                    <ActivityLabel
+                                        id={section.activityType}
+                                    />
+
+                                    <Pressable 
+                                        style={ styles.activityContent } 
+                                        onPress={ () => onSectionClick(section) }
+                                        disabled={ section.done }
+                                    >
+                                        <Text
+                                            style={ [ 
+                                                styles.activityTitle, 
+                                                theme.fonts.subheader, 
+                                                section.done ? {
+                                                    ...styles.activitySectionDone,
+                                                    textDecorationLine: 'line-through',
+                                                    opacity: 0.3
+                                                } : {} 
+                                            ] }>
+                                            { section.activityName }
+                                        </Text>
+
+                                        {
+                                            section.done ?
+                                                <SemiCircleSplit valueA={ section.satisfactionLevel } valueB={ section.hardnessLevel }/> :
+                                                <AddButton done/>
+                                        }
+                                    </Pressable>
+                                </View>
+                            ))
+                        ) }
                     </View>
                 </View>
 
@@ -608,5 +628,24 @@ const styles = StyleSheet.create({
     additionalTaskSectionsTitle: {
         paddingVertical: 8,
         paddingHorizontal: 16
+    },
+    emptyActivityContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 16,
+        gap: 16
+    },
+    emptyActivityTextContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 0
+    },
+    emptyActivityText: {
+        textAlign: 'center',
+        color: '#000000',
+        fontWeight: '600'
     }
 });

@@ -21,30 +21,30 @@ import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/S
 export const onboardingFirstSectionSteps: OnboardingStep[] = [
     {
         id: 1,
-        title: "Welcome to Plesury",
-        infoText: "Choose ready-made or create you own tasks, activities and habits. Track achievement and satisfaction. Discover your balance!",
+        title: "onboarding.step1.title",
+        infoText: "onboarding.step1.infoText",
         content: (<FirstStep onNext={() => {}} onBack={() => {}} />)
     },
     {
         id: 2,
-        title: "We've helped {count} busy minds feel more balanced",
+        title: "onboarding.step2.title",
         hasStyledNumber: true,
         content: (<SecondStep onNext={() => {}} />)
     },
     {
         id: 3,
-        title: "That's great!",
-        infoText: "93% of users report Plesury has seamlessly helped them to stay balanced and live fulfilled life.",
+        title: "onboarding.step3.title",
+        infoText: "onboarding.step3.infoText",
         content: (<ThirdStep onNext={() => {}} />)
     },
     {
         id: 4,
-        title: "What's your current mood?",
+        title: "onboarding.step4.title",
         content: (<FourthStep onNext={() => {}} />)
     },
     {
         id: 5,
-        title: "How did you hear about us?",
+        title: "onboarding.step5.title",
         content: (<FifthStep onNext={() => {}} />)
     }
 ]
@@ -52,68 +52,68 @@ export const onboardingFirstSectionSteps: OnboardingStep[] = [
 export const onboardingSecondSectionSteps: OnboardingStep[] = [
     {
         id: 6,
-        title: "Awesome",
-        infoText: "With Plesury you don't need to put too much time to track your achievement and satisfaction level.",
+        title: "onboarding.step6.title",
+        infoText: "onboarding.step6.infoText",
         content: (<SixthStep onNext={() => {}} />)
     },
     {
         id: 7,
-        title: "Add your first challenge",
-        infoText: "It can be any task, activity or habit you want to track. One-time or repetitive - it doesn't matter.",
+        title: "onboarding.step7.title",
+        infoText: "onboarding.step7.infoText",
         content: (<SeventhStep onNext={() => {}} />)
     },
     {
         id: 8,
-        title: "Good job! 👏",
-        infoText: "Now, rate your activity using these metrics:",
+        title: "onboarding.step8.title",
+        infoText: "onboarding.step8.infoText",
         content: (<EighthStep onNext={() => {}} />)
     },
     {
         id: 9,
-        title: "Task completed successfully!",
-        infoText: "That was easy, right? 😊",
+        title: "onboarding.step9.title",
+        infoText: "onboarding.step9.infoText",
         content: (<NinthStep onNext={() => {}} />)
     },
     {
         id: 10,
-        title: "How old are you?",
+        title: "onboarding.step10.title",
         content: (<TenthStep onNext={() => {}} />)
     },
     {
         id: 11,
-        title: "How do you usually track your tasks, activities and goals to find balance in your life?",
+        title: "onboarding.step11.title",
         content: (<EleventhStep onNext={() => {}} />)
     },
     {
         id: 12,
-        title: "Noted! We're setting everything up for you",
+        title: "onboarding.step12.title",
         content: (<TwelfthStep onNext={() => {}} />)
     },
     {
         id: 13,
-        title: "Balance your life with Plesury",
+        title: "onboarding.step13.title",
         content: (<ThirteenthStep onNext={() => {}} />)
     },
     {
         id: 14,
-        title: "But we'd love for you to try Plesury Plus for 7 days free too!",
-        infoText: "Plesury is free to use",
+        title: "onboarding.step14.title",
+        infoText: "onboarding.step14.infoText",
         content: (<FourteenthStep onNext={() => {}} />)
     },
     {
         id: 15,
-        title: "Free to cancel anytime",
-        infoText: "We'll remind you 2 days before you're charged",
+        title: "onboarding.step15.title",
+        infoText: "onboarding.step15.infoText",
         content: (<FifteenthStep onNext={() => {}} />)
     },
     {
         id: 16,
-        title: "Tap Allow to get a reminder",
+        title: "onboarding.step16.title",
         content: (<SixteenthStep onNext={() => {}} />)
     },
     {
         id: 17,
-        title: "Create an account",
+        title: "onboarding.step17.title",
         content: (<SeventeenthStep onNext={() => {}} />)
     },
 ]

@@ -4,7 +4,6 @@ import { AuthProvider } from "@features/auth/AuthProvider";
 import { ProfileProvider } from "@features/profile/ProfileProvider";
 import { QueryProvider } from "@shared/services/query/QueryProvider";
 import { useFonts } from "expo-font";
-import "../locales";
 import { ThemeProvider, useCustomTheme } from "@app/theme/ThemeContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppNavigator } from "@app/navigation/AppNavigator";
@@ -15,6 +14,7 @@ import { Routes } from "@app/navigation/const";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { appsFlyerService } from "@shared/services/appsflyer";
 import { configureGoogleSignIn } from "@features/auth/screens/firebaseAuth";
+import { TranslationsProvider } from "@app/translations/TranslationsProvider";
 // import { revenueCatService } from "@shared/services/revenuecat";
 // import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
@@ -121,19 +121,21 @@ export default function App() {
     if ( !fontsLoaded ) return null;
 
     return (
-        <QueryProvider>
-            <ProfileProvider>
-                <AuthProvider>
-                    <ThemeProvider>
-                        <ToastProvider>
-                            <SubscriptionOfferingProvider>
-                                <MainApp/>
-                            </SubscriptionOfferingProvider>
-                        </ToastProvider>
-                    </ThemeProvider>
-                </AuthProvider>
-            </ProfileProvider>
-        </QueryProvider>
+        <TranslationsProvider>
+            <QueryProvider>
+                <ProfileProvider>
+                    <AuthProvider>
+                        <ThemeProvider>
+                            <ToastProvider>
+                                <SubscriptionOfferingProvider>
+                                    <MainApp/>
+                                </SubscriptionOfferingProvider>
+                            </ToastProvider>
+                        </ThemeProvider>
+                    </AuthProvider>
+                </ProfileProvider>
+            </QueryProvider>
+        </TranslationsProvider>
     );
 }
 

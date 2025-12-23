@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, Text, View, ActivityIndicator, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {ActivityRecommendation} from "@shared/services/api/types";
@@ -28,6 +29,7 @@ export default function NinthStep({
     hasRequiredData,
     onAddToMyList,
 }: NinthStepProps) {
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -49,7 +51,7 @@ export default function NinthStep({
                 <SuggestedActivitiesIcon/>
 
                 <Text style={theme.fonts.subtitle}>
-                    Suggested activities
+                    {t('onboarding.texts.step9SuggestedActivities')}
                 </Text>
             </View>
 
@@ -128,7 +130,7 @@ export default function NinthStep({
         <View style={styles.container}>
             <View style={[styles.content, { gap: isSmall ? getResponsiveGap(16) : 16 }]}>
                     <Text style={styles.suggestingText}>
-                        Based on your previous answers we prepared a few first tasks and activities for you.
+                        {t('onboarding.texts.step9SuggestingText')}
                     </Text>
 
                     {isLoading && (
@@ -140,7 +142,7 @@ export default function NinthStep({
                     {!isLoading && showMissingData && (
                     <View style={[styles.messageCard, theme.containers.cardRound, { gap: isSmall ? getResponsiveGap(12) : 12 }]}>
                             <Text style={[styles.messageText, theme.fonts.body]}>
-                                Please complete previous steps so we can generate tailored activities for you.
+                                {t('onboarding.texts.step9MissingDataText')}
                             </Text>
                         </View>
                     )}
@@ -152,7 +154,7 @@ export default function NinthStep({
                             </Text>
 
                             <CustomButton
-                                title={'Try again'}
+                                title={t('onboarding.buttons.tryAgain')}
                                 onPress={onRetry}
                                 themeName={'white_no_border'}
                                 buttonStyle={styles.retryButton}
@@ -163,11 +165,11 @@ export default function NinthStep({
                     {!isLoading && showEmptyState && (
                     <View style={[styles.messageCard, theme.containers.cardRound, { gap: isSmall ? getResponsiveGap(12) : 12 }]}>
                             <Text style={[styles.messageText, theme.fonts.body]}>
-                                We couldn't prepare recommendations right now. Try again in a moment.
+                                {t('onboarding.texts.step9EmptyStateText')}
                             </Text>
 
                             <CustomButton
-                                title={'Try again'}
+                                title={t('onboarding.buttons.tryAgain')}
                                 onPress={onRetry}
                                 themeName={'white_no_border'}
                                 buttonStyle={styles.retryButton}
@@ -180,7 +182,7 @@ export default function NinthStep({
 
             <View style={theme.flexBlocks.vertical4}>
                 <CustomButton
-                    title={'Add to my list'}
+                    title={t('onboarding.buttons.addToMyList')}
                     onPress={() => {
                         if (hasRecommendations && onAddToMyList) {
                             onAddToMyList(recommendations);
@@ -192,7 +194,7 @@ export default function NinthStep({
                 />
 
                 <CustomButton
-                    title={'Skip'}
+                    title={t('onboarding.buttons.skip')}
                     onPress={onNext}
                     themeName={'white_no_border'}
                 />

@@ -65,9 +65,9 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                 <View style={[styles.content, theme.flexBlocks.vertical32]}>
                     <View style={[theme.flexBlocks.alignCenter, styles.haveAnAccSection]}>
                         <View style={theme.flexBlocks.alignCenter}>
-                            <Text style={styles.haveAnAccText}>Already have an account?</Text>
+                            <Text style={styles.haveAnAccText}>{t('onboarding.texts.alreadyHaveAccount')}</Text>
                             <Pressable onPress={handleLogin}>
-                                <Text style={[styles.haveAnAccText, styles.logIn]}>Log in</Text>
+                                <Text style={[styles.haveAnAccText, styles.logIn]}>{t('onboarding.buttons.logIn')}</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -82,7 +82,7 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                                 <AppleIcon/>
 
                                 <Text style={styles.logInBtnText}>
-                                    Continue with Apple
+                                    {t('onboarding.texts.step17ContinueWithApple')}
                                 </Text>
                             </Pressable>
 
@@ -94,13 +94,13 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                                 <GoogleIcon/>
 
                                 <Text style={styles.logInBtnText}>
-                                    Continue with Google
+                                    {t('onboarding.texts.step17ContinueWithGoogle')}
                                 </Text>
                             </Pressable>
                         </View>
 
                         <CustomButton
-                            title={'Skip'}
+                            title={t('onboarding.buttons.skip')}
                             onPress={handleSignUp}
                             themeName={'white_no_border'}
                         />
@@ -130,8 +130,7 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
                 `}/>
 
                 <Text style={[theme.fonts.regular, styles.bottomText]}>
-                    Your information is 100% secure. We don't sell your personal information. By submitting your email
-                    address, you agree with our Terms and Privacy.
+                    {t('onboarding.texts.step17SecurityText')}
                 </Text>
             </View>
         </View>

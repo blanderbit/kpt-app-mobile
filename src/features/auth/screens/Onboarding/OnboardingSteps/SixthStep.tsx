@@ -1,11 +1,12 @@
 import React from "react";
 import {StyleSheet, Text, View, Image, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function SixthStep({onNext}: { onNext: () => void }) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -15,7 +16,7 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
                         <Image
                             source={require('@assets/images/onboarding-awesome.png')}/>
                         <Text style={styles.centerBlockText}>
-                            Let's discover how it works!
+                            {t('onboarding.texts.step6Text')}
                         </Text>
                     </View>
                 </View>
@@ -37,7 +38,7 @@ export default function SixthStep({onNext}: { onNext: () => void }) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
-                    title={'Show me how'}
+                    title={t('onboarding.buttons.showMeHow')}
                     onPress={onNext}
                 />
             </View>
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     },
     centerBlock: {
         paddingVertical: 20,
-        gap: 32
+        gap: 16
     },
     centerBlockText: {
         fontFamily: 'SF Pro Display Bold',

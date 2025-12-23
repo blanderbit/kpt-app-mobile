@@ -3,6 +3,11 @@
     "title": "Home screen",
     "welcome": "Welcome, {{name}}!"
   },
+  "tabs": {
+    "today": "Today",
+    "activities": "Activities",
+    "profile": "Profile"
+  },
   "auth": {
     "login": "Log in",
     "logout": "Log out",
@@ -121,6 +126,11 @@
         "healthcare": {
           "label": "Healthcare",
           "info": "Eat vegetables for breakfast"
+        },
+        "empty": {
+          "title": "You're awesome, you've completed everything",
+          "description": "If you want, add new activities for today",
+          "button": "Add new activities"
         }
       },
       "additionalTasks": {
@@ -259,5 +269,111 @@
   "next": "Next",
   "add": "Add",
   "cancel": "Cancel",
-  "approve": "Approve"
+  "approve": "Approve",
+  "onboarding": {
+    "step1": {
+      "title": "Welcome to Plesury",
+      "infoText": "Choose ready-made or create you own tasks, activities and habits. Track achievement and satisfaction. Discover your balance!"
+    },
+    "step2": {
+      "title": "We've helped {{count}} busy minds feel more balanced"
+    },
+    "step3": {
+      "title": "That's great!",
+      "infoText": "93% of users report Plesury has seamlessly helped them to stay balanced and live fulfilled life."
+    },
+    "step4": {
+      "title": "What's your current mood?"
+    },
+    "step5": {
+      "title": "How did you hear about us?"
+    },
+    "step6": {
+      "title": "Awesome",
+      "infoText": "With Plesury you don't need to put too much time to track your achievement and satisfaction level."
+    },
+    "step7": {
+      "title": "Add your first challenge",
+      "infoText": "It can be any task, activity or habit you want to track. One-time or repetitive - it doesn't matter."
+    },
+    "step8": {
+      "title": "Good job! 👏",
+      "infoText": "Now, rate your activity using these metrics:"
+    },
+    "step9": {
+      "title": "Task completed successfully!",
+      "infoText": "That was easy, right? 😊"
+    },
+    "step10": {
+      "title": "How old are you?"
+    },
+    "step11": {
+      "title": "How do you usually track your tasks, activities and goals to find balance in your life?"
+    },
+    "step12": {
+      "title": "Noted! We're setting everything up for you"
+    },
+    "step13": {
+      "title": "Balance your life with Plesury"
+    },
+    "step14": {
+      "title": "But we'd love for you to try Plesury Plus for 7 days free too!",
+      "infoText": "Plesury is free to use"
+    },
+    "step15": {
+      "title": "Free to cancel anytime",
+      "infoText": "We'll remind you 2 days before you're charged"
+    },
+    "step16": {
+      "title": "Tap Allow to get a reminder"
+    },
+    "step17": {
+      "title": "Create an account"
+    },
+    "buttons": {
+      "getStarted": "Get started",
+      "continue": "Continue",
+      "skip": "Skip",
+      "addToMyList": "Add to my list",
+      "tryAgain": "Try again",
+      "logIn": "Log in",
+      "showMeHow": "Show me how",
+      "complete": "Complete",
+      "seeMyFreeOffer": "See my FREE offer"
+    },
+    "texts": {
+      "alreadyHaveAccount": "Already have an account?",
+      "step2FeedbackTitle": "Life-changing for my balance!",
+      "step2FeedbackText": "I used to feel scattered between work, family, and personal time, always losing track of small but important things. Now, with Plesury, I can bring everything into one clear space and finally feel lighter and focused",
+      "step2PersonName": "Jessica M.",
+      "step3QuestionsText": "A few quick questions to better understand your current state and goals 🤝",
+      "step9SuggestingText": "Based on your previous answers we prepared a few first tasks and activities for you.",
+      "step9SuggestedActivities": "Suggested activities",
+      "step9MissingDataText": "Please complete previous steps so we can generate tailored activities for you.",
+      "step9EmptyStateText": "We couldn't prepare recommendations right now. Try again in a moment.",
+      "step13Text": "You're on your way! Watch as your daily habits shift and your life feels more balanced.",
+      "step17ContinueWithApple": "Continue with Apple",
+      "step17ContinueWithGoogle": "Continue with Google",
+      "step17SecurityText": "Your information is 100% secure. We don't sell your personal information. By submitting your email address, you agree with our Terms and Privacy.",
+      "step6Text": "Let's discover how it works!",
+      "step16NotificationText": "* Turn off notifications anytime",
+      "ageOptions": {
+        "24AndUnder": "24 and under",
+        "25to34": "25-34",
+        "35to44": "35-44",
+        "45to55": "45-55",
+        "55Plus": "55+"
+      },
+      "taskTrackingOptions": {
+        "healthBody": "Health & body",
+        "healthBodySubtitle": "Physical wellness and fitness",
+        "productivityFocus": "Productivity & focus",
+        "productivityFocusSubtitle": "Getting more done with better concentration",
+        "emotionalWellbeing": "Emotional well-being",
+        "emotionalWellbeingSubtitle": "Mental health and emotional balance",
+        "relationshipsSocial": "Relationships & social life",
+        "relationshipsSocialSubtitle": "Connections with others and social fulfillment"
+      }
+    }
+  }
 }

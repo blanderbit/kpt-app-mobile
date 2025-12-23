@@ -1,11 +1,12 @@
 import React from "react";
 import {StyleSheet, Text, View, Image, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function ThirdStep({onNext}: { onNext: () => void }) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -15,7 +16,7 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
                         <Image
                             source={require('@assets/images/onboarding-img.png')}/>
                         <Text style={styles.centerBlockText}>
-                            A few quick questions to better understand your current state and goals 🤝
+                            {t('onboarding.texts.step3QuestionsText')}
                         </Text>
                     </View>
                 </View>
@@ -37,7 +38,7 @@ export default function ThirdStep({onNext}: { onNext: () => void }) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
-                    title={'Continue'}
+                    title={t('onboarding.buttons.continue')}
                     onPress={onNext}
                 />
             </View>

@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, View, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
@@ -7,6 +8,7 @@ import {REMINDER_SVG} from "@features/auth/screens/Onboarding/OnboardingSteps/ic
 import { isSmallScreen } from "@shared/utils/screenUtils";
 
 export default function FifteenthStep({onNext}: { onNext: () => void }) {
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -31,7 +33,7 @@ export default function FifteenthStep({onNext}: { onNext: () => void }) {
             )}
 
             <CustomButton
-                title={'See my FREE offer'}
+                title={t('onboarding.buttons.seeMyFreeOffer')}
                 onPress={onNext}
             />
         </View>

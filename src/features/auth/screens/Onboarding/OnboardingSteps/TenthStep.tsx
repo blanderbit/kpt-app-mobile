@@ -1,36 +1,37 @@
 import React, {useMemo} from "react";
 import {StyleSheet, View, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {SectionItem} from "@shared/components/SectionItem/SectionItem";
 import {ONBOARDING_KEYS} from "@shared/utils/onboardingStorage";
 
 export default function TenthStep({onNext}: { onNext: () => void }) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
 
     const ageQuestions = useMemo(() => [
         {
             id: 1,
-            name: '24 and under',
+            name: t('onboarding.texts.ageOptions.24AndUnder'),
         },
         {
             id: 2,
-            name: '25-34',
+            name: t('onboarding.texts.ageOptions.25to34'),
         },
         {
             id: 3,
-            name: '35-44',
+            name: t('onboarding.texts.ageOptions.35to44'),
         },
         {
             id: 4,
-            name: '45-55',
+            name: t('onboarding.texts.ageOptions.45to55'),
         },
         {
             id: 5,
-            name: '55+',
+            name: t('onboarding.texts.ageOptions.55Plus'),
         }
-    ], []);
+    ], [t]);
 
     const saveData = async (age: string) => {
         try {

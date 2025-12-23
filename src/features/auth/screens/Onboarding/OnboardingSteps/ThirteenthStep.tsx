@@ -1,5 +1,6 @@
 import React from "react";
 import {StyleSheet, Text, View, ScrollView} from "react-native";
+import {useTranslation} from 'react-i18next';
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
@@ -32,6 +33,7 @@ const BALANCE_CHART_SVG = `
 `
 
 export default function ThirteenthStep({onNext}: { onNext: () => void }) {
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const isSmall = isSmallScreen();
 
@@ -41,7 +43,7 @@ export default function ThirteenthStep({onNext}: { onNext: () => void }) {
                         <RemoteSvg xml={BALANCE_CHART_SVG}/>
 
                         <Text style={styles.centerBlockText}>
-                            You're on your way! Watch as your daily habits shift and your life feels more balanced.
+                            {t('onboarding.texts.step13Text')}
                         </Text>
                     </View>
                 </View>
@@ -63,7 +65,7 @@ export default function ThirteenthStep({onNext}: { onNext: () => void }) {
 
             <View style={theme.flexBlocks.vertical8}>
                 <CustomButton
-                    title={'Continue'}
+                    title={t('onboarding.buttons.continue')}
                     onPress={onNext}
                 />
             </View>

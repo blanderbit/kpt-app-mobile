@@ -1,6 +1,7 @@
 // BottomSwitcher.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import ActivitiesIcon from "@assets/icons/ActivitiesIcon";
 import ProfileIcon from "@assets/icons/ProfileIcon";
 import HomeIcon from "@assets/icons/HomeIcon";
@@ -12,13 +13,15 @@ interface BottomSwitcherProps {
     onChange?: (tab: Tab) => void;
 }
 
-const modes = [
-    { label: 'Today', icon: <HomeIcon /> },
-    { label: 'Activities', icon: <ActivitiesIcon /> },
-    { label: 'Profile', icon: <ProfileIcon /> }
-]
-
 export const BottomSwitcher: React.FC<BottomSwitcherProps> = ({ activeTab = 'Today', onChange }) => {
+    const { t } = useTranslation();
+
+    const modes = [
+        { label: 'Today', translationKey: 'tabs.today', icon: <HomeIcon /> },
+        { label: 'Activities', translationKey: 'tabs.activities', icon: <ActivitiesIcon /> },
+        { label: 'Profile', translationKey: 'tabs.profile', icon: <ProfileIcon /> }
+    ];
+
     const handlePress = (tab: Tab) => {
         onChange?.(tab);
     };
@@ -40,7 +43,7 @@ export const BottomSwitcher: React.FC<BottomSwitcherProps> = ({ activeTab = 'Tod
                             style={[styles.tabText, activeTab === tab.label && styles.activeTabText]}
                             numberOfLines={1}
                         >
-                            {tab.label}
+                            {t(tab.translationKey)}
                         </Text>
                     </Pressable>
                 ))}

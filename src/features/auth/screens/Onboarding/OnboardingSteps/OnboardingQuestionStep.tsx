@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {StyleSheet, Text, View, ScrollView, ActivityIndicator} from "react-native";
+import {useTranslation} from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
@@ -15,7 +16,7 @@ interface OnboardingQuestionStepProps {
 }
 
 export default function OnboardingQuestionStep({questionIndex, onNext}: OnboardingQuestionStepProps) {
-
+    const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const {data: questions, isLoading} = useOnboardingQuestions();
 
@@ -126,7 +127,7 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
             {!!selectedAnswers.length && currentQuestion?.inputType === 'multiple' && (
                 <View style={styles.formBottom}>
                     <CustomButton
-                        title={'Continue'}
+                        title={t('onboarding.buttons.continue')}
                         onPress={() => onNext(currentQuestion, selectedAnswers)}
                     />
                 </View>
