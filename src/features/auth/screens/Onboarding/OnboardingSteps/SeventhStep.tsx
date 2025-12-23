@@ -28,7 +28,7 @@ export default function SeventhStep({onNext}: { onNext: () => void }) {
 
                                 <View style={ [ theme.flexBlocks.alignCenter, styles.activityContent ] }>
                                     <Text
-                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: isSmall ? getResponsiveActivityMaxWidth() : '70%' } ] }>
+                                        style={ [ styles.activityTitle, theme.fonts.activityTitle ] }>
                                         { t("main.today.activity.sportActivity.info") }
                                     </Text>
 
@@ -99,14 +99,16 @@ const styles = StyleSheet.create({
     },
     activityContent: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
         gap: 16
     },
     activityTitle: {
-        maxWidth: '70%', // Оригинальное значение для средних/больших экранов
+        flex: 1,
+        flexShrink: 1,
     },
     addBtn: {
         width: 'auto',
+        flexShrink: 0,
         paddingVertical: 8,
         paddingHorizontal: 12,
         height: 'auto',

@@ -17,15 +17,15 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
             <View style={[styles.content, theme.flexBlocks.vertical16]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
-                        􀆅 One-time offer!
+                        􀆅 {t('subscriptionOffering.secondTrial.oneTimeOffer')}
                     </Text>
 
                     <Text style={[styles.textCenter, theme.fonts.title]}>
-                        41% OFF when you start your free trial now
+                        {t('subscriptionOffering.secondTrial.title')}
                     </Text>
 
                     <Text style={[styles.textCenter, styles.description, theme.fonts.regular]}>
-                        Biggest discount ever - just for you
+                        {t('subscriptionOffering.secondTrial.description')}
                     </Text>
                 </View>
 
@@ -37,13 +37,13 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
             <View style={theme.flexBlocks.vertical16}>
                 <View style={styles.subscriptionDescription}>
                     <Text style={[theme.fonts.regular, styles.descriptionText]}>
-                        Biggest discount ever - just for you
+                        {t('subscriptionOffering.secondTrial.description')}
                     </Text>
                 </View>
 
                 <View style={theme.flexBlocks.vertical16}>
                     <CustomButton
-                        title="Start my FREE offer"
+                        title={t('subscriptionOffering.secondTrial.startFreeOffer')}
                         onPress={() => {
                             // Событие: оплата + план
                             amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
@@ -62,7 +62,7 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
                         }}
                     >
                         <Text style={styles.skipTitle}>
-                            Skip this one-time offer
+                            {t('subscriptionOffering.secondTrial.skipOffer')}
                         </Text>
                     </Pressable>
                 </View>

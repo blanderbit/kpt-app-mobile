@@ -30,11 +30,11 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
             <View style={[styles.content, theme.flexBlocks.vertical8]}>
                 <View style={theme.flexBlocks.vertical8}>
                     <Text style={[styles.textCenter, theme.fonts.title]}>
-                        Your one time offer
+                        {t('subscriptionOffering.thirdTrial.title')}
                     </Text>
 
                     <Text style={[styles.textCenter, styles.description, theme.fonts.regular]}>
-                        7-Day Free Trial
+                        {t('subscriptionOffering.thirdTrial.subtitle')}
                     </Text>
                 </View>
 
@@ -49,59 +49,61 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={theme.flexBlocks.vertical4}>
                     <View style={[theme.flexBlocks.horizontal4, theme.flexBlocks.justifyCenter]}>
                         <Text style={[styles.mainPrice, styles.mainPriceOld]}>
-                            7.08
+                            {t('subscriptionOffering.thirdTrial.priceOld')}
                         </Text>
                         <Text style={styles.mainPrice}>
-                            2.91 USD/month
+                            {t('subscriptionOffering.thirdTrial.priceNew')}
                         </Text>
                     </View>
 
                     <Text style={styles.mainPriceDesc}>
-                        Once you close your one-time offer, it's gone!
+                        {t('subscriptionOffering.thirdTrial.onceYouClose')}
                     </Text>
                 </View>
 
                 <View style={theme.flexBlocks.vertical8}>
-                    <View style={[styles.freeTrialSection, theme.flexBlocks.justifySpaceBetween]}>
-                        <View style={[styles.freeTrialSectionEnabled, theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter]}>
+                    <View style={[styles.freeTrialSection, theme.flexBlocks.justifySpaceBetween, styles.freeTrialSectionContainer]}>
+                        <View style={[styles.freeTrialSectionEnabled, theme.flexBlocks.horizontal8, theme.flexBlocks.alignCenter, styles.freeTrialSectionTextContainer]}>
                             <RemoteSvg xml={STAR_ICON_SVG}/>
 
-                            <Text style={styles.freeTrialSectionText}>
-                                Free Trial {freeTrialEnabled ? 'Enabled' : 'Disabled'}
+                            <Text style={styles.freeTrialSectionText} numberOfLines={1}>
+                                {freeTrialEnabled ? t('subscriptionOffering.thirdTrial.freeTrialEnabled') : t('subscriptionOffering.thirdTrial.freeTrialDisabled')}
                             </Text>
                         </View>
 
-                        <ToggleSwitch
-                            options={[
-                                {label: 'Off', value: 'off'},
-                                {label: 'On', value: 'on'}
-                            ]}
-                            value={freeTrialEnabled ? 'on' : 'off'}
-                            onChange={(value) => setFreeTrialEnabled(value === 'on')}
-                        />
+                        <View style={styles.toggleSwitchContainer}>
+                            <ToggleSwitch
+                                options={[
+                                    {label: t('subscriptionOffering.thirdTrial.off'), value: 'off'},
+                                    {label: t('subscriptionOffering.thirdTrial.on'), value: 'on'}
+                                ]}
+                                value={freeTrialEnabled ? 'on' : 'off'}
+                                onChange={(value) => setFreeTrialEnabled(value === 'on')}
+                            />
+                        </View>
                     </View>
 
                     <View style={[styles.sevenDayFreeTrialSection, theme.flexBlocks.vertical8]}>
                         <View>
                             <Text style={styles.sevenDayFreeTrialSectionText}>
-                                7-DAY FREE TRIAL
+                                {t('subscriptionOffering.thirdTrial.sevenDayFreeTrial')}
                             </Text>
                         </View>
 
                         <View style={[styles.subscriptionBlock, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
                             <View>
                                 <Text style={styles.subscriptionBlockTitle}>
-                                    Yearly
+                                    {t('subscriptionOffering.thirdTrial.yearly')}
                                 </Text>
 
                                 <Text style={styles.subscriptionBlockDescription}>
-                                    12mo - 34.99 USD
+                                    {t('subscriptionOffering.thirdTrial.yearlyDescription')}
                                 </Text>
                             </View>
 
                             <View>
                                 <Text style={styles.subscriptionBlockPrice}>
-                                    2.91 USD/mo
+                                    {t('subscriptionOffering.thirdTrial.yearlyPrice')}
                                 </Text>
                             </View>
                         </View>
@@ -115,13 +117,13 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                         􀆅
                     </Text>
                     <Text style={[theme.fonts.regular, styles.descriptionText]}>
-                        No Payment Now
+                        {t('subscriptionOffering.thirdTrial.noPaymentNow')}
                     </Text>
                 </View>
 
                 <View style={theme.flexBlocks.vertical16}>
                     <CustomButton
-                        title="Start Your FREE Week"
+                        title={t('subscriptionOffering.thirdTrial.startFreeWeek')}
                         onPress={() => {
                             // Событие: оплата + план
                             amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
@@ -192,6 +194,16 @@ const styles = StyleSheet.create({
         padding: 12,
         paddingHorizontal: 8
     },
+    freeTrialSectionContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12
+    },
+    freeTrialSectionTextContainer: {
+        flex: 1,
+        flexShrink: 1,
+        minWidth: 0
+    },
     freeTrialSectionEnabled: {
         paddingHorizontal: 8,
     },
@@ -199,7 +211,11 @@ const styles = StyleSheet.create({
         fontFamily: 'InterSemibold',
         fontSize: 16,
         lineHeight: 24,
-        letterSpacing: 0.02
+        letterSpacing: 0.02,
+        flexShrink: 1
+    },
+    toggleSwitchContainer: {
+        flexShrink: 0
     },
     sevenDayFreeTrialSection: {
         backgroundColor: '#F2CFD6',

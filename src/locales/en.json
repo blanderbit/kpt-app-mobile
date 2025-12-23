@@ -375,5 +375,52 @@
         "relationshipsSocialSubtitle": "Connections with others and social fulfillment"
       }
     }
+  },
+  "subscriptionOffering": {
+    "startTrial": {
+      "oneTimeOfferApplied": "One-time offer applied",
+      "title": "Start your 7-day FREE trial",
+      "usedBy": "Used by 17,000+ busy minds",
+      "today": "Today",
+      "todayDescription": "Get instant access and start building your balance.",
+      "day5": "Day 5",
+      "day5Description": "We'll send you with a notification that your trial is ending.",
+      "day7": "Day 7",
+      "day7Description": "Your subscription will start Day/Month/Year. Cancel anytime before.",
+      "yearly": "Yearly",
+      "monthly": "Monthly",
+      "freeTrial": "7-Day Free Trial",
+      "unlimitedAccess": "Unlimited free access for",
+      "save58": "7 days (save 58%)",
+      "cancelAnytime": ". Cancel anytime",
+      "startFreeTrial": "Start my FREE trial now",
+      "subscribe": "Subscribe",
+      "skipOffer": "Skip this one-time offer",
+      "offerExpires": "Offer expires when you exit this screen!"
+    },
+    "secondTrial": {
+      "oneTimeOffer": "One-time offer!",
+      "title": "41% OFF when you start your free trial now",
+      "description": "Biggest discount ever - just for you",
+      "startFreeOffer": "Start my FREE offer",
+      "skipOffer": "Skip this one-time offer"
+    },
+    "thirdTrial": {
+      "title": "Your one time offer",
+      "subtitle": "7-Day Free Trial",
+      "priceOld": "7.08",
+      "priceNew": "2.91 USD/month",
+      "onceYouClose": "Once you close your one-time offer, it's gone!",
+      "freeTrialEnabled": "Free Trial Enabled",
+      "freeTrialDisabled": "Free Trial Disabled",
+      "off": "Off",
+      "on": "On",
+      "sevenDayFreeTrial": "7-DAY FREE TRIAL",
+      "yearly": "Yearly",
+      "yearlyDescription": "12mo - 34.99 USD",
+      "yearlyPrice": "2.91 USD/mo",
+      "noPaymentNow": "No Payment Now",
+      "startFreeWeek": "Start Your FREE Week"
+    }
   }
 }
