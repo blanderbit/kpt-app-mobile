@@ -86,8 +86,8 @@ export const loadAllOnboardingData = async (): Promise<{
     onboardingQuestionAndAnswers?: Record<string, string | string[]>;
     activities?: Array<{ activityName: string; content?: string }>;
     taskTrackingMethod?: string;
-    satisfactionLevel?: number;
-    hardnessLevel?: number;
+    initSatisfactionLevel?: number;
+    initHardnessLevel?: number;
 }> => {
     try {
         const entries = await AsyncStorage.multiGet([
@@ -182,15 +182,27 @@ export const loadAllOnboardingData = async (): Promise<{
             }
         }
 
+        // Парсим activities и убеждаемся что это массив
+        let parsedActivities: Array<{ activityName: string; content?: string }> | undefined;
+        if (selectedActivitiesValue) {
+            try {
+                const parsed = JSON.parse(selectedActivitiesValue);
+                // Убеждаемся что это массив
+                parsedActivities = Array.isArray(parsed) ? parsed : undefined;
+            } catch {
+                parsedActivities = undefined;
+            }
+        }
+
         const result = {
             age: parsedAge,
             feelingToday: parsedMood,
             socialNetworks: socialNetworksValue ? JSON.parse(socialNetworksValue) : undefined,
             onboardingQuestionAndAnswers: onboardingQuestionAndAnswers && Object.keys(onboardingQuestionAndAnswers).length > 0 ? onboardingQuestionAndAnswers : undefined,
-            activities: selectedActivitiesValue ? JSON.parse(selectedActivitiesValue) : undefined,
+            activities: parsedActivities,
             taskTrackingMethod: parsedTaskMethod,
-            satisfactionLevel: parsedSatisfactionLevel,
-            hardnessLevel: parsedHardnessLevel,
+            initSatisfactionLevel: parsedSatisfactionLevel,
+            initHardnessLevel: parsedHardnessLevel,
         };
 
         console.log('📦 [loadAllOnboardingData] Final result:', {

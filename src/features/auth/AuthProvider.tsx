@@ -310,9 +310,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             age?: string;
             feelingToday?: string;
             socialNetworks?: string[];
-            onboardingQuestionAndAnswers?: Record<string, string>;
+            onboardingQuestionAndAnswers?: Record<string, string | string[]>;
             activities?: Array<{ activityName: string; content?: string }>;
             taskTrackingMethod?: string;
+            initSatisfactionLevel?: number;
+            initHardnessLevel?: number;
         }
     ) => {
         try {
