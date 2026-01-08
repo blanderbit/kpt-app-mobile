@@ -146,7 +146,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             });
             
             console.log('✅ Пароль успешно изменен');
-            Alert.alert('Успех', 'Пароль успешно изменен');
+            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.passwordChangedSuccess'));
             passwordForm.reset();
             // Событие: смена данных профиля
             amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
@@ -156,7 +156,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             setPasswordDisabled(true);
         } catch (error: any) {
             console.error('❌ Ошибка смены пароля:', error);
-            Alert.alert('Ошибка', error.message || 'Не удалось изменить пароль');
+            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.passwordChangeError'));
         }
     };
 
@@ -186,7 +186,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             
         } catch (error: any) {
             console.error('❌ Ошибка смены email:', error);
-            Alert.alert('Ошибка', error.message || 'Не удалось изменить email');
+            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.emailChangeError'));
         }
     };
 
@@ -196,7 +196,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                 firstName: data.newName,
             });
             
-            Alert.alert('Успех', 'Имя успешно изменено');
+            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.nameChangedSuccess'));
             
             // Немедленно обновляем профиль в контексте с новыми данными
             updateProfileContext(updatedProfile);
@@ -213,7 +213,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             setNameDisabled(true);
         } catch (error: any) {
             console.error('❌ Ошибка смены имени:', error);
-            Alert.alert('Ошибка', error.message || 'Не удалось изменить имя');
+            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.nameChangeError'));
         }
     };
 

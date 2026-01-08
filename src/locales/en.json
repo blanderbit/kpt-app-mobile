@@ -8,7 +8,7 @@
     "activities": "Activities",
     "profile": "Profile"
   },
-  "auth": {
+    "auth": {
     "login": "Log in",
     "logout": "Log out",
     "email": "Your email",
@@ -21,6 +21,22 @@
     "dontHaveAccount": "Don't have an account? Sign up",
     "appleSignIn": "Continue with Apple",
     "googleSignIn": "Continue with Google",
+    "emailRequired": "Email is required",
+    "invalidEmail": "Invalid email address",
+    "invalidEmailFormat": "Invalid email format",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "passwordComplexity": "Password must contain at least one letter and one number",
+    "loginError": "Login Error",
+    "loginErrorMessage": "Invalid email or password",
+    "googleSignInError": "Google Sign-In Error",
+    "googleSignInErrorMessage": "Failed to sign in with Google",
+    "appleSignInError": "Apple Sign-In Error",
+    "appleSignInErrorMessage": "Failed to sign in with Apple",
+    "systemLoginError": "System login error",
+    "registrationError": "Registration error",
+    "firebaseLoginError": "Google sign-in error",
+    "firebaseRegistrationError": "Firebase registration error",
     "signUp": {
       "title": "Create Account",
       "info": "Sign up to get started",
@@ -196,7 +212,13 @@
         "areYouSureLogOut": "Are you sure you want to log out?",
         "areYouSureDeleteAccount": "Are you sure you want to delete your account? This action cannot be undone.",
         "accountDeleted": "Account Deleted",
-        "accountDeletedMessage": "Your account has been successfully deleted."
+        "accountDeletedMessage": "Your account has been successfully deleted.",
+        "error": "Error",
+        "logoutError": "Failed to log out",
+        "deleteAccountError": "Failed to delete account",
+        "loadProfileError": "Failed to load profile",
+        "mailClientError": "Failed to open mail client",
+        "linkError": "Failed to open link"
       },
       "personalInfoScreen": {
         "title": "Personal information",
@@ -223,7 +245,14 @@
         "differentPasswords": "New password must be different from current password",
         "firebaseUserMessage": "You signed in with Google/Apple. Email and password cannot be changed here, but you can change your name.",
         "confirmEmailChange": "Confirm Email Change",
-        "confirmEmailChangeDescription": "Enter the 6-digit verification code sent to {{email}}"
+        "confirmEmailChangeDescription": "Enter the 6-digit verification code sent to {{email}}",
+        "invalidEmailChangeCode": "Invalid email change code",
+        "success": "Success",
+        "passwordChangedSuccess": "Password successfully changed",
+        "passwordChangeError": "Failed to change password",
+        "emailChangeError": "Failed to change email",
+        "nameChangedSuccess": "Name successfully changed",
+        "nameChangeError": "Failed to change name"
       },
       "subscriptionSettingsScreen": {
         "title": "Subscription settings",
@@ -238,10 +267,23 @@
     },
     "additionalTasks": {
       "article": {
-        "title": "Article"
+        "title": "Article",
+        "loading": "Loading article...",
+        "loadError": "Failed to load article",
+        "notFound": "Article not found",
+        "unknownError": "Unknown error"
       },
       "survey": {
-        "title": "Survey"
+        "title": "Survey",
+        "loadError": "Failed to load survey",
+        "notFound": "Survey not found",
+        "unknownError": "Unknown error"
+      },
+      "moodTracker": {
+        "loadingSurveys": "Loading surveys...",
+        "loadMoodTypesError": "Failed to load mood types",
+        "loadSurveysError": "Failed to load surveys",
+        "selectSurveys": "Select the surveys you want to complete"
       }
     },
     "modals": {

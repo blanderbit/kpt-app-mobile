@@ -21,6 +21,22 @@
     "dontHaveAccount": "Немає акаунта? Зареєструватися",
     "appleSignIn": "Продовжити з Apple",
     "googleSignIn": "Продовжити з Google",
+    "emailRequired": "Email обов'язковий",
+    "invalidEmail": "Невірний email адрес",
+    "invalidEmailFormat": "Невірний формат email",
+    "passwordRequired": "Пароль обов'язковий",
+    "passwordMinLength": "Пароль повинен містити мінімум 8 символів",
+    "passwordComplexity": "Пароль повинен містити принаймні одну літеру та одну цифру",
+    "loginError": "Помилка входу",
+    "loginErrorMessage": "Невірний email або пароль",
+    "googleSignInError": "Помилка входу через Google",
+    "googleSignInErrorMessage": "Не вдалося увійти через Google",
+    "appleSignInError": "Помилка входу через Apple",
+    "appleSignInErrorMessage": "Не вдалося увійти через Apple",
+    "systemLoginError": "Помилка входу в систему",
+    "registrationError": "Помилка реєстрації",
+    "firebaseLoginError": "Помилка входу через Google",
+    "firebaseRegistrationError": "Помилка реєстрації через Firebase",
     "signUp": {
       "title": "Створити акаунт",
       "info": "Зареєструйтеся, щоб почати",
@@ -196,7 +212,13 @@
         "areYouSureLogOut": "Ви впевнені, що хочете вийти?",
         "areYouSureDeleteAccount": "Ви впевнені, що хочете видалити свій акаунт? Цю дію неможливо скасувати.",
         "accountDeleted": "Акаунт видалено",
-        "accountDeletedMessage": "Ваш акаунт успішно видалено."
+        "accountDeletedMessage": "Ваш акаунт успішно видалено.",
+        "error": "Помилка",
+        "logoutError": "Не вдалося вийти з акаунта",
+        "deleteAccountError": "Не вдалося видалити акаунт",
+        "loadProfileError": "Помилка завантаження профілю",
+        "mailClientError": "Не вдалося відкрити поштовий клієнт",
+        "linkError": "Не вдалося відкрити посилання"
       },
       "personalInfoScreen": {
         "title": "Особиста інформація",
@@ -223,7 +245,14 @@
         "differentPasswords": "Новий пароль повинен відрізнятися від поточного",
         "firebaseUserMessage": "Ви увійшли через Google/Apple. Email і пароль не можна змінити тут, але ви можете змінити своє ім'я.",
         "confirmEmailChange": "Підтвердження зміни email",
-        "confirmEmailChangeDescription": "Введіть 6-значний код підтвердження, надісланий на {{email}}"
+        "confirmEmailChangeDescription": "Введіть 6-значний код підтвердження, надісланий на {{email}}",
+        "invalidEmailChangeCode": "Невірний код підтвердження зміни email",
+        "success": "Успіх",
+        "passwordChangedSuccess": "Пароль успішно змінено",
+        "passwordChangeError": "Не вдалося змінити пароль",
+        "emailChangeError": "Не вдалося змінити email",
+        "nameChangedSuccess": "Ім'я успішно змінено",
+        "nameChangeError": "Не вдалося змінити ім'я"
       },
       "subscriptionSettingsScreen": {
         "title": "Налаштування підписки",
@@ -238,10 +267,23 @@
     },
     "additionalTasks": {
       "article": {
-        "title": "Стаття"
+        "title": "Стаття",
+        "loading": "Завантаження статті...",
+        "loadError": "Помилка завантаження статті",
+        "notFound": "Стаття не знайдена",
+        "unknownError": "Невідома помилка"
       },
       "survey": {
-        "title": "Опитування"
+        "title": "Опитування",
+        "loadError": "Помилка завантаження опитування",
+        "notFound": "Опитування не знайдено",
+        "unknownError": "Невідома помилка"
+      },
+      "moodTracker": {
+        "loadingSurveys": "Завантаження опитувань...",
+        "loadMoodTypesError": "Помилка завантаження типів настрою",
+        "loadSurveysError": "Помилка завантаження опитувань",
+        "selectSurveys": "Виберіть опитування, які ви хочете пройти"
       }
     },
     "modals": {

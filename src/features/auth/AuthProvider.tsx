@@ -218,6 +218,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch (error: any) {
             console.error('❌ Ошибка входа:', error);
+            const { t } = await import('react-i18next');
             const errorMessage = error.message || 'Ошибка входа в систему';
             setError(errorMessage);
             throw new Error(errorMessage);

@@ -80,7 +80,12 @@ export const EmailChangeConfirmationModal: React.FC<EmailChangeConfirmationModal
       );
     } catch (error: any) {
       console.error('❌ Ошибка подтверждения изменения email:', error);
-      setError(error.message || t('main.today.emailVerification.modal.errorMessage'));
+      const errorMessage = error.message?.toLowerCase();
+      if (errorMessage?.includes('invalid email change code')) {
+        setError(t('main.profile.personalInfoScreen.invalidEmailChangeCode'));
+      } else {
+        setError(error.message || t('main.today.emailVerification.modal.errorMessage'));
+      }
     }
   };
 

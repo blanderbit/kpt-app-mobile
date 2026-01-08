@@ -19,11 +19,11 @@ import { clearOnboardingData } from '@shared/utils/onboardingStorage';
 import { getResponsivePadding, getResponsiveGap, isSmallScreen } from '@shared/utils/screenUtils';
 
 const schema =  (t: any) => yup.object().shape({
-    email: yup.string().email('Invalid email').required('Email is required'),
+    email: yup.string().email(t('auth.invalidEmail')).required(t('auth.emailRequired')),
     password: yup.string()
-        .required(t('auth.checkEmailScreen.passwordRequired'))
-        .min(8, t('auth.checkEmailScreen.passwordMinLength'))
-        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.checkEmailScreen.passwordComplexity')),
+        .required(t('auth.passwordRequired'))
+        .min(8, t('auth.passwordMinLength'))
+        .matches(/^(?=.*[a-zA-Z])(?=.*\d)/, t('auth.passwordComplexity')),
 });
 
 type FormData = {
@@ -61,9 +61,9 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         } catch (error: any) {
             console.error('❌ Ошибка в onSubmit:', error);
             Alert.alert(
-                'Ошибка входа',
-                error.message || 'Неверный email или пароль',
-                [{ text: 'OK' }]
+                t('auth.loginError'),
+                error.message || t('auth.loginErrorMessage'),
+                [{ text: t('ok') }]
             );
         } finally {
             setIsSubmitting(false);
@@ -83,9 +83,9 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
             await signInWithGoogle();
         } catch (error: any) {
             Alert.alert(
-                'Ошибка входа через Google',
-                error.message || 'Не удалось войти через Google',
-                [{ text: 'OK' }]
+                t('auth.googleSignInError'),
+                error.message || t('auth.googleSignInErrorMessage'),
+                [{ text: t('ok') }]
             );
         }
     };
@@ -95,9 +95,9 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
             await signInWithApple();
         } catch (error: any) {
             Alert.alert(
-                'Ошибка входа через Apple',
-                error.message || 'Не удалось войти через Apple',
-                [{ text: 'OK' }]
+                t('auth.appleSignInError'),
+                error.message || t('auth.appleSignInErrorMessage'),
+                [{ text: t('ok') }]
             );
         }
     };

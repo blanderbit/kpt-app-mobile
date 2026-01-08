@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                             await logout();
                         } catch (error) {
                             console.error('❌ Ошибка выхода:', error);
-                            Alert.alert('Ошибка', 'Не удалось выйти из аккаунта');
+                            Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.logoutError'));
                         }
                     },
                 },
@@ -85,11 +85,11 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                 t('main.profile.settings.accountDeletedMessage'),
                                 [{ text: t('ok') }]
                             );
-                        } catch (error) {
+                        } catch (error: any) {
                             console.error('❌ Ошибка удаления аккаунта:', error);
                             Alert.alert(
-                                'Ошибка', 
-                                error?.message || 'Не удалось удалить аккаунт'
+                                t('main.profile.settings.error'), 
+                                error?.message || t('main.profile.settings.deleteAccountError')
                             );
                         }
                     },
@@ -137,7 +137,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
 
     // Показываем ошибку если не удалось загрузить профиль
     if (error) {
-        Alert.alert('Ошибка', `Ошибка загрузки профиля: ${error}`);
+        Alert.alert(t('main.profile.settings.error'), `${t('main.profile.settings.loadProfileError')}: ${error}`);
         return null;
     }
 
@@ -161,12 +161,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(mailtoUrl);
                     } else {
-                        Alert.alert('Ошибка', 'Не удалось открыть почтовый клиент');
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'));
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии почты:', err);
-                    Alert.alert('Ошибка', 'Не удалось открыть почтовый клиент');
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'));
                 });
         } else if (nested.label === 'main.profile.settings.privacyPolicy') {
             // Событие: переход по ссылкам
@@ -180,12 +180,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(url);
                     } else {
-                        Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии ссылки:', err);
-                    Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
                 });
         } else if (nested.label === 'main.profile.settings.termsConditions') {
             // Событие: переход по ссылкам
@@ -199,12 +199,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(url);
                     } else {
-                        Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии ссылки:', err);
-                    Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
                 });
         }
     };

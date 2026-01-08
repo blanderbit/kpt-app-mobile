@@ -106,11 +106,11 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
             }>
                 <View style={styles.center}>
                     <Text style={theme.fonts.subheader}>
-                        {error ? 'Ошибка загрузки опроса' : 'Опрос не найден'}
+                        {error ? t('main.additionalTasks.survey.loadError') : t('main.additionalTasks.survey.notFound')}
                     </Text>
                     {error && (
                         <Text style={[theme.fonts.regular, { marginTop: 8, opacity: 0.6 }]}>
-                            {error.message || 'Неизвестная ошибка'}
+                            {error.message || t('main.additionalTasks.survey.unknownError')}
                         </Text>
                     )}
                 </View>

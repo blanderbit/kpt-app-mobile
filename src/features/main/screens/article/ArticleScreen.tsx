@@ -87,7 +87,7 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
             }>
                 <View style={[styles.center, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
                     <ActivityIndicator size="large" />
-                    <Text style={[theme.fonts.regular, { marginTop: 16 }]}>Загрузка статьи...</Text>
+                    <Text style={[theme.fonts.regular, { marginTop: 16 }]}>{t('main.additionalTasks.article.loading')}</Text>
                 </View>
             </PageWithHeader>
         );
@@ -113,11 +113,11 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
             }>
                 <View style={styles.center}>
                     <Text style={theme.fonts.subheader}>
-                        {error ? 'Ошибка загрузки статьи' : 'Статья не найдена'}
+                        {error ? t('main.additionalTasks.article.loadError') : t('main.additionalTasks.article.notFound')}
                     </Text>
                     {error && (
                         <Text style={[theme.fonts.regular, { marginTop: 8, opacity: 0.6 }]}>
-                            {error.message || 'Неизвестная ошибка'}
+                            {error.message || t('main.additionalTasks.article.unknownError')}
                         </Text>
                     )}
                 </View>

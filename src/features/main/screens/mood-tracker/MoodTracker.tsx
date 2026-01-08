@@ -153,7 +153,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                                     )) }
                             </View>
                         ) : (
-                            <Text style={ theme.fonts.regular }>Ошибка загрузки типов настроения</Text>
+                            <Text style={ theme.fonts.regular }>{t('main.additionalTasks.moodTracker.loadMoodTypesError')}</Text>
                         ) }
                     </ScrollView>
                 </View>
@@ -174,7 +174,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         </Text>
 
                         <Text style={ [ theme.fonts.regular, { opacity: 0.6 } ] }>
-                            Выберите опросники, которые вы хотите пройти
+                            {t('main.additionalTasks.moodTracker.selectSurveys')}
                         </Text>
                     </View>
 
@@ -183,7 +183,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                         showsVerticalScrollIndicator={ false }
                     >
                         {moodSurveysLoading ? (
-                            <Text style={theme.fonts.regular}>Загрузка опросников...</Text>
+                            <Text style={theme.fonts.regular}>{t('main.additionalTasks.moodTracker.loadingSurveys')}</Text>
                         ) : moodSurveys ? (
                             <View style={theme.flexBlocks.vertical8}>
                                 {moodSurveys
@@ -210,7 +210,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                                 }
                             </View>
                         ) : (
-                            <Text style={theme.fonts.regular}>Ошибка загрузки опросников</Text>
+                            <Text style={theme.fonts.regular}>{t('main.additionalTasks.moodTracker.loadSurveysError')}</Text>
                         )}
                     </ScrollView>
                 </View>

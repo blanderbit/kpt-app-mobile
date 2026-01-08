@@ -20,6 +20,22 @@
     "login": "Войти",
     "appleSignIn": "Продолжить с Apple",
     "googleSignIn": "Продолжить с Google",
+    "emailRequired": "Email обязателен",
+    "invalidEmail": "Неверный email адрес",
+    "invalidEmailFormat": "Неверный формат email",
+    "passwordRequired": "Пароль обязателен",
+    "passwordMinLength": "Пароль должен содержать минимум 8 символов",
+    "passwordComplexity": "Пароль должен содержать хотя бы одну букву и одну цифру",
+    "loginError": "Ошибка входа",
+    "loginErrorMessage": "Неверный email или пароль",
+    "googleSignInError": "Ошибка входа через Google",
+    "googleSignInErrorMessage": "Не удалось войти через Google",
+    "appleSignInError": "Ошибка входа через Apple",
+    "appleSignInErrorMessage": "Не удалось войти через Apple",
+    "systemLoginError": "Ошибка входа в систему",
+    "registrationError": "Ошибка регистрации",
+    "firebaseLoginError": "Ошибка входа через Google",
+    "firebaseRegistrationError": "Ошибка регистрации через Firebase",
     "signUp": {
       "title": "Создать аккаунт",
       "info": "Зарегистрируйтесь, чтобы начать",
@@ -195,7 +211,13 @@
         "areYouSureLogOut": "Вы уверены, что хотите выйти?",
         "areYouSureDeleteAccount": "Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить.",
         "accountDeleted": "Аккаунт удален",
-        "accountDeletedMessage": "Ваш аккаунт был успешно удален."
+        "accountDeletedMessage": "Ваш аккаунт был успешно удален.",
+        "error": "Ошибка",
+        "logoutError": "Не удалось выйти из аккаунта",
+        "deleteAccountError": "Не удалось удалить аккаунт",
+        "loadProfileError": "Ошибка загрузки профиля",
+        "mailClientError": "Не удалось открыть почтовый клиент",
+        "linkError": "Не удалось открыть ссылку"
       },
       "personalInfoScreen": {
         "title": "Личная информация",
@@ -222,7 +244,14 @@
         "differentPasswords": "Новый пароль должен отличаться от текущего",
         "firebaseUserMessage": "Вы вошли через Google/Apple. Email и пароль нельзя изменить здесь, но вы можете изменить свое имя.",
         "confirmEmailChange": "Подтверждение изменения email",
-        "confirmEmailChangeDescription": "Введите 6-значный код подтверждения, отправленный на {{email}}"
+        "confirmEmailChangeDescription": "Введите 6-значный код подтверждения, отправленный на {{email}}",
+        "invalidEmailChangeCode": "Неверный код подтверждения изменения email",
+        "success": "Успех",
+        "passwordChangedSuccess": "Пароль успешно изменен",
+        "passwordChangeError": "Не удалось изменить пароль",
+        "emailChangeError": "Не удалось изменить email",
+        "nameChangedSuccess": "Имя успешно изменено",
+        "nameChangeError": "Не удалось изменить имя"
       },
       "subscriptionSettingsScreen": {
         "title": "Настройки подписки",
@@ -237,10 +266,23 @@
     },
     "additionalTasks": {
       "article": {
-        "title": "Статья"
+        "title": "Статья",
+        "loading": "Загрузка статьи...",
+        "loadError": "Ошибка загрузки статьи",
+        "notFound": "Статья не найдена",
+        "unknownError": "Неизвестная ошибка"
       },
       "survey": {
-        "title": "Опрос"
+        "title": "Опрос",
+        "loadError": "Ошибка загрузки опроса",
+        "notFound": "Опрос не найден",
+        "unknownError": "Неизвестная ошибка"
+      },
+      "moodTracker": {
+        "loadingSurveys": "Загрузка опросников...",
+        "loadMoodTypesError": "Ошибка загрузки типов настроения",
+        "loadSurveysError": "Ошибка загрузки опросников",
+        "selectSurveys": "Выберите опросники, которые вы хотите пройти"
       }
     },
     "modals": {

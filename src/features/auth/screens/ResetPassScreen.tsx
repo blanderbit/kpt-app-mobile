@@ -14,8 +14,8 @@ import { Routes } from "@app/navigation/const";
 import { authService } from '@shared/services/api';
 import { getResponsivePadding, getResponsiveGap, isSmallScreen } from '@shared/utils/screenUtils';
 
-const schema = yup.object().shape({
-    email: yup.string().email('Invalid email format').required('Email is required'),
+const createSchema = (t: any) => yup.object().shape({
+    email: yup.string().email(t('auth.invalidEmailFormat')).required(t('auth.emailRequired')),
 });
 
 type FormData = {
@@ -28,7 +28,7 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
     const [isLoading, setIsLoading] = useState(false);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(createSchema(t)),
     });
 
     const onBack = () => {
