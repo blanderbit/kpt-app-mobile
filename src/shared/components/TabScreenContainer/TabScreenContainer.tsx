@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { View, StyleSheet, Dimensions, Animated, ScrollView } from 'react-native';
 import { BottomSwitcher } from "@shared/components/BottomSwitcher/BottomSwitcher";
 import { BlurView } from 'expo-blur';
@@ -33,36 +33,41 @@ interface TabScreenContainerProps {
 
 export const TabScreenContainer: React.FC<TabScreenContainerProps> = ({ children, blurOpacity }) => {
     const navigation = useNavigation<AppNavigationProp>();
-    const { scrollEnabled } = useScrollBlocker();
-
-    // Получаем текущий роут из navigation state
+    
+    // Получаем текущий роут из navigation state с мемоизацией
     const currentRoute = useNavigationState(state => {
         const route = state?.routes[state?.index];
         return route?.name;
     });
 
-    // Определяем текущий активный таб на основе текущего роута
-    const getCurrentTab = (): Tab => {
+    // Мемоизируем определение текущего таба
+    const activeTab = useMemo((): Tab => {
         return routeToTab[currentRoute || ''] || 'Today';
-    };
+    }, [currentRoute]);
 
-    const activeTab = getCurrentTab();
+    // Мемоизируем определение, нужен ли ScrollView
+    const needsScrollView = useMemo(() => {
+        return currentRoute !== Routes.PROFILE && currentRoute !== Routes.ACTIVITIES;
+    }, [currentRoute]);
 
-    // Обработчик изменения таба через BottomSwitcher
-    const handleTabChange = (tab: Tab) => {
-        const targetRoute = tabToRoute[tab];
-        if (targetRoute && currentRoute !== targetRoute) {
-            navigation.navigate(targetRoute);
-        }
-    };
+    // Используем useScrollBlocker только если нужен ScrollView
+    const scrollBlocker = useScrollBlocker();
+    const scrollEnabled = needsScrollView ? scrollBlocker.scrollEnabled : true;
 
     const defaultBlurOpacity = useRef(new Animated.Value(1)).current;
     const blurValue = blurOpacity || defaultBlurOpacity;
 
-    // ProfileScreen имеет свой ScrollView, поэтому не добавляем еще один
-    const needsScrollView = currentRoute !== Routes.PROFILE;
+    // Мемоизируем обработчик изменения таба
+    const handleTabChange = useCallback((tab: Tab) => {
+        const targetRoute = tabToRoute[tab];
+        if (targetRoute && currentRoute !== targetRoute) {
+            // Type assertion необходим, так как TypeScript не может определить конкретный тип из union
+            navigation.navigate(targetRoute as Routes.TODAY | Routes.ACTIVITIES | Routes.PROFILE);
+        }
+    }, [currentRoute, navigation]);
 
-    const handleScroll = (e: any) => {
+    // Мемоизируем обработчик скролла
+    const handleScroll = useCallback((e: any) => {
         const { contentOffset, layoutMeasurement, contentSize } = e.nativeEvent;
         const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 5;
 
@@ -71,7 +76,7 @@ export const TabScreenContainer: React.FC<TabScreenContainerProps> = ({ children
             duration: 10,
             useNativeDriver: true,
         }).start();
-    };
+    }, [blurValue]);
 
     return (
         <View style={styles.container}>

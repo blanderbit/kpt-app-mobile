@@ -489,24 +489,10 @@ export const useChangeActivityPosition = () => {
 
 // Suggested Activities hooks
 export const useSuggestedActivities = (date?: string) => {
-  console.log('🎯 [useSuggestedActivities] Запрос suggested activities, date:', date);
-  
   return useQuery({
     queryKey: queryKeys.suggestedActivitiesForDate(date),
-    queryFn: async () => {
-      console.log('🎯 [useSuggestedActivities] Выполнение запроса для date:', date);
-      const result = await suggestedActivityService.getSuggestedActivities(date);
-      console.log('🎯 [useSuggestedActivities] ✅ Получены suggested activities:', JSON.stringify(result, null, 2));
-      console.log('🎯 [useSuggestedActivities] Количество:', result?.length || 0);
-      return result;
-    },
+    queryFn: () => suggestedActivityService.getSuggestedActivities(date),
     staleTime: 5 * 60 * 1000,
-    onSuccess: (data) => {
-      console.log('🎯 [useSuggestedActivities] onSuccess - данные:', data);
-    },
-    onError: (error) => {
-      console.error('🎯 [useSuggestedActivities] ❌ Ошибка:', error);
-    },
   });
 };
 

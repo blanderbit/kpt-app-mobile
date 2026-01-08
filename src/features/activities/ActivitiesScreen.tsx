@@ -7,6 +7,8 @@ import {
     TextInput,
     Keyboard,
     Animated,
+    ScrollView,
+    LogBox,
 } from 'react-native';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
@@ -25,7 +27,7 @@ import { ArchiveBackIcon } from "@assets/icons/ArchiveBackIcon";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
 import DraggableList from "@features/activities/draggable-activities/DraggableActivities";
-import {getResponsiveActivityMaxWidth, isSmallScreen} from "@shared/utils/screenUtils";
+import {getResponsiveActivityMaxWidth, isSmallScreen, SCREEN_HEIGHT} from "@shared/utils/screenUtils";
 import { 
     useMyActivities, 
     useCreateActivity, 
@@ -35,7 +37,8 @@ import {
     useDeleteSuggestedActivity,
     useChangeActivityPosition,
     useArchivedActivities,
-    useRestoreActivity
+    useRestoreActivity,
+    queryKeys
 } from '@shared/services/api/hooks';
 import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -58,6 +61,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const inputRef = useRef<TextInput>(null);
     const activityValueRef = useRef('');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    // Refs для управления Swipeable при drag-and-drop
+    const swipeableRefs = useRef<Map<number, Swipeable>>(new Map());
+    // Локальное состояние для управления порядком элементов (чтобы DraggableFlatList не терял состояние)
+    const [localActivities, setLocalActivities] = useState<Activity[] | null>(null);
 
     // Query client for cache invalidation
     const queryClient = useQueryClient();
@@ -67,12 +74,35 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const { data: suggestedActivitiesData } = useSuggestedActivities();
     const { data: archivedActivities } = useArchivedActivities();
 
+    // Синхронизируем локальное состояние с данными из API
+    // Сбрасываем локальное состояние только если данные изменились и мы не в процессе drag
+    useEffect(() => {
+        if (myActivities?.data) {
+            // Если локальное состояние пустое или данные изменились (например, после создания/удаления)
+            // обновляем локальное состояние
+            const shouldUpdate = !localActivities || 
+                localActivities.length !== myActivities.data.length ||
+                localActivities.some((local, index) => local.id !== myActivities.data[index]?.id);
+            
+            if (shouldUpdate) {
+                setLocalActivities(myActivities.data);
+            }
+        }
+    }, [myActivities?.data]);
+
     const createActivityMutation = useCreateActivity();
     const deleteActivityMutation = useDeleteActivity();
     const addSuggestedActivityMutation = useAddSuggestedActivityToActivities();
     const deleteSuggestedActivityMutation = useDeleteSuggestedActivity();
     const changePositionMutation = useChangeActivityPosition();
     const restoreActivityMutation = useRestoreActivity();
+
+    // Подавляем предупреждение о вложенных VirtualizedLists
+    useEffect(() => {
+        LogBox.ignoreLogs([
+            'VirtualizedLists should never be nested inside plain ScrollViews',
+        ]);
+    }, []);
 
     // Событие: открытие страницы активностей
     useFocusEffect(
@@ -81,16 +111,22 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         }, [])
     );
 
-    // Debug logs
-    console.log('myActivities:', myActivities);
-    console.log('myActivities.data:', myActivities?.data);
-    console.log('myActivities.data length:', myActivities?.data?.length);
-    console.log('isLoading:', isLoading);
-    console.log('error:', error);
-    
-    // Suggested Activities logs
-    console.log('🎯 suggestedActivitiesData:', suggestedActivitiesData);
-    console.log('🎯 suggestedActivitiesData length:', suggestedActivitiesData?.length);
+    // Debug logs для myActivities с бекенда
+    useEffect(() => {
+        if (myActivities?.data) {
+            console.log('📋 [ActivitiesScreen] Мои активности с бекенда:', {
+                totalCount: myActivities.data.length,
+                activities: myActivities.data.map(activity => ({
+                    id: activity.id,
+                    activityName: activity.activityName,
+                    activityType: activity.activityType,
+                    position: activity.position,
+                    status: activity.status,
+                })),
+                fullData: JSON.stringify(myActivities.data, null, 2)
+            });
+        }
+    }, [myActivities?.data]);
 
     const updateActivityState = useCallback((value: string) => {
         if (debounceTimerRef.current) {
@@ -136,6 +172,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 // Force refetch
                 queryClient.refetchQueries({ queryKey: ['activities', 'my'] });
+                // Сбрасываем локальное состояние, чтобы синхронизироваться с новыми данными
+                setLocalActivities(null);
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });
@@ -155,6 +193,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                // Сбрасываем локальное состояние, чтобы синхронизироваться с новыми данными
+                setLocalActivities(null);
             },
             onError: (error) => {
                 showToast({ message: "Failed to archive activity", type: "error" });
@@ -177,6 +217,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 queryClient.invalidateQueries({ queryKey: ['suggestedActivities'] });
+                // Сбрасываем локальное состояние, чтобы синхронизироваться с новыми данными
+                setLocalActivities(null);
             },
             onError: (error) => {
                 showToast({ message: "Failed to add activity", type: "error" });
@@ -211,6 +253,26 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             newPosition,
         });
 
+        // Обновляем локальное состояние сразу (для мгновенного отклика UI)
+        const updatedData = data.map((activity, index) => ({
+            ...activity,
+            position: index,
+        }));
+        setLocalActivities(updatedData);
+
+        // Сохраняем текущие данные для возможного отката
+        const previousData = myActivities;
+        const previousLocalData = localActivities;
+
+        // Оптимистично обновляем кэш с новым порядком элементов
+        queryClient.setQueryData(queryKeys.myActivities(), (oldData: typeof myActivities) => {
+            if (!oldData) return oldData;
+            return {
+                ...oldData,
+                data: updatedData,
+            };
+        });
+
         changePositionMutation.mutate(
             {
                 id: movedActivity.id,
@@ -225,14 +287,24 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         to_position: to,
                     });
                     console.log('✅ [handleDragEnd] Позиция успешно обновлена');
-                    // Инвалидируем кэш для обновления списка
+                    // Инвалидируем кэш для синхронизации с сервером
                     queryClient.invalidateQueries({ queryKey: ['activities'] });
                     queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
+                    // Не сбрасываем локальное состояние, так как оно уже обновлено оптимистично
+                    // После refetch данные синхронизируются автоматически через useEffect
                 },
                 onError: (error) => {
                     console.error('❌ [handleDragEnd] Ошибка обновления позиции:', error);
                     showToast({ message: "Failed to update activity position", type: "error" });
-                    // Откатываем изменения в UI
+                    // Откатываем оптимистичное обновление
+                    if (previousData) {
+                        queryClient.setQueryData(queryKeys.myActivities(), previousData);
+                    }
+                    // Откатываем локальное состояние
+                    if (previousLocalData) {
+                        setLocalActivities(previousLocalData);
+                    }
+                    // Инвалидируем кэш для получения актуальных данных с сервера
                     queryClient.invalidateQueries({ queryKey: ['activities'] });
                     queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                 },
@@ -277,54 +349,81 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
     return (
         <TabScreenContainer>
-            <View style={ [ styles.container, theme.flexBlocks.vertical8 ] }>
-            <View style={ theme.containers.cardRound }>
-                <View
-                    style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
-                    <LayersIcon/>
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled={true}
+            >
+                {/* Секция "Мои активности" с DraggableFlatList */}
+                <View style={ theme.containers.cardRound }>
+                    <View
+                        style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
+                        <LayersIcon/>
 
-                    <Text style={ theme.fonts.subtitle }>
-                        { t('main.activities.myActivities') }
-                    </Text>
-                </View>
+                        <Text style={ theme.fonts.subtitle }>
+                            { t('main.activities.myActivities') }
+                        </Text>
+                    </View>
 
-                <View style={ styles.activitySections }>
-                    {myActivities?.data && myActivities.data.length > 0 ? (
-                        <DraggableList 
-                            itemsArr={ myActivities.data }
-                            itemHeight={ 90 }
-                            onDragEnd={ handleDragEnd }
-                            renderItem={ (activity, index, drag) => (
-                                <View style={ {
-                                    ...styles.activitySection,
-                                    ...(index !== myActivities.data.length - 1
-                                        ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
-                                        : {}),
-                                } }>
-                                    <Swipeable
-                                        renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
-                                        overshootRight={ false }>
-                                        <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
-                                            <Pressable onPressIn={drag}>
-                                                <BurgerIcon/>
-                                            </Pressable>
+                    <View style={ [styles.activitySections, { height: SCREEN_HEIGHT * 0.65, maxHeight: SCREEN_HEIGHT * 0.65 }] }>
+                        {(localActivities || myActivities?.data) && (localActivities || myActivities.data)!.length > 0 ? (
+                            <DraggableList 
+                                itemsArr={ localActivities || myActivities.data! }
+                                itemHeight={ 90 }
+                                onDragEnd={ handleDragEnd }
+                            renderItem={ (activity, index, drag) => {
+                                const handleDragStart = () => {
+                                    // Закрываем Swipeable перед началом drag
+                                    const swipeable = swipeableRefs.current.get(activity.id);
+                                    if (swipeable) {
+                                        swipeable.close();
+                                    }
+                                    drag();
+                                };
 
-                                            <View style={theme.flexBlocks.vertical8}>
-                                                <ActivityLabel id={activity.activityType} />
-
-                                                <Pressable style={ styles.activityContent }>
-                                                    <Text
-                                                        style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
-                                                        { activity.activityName } 
-                                                    </Text>
-                                                    <SemiCircleSplit valueA={ satisfaction }
-                                                                     valueB={ achieveness }/>
+                                return (
+                                    <View style={ {
+                                        ...styles.activitySection,
+                                        ...(index !== (localActivities || myActivities.data)!.length - 1
+                                            ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                            : {}),
+                                    } }>
+                                        <Swipeable
+                                            ref={(ref) => {
+                                                if (ref) {
+                                                    swipeableRefs.current.set(activity.id, ref);
+                                                } else {
+                                                    swipeableRefs.current.delete(activity.id);
+                                                }
+                                            }}
+                                            renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
+                                            overshootRight={ false }
+                                            enabled={true}>
+                                            <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
+                                                <Pressable 
+                                                    onPressIn={handleDragStart}
+                                                    style={{ padding: 8, marginLeft: -8 }}>
+                                                    <BurgerIcon/>
                                                 </Pressable>
+
+                                                <View style={theme.flexBlocks.vertical8}>
+                                                    <ActivityLabel id={activity.activityType} />
+
+                                                    <Pressable style={ styles.activityContent }>
+                                                        <Text
+                                                            style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
+                                                            { activity.activityName } 
+                                                        </Text>
+                                                        <SemiCircleSplit valueA={ satisfaction }
+                                                                         valueB={ achieveness }/>
+                                                    </Pressable>
+                                                </View>
                                             </View>
-                                        </View>
-                                    </Swipeable>
-                                </View>
-                            )}
+                                        </Swipeable>
+                                    </View>
+                                );
+                            }}
                         />
                     ) : null}
 
@@ -361,10 +460,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
             </View>
 
-            <View style={ theme.containers.cardRound }>
-                <View
-                    style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
-                    <SuggestedActivitiesIcon/>
+            {/* Остальные секции */}
+            <View style={ [theme.containers.cardRound, { marginTop: 16 }] }>
+                    <View
+                        style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
+                        <SuggestedActivitiesIcon/>
 
                     <Text style={ theme.fonts.subtitle }>
                         { t('main.activities.suggestedActivities') }
@@ -470,19 +570,24 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     }
                 </View>
             </View>
-        </View>
+            </ScrollView>
         </TabScreenContainer>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    scrollView: {
         flex: 1,
+    },
+    scrollContent: {
+        flexGrow: 1,
+        paddingBottom: 100,
     },
     activitySections: {
         flexDirection: 'column',
         backgroundColor: '#F5F5F5',
         borderRadius: 16,
+        overflow: 'hidden',
     },
     activitySection: {
         width: '100%',
