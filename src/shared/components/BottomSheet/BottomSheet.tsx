@@ -24,6 +24,7 @@ type BottomSheetProps = {
     button: React.ReactNode;
     closeBtn?: boolean;
     backBtn?: boolean;
+    scrollEnabled?: boolean;
     children?: React.ReactNode;
 };
 
@@ -35,6 +36,7 @@ export default function BottomSheet({
                                         button,
                                         closeBtn = true,
                                         backBtn,
+                                        scrollEnabled = true,
                                         children
                                     }: BottomSheetProps) {
     const [ showModal, setShowModal ] = useState(visible);
@@ -132,6 +134,7 @@ export default function BottomSheet({
                     style={ styles.content }
                     contentContainerStyle={ { paddingBottom: 10 } }
                     showsVerticalScrollIndicator={ false }
+                    scrollEnabled={ scrollEnabled }
                 >
                     { children }
                 </ScrollView>

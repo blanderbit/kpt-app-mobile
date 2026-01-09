@@ -21,6 +21,8 @@ type SliderProps = {
     endLabel: string;
     initialValue: number;
     onChange?: (value: number) => void;
+    onDragStart?: () => void;
+    onDragEnd?: () => void;
     colors: Array<string>;
     labelStyle?: Record<string, any>;
 };
@@ -31,6 +33,8 @@ const Slider: React.FC<SliderProps> = ({
                                            endLabel,
                                            initialValue,
                                            onChange,
+                                           onDragStart,
+                                           onDragEnd,
                                            colors,
                                            labelStyle = {}
                                        }) => {
@@ -48,6 +52,9 @@ const Slider: React.FC<SliderProps> = ({
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: () => true,
+            onPanResponderGrant: () => {
+                onDragStart && onDragStart();
+            },
             onPanResponderMove: (_, gesture) => {
                 let newX = Math.min(
                     SLIDER_WIDTH,
@@ -57,6 +64,12 @@ const Slider: React.FC<SliderProps> = ({
                 const newPercent = Math.round((newX / SLIDER_WIDTH) * 100);
                 setPercent(newPercent);
                 onChange && onChange(newPercent);
+            },
+            onPanResponderRelease: () => {
+                onDragEnd && onDragEnd();
+            },
+            onPanResponderTerminate: () => {
+                onDragEnd && onDragEnd();
             },
         })
     ).current;

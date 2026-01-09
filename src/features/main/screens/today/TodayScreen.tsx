@@ -91,6 +91,7 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
 
     const [ satisfactionLevel, setSatisfactionLevel ] = useState(0);
     const [ hardnessLevel, setHardnessLevel ] = useState(0);
+    const [ activeSliderDrags, setActiveSliderDrags ] = useState(0);
 
     const handleLayout = (e: LayoutChangeEvent) => {
         const width = e.nativeEvent.layout.width;
@@ -471,7 +472,9 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                              setSelectedActivityId(null);
                              setSatisfactionLevel(0);
                              setHardnessLevel(0);
+                             setActiveSliderDrags(0);
                          } }
+                         scrollEnabled={ activeSliderDrags === 0 }
                          button={
                              <CustomButton
                                  title={ t('complete') }
@@ -523,6 +526,8 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                             endLabel={ t('main.modals.measureActivity.satisfactionLevel.endLabel') }
                             initialValue={ satisfactionLevel }
                             onChange={ setSatisfactionLevel }
+                            onDragStart={ () => setActiveSliderDrags(prev => prev + 1) }
+                            onDragEnd={ () => setActiveSliderDrags(prev => Math.max(0, prev - 1)) }
                             colors={ [ '#DD583D', '#FFC372' ] }
                         />
                     </View>
@@ -534,6 +539,8 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                             endLabel={ t('main.modals.measureActivity.hardnessLevel.endLabel') }
                             initialValue={ hardnessLevel }
                             onChange={ setHardnessLevel }
+                            onDragStart={ () => setActiveSliderDrags(prev => prev + 1) }
+                            onDragEnd={ () => setActiveSliderDrags(prev => Math.max(0, prev - 1)) }
                             colors={ [ '#CA21D0', '#810085' ] }
                         />
                     </View>
