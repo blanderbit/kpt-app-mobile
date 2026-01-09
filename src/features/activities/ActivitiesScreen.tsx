@@ -28,9 +28,9 @@ import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
 import DraggableList from "@features/activities/draggable-activities/DraggableActivities";
 import {getResponsiveActivityMaxWidth, isSmallScreen, SCREEN_HEIGHT} from "@shared/utils/screenUtils";
-import { 
-    useMyActivities, 
-    useCreateActivity, 
+import {
+    useMyActivities,
+    useCreateActivity,
     useDeleteActivity,
     useSuggestedActivities,
     useAddSuggestedActivityToActivities,
@@ -80,10 +80,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         if (myActivities?.data) {
             // Если локальное состояние пустое или данные изменились (например, после создания/удаления)
             // обновляем локальное состояние
-            const shouldUpdate = !localActivities || 
+            const shouldUpdate = !localActivities ||
                 localActivities.length !== myActivities.data.length ||
                 localActivities.some((local, index) => local.id !== myActivities.data[index]?.id);
-            
+
             if (shouldUpdate) {
                 setLocalActivities(myActivities.data);
             }
@@ -151,7 +151,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             showToast({ message: "The name of activity should not be less than 10 symbols.", type: "error" })
             return;
         }
-        
+
         createActivityMutation.mutate({
             activityName: activityValue
         }, {
@@ -166,7 +166,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 setNewActivity("");
                 setInputKey(prev => prev + 1);
                 Keyboard.dismiss();
-                
+
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
@@ -189,7 +189,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     activity_id: activityId,
                 });
                 showToast({ message: "Activity archived", type: "success" });
-                
+
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
@@ -212,7 +212,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     suggested_activity_id: suggestedActivityId,
                 });
                 showToast({ message: "Activity added to your list", type: "success" });
-                
+
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
@@ -349,7 +349,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
     return (
         <TabScreenContainer>
-            <ScrollView 
+            <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
@@ -366,75 +366,77 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         </Text>
                     </View>
 
-                    <View style={ [styles.activitySections, { height: SCREEN_HEIGHT * 0.65, maxHeight: SCREEN_HEIGHT * 0.65 }] }>
-                        {(localActivities || myActivities?.data) && (localActivities || myActivities.data)!.length > 0 ? (
-                            <DraggableList 
-                                itemsArr={ localActivities || myActivities.data! }
-                                itemHeight={ 90 }
-                                onDragEnd={ handleDragEnd }
-                            renderItem={ (activity, index, drag) => {
-                                const handleDragStart = () => {
-                                    // Закрываем Swipeable перед началом drag
-                                    const swipeable = swipeableRefs.current.get(activity.id);
-                                    if (swipeable) {
-                                        swipeable.close();
-                                    }
-                                    drag();
-                                };
+                    <View style={ [styles.activitySections, { maxHeight: SCREEN_HEIGHT * 0.65 }] }>
+                        <View style={ [{ maxHeight: SCREEN_HEIGHT * 0.55 }] }>
+                            {(localActivities || myActivities?.data) && (localActivities || myActivities.data)!.length > 0 ? (
+                                <DraggableList
+                                    itemsArr={ localActivities || myActivities.data! }
+                                    itemHeight={ 90 }
+                                    onDragEnd={ handleDragEnd }
+                                    renderItem={ (activity, index, drag) => {
+                                        const handleDragStart = () => {
+                                            // Закрываем Swipeable перед началом drag
+                                            const swipeable = swipeableRefs.current.get(activity.id);
+                                            if (swipeable) {
+                                                swipeable.close();
+                                            }
+                                            drag();
+                                        };
 
-                                return (
-                                    <View style={ {
-                                        ...styles.activitySection,
-                                        ...(index !== (localActivities || myActivities.data)!.length - 1
-                                            ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
-                                            : {}),
-                                    } }>
-                                        <Swipeable
-                                            ref={(ref) => {
-                                                if (ref) {
-                                                    swipeableRefs.current.set(activity.id, ref);
-                                                } else {
-                                                    swipeableRefs.current.delete(activity.id);
-                                                }
-                                            }}
-                                            renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
-                                            overshootRight={ false }
-                                            enabled={true}>
-                                            <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
-                                                <Pressable 
-                                                    onPressIn={handleDragStart}
-                                                    style={{ padding: 8, marginLeft: -8 }}>
-                                                    <BurgerIcon/>
-                                                </Pressable>
+                                        return (
+                                            <View style={ {
+                                                ...styles.activitySection,
+                                                ...(index !== (localActivities || myActivities.data)!.length - 1
+                                                    ? { borderBottomWidth: 1, borderBottomColor: '#E2DDD8' }
+                                                    : {}),
+                                            } }>
+                                                <Swipeable
+                                                    ref={(ref) => {
+                                                        if (ref) {
+                                                            swipeableRefs.current.set(activity.id, ref);
+                                                        } else {
+                                                            swipeableRefs.current.delete(activity.id);
+                                                        }
+                                                    }}
+                                                    renderRightActions={ (progress, dragX) => renderRightActions(progress, dragX, activity.id) }
+                                                    overshootRight={ false }
+                                                    enabled={true}>
+                                                    <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
+                                                        <Pressable
+                                                            onPressIn={handleDragStart}
+                                                            style={{ padding: 8, marginLeft: -8 }}>
+                                                            <BurgerIcon/>
+                                                        </Pressable>
 
-                                                <View style={theme.flexBlocks.vertical8}>
-                                                    <ActivityLabel id={activity.activityType} />
+                                                        <View style={theme.flexBlocks.vertical8}>
+                                                            <ActivityLabel id={activity.activityType} />
 
-                                                    <Pressable style={ styles.activityContent }>
-                                                        <Text
-                                                            style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
-                                                            { activity.activityName } 
-                                                        </Text>
-                                                        <SemiCircleSplit valueA={ satisfaction }
-                                                                         valueB={ achieveness }/>
-                                                    </Pressable>
-                                                </View>
+                                                            <Pressable style={ styles.activityContent }>
+                                                                <Text
+                                                                    style={ [ styles.activityTitle, theme.fonts.activityTitle, { maxWidth: activityMaxWidth } ] }>
+                                                                    { activity.activityName }
+                                                                </Text>
+                                                                <SemiCircleSplit valueA={ satisfaction }
+                                                                                 valueB={ achieveness }/>
+                                                            </Pressable>
+                                                        </View>
+                                                    </View>
+                                                </Swipeable>
                                             </View>
-                                        </Swipeable>
-                                    </View>
-                                );
-                            }}
-                        />
-                    ) : null}
+                                        );
+                                    }}
+                                />
+                            ) : null}
+                        </View>
 
                     <View
                         style={ [ styles.activitySection, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, { height: 'auto' } ] }>
-                        <TextInput 
+                        <TextInput
                             key={inputKey}
                             ref={inputRef}
                             style={ [ styles.textInput, styles.textInputWithButton ] }
-                            placeholder={ t('main.activities.addNewActivity') } 
-                            multiline 
+                            placeholder={ t('main.activities.addNewActivity') }
+                            multiline
                             defaultValue=""
                             onChangeText={ (val) => {
                                 activityValueRef.current = val;
@@ -472,7 +474,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
 
                 <View style={ styles.activitySections }>
-                    {suggestedActivitiesData && suggestedActivitiesData.length > 0 && 
+                    {suggestedActivitiesData && suggestedActivitiesData.length > 0 &&
                         suggestedActivitiesData.map((activity, index) => (
                             <View
                                 key={ activity.id }
@@ -515,7 +517,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
 
                 <View style={ styles.activitySections }>
-                    {archivedActivities?.data && archivedActivities.data.length > 0 && 
+                    {archivedActivities?.data && archivedActivities.data.length > 0 &&
                         archivedActivities.data.map((activity, index) => {
                             return (
                                 <View
@@ -531,8 +533,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
                                     <View style={ [ styles.activityContent, theme.flexBlocks.alignCenter ] }>
                                         <Text
-                                            style={ [ 
-                                                styles.activityTitle, 
+                                            style={ [
+                                                styles.activityTitle,
                                                 styles.activityTitleWithButton,
                                                 theme.fonts.activityTitle,
                                                 {
@@ -543,12 +545,12 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                             { activity.activityName }
                                         </Text>
 
-                                        <CustomButton 
+                                        <CustomButton
                                             onPress={ () => {
                                                 restoreActivityMutation.mutate(activity.id, {
                                                     onSuccess: () => {
                                                         showToast({ message: "Activity restored", type: "success" });
-                                                        
+
                                                         // Invalidate and refetch activities data
                                                         queryClient.invalidateQueries({ queryKey: ['activities'] });
                                                         queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });

@@ -88,7 +88,6 @@ export default function DraggableActivities<T extends { id: number }>({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
   },
   item: {
     width: '100%',
