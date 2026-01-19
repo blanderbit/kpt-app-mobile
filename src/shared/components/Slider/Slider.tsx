@@ -133,7 +133,7 @@ const Slider: React.FC<SliderProps> = ({
                         </Animated.View>
                     }
 
-                    <Text style={ [ theme.fonts.title, { color: "#000" } ] }>{ percent }%</Text>
+                    <Text style={ [ theme.fonts.title, { color: "#000", paddingTop: 2 } ] }>{ percent }%</Text>
                 </View>
 
                 <Animated.View style={ [ styles.fillWrapper, { width: translateX } ] }>
@@ -162,7 +162,7 @@ const Slider: React.FC<SliderProps> = ({
                             left: SLIDER_WIDTH / 2.5 - 2,
                         }
                     ] }>
-                        <Text style={ [ theme.fonts.title, { color: "#fff" } ] }>{ percent }%</Text>
+                        <Text style={ [ theme.fonts.title, { color: "#fff", paddingTop: 2 } ] }>{ percent }%</Text>
                     </View>
                 </Animated.View>
 

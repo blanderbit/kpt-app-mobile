@@ -28,10 +28,10 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
     const { profile, isLoading, error, refreshProfile } = useProfile();
     const deleteAccount = useDeleteAccount();
     const { data: moodData, isLoading: isLoadingMood } = useMoodForLast7Days();
-    
+
     // Загружаем аналитику профиля (за все время, без параметров дат)
     const { data: analyticsData, isLoading: isLoadingAnalytics } = useAnalyticsOverview();
-    
+
     // Получаем данные из аналитики или используем значения по умолчанию
     // Округляем до целых чисел для отображения
     const satisfaction = Math.round(analyticsData?.rateActivityAverages?.satisfactionLevel || 0);
@@ -79,7 +79,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                         try {
                             await deleteAccount.mutateAsync({ confirm: true });
                             await logout();
-                            
+
                             Alert.alert(
                                 t('main.profile.settings.accountDeleted'),
                                 t('main.profile.settings.accountDeletedMessage'),
@@ -88,7 +88,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                         } catch (error: any) {
                             console.error('❌ Ошибка удаления аккаунта:', error);
                             Alert.alert(
-                                t('main.profile.settings.error'), 
+                                t('main.profile.settings.error'),
                                 error?.message || t('main.profile.settings.deleteAccountError')
                             );
                         }
@@ -102,25 +102,25 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
     const last7DaysMood = useMemo(() => {
         const days = [];
         const today = new Date();
-        
+
         // Создаем массив дней недели, начиная с сегодняшнего дня
         const todayDayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник, ..., 6 = суббота
         const weekDaysOrdered = [];
-        
+
         // Создаем порядок дней недели, начиная с сегодняшнего дня
         for (let i = 0; i < 7; i++) {
             const dayIndex = (todayDayOfWeek - 6 + i + 7) % 7; // Начинаем с 6 дней назад
             weekDaysOrdered.push(weekDays[dayIndex]);
         }
-        
+
         for (let i = 6; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(today.getDate() - i);
             const dateString = date.toISOString().split('T')[0]; // YYYY-MM-DD
-            
+
             // Ищем настроение для этого дня в данных с бэкенда
             const moodForDay = moodData?.find(mood => mood.moodDate === dateString);
-            
+
             days.push({
                 date: dateString,
                 mood: moodForDay || null,
@@ -253,7 +253,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                                 style={ { width: 18, height: 18, borderRadius: 50, flexShrink: 0 } }
                                             />
 
-                                            <Text 
+                                            <Text
                                                 style={ [ theme.fonts.subtitle, { flexShrink: 1 } ] }
                                                 numberOfLines={ 2 }
                                                 ellipsizeMode="tail"
@@ -262,7 +262,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                             </Text>
                                         </View>
 
-                                        <Text style={ theme.fonts.title }>{ satisfaction }%</Text>
+                                        <Text style={ [ theme.fonts.title, { paddingTop: 2 } ] }>{ satisfaction }%</Text>
                                     </View>
 
                                     <View style={ theme.flexBlocks.vertical8 }>
@@ -274,7 +274,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                                 style={ { width: 18, height: 18, borderRadius: 50, flexShrink: 0 } }
                                             />
 
-                                            <Text 
+                                            <Text
                                                 style={ [ theme.fonts.subtitle, { flexShrink: 1 } ] }
                                                 numberOfLines={ 2 }
                                                 ellipsizeMode="tail"
@@ -283,7 +283,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                             </Text>
                                         </View>
 
-                                        <Text style={ theme.fonts.title }>{ achieveness }%</Text>
+                                        <Text style={ [ theme.fonts.title, { paddingTop: 2 } ] }>{ achieveness }%</Text>
                                     </View>
                                 </View>
                             </View>
