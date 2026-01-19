@@ -7,6 +7,7 @@ import {
     TextInput,
     Keyboard,
     Animated,
+    Platform,
     ScrollView,
     LogBox,
 } from 'react-native';
@@ -59,6 +60,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const [ inputHeight, setInputHeight ] = useState(28);
     const [ inputKey, setInputKey ] = useState(0);
     const inputRef = useRef<TextInput>(null);
+    const maxHeightAnim = useRef(new Animated.Value(SCREEN_HEIGHT * 0.55)).current;
     const activityValueRef = useRef('');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
     // Refs для управления Swipeable при drag-and-drop
@@ -103,6 +105,39 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             'VirtualizedLists should never be nested inside plain ScrollViews',
         ]);
     }, []);
+
+    // Отслеживание состояния клавиатуры с плавной анимацией
+    useEffect(() => {
+        const showKeyboard = () => {
+            Animated.spring(maxHeightAnim, {
+                toValue: SCREEN_HEIGHT * 0.3,
+                tension: 50,
+                friction: 7,
+                useNativeDriver: false,
+            }).start();
+        };
+
+        const hideKeyboard = () => {
+            Animated.spring(maxHeightAnim, {
+                toValue: SCREEN_HEIGHT * 0.55,
+                tension: 50,
+                friction: 7,
+                useNativeDriver: false,
+            }).start();
+        };
+
+        // Используем правильные события для каждой платформы
+        const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+        const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+        const keyboardShowListener = Keyboard.addListener(showEvent, showKeyboard);
+        const keyboardHideListener = Keyboard.addListener(hideEvent, hideKeyboard);
+
+        return () => {
+            keyboardShowListener.remove();
+            keyboardHideListener.remove();
+        };
+    }, [maxHeightAnim]);
 
     // Событие: открытие страницы активностей
     useFocusEffect(
@@ -367,7 +402,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     </View>
 
                     <View style={ [styles.activitySections, { maxHeight: SCREEN_HEIGHT * 0.65 }] }>
-                        <View style={ [{ maxHeight: SCREEN_HEIGHT * 0.55 }] }>
+                        <Animated.View style={ [{ maxHeight: maxHeightAnim }] }>
                             {(localActivities || myActivities?.data) && (localActivities || myActivities.data)!.length > 0 ? (
                                 <DraggableList
                                     itemsArr={ localActivities || myActivities.data! }
@@ -427,7 +462,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                     }}
                                 />
                             ) : null}
-                        </View>
+                        </Animated.View>
 
                     <View
                         style={ [ styles.activitySection, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, { height: 'auto' } ] }>
@@ -611,10 +646,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         gap: 16,
         width: '100%',
-        marginRight: -30
+        marginRight: -40
     },
     activityTitle: {
-        maxWidth: '70%', // Оригинальное значение для средних/больших экранов
+        maxWidth: '60%', // Оригинальное значение для средних/больших экранов
     },
     activityTitleWithButton: {
         flex: 1,
