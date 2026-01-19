@@ -311,6 +311,21 @@
   "add": "Добавить",
   "cancel": "Отмена",
   "approve": "Подтвердить",
+  "toast": {
+    "activityNameMinLength": "Название активности должно содержать не менее 10 символов.",
+    "activitySuccessfullyAdded": "Активность успешно добавлена",
+    "failedToAddActivity": "Не удалось добавить активность",
+    "activityArchived": "Активность архивирована",
+    "failedToArchiveActivity": "Не удалось архивировать активность",
+    "activityAddedToList": "Активность добавлена в ваш список",
+    "suggestedActivityRemoved": "Предложенная активность удалена",
+    "failedToRemoveSuggestedActivity": "Не удалось удалить предложенную активность",
+    "failedToUpdateActivityPosition": "Не удалось обновить позицию активности",
+    "activityRestored": "Активность восстановлена",
+    "failedToRestoreActivity": "Не удалось восстановить активность",
+    "moodSuccessfullyTracked": "Настроение успешно отслежено",
+    "moodNotTracked": "Не удалось отследить настроение"
+  },
   "onboarding": {
     "step1": {
       "title": "Добро пожаловать в Plesury",

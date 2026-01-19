@@ -148,7 +148,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const handleAddNewActivity = () => {
         const activityValue = activityValueRef.current.trim();
         if ( activityValue.length < 10 ) {
-            showToast({ message: "The name of activity should not be less than 10 symbols.", type: "error" })
+            showToast({ message: t('toast.activityNameMinLength'), type: "error" })
             return;
         }
 
@@ -161,7 +161,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     activity_name: activityValue,
                 });
                 console.log('✅ Activity created successfully:', data);
-                showToast({ message: "Activity successfully added", type: "success" });
+                showToast({ message: t('toast.activitySuccessfullyAdded'), type: "success" });
                 activityValueRef.current = '';
                 setNewActivity("");
                 setInputKey(prev => prev + 1);
@@ -176,7 +176,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 setLocalActivities(null);
             },
             onError: (error) => {
-                showToast({ message: "Failed to add activity", type: "error" });
+                showToast({ message: t('toast.failedToAddActivity'), type: "error" });
             }
         });
     };
@@ -188,7 +188,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 amplitudeAnalyticsService.trackEvent('Activities Archive Activity', {
                     activity_id: activityId,
                 });
-                showToast({ message: "Activity archived", type: "success" });
+                showToast({ message: t('toast.activityArchived'), type: "success" });
 
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
@@ -197,7 +197,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 setLocalActivities(null);
             },
             onError: (error) => {
-                showToast({ message: "Failed to archive activity", type: "error" });
+                showToast({ message: t('toast.failedToArchiveActivity'), type: "error" });
             }
         });
     };
@@ -211,7 +211,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 amplitudeAnalyticsService.trackEvent('Activities Add From Suggested', {
                     suggested_activity_id: suggestedActivityId,
                 });
-                showToast({ message: "Activity added to your list", type: "success" });
+                showToast({ message: t('toast.activityAddedToList'), type: "success" });
 
                 // Invalidate and refetch activities data
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
@@ -221,7 +221,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 setLocalActivities(null);
             },
             onError: (error) => {
-                showToast({ message: "Failed to add activity", type: "error" });
+                showToast({ message: t('toast.failedToAddActivity'), type: "error" });
             }
         });
     };
@@ -229,10 +229,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const handleDeleteSuggestedActivity = (suggestedActivityId: number) => {
         deleteSuggestedActivityMutation.mutate(suggestedActivityId, {
             onSuccess: () => {
-                showToast({ message: "Suggested activity removed", type: "success" });
+                showToast({ message: t('toast.suggestedActivityRemoved'), type: "success" });
             },
             onError: (error) => {
-                showToast({ message: "Failed to remove suggested activity", type: "error" });
+                showToast({ message: t('toast.failedToRemoveSuggestedActivity'), type: "error" });
             }
         });
     };
@@ -295,7 +295,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 },
                 onError: (error) => {
                     console.error('❌ [handleDragEnd] Ошибка обновления позиции:', error);
-                    showToast({ message: "Failed to update activity position", type: "error" });
+                    showToast({ message: t('toast.failedToUpdateActivityPosition'), type: "error" });
                     // Откатываем оптимистичное обновление
                     if (previousData) {
                         queryClient.setQueryData(queryKeys.myActivities(), previousData);
@@ -506,7 +506,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 </View>
             </View>
 
-            <View style={ theme.containers.cardRound }>
+            <View style={ [theme.containers.cardRound, { marginTop: 16 }] }>
                 <View
                     style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter, { paddingHorizontal: 8 } ] }>
                     <ArchiveIcon/>
@@ -549,7 +549,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                             onPress={ () => {
                                                 restoreActivityMutation.mutate(activity.id, {
                                                     onSuccess: () => {
-                                                        showToast({ message: "Activity restored", type: "success" });
+                                                        showToast({ message: t('toast.activityRestored'), type: "success" });
 
                                                         // Invalidate and refetch activities data
                                                         queryClient.invalidateQueries({ queryKey: ['activities'] });
@@ -557,7 +557,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                                         queryClient.invalidateQueries({ queryKey: ['activities', 'archived'] });
                                                     },
                                                     onError: (error) => {
-                                                        showToast({ message: "Failed to restore activity", type: "error" });
+                                                        showToast({ message: t('toast.failedToRestoreActivity'), type: "error" });
                                                     }
                                                 });
                                             } }

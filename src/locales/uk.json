@@ -312,6 +312,21 @@
   "add": "Додати",
   "cancel": "Скасувати",
   "approve": "Підтвердити",
+  "toast": {
+    "activityNameMinLength": "Назва активності повинна містити не менше 10 символів.",
+    "activitySuccessfullyAdded": "Активність успішно додана",
+    "failedToAddActivity": "Не вдалося додати активність",
+    "activityArchived": "Активність архівована",
+    "failedToArchiveActivity": "Не вдалося архівувати активність",
+    "activityAddedToList": "Активність додана до вашого списку",
+    "suggestedActivityRemoved": "Запропонована активність видалена",
+    "failedToRemoveSuggestedActivity": "Не вдалося видалити запропоновану активність",
+    "failedToUpdateActivityPosition": "Не вдалося оновити позицію активності",
+    "activityRestored": "Активність відновлена",
+    "failedToRestoreActivity": "Не вдалося відновити активність",
+    "moodSuccessfullyTracked": "Настрій успішно відстежено",
+    "moodNotTracked": "Не вдалося відстежити настрій"
+  },
   "onboarding": {
     "step1": {
       "title": "Ласкаво просимо до Plesury",

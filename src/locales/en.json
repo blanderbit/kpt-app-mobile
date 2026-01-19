@@ -312,6 +312,21 @@
   "add": "Add",
   "cancel": "Cancel",
   "approve": "Approve",
+  "toast": {
+    "activityNameMinLength": "The name of activity should not be less than 10 symbols.",
+    "activitySuccessfullyAdded": "Activity successfully added",
+    "failedToAddActivity": "Failed to add activity",
+    "activityArchived": "Activity archived",
+    "failedToArchiveActivity": "Failed to archive activity",
+    "activityAddedToList": "Activity added to your list",
+    "suggestedActivityRemoved": "Suggested activity removed",
+    "failedToRemoveSuggestedActivity": "Failed to remove suggested activity",
+    "failedToUpdateActivityPosition": "Failed to update activity position",
+    "activityRestored": "Activity restored",
+    "failedToRestoreActivity": "Failed to restore activity",
+    "moodSuccessfullyTracked": "Mood successfully tracked",
+    "moodNotTracked": "Mood isn't tracked"
+  },
   "onboarding": {
     "step1": {
       "title": "Welcome to Plesury",
