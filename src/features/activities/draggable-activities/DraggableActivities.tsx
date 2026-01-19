@@ -77,10 +77,10 @@ export default function DraggableActivities<T extends { id: number }>({
         onDragEnd={handleDragEnd}
         keyExtractor={keyExtractor}
         renderItem={renderDraggableItem}
-        activationDistance={10}
+        activationDistance={0}
         scrollEnabled={true}
-        // Увеличиваем активационное расстояние для лучшей работы на мобильных устройствах
         dragItemOverflow={true}
+        simultaneousHandlers={[]}
       />
     </View>
   );

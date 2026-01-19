@@ -11,6 +11,7 @@ import {
     ScrollView,
     LogBox,
 } from 'react-native';
+import Reanimated, { Easing as ReanimatedEasing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
 import { ActivityLabel } from '@shared/components/ActivityLabel';
@@ -60,7 +61,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const [ inputHeight, setInputHeight ] = useState(28);
     const [ inputKey, setInputKey ] = useState(0);
     const inputRef = useRef<TextInput>(null);
-    const maxHeightAnim = useRef(new Animated.Value(SCREEN_HEIGHT * 0.55)).current;
+    // Держим maxHeight на UI thread (Reanimated), чтобы анимация не дергалась при нагрузке на JS
+    const maxHeightSv = useSharedValue(SCREEN_HEIGHT * 0.55);
     const activityValueRef = useRef('');
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
     // Refs для управления Swipeable при drag-and-drop
@@ -108,22 +110,22 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
     // Отслеживание состояния клавиатуры с плавной анимацией
     useEffect(() => {
-        const showKeyboard = () => {
-            Animated.spring(maxHeightAnim, {
-                toValue: SCREEN_HEIGHT * 0.3,
-                tension: 50,
-                friction: 7,
-                useNativeDriver: false,
-            }).start();
+        const animateHeight = (toValue: number, duration?: number) => {
+            // withTiming на UI thread, более гладко чем Animated.timing в JS
+            maxHeightSv.value = withTiming(toValue, {
+                duration: duration ?? 250,
+                easing: ReanimatedEasing.inOut(ReanimatedEasing.cubic),
+            });
         };
 
-        const hideKeyboard = () => {
-            Animated.spring(maxHeightAnim, {
-                toValue: SCREEN_HEIGHT * 0.55,
-                tension: 50,
-                friction: 7,
-                useNativeDriver: false,
-            }).start();
+        const showKeyboard = (e?: any) => {
+            const d = Platform.OS === 'ios' ? e?.duration : undefined;
+            animateHeight(SCREEN_HEIGHT * 0.3, d);
+        };
+
+        const hideKeyboard = (e?: any) => {
+            const d = Platform.OS === 'ios' ? e?.duration : undefined;
+            animateHeight(SCREEN_HEIGHT * 0.55, d);
         };
 
         // Используем правильные события для каждой платформы
@@ -137,7 +139,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
             keyboardShowListener.remove();
             keyboardHideListener.remove();
         };
-    }, [maxHeightAnim]);
+    }, [maxHeightSv]);
+
+    const myActivitiesMaxHeightStyle = useAnimatedStyle(() => {
+        return { maxHeight: maxHeightSv.value };
+    }, []);
 
     // Событие: открытие страницы активностей
     useFocusEffect(
@@ -402,20 +408,33 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     </View>
 
                     <View style={ [styles.activitySections, { maxHeight: SCREEN_HEIGHT * 0.65 }] }>
-                        <Animated.View style={ [{ maxHeight: maxHeightAnim }] }>
+                        <Reanimated.View style={ myActivitiesMaxHeightStyle }>
                             {(localActivities || myActivities?.data) && (localActivities || myActivities.data)!.length > 0 ? (
                                 <DraggableList
                                     itemsArr={ localActivities || myActivities.data! }
                                     itemHeight={ 90 }
                                     onDragEnd={ handleDragEnd }
                                     renderItem={ (activity, index, drag) => {
-                                        const handleDragStart = () => {
+                                        let longPressTimer: NodeJS.Timeout | null = null;
+
+                                        const handlePressIn = () => {
                                             // Закрываем Swipeable перед началом drag
                                             const swipeable = swipeableRefs.current.get(activity.id);
                                             if (swipeable) {
                                                 swipeable.close();
                                             }
-                                            drag();
+                                            // Запускаем таймер для долгого нажатия
+                                            longPressTimer = setTimeout(() => {
+                                                drag();
+                                            }, 100);
+                                        };
+
+                                        const handlePressOut = () => {
+                                            // Отменяем таймер, если палец отпущен до истечения времени
+                                            if (longPressTimer) {
+                                                clearTimeout(longPressTimer);
+                                                longPressTimer = null;
+                                            }
                                         };
 
                                         return (
@@ -438,7 +457,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                                     enabled={true}>
                                                     <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
                                                         <Pressable
-                                                            onPressIn={handleDragStart}
+                                                            onPressIn={handlePressIn}
+                                                            onPressOut={handlePressOut}
                                                             style={{ padding: 8, marginLeft: -8 }}>
                                                             <BurgerIcon/>
                                                         </Pressable>
@@ -462,7 +482,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                     }}
                                 />
                             ) : null}
-                        </Animated.View>
+                        </Reanimated.View>
 
                     <View
                         style={ [ styles.activitySection, theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter, { height: 'auto' } ] }>
