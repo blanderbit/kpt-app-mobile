@@ -74,7 +74,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const queryClient = useQueryClient();
 
     // API hooks
-    const { data: myActivities, isLoading, error } = useMyActivities();
+    const { data: myActivities, isLoading, error, refetch: refetchMyActivities } = useMyActivities();
     const { data: suggestedActivitiesData } = useSuggestedActivities();
     const { data: archivedActivities } = useArchivedActivities();
 
@@ -145,11 +145,13 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         return { maxHeight: maxHeightSv.value };
     }, []);
 
-    // Событие: открытие страницы активностей
+    // Событие: открытие страницы активностей и обновление данных
     useFocusEffect(
         React.useCallback(() => {
             amplitudeAnalyticsService.trackEvent('Activities Screen Opened');
-        }, [])
+            // Обновляем список активностей с бекенда при каждом заходе на страницу
+            refetchMyActivities();
+        }, [refetchMyActivities])
     );
 
     // Debug logs для myActivities с бекенда
@@ -196,7 +198,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         createActivityMutation.mutate({
             activityName: activityValue
         }, {
-            onSuccess: (data) => {
+            onSuccess: async (data) => {
                 // Событие: создать активность
                 amplitudeAnalyticsService.trackEvent('Activities Create Activity', {
                     activity_name: activityValue,
@@ -208,13 +210,20 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 setInputKey(prev => prev + 1);
                 Keyboard.dismiss();
 
-                // Invalidate and refetch activities data
+                // Invalidate queries
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
-                // Force refetch
-                queryClient.refetchQueries({ queryKey: ['activities', 'my'] });
-                // Сбрасываем локальное состояние, чтобы синхронизироваться с новыми данными
-                setLocalActivities(null);
+                
+                // Получаем актуальный список активностей с сервера
+                const { data: updatedActivities } = await refetchMyActivities();
+                
+                // Обновляем локальное состояние новыми данными
+                if (updatedActivities?.data) {
+                    setLocalActivities(updatedActivities.data);
+                } else {
+                    // Если данные не пришли, сбрасываем для синхронизации через useEffect
+                    setLocalActivities(null);
+                }
             },
             onError: (error) => {
                 showToast({ message: t('toast.failedToAddActivity'), type: "error" });
