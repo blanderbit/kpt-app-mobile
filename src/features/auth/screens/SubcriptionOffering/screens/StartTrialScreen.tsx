@@ -7,12 +7,15 @@ import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {LinearGradient} from "expo-linear-gradient";
 import {COLORS} from "@app/theme";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { revenueCatService } from "@shared/services/revenuecat";
+import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
 
 export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [stepHeights, setStepHeights] = useState<number[]>([]);
     const [selectedSubscription, setSelectedSubscription] = useState<string>('yearly');
+    const [isPurchasing, setIsPurchasing] = useState(false);
     const stepRefs = useRef<(View | null)[]>([]);
 
     const measureStepHeight = (index: number) => {
@@ -100,6 +103,38 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         }
     ]
 
+    const purchaseSelectedPlan = async () => {
+        const productId =
+            selectedSubscription === 'monthly'
+                ? REVENUECAT_PRODUCT_IDS.MONTHLY
+                : REVENUECAT_PRODUCT_IDS.YEARLY;
+
+        if (!revenueCatService.getInitialized()) {
+            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
+            return;
+        }
+
+        setIsPurchasing(true);
+        try {
+            const products = await revenueCatService.getProducts([productId]);
+            const product = products?.[0];
+            if (!product) {
+                console.warn('[RevenueCat] Product not found:', productId);
+                return;
+            }
+            await revenueCatService.purchaseProduct(product);
+            onNext();
+        } catch (e: any) {
+            // В библиотеке обычно есть e.userCancelled
+            if (e?.userCancelled) {
+                return;
+            }
+            console.error('[RevenueCat] Purchase failed:', e);
+        } finally {
+            setIsPurchasing(false);
+        }
+    };
+
     return (
         <View style={[styles.container, theme.flexBlocks.vertical16]}>
             <View style={[styles.content, theme.flexBlocks.vertical16]}>
@@ -121,7 +156,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                     {subscriptionSteps.map((step, index) => (
                         <View
                             key={index}
-                            style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index)}]}
+                            style={[theme.flexBlocks.horizontal16, {marginBottom: getMarginBottom(index), flexShrink: 1, minWidth: 0}]}
                             onLayout={() => measureStepHeight(index)}
                         >
                             <View
@@ -133,13 +168,13 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                 ref={(ref) => {
                                     stepRefs.current[index] = ref;
                                 }}
-                                style={{width: '90%'}}
+                                style={{flex: 1, flexShrink: 1, minWidth: 0}}
                             >
                                 <Text style={styles.periodTitle}>
                                     {step.title}
                                 </Text>
 
-                                <Text style={theme.fonts.regular}>
+                                <Text style={[theme.fonts.regular, {flexShrink: 1}]}>
                                     {step.description}
                                 </Text>
                             </View>
@@ -214,6 +249,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={styles.subscriptionDescription}>
                     <Text style={[theme.fonts.regular, styles.descriptionText]}>
                         {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionText}
+                        {' '}
                         <Text style={styles.descriptionHighlight}>
                             {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionHighlight}
                         </Text>
@@ -229,9 +265,10 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                             amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
                                 plan: selectedSubscription,
                             });
-                            onNext();
+                            purchaseSelectedPlan().catch(() => {});
                         }}
                         variant="primary"
+                        disabled={isPurchasing}
                     />
 
                     <Pressable
@@ -355,8 +392,8 @@ const styles = StyleSheet.create({
     descriptionText: {
         textAlign: 'center',
         fontFamily: 'SF Pro Display Semibold',
-        fontSize: 18,
-        lineHeight: 24
+        fontSize: 16,
+        lineHeight: 22
     },
     descriptionHighlight: {
         color: COLORS.warning,

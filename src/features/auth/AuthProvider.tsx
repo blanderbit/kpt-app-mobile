@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 import { notificationService } from '@shared/services/notifications/NotificationService';
 import { amplitudeAnalyticsService } from '@shared/services/analytics';
+import { revenueCatService } from '@shared/services/revenuecat';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -100,6 +101,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         const userData = await authService.getCurrentUser();
                         setUser(userData);
                         setIsAuthenticated(true);
+
+                        // RevenueCat: appUserID должен совпадать с users.id на бэкенде
+                        if (userData?.id != null) {
+                            await revenueCatService.setUserID(String(userData.id));
+                        }
                         
                         // Загружаем флаг Firebase
                         const firebaseFlag = await getFirebaseFlag();
@@ -198,6 +204,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(true);
             setIsFirebaseUser(false);
             setIsEmailVerified(response.user.emailVerified);
+
+            // RevenueCat: appUserID должен совпадать с users.id на бэкенде
+            if (response.user?.id != null) {
+                await revenueCatService.setUserID(String(response.user.id));
+            }
             // Обновляем профиль после успешного входа
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
@@ -277,6 +288,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(true);
             setIsFirebaseUser(true);
             setIsEmailVerified(true);
+
+            // RevenueCat: appUserID должен совпадать с users.id на бэкенде
+            if (response.user?.id != null) {
+                await revenueCatService.setUserID(String(response.user.id));
+            }
             // Обновляем профиль после успешного входа
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
@@ -344,6 +360,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsAuthenticated(true);
             setIsFirebaseUser(true);
             setIsEmailVerified(true);
+
+            // RevenueCat: appUserID должен совпадать с users.id на бэкенде
+            if (response.user?.id != null) {
+                await revenueCatService.setUserID(String(response.user.id));
+            }
             // Обновляем профиль после успешной регистрации
             await refreshProfile();
             // Регистрируем нотификации после успешной регистрации
@@ -383,6 +404,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             // Вызываем API выхода
             await authService.logout();
+
+            // RevenueCat: сбрасываем пользователя
+            try {
+                await revenueCatService.logout();
+            } catch (e) {
+                // не блокируем логаут приложения из-за RevenueCat
+                console.warn('RevenueCat logout failed:', e);
+            }
             
             // Очищаем токены
             await apiUtils.removeAuthTokens();
@@ -409,6 +438,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Даже если API вызов не удался, очищаем локальное состояние
             // Удаляем регистрацию нотификаций
             await notificationService.unregisterDevice();
+            try {
+                await revenueCatService.logout();
+            } catch (e) {
+                console.warn('RevenueCat logout failed:', e);
+            }
             await apiUtils.removeAuthTokens();
             await clearFirebaseFlag();
             await clearEmailVerifiedFlag();

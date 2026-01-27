@@ -7,10 +7,38 @@ import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {COLORS} from "@app/theme";
 import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { revenueCatService } from "@shared/services/revenuecat";
+import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
 
 export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
+    const [isPurchasing, setIsPurchasing] = React.useState(false);
+
+    const purchaseYearly = async () => {
+        if (!revenueCatService.getInitialized()) {
+            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
+            return;
+        }
+        setIsPurchasing(true);
+        try {
+            const products = await revenueCatService.getProducts([REVENUECAT_PRODUCT_IDS.YEARLY]);
+            const product = products?.[0];
+            if (!product) {
+                console.warn('[RevenueCat] Product not found:', REVENUECAT_PRODUCT_IDS.YEARLY);
+                return;
+            }
+            await revenueCatService.purchaseProduct(product);
+            onNext();
+        } catch (e: any) {
+            if (e?.userCancelled) {
+                return;
+            }
+            console.error('[RevenueCat] Purchase failed:', e);
+        } finally {
+            setIsPurchasing(false);
+        }
+    };
 
     return (
         <View style={[styles.container, theme.flexBlocks.vertical16]}>
@@ -49,9 +77,10 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
                             amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
                                 plan: 'second_trial',
                             });
-                            onNext();
+                            purchaseYearly().catch(() => {});
                         }}
                         variant="primary"
+                        disabled={isPurchasing}
                     />
 
                     <Pressable

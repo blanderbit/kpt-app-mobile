@@ -13,6 +13,8 @@ import {
 import ToggleSwitch from "@shared/components/ToggleSwitch";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import {isSmallScreen} from "@shared/utils/screenUtils";
+import { revenueCatService } from "@shared/services/revenuecat";
+import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
 
 const STAR_ICON_SVG = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -24,6 +26,32 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [freeTrialEnabled, setFreeTrialEnabled] = React.useState(true);
+    const [isPurchasing, setIsPurchasing] = React.useState(false);
+
+    const purchaseYearly = async () => {
+        if (!revenueCatService.getInitialized()) {
+            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
+            return;
+        }
+        setIsPurchasing(true);
+        try {
+            const products = await revenueCatService.getProducts([REVENUECAT_PRODUCT_IDS.YEARLY]);
+            const product = products?.[0];
+            if (!product) {
+                console.warn('[RevenueCat] Product not found:', REVENUECAT_PRODUCT_IDS.YEARLY);
+                return;
+            }
+            await revenueCatService.purchaseProduct(product);
+            onNext();
+        } catch (e: any) {
+            if (e?.userCancelled) {
+                return;
+            }
+            console.error('[RevenueCat] Purchase failed:', e);
+        } finally {
+            setIsPurchasing(false);
+        }
+    };
 
     return (
         <View style={[styles.container, isSmallScreen() ? theme.flexBlocks.vertical32 : theme.flexBlocks.vertical64]}>
@@ -130,8 +158,9 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                                 plan: 'yearly',
                                 free_trial_enabled: freeTrialEnabled,
                             });
-                            onNext();
+                            purchaseYearly().catch(() => {});
                         }}
+                        disabled={isPurchasing}
                     />
                 </View>
             </View>

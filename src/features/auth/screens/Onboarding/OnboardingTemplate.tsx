@@ -27,7 +27,41 @@ import SixteenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/Six
 import SeventeenthStep from "@features/auth/screens/Onboarding/OnboardingSteps/SeventeenthStep";
 import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
-import { isSmallScreen, getResponsivePadding } from "@shared/utils/screenUtils";
+import { isSmallScreen } from "@shared/utils/screenUtils";
+
+// ЗАХАРДКОЖЕННЫЕ ДАННЫЕ ОНБОРДИНГА ДЛЯ БЫСТРОГО ДОСТУПА К ЭКРАНУ ОПЛАТЫ
+// Скопируйте JSON из console.log перед экраном оплаты и вставьте сюда
+// Затем установите USE_HARDCODED_ONBOARDING_DATA = true для использования
+const USE_HARDCODED_ONBOARDING_DATA = true;
+const HARDCODED_ONBOARDING_DATA = {
+    "mood": "excellent",
+    "socialNetworks": [
+        "facebook"
+    ],
+    "questions": {
+        "improvement_goal": [
+            "more_energy"
+        ],
+        "main_challenge": [
+            "burned_out"
+        ],
+        "life_approach": [
+            "chasing_results"
+        ],
+        "biggest_change": [
+            "health_body"
+        ],
+        "starting_approach": [
+            "small_steps"
+        ],
+        "time_investment": [
+            "up_to_5_min"
+        ]
+    },
+    "selectedActivities": [],
+    "satisfactionLevel": 65,
+    "hardnessLevel": 54
+};
 
 export default function OnboardingTemplate({
                                                navigation,
@@ -45,23 +79,23 @@ export default function OnboardingTemplate({
         reset: resetGenerateRecommendations,
     } = useGenerateActivityRecommendations();
     const { showSubscriptionOffering } = useSubscriptionOffering();
-    
+
     // Анимационные значения для переходов между степами
     const fadeAnim = useRef(new Animated.Value(1)).current;
     const slideAnim = useRef(new Animated.Value(0)).current;
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [transitionDirection, setTransitionDirection] = useState<'forward' | 'backward'>('forward');
-    
+
     // Анимация для загрузки
     const loadingAnim = useRef(new Animated.Value(0)).current;
-    
+
     // Анимация для степпера
     const stepperAnim = useRef(new Animated.Value(1)).current;
-    
+
     // Анимация для кнопки "Назад"
     const backButtonAnim = useRef(new Animated.Value(1)).current;
     const lastRecommendationsPayloadRef = useRef<string | null>(null);
-    
+
     const [onboardingData, setOnboardingData] = useState<{
         mood: string | null;
         socialNetworks: string[];
@@ -69,7 +103,7 @@ export default function OnboardingTemplate({
         selectedActivities: Array<{ activityName: string; content?: string }>;
         satisfactionLevel?: number;
         hardnessLevel?: number;
-    }>({
+    }>(USE_HARDCODED_ONBOARDING_DATA ? HARDCODED_ONBOARDING_DATA : {
         mood: null,
         socialNetworks: [],
         questions: {},
@@ -258,7 +292,7 @@ export default function OnboardingTemplate({
     );
 
     const hasRecommendationInputs = Boolean(recommendationsPayload);
-    
+
     // Хардкодные активности для fallback при ошибке
     const fallbackRecommendations: ActivityRecommendation[] = [
         {
@@ -277,10 +311,10 @@ export default function OnboardingTemplate({
             activityType: "personal growth"
         }
     ];
-    
+
     // Используем хардкодные активности если есть ошибка, иначе данные с бекенда
-    const recommendations = isGenerateRecommendationsError 
-        ? fallbackRecommendations 
+    const recommendations = isGenerateRecommendationsError
+        ? fallbackRecommendations
         : (recommendationsResponse?.recommendations ?? []);
     const recommendationsOverallReasoning = recommendationsResponse?.overallReasoning;
 
@@ -313,7 +347,7 @@ export default function OnboardingTemplate({
             }
             return stepConfig;
         }
-        
+
         // Динамические вопросы - используем вопрос из API
         const questionIndex = currentStep - 6;
         if (questions && questionIndex >= 0 && questionIndex < questions.length) {
@@ -324,7 +358,7 @@ export default function OnboardingTemplate({
                 infoText: undefined
             };
         }
-        
+
         // Финальные степпы - после всех динамических вопросов
         const questionsCount = questions?.length || 0;
         const sixthStepNumber = 6 + questionsCount;
@@ -472,7 +506,7 @@ export default function OnboardingTemplate({
             }
             return stepConfig;
         }
-        
+
         return null;
     };
 
@@ -480,13 +514,13 @@ export default function OnboardingTemplate({
     const animateStepTransition = (newStep: number, direction: 'forward' | 'backward', callback?: () => void) => {
         setIsTransitioning(true);
         setTransitionDirection(direction);
-        
+
         // Определяем направление анимации
         const exitSlideValue = direction === 'forward' ? -50 : 50; // вперед - влево, назад - вправо
         const enterSlideValue = direction === 'forward' ? 50 : -50; // новый контент приходит с противоположной стороны
-        
+
         // Убираем анимацию кнопки "Назад" для стабильности
-        
+
         // Анимация исчезновения текущего степа
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -502,11 +536,11 @@ export default function OnboardingTemplate({
         ]).start(() => {
             // Обновляем степ
             setCurrentStep(newStep);
-            
+
             // Сбрасываем анимационные значения для следующего степа
             fadeAnim.setValue(0);
             slideAnim.setValue(enterSlideValue);
-            
+
             // Небольшая задержка для более плавного перехода
             setTimeout(() => {
                 // Анимация появления нового степа
@@ -536,7 +570,7 @@ export default function OnboardingTemplate({
             if (currentStep === stepNumbers.thirteenthStep) {
                 newStep = stepNumbers.eleventhStep;
             }
-            
+
             animateStepTransition(newStep, 'backward', async () => {
                 await saveOnboardingProgress(newStep);
             });
@@ -548,15 +582,28 @@ export default function OnboardingTemplate({
     };
 
     const onNext = async () => {
+        // Если используется захардкоженная дата, сразу переходим на экран оплаты
+        if (USE_HARDCODED_ONBOARDING_DATA) {
+            console.log('🚀 [Onboarding] Using hardcoded data - skipping to payment screen');
+            console.log('📋 [Onboarding] Hardcoded onboarding data:', JSON.stringify(onboardingData, null, 2));
+            showSubscriptionOffering(handleSubscriptionOfferingComplete);
+            return;
+        }
+
         if (currentStep < totalSteps) {
             const newStep = currentStep + 1;
-            
+
             // Если следующий степ - SeventeenthStep (последний), показываем SubscriptionOfferingTemplate
             if (newStep === stepNumbers.seventeenthStep) {
+                // Логируем всю онбординг дату перед показом экрана оплаты
+                console.log('📋 [Onboarding] Full onboarding data before payment screen:', JSON.stringify(onboardingData, null, 2));
+                console.log('📋 [Onboarding] Copy this JSON to hardcode for quick access to payment screen:');
+                console.log(JSON.stringify(onboardingData, null, 2));
+
                 showSubscriptionOffering(handleSubscriptionOfferingComplete);
                 return;
             }
-            
+
             animateStepTransition(newStep, 'forward', async () => {
                 await saveOnboardingProgress(newStep);
             });
@@ -585,7 +632,7 @@ export default function OnboardingTemplate({
         } catch (error) {
             console.error('❌ [OnboardingTemplate] Error saving mood:', error);
         }
-        
+
         setOnboardingData(prev => ({
             ...prev,
             mood: mood
@@ -614,7 +661,7 @@ export default function OnboardingTemplate({
     const handleSubscriptionOfferingComplete = async () => {
         // Переходим к последнему степу (SeventeenthStep)
         const newStep = stepNumbers.seventeenthStep;
-        
+
         animateStepTransition(newStep, 'forward', async () => {
             await saveOnboardingProgress(newStep);
         });
@@ -623,7 +670,7 @@ export default function OnboardingTemplate({
     // Рендеринг статических степов (1-5)
     const renderStaticSteps = () => {
         if (currentStep > onboardingFirstSectionSteps.length) return null;
-        
+
         const currentStepData = onboardingFirstSectionSteps.find(step => step.id === currentStep);
         if (!currentStepData) return null;
 
@@ -643,7 +690,7 @@ export default function OnboardingTemplate({
     // Рендеринг динамических вопросов
     const renderQuestions = () => {
         const questionIndex = currentStep - 6; // 6-й шаг = первый вопрос (индекс 0)
-        
+
         if (!questions || questionIndex < 0 || questionIndex >= questions.length) {
             return null;
         }
@@ -661,7 +708,7 @@ export default function OnboardingTemplate({
         const stepComponents = {
             [stepNumbers.sixthStep]: <SixthStep onNext={onNext} />,
             [stepNumbers.seventhStep]: <SeventhStep onNext={onNext} />,
-            [stepNumbers.eighthStep]: <EighthStep 
+            [stepNumbers.eighthStep]: <EighthStep
                 onNext={onNext}
                 initialSatisfactionLevel={onboardingData.satisfactionLevel}
                 initialHardnessLevel={onboardingData.hardnessLevel}
@@ -750,7 +797,7 @@ export default function OnboardingTemplate({
                     isSmallScreen() && styles.mainContainerSmall
                 ]}>
                     {questionsLoading ? (
-                        <Animated.View 
+                        <Animated.View
                             style={[
                                 styles.loadingContainer,
                                 {
@@ -764,7 +811,7 @@ export default function OnboardingTemplate({
                             <ActivityIndicator size="large" color={theme.buttons.primary.backgroundColor} />
                         </Animated.View>
                     ) : (
-                        <Animated.View 
+                        <Animated.View
                             style={[
                                 styles.stepContainer,
                                 {
@@ -777,7 +824,7 @@ export default function OnboardingTemplate({
                             {(() => {
                                 const stepConfig = getCurrentStepConfig();
                                 if (!stepConfig) return null;
-                                
+
                                 return (
                                     <View style={[
                                         styles.commonHeader,
@@ -814,7 +861,7 @@ export default function OnboardingTemplate({
                                     </View>
                                 );
                             })()}
-                            
+
                             {renderCurrentStep()}
                         </Animated.View>
                     )}

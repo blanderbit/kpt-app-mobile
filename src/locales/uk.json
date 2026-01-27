@@ -201,7 +201,9 @@
       },
       "settings": {
         "title": "Налаштування",
-        "colorScheme": "Кольорова схема",
+        "colorScheme": "Кольор. схема",
+        "themeGreen": "Зелена",
+        "themePink": "Рожева",
         "personalInfo": "Особиста інформація",
         "privacyPolicy": "Політика конфіденційності",
         "termsConditions": "Умови використання",

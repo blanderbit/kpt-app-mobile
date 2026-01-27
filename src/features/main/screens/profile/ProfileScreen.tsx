@@ -394,8 +394,8 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                         rightElement={ index > 0 ? <ChevronRightIcon/> : (
                                             <ToggleSwitch
                                                 options={[
-                                                    { label: 'Green', value: 'Green' },
-                                                    { label: 'Pink', value: 'Pink' }
+                                                    { label: t('main.profile.settings.themeGreen'), value: 'Green' },
+                                                    { label: t('main.profile.settings.themePink'), value: 'Pink' }
                                                 ]}
                                                 value={themeName}
                                                 onChange={(value) => {

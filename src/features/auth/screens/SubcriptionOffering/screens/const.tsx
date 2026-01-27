@@ -7,9 +7,7 @@ import ThirdTrialScreen from "@features/auth/screens/SubcriptionOffering/screens
 export const subscriptionOfferingSteps: SubscriptionOfferingStep[] = [
     {
         id: 1,
-        // content: (<StartTrialScreen onNext={() => {}} />)
-        // content: (<SecondTrialScreen onNext={() => {}} />)
-        content: (<ThirdTrialScreen onNext={() => {}} />)
+        content: (<StartTrialScreen onNext={() => {}} />)
     },
     {
         id: 2,

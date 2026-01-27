@@ -33,4 +33,21 @@ export const getRevenueCatApiKey = (): string => {
   return REVENUECAT_API_KEYS.ios;
 };
 
+/**
+ * Идентификаторы продуктов подписки
+ * Соответствуют продуктам, настроенным в RevenueCat Dashboard
+ */
+export const REVENUECAT_PRODUCT_IDS = {
+  MONTHLY: 'plesury.monthly',
+  YEARLY: 'plesury.yearly',
+} as const;
+
+/**
+ * Массив всех идентификаторов продуктов
+ */
+export const REVENUECAT_PRODUCT_IDENTIFIERS = [
+  REVENUECAT_PRODUCT_IDS.MONTHLY,
+  REVENUECAT_PRODUCT_IDS.YEARLY,
+] as const;
+
 
