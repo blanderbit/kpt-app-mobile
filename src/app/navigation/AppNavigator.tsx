@@ -67,7 +67,7 @@ export type CheckEmailScreenRouteProp = RouteProp<RootStackParamList, Routes.CHE
 const Stack = createStackNavigator<RootStackParamList>();
 
 export function AppNavigator() {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isInitializing } = useAuth();
     const { theme } = useCustomTheme();
 
     const { colors } = useTheme();
@@ -76,7 +76,7 @@ export function AppNavigator() {
     const horizontalPadding = getResponsiveHorizontalPadding(14);
     const topPadding = getResponsiveTopPadding(60);
 
-    if (isLoading) {
+    if (isInitializing) {
         return (
             <View style={[styles.main, { paddingHorizontal: horizontalPadding, paddingTop: topPadding }]}>
                 <LoadingSpinner visible={true} />

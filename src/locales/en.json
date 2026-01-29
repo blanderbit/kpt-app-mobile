@@ -455,6 +455,7 @@
       "freeTrial": "7-Day Free Trial",
       "unlimitedAccess": "Unlimited free access for",
       "save58": "7 days (save 58%)",
+      "savePercent": "7 days (save {{percent}}%)",
       "cancelAnytime": ". Cancel anytime",
       "startFreeTrial": "Start my FREE trial now",
       "subscribe": "Subscribe",

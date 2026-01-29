@@ -8,16 +8,19 @@ import { useActivityTypesLoader } from '@app/hooks/activity-types-loader.hook';
 import { notificationService } from '@shared/services/notifications/NotificationService';
 import { amplitudeAnalyticsService } from '@shared/services/analytics';
 import { revenueCatService } from '@shared/services/revenuecat';
+import { queryClient } from '@shared/services/query/QueryProvider';
+import { clearOnboardingOnLogout } from '@shared/hooks/useOnboardingCleanup';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isInitializing, setIsInitializing] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isFirebaseUser, setIsFirebaseUser] = useState(false);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const { refreshProfile, clearProfile } = useProfile();
-    
+
     // Функции для работы с флагом Firebase
     const setFirebaseFlag = async (isFirebase: boolean) => {
         try {
@@ -85,9 +88,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.log('updateEmailVerifiedState: updating state to', isVerified);
         setIsEmailVerified(isVerified);
     };
-    
-    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({ 
-        enabled: isAuthenticated 
+
+    const { isLoading: isLoadingActivityTypes } = useActivityTypesLoader({
+        enabled: isAuthenticated
     });
 
     // Проверяем наличие токена при загрузке приложения
@@ -106,22 +109,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         if (userData?.id != null) {
                             await revenueCatService.setUserID(String(userData.id));
                         }
-                        
+
                         // Загружаем флаг Firebase
                         const firebaseFlag = await getFirebaseFlag();
                         setIsFirebaseUser(firebaseFlag);
-                        
+
                         // Загружаем флаг emailVerified из хранилища
                         const emailVerifiedFlag = await getEmailVerifiedFlag();
                         console.log('AuthProvider: emailVerified from storage:', emailVerifiedFlag);
                         setIsEmailVerified(emailVerifiedFlag);
-                        
+
                         // Обновляем профиль после успешной аутентификации
                         await refreshProfile();
-                        
+
                         // Регистрируем нотификации после успешной аутентификации
                         await notificationService.registerDevice();
-                        
+
                         // Инициализируем Amplitude Analytics с email пользователя
                         if (userData?.email) {
                             await amplitudeAnalyticsService.initialize(userData.email);
@@ -135,6 +138,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         // Токен недействителен, очищаем его
                         await apiUtils.removeAuthTokens();
                         await clearFirebaseFlag();
+
+                        // Очищаем React Query кеш при недействительном токене
+                        queryClient.clear();
+
+                        // Очищаем данные онбординга
+                        await clearOnboardingOnLogout();
+
                         setIsAuthenticated(false);
                         setUser(null);
                         setIsFirebaseUser(false);
@@ -148,14 +158,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 console.error('Ошибка проверки аутентификации:', error);
             } finally {
                 setIsLoading(false);
+                setIsInitializing(false);
             }
         };
 
         checkAuthStatus();
-        
+
         // Устанавливаем слушатель изменений разрешений на нотификации
         notificationService.setupPermissionsListener();
-        
+
         // Очищаем слушатель при размонтировании
         return () => {
             notificationService.removePermissionsListener();
@@ -171,6 +182,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsEmailVerified(false);
             await clearFirebaseFlag();
             await clearEmailVerifiedFlag();
+
+            // Очищаем React Query кеш при необходимости логина
+            queryClient.clear();
+
+            // Очищаем данные онбординга
+            await clearOnboardingOnLogout();
+
             clearProfile();
         };
 
@@ -195,10 +213,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // Сбрасываем флаг Firebase для обычного логина
             await setFirebaseFlag(false);
-            
+
             // Сохраняем флаг emailVerified
             await setEmailVerifiedFlag(response.user.emailVerified);
-            
+
             // Обновляем состояние
             setUser(response.user);
             setIsAuthenticated(true);
@@ -213,7 +231,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
-            
+
             // Инициализируем Amplitude Analytics с email и отслеживаем событие входа
             if (response.user?.email) {
                 await amplitudeAnalyticsService.initialize(response.user.email);
@@ -228,9 +246,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 });
             }
         } catch (error: any) {
-            console.error('❌ Ошибка входа:', error);
-            const { t } = await import('react-i18next');
-            const errorMessage = error.message || 'Ошибка входа в систему';
+            const errorMessage = error.message || 'auth.loginErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -250,7 +266,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await login(email, password);
         } catch (error: any) {
             console.error('❌ Ошибка регистрации:', error);
-            const errorMessage = error.message || 'Ошибка регистрации';
+            const errorMessage = error.message || 'auth.signUp.registrationErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -270,18 +286,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 // Поля онбординга пока не используем
             });
             console.log('✅ Получен ответ от Firebase API:', response);
-            
+
             // Сохраняем токены
             console.log('💾 Сохраняем токены...');
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
             console.log('✅ Токены сохранены');
-            
+
             // Устанавливаем флаг Firebase
             await setFirebaseFlag(true);
-            
+
             // Сохраняем флаг emailVerified (для Firebase пользователей всегда true)
             await setEmailVerifiedFlag(true);
-            
+
             // Обновляем состояние
             console.log('🔄 Обновляем состояние...');
             setUser(response.user);
@@ -297,7 +313,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешного входа
             await notificationService.registerDevice();
-            
+
             // Инициализируем Amplitude Analytics с email и отслеживаем событие входа
             if (response.user?.email) {
                 await amplitudeAnalyticsService.initialize(response.user.email);
@@ -313,7 +329,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.log('✅ Firebase вход выполнен успешно');
         } catch (error: any) {
             console.error('❌ Ошибка Firebase входа:', error);
-            const errorMessage = error.message || 'Ошибка входа через Google';
+            const errorMessage = error.message || 'auth.googleSignInErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -322,7 +338,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const registerWithFirebase = async (
-        idToken: string, 
+        idToken: string,
         onboardingData: {
             age?: string;
             feelingToday?: string;
@@ -351,10 +367,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // Устанавливаем флаг Firebase
             await setFirebaseFlag(true);
-            
+
             // Сохраняем флаг emailVerified (для Firebase пользователей всегда true)
             await setEmailVerifiedFlag(true);
-            
+
             // Обновляем состояние
             setUser(response.user);
             setIsAuthenticated(true);
@@ -369,7 +385,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await refreshProfile();
             // Регистрируем нотификации после успешной регистрации
             await notificationService.registerDevice();
-            
+
             // Инициализируем Amplitude Analytics с email и отслеживаем событие регистрации
             if (response.user?.email) {
                 await amplitudeAnalyticsService.initialize(response.user.email);
@@ -384,7 +400,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
         } catch (error: any) {
             console.error('❌ Ошибка Firebase регистрации:', error);
-            const errorMessage = error.message || 'Ошибка регистрации через Firebase';
+            const errorMessage = error.message || 'auth.signUp.googleSignInErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
         } finally {
@@ -395,13 +411,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = async () => {
         try {
             setIsLoading(true);
-            
+
             // Отслеживаем событие выхода перед очисткой
             amplitudeAnalyticsService.trackEvent('User Logged Out');
-            
+
             // Удаляем регистрацию нотификаций перед выходом
             await notificationService.unregisterDevice();
-            
+
             // Вызываем API выхода
             await authService.logout();
 
@@ -412,19 +428,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 // не блокируем логаут приложения из-за RevenueCat
                 console.warn('RevenueCat logout failed:', e);
             }
-            
+
             // Очищаем токены
             await apiUtils.removeAuthTokens();
-            
+
             // Очищаем флаг Firebase
             await clearFirebaseFlag();
-            
+
             // Очищаем флаг emailVerified
             await clearEmailVerifiedFlag();
-            
+
             // Очищаем данные пользователя в аналитике
             amplitudeAnalyticsService.clearUser();
-            
+
+            // Очищаем React Query кеш (все данные аналитики, активности, настроения и т.д.)
+            queryClient.clear();
+
+            // Очищаем данные онбординга
+            await clearOnboardingOnLogout();
+
             // Обновляем состояние
             setIsAuthenticated(false);
             setUser(null);
@@ -446,6 +468,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await apiUtils.removeAuthTokens();
             await clearFirebaseFlag();
             await clearEmailVerifiedFlag();
+
+            // Очищаем React Query кеш даже при ошибке
+            queryClient.clear();
+
+            // Очищаем данные онбординга даже при ошибке
+            await clearOnboardingOnLogout();
+
             setIsAuthenticated(false);
             setUser(null);
             setIsFirebaseUser(false);
@@ -457,15 +486,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ 
-            isAuthenticated, 
-            user, 
-            isLoading, 
+        <AuthContext.Provider value={{
+            isAuthenticated,
+            user,
+            isLoading,
+            isInitializing,
             login,
             register,
             loginWithFirebase,
             registerWithFirebase,
-            logout, 
+            logout,
             error,
             isFirebaseUser,
             isEmailVerified,

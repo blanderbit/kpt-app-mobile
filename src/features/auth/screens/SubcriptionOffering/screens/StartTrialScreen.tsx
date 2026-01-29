@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {StyleSheet, Text, View, TouchableOpacity, Pressable} from "react-native";
+import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -8,7 +8,22 @@ import {LinearGradient} from "expo-linear-gradient";
 import {COLORS} from "@app/theme";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { revenueCatService } from "@shared/services/revenuecat";
-import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
+import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
+import { PurchasesStoreProduct } from "react-native-purchases";
+
+interface SubscriptionPlan {
+    id: 'yearly' | 'monthly';
+    title: string;
+    originalPrice: string | null;
+    price: string;
+    pricePerMonth: string | null;
+    hasFreeTrial: boolean;
+    freeTrialText: string | null;
+    descriptionText: string;
+    descriptionHighlight: string;
+    descriptionTextAfter?: string;
+    product?: PurchasesStoreProduct;
+}
 
 export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
@@ -16,6 +31,8 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
     const [stepHeights, setStepHeights] = useState<number[]>([]);
     const [selectedSubscription, setSelectedSubscription] = useState<string>('yearly');
     const [isPurchasing, setIsPurchasing] = useState(false);
+    const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+    const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
     const stepRefs = useRef<(View | null)[]>([]);
 
     const measureStepHeight = (index: number) => {
@@ -47,6 +64,127 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         return () => clearTimeout(timer);
     }, []);
 
+    // Загружаем планы подписки из RevenueCat
+    useEffect(() => {
+        const loadSubscriptionPlans = async () => {
+            if (!revenueCatService.getInitialized()) {
+                console.warn('[RevenueCat] Not initialized yet, cannot load plans');
+                setIsLoadingPlans(false);
+                return;
+            }
+
+            try {
+                setIsLoadingPlans(true);
+                const products = await revenueCatService.getProducts(REVENUECAT_PRODUCT_IDENTIFIERS);
+
+                if (!products || products.length === 0) {
+                    console.warn('[RevenueCat] No products found. This might be because:');
+                    console.warn('1. Products are not approved in App Store Connect yet');
+                    console.warn('2. Products are not configured correctly in RevenueCat Dashboard');
+                    console.warn('3. Using StoreKit Configuration file in development');
+                    console.warn('Products will be available once approved in App Store Connect.');
+                    setIsLoadingPlans(false);
+                    return;
+                }
+
+                // Находим monthly и yearly продукты
+                const monthlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
+                const yearlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.YEARLY);
+
+                const plans: SubscriptionPlan[] = [];
+
+                // Процент выгоды годового vs месячного: (цена_месяц − цена_год/12) / цена_месяц
+                let savingsPercent: number | null = null;
+                if (yearlyProduct && monthlyProduct && monthlyProduct.price > 0) {
+                    const yearlyPerMonth = yearlyProduct.price / 12;
+                    savingsPercent = Math.round(
+                        ((monthlyProduct.price - yearlyPerMonth) / monthlyProduct.price) * 100
+                    );
+                    savingsPercent = Math.max(0, Math.min(100, savingsPercent));
+                }
+
+                // Годовой план
+                if (yearlyProduct) {
+                    const yearlyPriceNumber = yearlyProduct.price;
+                    const currencyCode = yearlyProduct.currencyCode || 'USD';
+
+                    // Проверяем наличие вводной цены (intro price) для free trial
+                    const hasIntroPrice = yearlyProduct.introPrice !== null && yearlyProduct.introPrice !== undefined;
+                    // Проверяем, является ли intro price free trial (цена = 0 означает free trial)
+                    const isFreeTrial = hasIntroPrice && yearlyProduct.introPrice?.price === 0;
+
+                    // Форматируем цену
+                    const yearlyPrice = yearlyProduct.priceString || `${yearlyPriceNumber.toFixed(2)} ${currencyCode}`;
+
+                    // Если есть free trial, не показываем originalPrice (цена не меняется, просто бесплатный период)
+                    const originalPrice = null;
+
+                    // Вычисляем цену за месяц для годового плана
+                    const pricePerMonth = yearlyPriceNumber / 12;
+                    const pricePerMonthString = `${pricePerMonth.toFixed(2)} ${currencyCode}/mo.`;
+
+                    const descriptionHighlight =
+                        savingsPercent !== null
+                            ? t('subscriptionOffering.startTrial.savePercent', { percent: savingsPercent })
+                            : t('subscriptionOffering.startTrial.save58');
+
+                    plans.push({
+                        id: 'yearly',
+                        title: t('subscriptionOffering.startTrial.yearly'),
+                        originalPrice: originalPrice,
+                        price: yearlyPrice,
+                        pricePerMonth: pricePerMonthString,
+                        hasFreeTrial: isFreeTrial,
+                        freeTrialText: isFreeTrial ? t('subscriptionOffering.startTrial.freeTrial') : null,
+                        descriptionText: t('subscriptionOffering.startTrial.unlimitedAccess'),
+                        descriptionHighlight,
+                        product: yearlyProduct
+                    });
+                }
+
+                // Месячный план
+                if (monthlyProduct) {
+                    const monthlyPrice = monthlyProduct.priceString || `${monthlyProduct.price}`;
+                    const monthlyPriceString = `${monthlyPrice}/mo.`;
+
+                    plans.push({
+                        id: 'monthly',
+                        title: t('subscriptionOffering.startTrial.monthly'),
+                        originalPrice: null,
+                        price: monthlyPriceString,
+                        pricePerMonth: null,
+                        hasFreeTrial: false,
+                        freeTrialText: null,
+                        descriptionText: '',
+                        descriptionHighlight: monthlyPriceString.replace('/mo.', '/month'),
+                        descriptionTextAfter: t('subscriptionOffering.startTrial.cancelAnytime'),
+                        product: monthlyProduct
+                    });
+                }
+
+                if (plans.length === 0) {
+                    console.warn('[RevenueCat] No valid subscription plans found. Products might not be available yet.');
+                    console.warn('Please ensure products are approved in App Store Connect.');
+                } else {
+                    console.log(`[RevenueCat] Successfully loaded ${plans.length} subscription plan(s)`);
+                }
+                
+                setSubscriptionPlans(plans);
+            } catch (error: any) {
+                console.error('[RevenueCat] Error loading subscription plans:', error);
+                // Не показываем критическую ошибку пользователю, просто логируем
+                // Это нормально для development, когда продукты еще не одобрены
+                if (error?.message?.includes('configuration') || error?.message?.includes('App Store Connect')) {
+                    console.warn('[RevenueCat] Configuration issue detected. This is expected if products are not yet approved in App Store Connect.');
+                }
+            } finally {
+                setIsLoadingPlans(false);
+            }
+        };
+
+        loadSubscriptionPlans();
+    }, [t]);
+
     const subscriptionSteps = [
         {
             icon: `
@@ -77,37 +215,13 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         }
     ]
 
-    const subscriptionPlans = [
-        {
-            id: 'yearly',
-            title: t('subscriptionOffering.startTrial.yearly'),
-            originalPrice: '119,88 USD',
-            price: '49.99 USD',
-            pricePerMonth: '4.16 USD/mo.',
-            hasFreeTrial: true,
-            freeTrialText: t('subscriptionOffering.startTrial.freeTrial'),
-            descriptionText: t('subscriptionOffering.startTrial.unlimitedAccess'),
-            descriptionHighlight: t('subscriptionOffering.startTrial.save58')
-        },
-        {
-            id: 'monthly',
-            title: t('subscriptionOffering.startTrial.monthly'),
-            originalPrice: null,
-            price: '9.99 USD/mo.',
-            pricePerMonth: null,
-            hasFreeTrial: false,
-            freeTrialText: null,
-            descriptionText: '',
-            descriptionHighlight: '9.99 USD/month',
-            descriptionTextAfter: t('subscriptionOffering.startTrial.cancelAnytime')
-        }
-    ]
-
     const purchaseSelectedPlan = async () => {
-        const productId =
-            selectedSubscription === 'monthly'
-                ? REVENUECAT_PRODUCT_IDS.MONTHLY
-                : REVENUECAT_PRODUCT_IDS.YEARLY;
+        const selectedPlan = subscriptionPlans.find(plan => plan.id === selectedSubscription);
+
+        if (!selectedPlan || !selectedPlan.product) {
+            console.warn('[RevenueCat] Selected plan or product not found');
+            return;
+        }
 
         if (!revenueCatService.getInitialized()) {
             console.warn('[RevenueCat] Not initialized yet, cannot purchase');
@@ -116,13 +230,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
         setIsPurchasing(true);
         try {
-            const products = await revenueCatService.getProducts([productId]);
-            const product = products?.[0];
-            if (!product) {
-                console.warn('[RevenueCat] Product not found:', productId);
-                return;
-            }
-            await revenueCatService.purchaseProduct(product);
+            await revenueCatService.purchaseProduct(selectedPlan.product);
             onNext();
         } catch (e: any) {
             // В библиотеке обычно есть e.userCancelled
@@ -130,6 +238,11 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 return;
             }
             console.error('[RevenueCat] Purchase failed:', e);
+            Alert.alert(
+                t('subscriptionOffering.startTrial.purchaseErrorTitle'),
+                t('subscriptionOffering.startTrial.purchaseErrorMessage'),
+                [{ text: t('ok') }]
+            );
         } finally {
             setIsPurchasing(false);
         }
@@ -189,7 +302,16 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                 </View>
 
                 <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
-                    {subscriptionPlans.map((plan) => {
+                    {isLoadingPlans ? (
+                        <View style={styles.loadingContainer}>
+                            <Text style={theme.fonts.regular}>{t('subscriptionOffering.startTrial.loadingPlans')}</Text>
+                        </View>
+                    ) : subscriptionPlans.length === 0 ? (
+                        <View style={styles.loadingContainer}>
+                            <Text style={theme.fonts.regular}>{t('subscriptionOffering.startTrial.noPlansAvailable')}</Text>
+                        </View>
+                    ) : (
+                        subscriptionPlans.map((plan) => {
                         const isSelected = selectedSubscription === plan.id;
 
                         return (
@@ -231,30 +353,39 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                         </Text>
                                     </View>
 
-                                    {plan.hasFreeTrial && (
+                                    {/* Зелёная плашка "7-Day Free Trial" для годового плана */}
+                                    {(plan.id === 'yearly' || plan.hasFreeTrial) && (
                                         <View style={styles.subscriptionLabel}>
                                             <Text style={styles.subscriptionLabelText}>
-                                                {plan.freeTrialText}
+                                                {plan.freeTrialText ?? t('subscriptionOffering.startTrial.freeTrial')}
                                             </Text>
                                         </View>
                                     )}
                                 </View>
                             </TouchableOpacity>
                         );
-                    })}
+                    }))}
                 </View>
             </View>
 
             <View style={theme.flexBlocks.vertical16}>
                 <View style={styles.subscriptionDescription}>
-                    <Text style={[theme.fonts.regular, styles.descriptionText]}>
-                        {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionText}
-                        {' '}
-                        <Text style={styles.descriptionHighlight}>
-                            {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionHighlight}
-                        </Text>
-                        {subscriptionPlans.find(plan => plan.id === selectedSubscription)?.descriptionTextAfter}
-                    </Text>
+                    {(() => {
+                        const selectedPlan = subscriptionPlans.find(plan => plan.id === selectedSubscription);
+                        if (!selectedPlan) return null;
+                        const { descriptionText, descriptionHighlight, descriptionTextAfter } = selectedPlan;
+                        const hasLeading = Boolean(descriptionText?.trim());
+                        return (
+                            <Text style={[theme.fonts.regular, styles.descriptionText]}>
+                                {hasLeading ? descriptionText : null}
+                                {hasLeading ? ' ' : null}
+                                <Text style={styles.descriptionHighlight}>
+                                    {descriptionHighlight}
+                                </Text>
+                                {descriptionTextAfter ?? ''}
+                            </Text>
+                        );
+                    })()}
                 </View>
 
                 <View style={theme.flexBlocks.vertical8}>
@@ -268,7 +399,7 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                             purchaseSelectedPlan().catch(() => {});
                         }}
                         variant="primary"
-                        disabled={isPurchasing}
+                        disabled={isPurchasing || isLoadingPlans || subscriptionPlans.length === 0}
                     />
 
                     <Pressable
@@ -412,5 +543,10 @@ const styles = StyleSheet.create({
         letterSpacing: -0.02,
         color: '#DD583D',
         textAlign: 'center'
+    },
+    loadingContainer: {
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });

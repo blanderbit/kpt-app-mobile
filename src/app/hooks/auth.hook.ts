@@ -6,6 +6,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     user: any;
     isLoading: boolean;
+    isInitializing: boolean;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, firstName: string) => Promise<void>;
     loginWithFirebase: (idToken: string) => Promise<void>;

@@ -214,9 +214,25 @@ class RevenueCatService {
   async getProducts(productIdentifiers: string[], type?: string): Promise<PurchasesStoreProduct[]> {
     try {
       // Второй параметр опционален, SDK автоматически определит тип по платформе
-      return await Purchases.getProducts(productIdentifiers, type as any);
-    } catch (error) {
-      console.error('Error getting products:', error);
+      const products = await Purchases.getProducts(productIdentifiers, type as any);
+      
+      if (!products || products.length === 0) {
+        console.warn('[RevenueCat] getProducts returned empty array. This might indicate:');
+        console.warn('- Products are not approved in App Store Connect yet');
+        console.warn('- Products are not configured in RevenueCat Dashboard');
+        console.warn('- Using StoreKit Configuration file in development (expected behavior)');
+      }
+      
+      return products;
+    } catch (error: any) {
+      // Не логируем как критическую ошибку, если это проблема конфигурации
+      if (error?.message?.includes('configuration') || error?.message?.includes('App Store Connect')) {
+        console.warn('[RevenueCat] Configuration issue when getting products:', error.message);
+        console.warn('This is expected if products are not yet approved in App Store Connect.');
+        // Возвращаем пустой массив вместо throw, чтобы приложение не падало
+        return [];
+      }
+      console.error('[RevenueCat] Error getting products:', error);
       throw error;
     }
   }

@@ -13,8 +13,6 @@ import { SubscriptionOfferingProvider } from "@features/auth/screens/Subcription
 import { appsFlyerService } from "@shared/services/appsflyer";
 import { configureGoogleSignIn } from "@features/auth/screens/firebaseAuth";
 import { TranslationsProvider } from "@app/translations/TranslationsProvider";
-import { revenueCatService } from "@shared/services/revenuecat";
-import { getRevenueCatApiKey } from "@app/config/revenuecat.config";
 
 function MainApp() {
     const { theme } = useCustomTheme();
@@ -101,20 +99,7 @@ export default function App() {
         });
     }, []);
 
-    // Инициализация RevenueCat
-    useEffect(() => {
-        try {
-            const apiKey = getRevenueCatApiKey();
-            // Проверяем, что ключ не дефолтный
-            if (apiKey && !apiKey.includes('YOUR_') && !apiKey.includes('HERE')) {
-                revenueCatService.initialize({ apiKey });
-            } else {
-                console.warn('RevenueCat API key not configured. Please set REVENUECAT_IOS_API_KEY and REVENUECAT_ANDROID_API_KEY in your environment or update revenuecat.config.ts');
-            }
-        } catch (error) {
-            console.error('Failed to initialize RevenueCat:', error);
-        }
-    }, []);
+    // RevenueCat инициализируется в index.ts при старте приложения
 
     if ( !fontsLoaded ) return null;
 
