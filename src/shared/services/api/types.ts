@@ -122,6 +122,7 @@ export interface User {
   firstName: string;
   avatarUrl: string;
   emailVerified: boolean;
+  hasPaidSubscription?: boolean;
   googleId?: string;
   firebaseUid?: string;
   appleId?: string;
@@ -565,6 +566,7 @@ export interface SurveyResponse {
   description?: string | null;
   questions?: SurveyQuestion[];
   status: 'active' | 'archived' | 'available';
+  language?: string | null;
   createdBy?: string | null;
   updatedBy?: string | null;
   createdAt: string;
@@ -573,6 +575,14 @@ export interface SurveyResponse {
   archivedBy?: string | null;
   isCompleted?: boolean;
   file?: FileDto | null;
+}
+
+export interface UpdateSurveyDto {
+  title?: string;
+  description?: string;
+  questions?: SurveyQuestion[];
+  language?: string;
+  removeFileId?: number;
 }
 
 export interface SurveyAnswer {
@@ -599,6 +609,20 @@ export interface Subscription {
   expiresAt?: string;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export type SubscriptionPlanInterval = 'monthly' | 'yearly' | 'unknown';
+export type SubscriptionStatus = 'active' | 'cancelled' | 'expired' | 'past_due' | 'pending' | 'unknown';
+
+export interface SubscriptionSummaryDto {
+  productId?: string;
+  planInterval: SubscriptionPlanInterval;
+  planIntervalLabel: string;
+  name?: string;
+  description?: string;
+  status: SubscriptionStatus;
+  statusLabel: string;
+  periodEnd?: string;
 }
 
 export interface CancelSubscriptionRequest {

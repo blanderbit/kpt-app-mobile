@@ -262,6 +262,11 @@
         "oneMonth": "1 Month plan",
         "subscription": "Subscription",
         "lastDay": "Last day",
+        "loading": "Loading...",
+        "loadError": "Failed to load subscription",
+        "noSubscription": "No subscription data",
+        "noSubscriptionDescription": "Subscribe to access premium features.",
+        "cancelledMessage": "You will not be charged in the future. You can still access the app until your current subscription ends.",
         "statuses": {
           "cancelled": "Cancelled"
         }

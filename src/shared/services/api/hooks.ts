@@ -12,6 +12,7 @@ import {
   tooltipService,
   articleService,
   surveyService,
+  subscriptionService,
 } from './client';
 import {
   LoginRequest,
@@ -108,6 +109,10 @@ export const queryKeys = {
   surveys: ['surveys'] as const,
   randomSurvey: () => [...queryKeys.surveys, 'random'] as const,
   surveyById: (id: number) => [...queryKeys.surveys, 'byId', id] as const,
+
+  // Subscriptions
+  subscriptions: ['subscriptions'] as const,
+  subscriptionSummary: (lang?: string) => [...queryKeys.subscriptions, 'summary', lang ?? ''] as const,
 };
 
 // Auth hooks
@@ -709,5 +714,17 @@ export const useSurveyById = (id: number) => {
   });
 
   return queryResult;
+};
+
+// Subscription hooks
+export const useSubscriptionSummary = (lang?: string) => {
+  return useQuery({
+    queryKey: queryKeys.subscriptionSummary(lang),
+    queryFn: () =>
+      subscriptionService.getLatestSubscriptionSummary(
+        lang ? { lang } : undefined,
+      ),
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
 };
 

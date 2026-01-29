@@ -350,8 +350,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - PurchasesHybridCommon (14.3.0):
-    - RevenueCat (= 5.32.0)
+  - PurchasesHybridCommon (17.30.0):
+    - RevenueCat (= 5.56.0)
   - RCTDeprecation (0.81.5)
   - RCTRequired (0.81.5)
   - RCTTypeSafety (0.81.5):
@@ -2080,7 +2080,7 @@ PODS:
     - ReactNativeDependencies
   - ReactNativeDependencies (0.81.5)
   - RecaptchaInterop (101.0.0)
-  - RevenueCat (5.32.0)
+  - RevenueCat (5.56.0)
   - RNAppleAuthentication (2.5.0):
     - React-Core
   - RNCAsyncStorage (2.2.0):
@@ -2180,8 +2180,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNPurchases (8.12.0):
-    - PurchasesHybridCommon (= 14.3.0)
+  - RNPurchases (9.7.3):
+    - PurchasesHybridCommon (= 17.30.0)
     - React-Core
   - RNReanimated (4.1.5):
     - hermes-engine
@@ -2825,7 +2825,7 @@ SPEC CHECKSUMS:
   hermes-engine: 9f4dfe93326146a1c99eb535b1cb0b857a3cd172
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: c34a02df495e2002c36ea2f682ae1c1ef2e11ce7
-  PurchasesHybridCommon: 7f0944cc5411bdcd1ea5d69affa6a6f9aaf87b13
+  PurchasesHybridCommon: c00f6ce5933b9928e99766a45c9e53c0a5a03240
   RCTDeprecation: 943572d4be82d480a48f4884f670135ae30bf990
   RCTRequired: 8f3cfc90cc25cf6e420ddb3e7caaaabc57df6043
   RCTTypeSafety: 16a4144ca3f959583ab019b57d5633df10b5e97c
@@ -2896,7 +2896,7 @@ SPEC CHECKSUMS:
   ReactCommon: 08810150b1206cc44aecf5f6ae19af32f29151a8
   ReactNativeDependencies: 71ce9c28beb282aa720ea7b46980fff9669f428a
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
-  RevenueCat: 7e1d0768fb287c9983173c9b28e39ccbeeb828a9
+  RevenueCat: 9e2a13bead55198a72272ff105a7265e9510cd11
   RNAppleAuthentication: 9027af8aa92b4719ef1b6030a8e954d37079473a
   RNCAsyncStorage: c8407cc394627a3a4cf56b457d594bfa822b6ab8
   RNCMaskedView: ee2fc4739eb35be50bcf4f95daca19f316b5d50c
@@ -2904,13 +2904,13 @@ SPEC CHECKSUMS:
   RNFBAuth: 7123a71a1fc8dec4aa4e6cb656562661b3ece9f7
   RNGestureHandler: c3831b3b1b5014c6afab7fff7e4171394a3419ab
   RNGoogleSignin: 11966e836644da771839d90b1c8e26026748b8f7
-  RNPurchases: 6070b60f5d8f525a58905df50773f7a3252f0cfa
+  RNPurchases: 90119bdefe27a94c0c76a548433ca6e90cffc58f
   RNReanimated: 2a5413dfcf429c7c9ce3f0030e3b7a010c2f9565
   RNScreens: 33bbd1d0f86ed957557620dc94054b71db0a94ee
   RNSVG: ac3047fdd9c0ebac9d0b731a352bddf216af6242
   RNWorklets: 76fce72926e28e304afb44f0da23b2d24f2c1fa0
   Yoga: 65431d43277b661ebc7289c6c5d82f64ce42cfe0
 
-PODFILE CHECKSUM: 7b9d76f5cc49729f045d8bdc64f5c0ca437a0fe8
+PODFILE CHECKSUM: a3fb382e590f6d486f2118d9f529061a21601452
 
 COCOAPODS: 1.16.2

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -8,104 +8,143 @@ import { COLORS } from "@app/theme";
 import { SubscriptionSettingsScreenNavigationProp } from "@app/navigation/AppNavigator";
 import MySubscriptionIcon from "@assets/icons/MySubcriptionIcon";
 import { Label, LabelType } from "@shared/components/Label/Label";
-import { ChevronRightIcon } from "@assets/icons/ChevronRightIcon";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { formatDateLong } from "@shared/utils/formatDate";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { useProfile } from "@app/hooks/profile.hook";
+import { useSubscriptionSummary } from "@shared/services/api/hooks";
+import type { SubscriptionStatus } from "@shared/services/api/types";
+
+const ns = "main.profile.subscriptionSettingsScreen";
+
+function statusToLabelType(s: SubscriptionStatus): LabelType {
+    switch (s) {
+        case "cancelled":
+        case "expired":
+        case "past_due":
+            return LabelType.DANGER;
+        case "active":
+            return LabelType.SUCCESS;
+        default:
+            return LabelType.DEFAULT;
+    }
+}
 
 export default function SubscriptionSettingsScreen({ navigation }: {
     navigation: SubscriptionSettingsScreenNavigationProp
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { theme } = useCustomTheme();
+    const { profile } = useProfile();
+    const lang = (i18n.language || "en").split("-")[0];
+    const { data: summary, isLoading, isError } = useSubscriptionSummary(lang);
 
-    const onBack = () => {
-        navigation.goBack()
-    };
+    const onBack = () => navigation.goBack();
 
-    // Событие: отмена сабскрипшина (если статус cancelled)
     useEffect(() => {
-        // Проверяем статус подписки и отправляем событие если она отменена
-        amplitudeAnalyticsService.trackEvent('Profile Subscription Cancelled');
-    }, []);
+        if (summary?.status === "cancelled") {
+            amplitudeAnalyticsService.trackEvent("Profile Subscription Cancelled");
+        }
+    }, [summary?.status]);
+
+    const planTitle = summary?.name ?? summary?.planIntervalLabel ?? t(`${ns}.oneMonth`);
+    const planSubtitle = summary?.description ?? null;
+    const showCancelledMessage = summary?.status === "cancelled";
 
     return (
         <PageWithHeader headerContent={
             <>
                 <Pressable
-                    onPress={ onBack }
-                    style={ ({ pressed }) => [
+                    onPress={onBack}
+                    style={({ pressed }) => [
                         styles.smallBtn,
                         { ...theme.buttons.smallBtn },
                         pressed && { opacity: 0.6 }
-                    ] }>
-                    <ArrowIcon/>
+                    ]}>
+                    <ArrowIcon />
                 </Pressable>
-                <Text style={ theme.fonts.subtitle }>
-                    { t('main.profile.subscriptionSettingsScreen.title') }
+                <Text style={theme.fonts.subtitle}>
+                    {t(`${ns}.title`)}
                 </Text>
             </>
         }>
-            <View style={ theme.flexBlocks.vertical8 }>
-                <View style={ [ theme.containers.cardRound, { paddingHorizontal: 16 } ] }>
-                    <View style={ theme.flexBlocks.horizontal4 }>
-                        <MySubscriptionIcon/>
-
-                        <Text style={ [ theme.fonts.subtitle, { textAlign: 'left' } ] }>
-                            { t('main.profile.subscriptionSettingsScreen.mySubscription') }
-                        </Text>
+            <View style={theme.flexBlocks.vertical8}>
+                {(isLoading || summary) && (
+                    <View style={[theme.containers.cardRound, { paddingHorizontal: 16 }]}>
+                        <View style={theme.flexBlocks.horizontal4}>
+                            <MySubscriptionIcon />
+                            <Text style={[theme.fonts.subtitle, { textAlign: "left" }]}>
+                                {t(`${ns}.mySubscription`)}
+                            </Text>
+                        </View>
+                        <View style={theme.flexBlocks.vertical4}>
+                            <Text style={theme.fonts.titleSecond}>
+                                {profile?.email ?? "—"}
+                            </Text>
+                            {(planSubtitle != null && planSubtitle !== "") && (
+                                <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>
+                                    {planSubtitle}
+                                </Text>
+                            )}
+                        </View>
                     </View>
+                )}
 
-                    <View style={ theme.flexBlocks.vertical4 }>
-                        <Text style={ theme.fonts.titleSecond }>
-                            username@mail.com
-                        </Text>
-
-                        <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
-                            Description
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={ [ theme.containers.cardRound ] }>
-                    <Text
-                        style={ [ theme.fonts.titleSecond, { paddingHorizontal: 16 } ] }>{ t('main.profile.subscriptionSettingsScreen.oneMonth') }</Text>
-
-                    <View>
-                        <SectionItem
-                            label={ t('main.profile.subscriptionSettingsScreen.subscription') }
-                            rightElement={
-                                <Label status={ LabelType.DANGER }
-                                       title={ 'main.profile.subscriptionSettingsScreen.statuses.cancelled' }/>
-                            }
-                            extraStyles={ [
-                                styles.settingsElementsBorderTop,
-                                styles.settingsElementsBorder,
-                            ] }
-                            extraLabelStyles={ [
-                                theme.fonts.subtitle,
-                                { textAlign: 'left' }
-                            ] }
-                        />
-                        <SectionItem
-                            label={ t('main.profile.subscriptionSettingsScreen.lastDay') }
-                            rightElement={
-                                <Text style={ theme.fonts.label }>{ formatDateLong(new Date('2025-01-21')) }</Text>
-                            }
-                            extraStyles={ [
-                                styles.settingsElementsBorderBottom,
-                            ] }
-                            extraLabelStyles={ [
-                                theme.fonts.subtitle,
-                                { textAlign: 'left' }
-                            ] }
-                        />
-                    </View>
-
-                    <Text style={ [ theme.fonts.regular, { opacity: .6, paddingHorizontal: 16 } ] }>
-                        You will not be charged in the future. You can still access App until your current subscription
-                        ends.
-                    </Text>
+                <View style={[theme.containers.cardRound]}>
+                    {isLoading ? (
+                        <View style={styles.loadingRow}>
+                            <ActivityIndicator size="small" color={COLORS.gray_dark} />
+                            <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>{t(`${ns}.loading`)}</Text>
+                        </View>
+                    ) : isError ? (
+                        <View style={styles.stubRow}>
+                            <MySubscriptionIcon />
+                            <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>{t(`${ns}.loadError`)}</Text>
+                        </View>
+                    ) : summary ? (
+                        <>
+                            <Text style={[theme.fonts.titleSecond, { paddingHorizontal: 16 }]}>
+                                {planTitle}
+                            </Text>
+                            <View>
+                                <SectionItem
+                                    label={`${ns}.subscription`}
+                                    rightElement={
+                                        <Label status={statusToLabelType(summary.status)} text={summary.statusLabel} />
+                                    }
+                                    extraStyles={[styles.settingsElementsBorderTop, styles.settingsElementsBorder]}
+                                    extraLabelStyles={[theme.fonts.subtitle, { textAlign: "left" }]}
+                                />
+                                <SectionItem
+                                    label={`${ns}.lastDay`}
+                                    rightElement={
+                                        <Text style={theme.fonts.label}>
+                                            {summary.periodEnd != null
+                                                ? formatDateLong(summary.periodEnd)
+                                                : "—"}
+                                        </Text>
+                                    }
+                                    extraStyles={[styles.settingsElementsBorderBottom]}
+                                    extraLabelStyles={[theme.fonts.subtitle, { textAlign: "left" }]}
+                                />
+                            </View>
+                            {showCancelledMessage && (
+                                <Text style={[theme.fonts.regular, { opacity: 0.6, paddingHorizontal: 16 }]}>
+                                    {t(`${ns}.cancelledMessage`)}
+                                </Text>
+                            )}
+                        </>
+                    ) : (
+                        <View style={styles.stubRow}>
+                            <MySubscriptionIcon />
+                            <Text style={[theme.fonts.titleSecond, { textAlign: "center" }]}>
+                                {t(`${ns}.noSubscription`)}
+                            </Text>
+                            <Text style={[theme.fonts.regular, { opacity: 0.6, textAlign: "center" }]}>
+                                {t(`${ns}.noSubscriptionDescription`)}
+                            </Text>
+                        </View>
+                    )}
                 </View>
             </View>
         </PageWithHeader>
@@ -115,9 +154,24 @@ export default function SubscriptionSettingsScreen({ navigation }: {
 
 const styles = StyleSheet.create({
     smallBtn: {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
+    },
+    loadingRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        paddingVertical: 24,
+        paddingHorizontal: 16,
+    },
+    stubRow: {
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        paddingVertical: 32,
+        paddingHorizontal: 24,
     },
     changePassBtn: {
         alignSelf: 'flex-start',
