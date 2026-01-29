@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
@@ -83,7 +83,8 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                                 styles.settingsElementsBorder,
                             ] }
                             extraLabelStyles={ [
-                                theme.fonts.subtitle
+                                theme.fonts.subtitle,
+                                { textAlign: 'left' }
                             ] }
                         />
                         <SectionItem
@@ -95,7 +96,8 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                                 styles.settingsElementsBorderBottom,
                             ] }
                             extraLabelStyles={ [
-                                theme.fonts.subtitle
+                                theme.fonts.subtitle,
+                                { textAlign: 'left' }
                             ] }
                         />
                     </View>
