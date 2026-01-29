@@ -36,9 +36,17 @@ target 'Plesury' do
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
 
-        installer.pods_project.build_configurations.each do |config|
-          config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = true
-        end
+    # Единый deployment target для всех подов (нужно для PurchasesHybridCommon 17+)
+    deployment_target = podfile_properties['ios.deploymentTarget'] || '16.0'
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
+      end
+    end
+
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = true
+    end
 
 #     # https://github.com/dream-sports-labs/react-native-fast-image/issues/273
 #         # https://github.com/facebook/folly/issues/2297
