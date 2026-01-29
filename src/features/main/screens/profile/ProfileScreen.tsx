@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                             await logout();
                         } catch (error) {
                             console.error('❌ Ошибка выхода:', error);
-                            Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.logoutError'));
+                            Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.logoutError'), [{ text: t('ok') }]);
                         }
                     },
                 },
@@ -87,9 +87,11 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                             );
                         } catch (error: any) {
                             console.error('❌ Ошибка удаления аккаунта:', error);
+                            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.settings.deleteAccountError'));
                             Alert.alert(
                                 t('main.profile.settings.error'),
-                                error?.message || t('main.profile.settings.deleteAccountError')
+                                msg,
+                                [{ text: t('ok') }]
                             );
                         }
                     },
@@ -137,7 +139,8 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
 
     // Показываем ошибку если не удалось загрузить профиль
     if (error) {
-        Alert.alert(t('main.profile.settings.error'), `${t('main.profile.settings.loadProfileError')}: ${error}`);
+        const errorText = error && (error.startsWith('auth.') || error.startsWith('main.')) ? t(error) : error;
+        Alert.alert(t('main.profile.settings.error'), `${t('main.profile.settings.loadProfileError')}: ${errorText}`, [{ text: t('ok') }]);
         return null;
     }
 
@@ -161,12 +164,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(mailtoUrl);
                     } else {
-                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'));
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'), [{ text: t('ok') }]);
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии почты:', err);
-                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'));
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'), [{ text: t('ok') }]);
                 });
         } else if (nested.label === 'main.profile.settings.privacyPolicy') {
             // Событие: переход по ссылкам
@@ -180,12 +183,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(url);
                     } else {
-                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии ссылки:', err);
-                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                 });
         } else if (nested.label === 'main.profile.settings.termsConditions') {
             // Событие: переход по ссылкам
@@ -199,12 +202,12 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     if (supported) {
                         Linking.openURL(url);
                     } else {
-                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
+                        Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                     }
                 })
                 .catch((err) => {
                     console.error('Ошибка при открытии ссылки:', err);
-                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'));
+                    Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                 });
         }
     };

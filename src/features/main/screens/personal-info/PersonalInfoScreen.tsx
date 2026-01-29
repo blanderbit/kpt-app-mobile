@@ -64,13 +64,13 @@ type NameFormData = {
 export default function PersonalInfoScreen({ navigation }: { navigation: PersonalInfoScreenNavigationProp }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
-    
+
     // Хуки для работы с профилем
     const { profile, isLoading, error, refreshProfile, updateProfile: updateProfileContext } = useProfile();
     const updateProfile = useUpdateProfile();
     const changePassword = useChangePassword();
     const changeEmail = useChangeEmail();
-    
+
     // Хук для проверки Firebase пользователя
     const { isFirebaseUser } = useAuth();
 
@@ -102,10 +102,10 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const [ passwordDisabled, setPasswordDisabled ] = useState(true);
     const [ emailDisabled, setEmailDisabled ] = useState(true);
     const [ nameDisabled, setNameDisabled ] = useState(true);
-    
+
     // Состояние для отслеживания изначального email
     const [ originalEmail, setOriginalEmail ] = useState<string>('');
-    
+
     // Состояние для модала подтверждения изменения email
     const [ emailChangeModalOpen, setEmailChangeModalOpen ] = useState(false);
     const [ newEmailToConfirm, setNewEmailToConfirm ] = useState<string>('');
@@ -116,7 +116,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             const currentEmail = profile.email || '';
             emailForm.setValue('newEmail', currentEmail);
             nameForm.setValue('newName', profile.firstName || '');
-            
+
             // Сохраняем изначальный email только если он еще не установлен
             if (!originalEmail) {
                 setOriginalEmail(currentEmail);
@@ -130,7 +130,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     // Отслеживаем изменения в поле email в реальном времени
     const watchedEmail = emailForm.watch('newEmail');
-    
+
     // Функция для проверки изменения email
     const isEmailChanged = () => {
         return watchedEmail !== originalEmail;
@@ -139,54 +139,53 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
     const onSubmitChangePassword = async (data: PasswordFormData) => {
         try {
             console.log('🔐 Начинаем смену пароля...');
-            
+
             await changePassword.mutateAsync({
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
-            
-            console.log('✅ Пароль успешно изменен');
-            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.passwordChangedSuccess'));
+
+            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.passwordChangedSuccess'), [{ text: t('ok') }]);
             passwordForm.reset();
             // Событие: смена данных профиля
             amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
                 field: 'password',
             });
-            
+
             setPasswordDisabled(true);
         } catch (error: any) {
-            console.error('❌ Ошибка смены пароля:', error);
-            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.passwordChangeError'));
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.personalInfoScreen.passwordChangeError'));
+            Alert.alert(t('main.profile.settings.error'), msg, [{ text: t('ok') }]);
         }
     };
 
     const onSubmitChangeEmail = async (data: EmailFormData) => {
         try {
             console.log('📧 Начинаем смену email...');
-            
+
             await changeEmail.mutateAsync({
                 newEmail: data.newEmail,
                 password: data.password,
             });
-            
+
             console.log('✅ Email успешно изменен, открываем модал подтверждения');
-            
+
             // Сохраняем новый email для подтверждения
             setNewEmailToConfirm(data.newEmail);
-            
+
             // Открываем модал подтверждения
             setEmailChangeModalOpen(true);
-            
+
             // Сбрасываем форму с текущими значениями (email не изменится до подтверждения)
             emailForm.reset({
                 newEmail: profile?.email || '',
                 password: '',
             });
             setEmailDisabled(true);
-            
+
         } catch (error: any) {
-            console.error('❌ Ошибка смены email:', error);
-            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.emailChangeError'));
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.personalInfoScreen.emailChangeError'));
+            Alert.alert(t('main.profile.settings.error'), msg, [{ text: t('ok') }]);
         }
     };
 
@@ -195,17 +194,17 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             const updatedProfile = await updateProfile.mutateAsync({
                 firstName: data.newName,
             });
-            
-            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.nameChangedSuccess'));
-            
+
+            Alert.alert(t('main.profile.personalInfoScreen.success'), t('main.profile.personalInfoScreen.nameChangedSuccess'), [{ text: t('ok') }]);
+
             // Немедленно обновляем профиль в контексте с новыми данными
             updateProfileContext(updatedProfile);
-            
+
             // Событие: смена данных профиля
             amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
                 field: 'name',
             });
-            
+
             // Сбрасываем форму с новыми значениями
             nameForm.reset({
                 newName: updatedProfile.firstName || '',
@@ -213,29 +212,30 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             setNameDisabled(true);
         } catch (error: any) {
             console.error('❌ Ошибка смены имени:', error);
-            Alert.alert(t('main.profile.settings.error'), error.message || t('main.profile.personalInfoScreen.nameChangeError'));
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.personalInfoScreen.nameChangeError'));
+            Alert.alert(t('main.profile.settings.error'), msg, [{ text: t('ok') }]);
         }
     };
 
     const handleConfirmEmailChange = async () => {
         try {
             console.log('✅ Email успешно подтвержден и изменен');
-            
+
             // Обновляем профиль с сервера для получения актуальных данных
             await refreshProfile();
-            
+
             // Обновляем изначальный email для будущих изменений
             setOriginalEmail(newEmailToConfirm);
-            
+
             // Событие: смена данных профиля
             amplitudeAnalyticsService.trackEvent('Profile Data Changed', {
                 field: 'email',
             });
-            
+
             // Закрываем модал
             setEmailChangeModalOpen(false);
             setNewEmailToConfirm('');
-            
+
         } catch (error: any) {
             console.error('❌ Ошибка обновления профиля после изменения email:', error);
         }
@@ -455,7 +455,7 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
                     }
                 </View>
             </View>
-            
+
             {/* Модал подтверждения изменения email */}
             <EmailChangeConfirmationModal
                 visible={emailChangeModalOpen}

@@ -78,7 +78,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             await saveProfileToStorage(profileData);
         } catch (error: any) {
             console.error('❌ Ошибка обновления профиля:', error);
-            setError(error.message || 'Ошибка загрузки профиля');
+            setError(error.message || 'main.profile.settings.loadProfileError');
         } finally {
             setIsLoading(false);
         }

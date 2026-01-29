@@ -61,10 +61,11 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
             await register(data.email, data.password, data.name);
         } catch (error: any) {
             console.error('❌ Ошибка в onSubmit:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.registrationErrorMessage'));
             Alert.alert(
                 t('auth.signUp.registrationError'),
-                error.message || t('auth.signUp.registrationErrorMessage'),
-                [{ text: 'OK' }]
+                msg,
+                [{ text: t('ok') }]
             );
         } finally {
             setIsSubmitting(false);

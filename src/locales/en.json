@@ -437,6 +437,10 @@
   },
   "subscriptionOffering": {
     "startTrial": {
+      "loadingPlans": "Loading plans...",
+      "noPlansAvailable": "No plans available",
+      "purchaseErrorTitle": "Purchase Failed",
+      "purchaseErrorMessage": "Something went wrong. Please try again.",
       "oneTimeOfferApplied": "One-time offer applied",
       "title": "Start your 7-day FREE trial",
       "usedBy": "Used by 17,000+ busy minds",

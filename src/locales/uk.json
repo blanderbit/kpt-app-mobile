@@ -437,6 +437,10 @@
   },
   "subscriptionOffering": {
     "startTrial": {
+      "loadingPlans": "Завантаження планів...",
+      "noPlansAvailable": "Плани недоступні",
+      "purchaseErrorTitle": "Помилка покупки",
+      "purchaseErrorMessage": "Щось пішло не так. Спробуйте ще раз.",
       "oneTimeOfferApplied": "Одноразова пропозиція застосована",
       "title": "Почніть свій 7-денний БЕЗКОШТОВНИЙ пробний період",
       "usedBy": "Використовується більш ніж 17 000 зайнятими розумами",

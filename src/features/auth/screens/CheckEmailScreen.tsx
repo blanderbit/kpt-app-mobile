@@ -58,7 +58,8 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
             if (!email) {
                 Alert.alert(
                     t('auth.checkEmailScreen.errorTitle'),
-                    t('auth.checkEmailScreen.emailNotFound')
+                    t('auth.checkEmailScreen.emailNotFound'),
+                    [{ text: t('ok') }]
                 );
                 return;
             }
@@ -83,9 +84,11 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
             );
         } catch (error: any) {
             console.error('Reset password error:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.checkEmailScreen.errorMessage'));
             Alert.alert(
                 t('auth.checkEmailScreen.errorTitle'),
-                error.message || t('auth.checkEmailScreen.errorMessage')
+                msg,
+                [{ text: t('ok') }]
             );
         } finally {
             setIsLoading(false);
@@ -102,7 +105,8 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
                 } else {
                     Alert.alert(
                         t('auth.checkEmailScreen.errorTitle'),
-                        t('auth.checkEmailScreen.mailClientError')
+                        t('auth.checkEmailScreen.mailClientError'),
+                        [{ text: t('ok') }]
                     );
                 }
             })

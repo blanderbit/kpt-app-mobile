@@ -35,10 +35,11 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
             console.log('✅ [SeventeenthStep] Google sign up successful');
         } catch (error: any) {
             console.error('❌ [SeventeenthStep] Google sign up error:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.googleSignInErrorMessage'));
             Alert.alert(
                 t('auth.signUp.googleSignInError'),
-                error.message || t('auth.signUp.googleSignInErrorMessage'),
-                [{ text: 'OK' }]
+                msg,
+                [{ text: t('ok') }]
             );
         }
     };
@@ -51,10 +52,11 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
             console.log('✅ [SeventeenthStep] Apple sign up successful');
         } catch (error: any) {
             console.error('❌ [SeventeenthStep] Apple sign up error:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.appleSignInErrorMessage'));
             Alert.alert(
                 t('auth.signUp.appleSignInError'),
-                error.message || t('auth.signUp.appleSignInErrorMessage'),
-                [{ text: 'OK' }]
+                msg,
+                [{ text: t('ok') }]
             );
         }
     };

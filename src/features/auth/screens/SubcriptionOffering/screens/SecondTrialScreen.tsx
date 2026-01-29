@@ -1,5 +1,5 @@
 import React from "react";
-import {Pressable, StyleSheet, Text, View} from "react-native";
+import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -35,6 +35,11 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
                 return;
             }
             console.error('[RevenueCat] Purchase failed:', e);
+            Alert.alert(
+                t('subscriptionOffering.startTrial.purchaseErrorTitle'),
+                t('subscriptionOffering.startTrial.purchaseErrorMessage'),
+                [{ text: t('ok') }]
+            );
         } finally {
             setIsPurchasing(false);
         }

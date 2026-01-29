@@ -52,9 +52,11 @@ export default function ResetPassScreen({ navigation }: { navigation: ResetPassS
             );
         } catch (error: any) {
             console.error('Forgot password error:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.resetPassScreen.errorMessage'));
             Alert.alert(
                 t('auth.resetPassScreen.errorTitle'),
-                error.message || t('auth.resetPassScreen.errorMessage')
+                msg,
+                [{ text: t('ok') }]
             );
         } finally {
             setIsLoading(false);

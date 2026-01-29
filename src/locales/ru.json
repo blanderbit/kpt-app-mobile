@@ -436,6 +436,10 @@
   },
   "subscriptionOffering": {
     "startTrial": {
+      "loadingPlans": "Загрузка планов...",
+      "noPlansAvailable": "Планы недоступны",
+      "purchaseErrorTitle": "Ошибка покупки",
+      "purchaseErrorMessage": "Что-то пошло не так. Попробуйте ещё раз.",
       "oneTimeOfferApplied": "Одноразовое предложение применено",
       "title": "7-дневный пробный период",
       "usedBy": "Используется более чем 17 000 занятыми умами",

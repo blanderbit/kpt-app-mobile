@@ -48,8 +48,8 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: yupResolver(schema(t)),
         defaultValues: {
-            email: 'd.utyuzh@codeska.com',
-            password: 'stringst123',
+            email: '',
+            password: '',
         },
     });
 
@@ -60,9 +60,10 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
             await login(data.email, data.password);
         } catch (error: any) {
             console.error('❌ Ошибка в onSubmit:', error);
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.loginErrorMessage'));
             Alert.alert(
                 t('auth.loginError'),
-                error.message || t('auth.loginErrorMessage'),
+                msg,
                 [{ text: t('ok') }]
             );
         } finally {
@@ -82,9 +83,10 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         try {
             await signInWithGoogle();
         } catch (error: any) {
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.googleSignInErrorMessage'));
             Alert.alert(
                 t('auth.googleSignInError'),
-                error.message || t('auth.googleSignInErrorMessage'),
+                msg,
                 [{ text: t('ok') }]
             );
         }
@@ -94,9 +96,10 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
         try {
             await signInWithApple();
         } catch (error: any) {
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.appleSignInErrorMessage'));
             Alert.alert(
                 t('auth.appleSignInError'),
-                error.message || t('auth.appleSignInErrorMessage'),
+                msg,
                 [{ text: t('ok') }]
             );
         }
@@ -160,15 +163,15 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                         </View>
 
             <View style={ [ styles.container, { gap: isSmall ? getResponsiveGap(8) : 8 } ] }>
-                            <CustomButton 
-                                title={ t('auth.login') } 
+                            <CustomButton
+                                title={ t('auth.login') }
                                 onPress={ handleSubmit(onSubmit) }
                                 disabled={ isSubmitting || isLoading }
                                 loading={ isSubmitting || isLoading }
                             />
 
-                            <CustomButton 
-                                title={ t('auth.appleSignIn') } 
+                            <CustomButton
+                                title={ t('auth.appleSignIn') }
                                 onPress={ handleAppleSignIn }
                                 themeName="white"
                                 disabled={ isSubmitting || isLoading || firebaseLoading }
@@ -196,7 +199,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 
         return (
             <SafeAreaView style={ [ styles.safeArea ] }>
-                <KeyboardAvoidingView 
+                <KeyboardAvoidingView
                     style={ { flex: 1 } }
                     behavior={ Platform.OS === 'ios' ? 'padding' : 'height' }
                     keyboardVerticalOffset={ Platform.OS === 'ios' ? 0 : 20 }
@@ -204,23 +207,23 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
                     <ScrollView
                         contentContainerStyle={ [
                             styles.scrollContent,
-                            { 
+                            {
                                 paddingTop: responsivePadding,
                                 paddingBottom: responsivePadding,
-                                gap: responsiveGap 
+                                gap: responsiveGap
                             }
                         ] }
                         showsVerticalScrollIndicator={ false }
                         keyboardShouldPersistTaps="handled"
                     >
-                        <View style={ [ 
-                            styles.mainContainer, 
-                            { 
+                        <View style={ [
+                            styles.mainContainer,
+                            {
                                 gap: responsiveGap,
                                 paddingTop: containerPaddingTop,
                                 paddingBottom: containerPaddingBottom,
                                 paddingHorizontal: containerPaddingHorizontal
-                            } 
+                            }
                         ] }>
                             {formContent}
                     </View>
