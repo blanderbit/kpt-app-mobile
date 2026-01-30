@@ -556,7 +556,12 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                     </Text>
                 </View>
 
-                <View style={ styles.activitySections }>
+                <ScrollView
+                    style={ [ styles.activitySections, styles.suggestedActivitiesScroll ] }
+                    contentContainerStyle={ styles.suggestedActivitiesScrollContent }
+                    nestedScrollEnabled
+                    showsVerticalScrollIndicator={ true }
+                >
                     {suggestedActivitiesData && suggestedActivitiesData.length > 0 &&
                         suggestedActivitiesData.map((activity, index) => (
                             <View
@@ -587,7 +592,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                             </View>
                         ))
                     }
-                </View>
+                </ScrollView>
             </View>
 
             <View style={ [theme.containers.cardRound, { marginTop: 16 }] }>
@@ -674,6 +679,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
         borderRadius: 16,
         overflow: 'hidden',
+    },
+    suggestedActivitiesScroll: {
+        maxHeight: SCREEN_HEIGHT * 0.4,
+    },
+    suggestedActivitiesScrollContent: {
+        flexGrow: 1,
     },
     activitySection: {
         width: '100%',
