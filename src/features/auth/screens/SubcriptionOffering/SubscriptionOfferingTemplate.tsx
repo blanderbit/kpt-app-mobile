@@ -6,7 +6,7 @@ import {SubscriptionOfferingTemplateProps} from "./types";
 import {subscriptionOfferingSteps} from "./screens/const";
 import {LinearGradient} from "expo-linear-gradient";
 
-export default function SubscriptionOfferingTemplate({navigation, onComplete}: SubscriptionOfferingTemplateProps) {
+export default function SubscriptionOfferingTemplate({navigation, onComplete, variant = 'onboarding'}: SubscriptionOfferingTemplateProps) {
     const {theme} = useCustomTheme();
     const [currentStep, setCurrentStep] = useState(1);
     
@@ -95,6 +95,7 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete}: S
 
         return React.cloneElement(currentStepData.content as React.ReactElement, {
             onNext,
+            variant,
         });
     };
 

@@ -99,6 +99,22 @@ class RevenueCatService {
   }
 
   /**
+   * URL для управления подпиской (App Store / Play Store).
+   * Открытие этого URL ведёт пользователя в настройки подписки, где можно отменить или изменить план.
+   * @returns URL или null, если подписки нет / платформа не поддерживается
+   */
+  async getManagementURL(): Promise<string | null> {
+    try {
+      const customerInfo = await this.getCustomerInfo();
+      const info = customerInfo as CustomerInfo & { managementURL?: string | null };
+      return info.managementURL ?? null;
+    } catch (error) {
+      console.error('Error getting management URL:', error);
+      return null;
+    }
+  }
+
+  /**
    * Получение доступных предложений (offerings)
    */
   async getOfferings(): Promise<PurchasesOffering | null> {

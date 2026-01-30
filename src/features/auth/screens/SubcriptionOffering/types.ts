@@ -5,8 +5,11 @@ export interface SubscriptionOfferingStep {
   infoText?: string;
 }
 
+export type SubscriptionOfferingVariant = 'onboarding' | 'settings';
+
 export interface SubscriptionOfferingTemplateProps {
   navigation: any;
   onComplete?: () => void;
+  variant?: SubscriptionOfferingVariant;
 }
 

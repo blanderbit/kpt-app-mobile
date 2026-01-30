@@ -10,6 +10,7 @@ import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { revenueCatService } from "@shared/services/revenuecat";
 import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
 import { PurchasesStoreProduct } from "react-native-purchases";
+import type { SubscriptionOfferingVariant } from "@features/auth/screens/SubcriptionOffering/types";
 
 interface SubscriptionPlan {
     id: 'yearly' | 'monthly';
@@ -25,7 +26,12 @@ interface SubscriptionPlan {
     product?: PurchasesStoreProduct;
 }
 
-export default function StartTrialScreen({onNext}: { onNext: () => void }) {
+interface StartTrialScreenProps {
+    onNext: () => void;
+    variant?: SubscriptionOfferingVariant;
+}
+
+export default function StartTrialScreen({ onNext, variant = 'onboarding' }: StartTrialScreenProps) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [stepHeights, setStepHeights] = useState<number[]>([]);
@@ -248,21 +254,27 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
         }
     };
 
+    const isSettingsVariant = variant === 'settings';
+
     return (
         <View style={[styles.container, theme.flexBlocks.vertical16]}>
             <View style={[styles.content, theme.flexBlocks.vertical16]}>
                 <View style={theme.flexBlocks.vertical8}>
-                    <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
-                        􀆅 {t('subscriptionOffering.startTrial.oneTimeOfferApplied')}
-                    </Text>
+                    {!isSettingsVariant && (
+                        <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
+                            􀆅 {t('subscriptionOffering.startTrial.oneTimeOfferApplied')}
+                        </Text>
+                    )}
 
                     <Text style={[styles.textCenter, theme.fonts.title]}>
                         {t('subscriptionOffering.startTrial.title')}
                     </Text>
 
-                    <Text style={[styles.textCenter, styles.description, theme.fonts.regular]}>
-                        􀝋 {t('subscriptionOffering.startTrial.usedBy')}
-                    </Text>
+                    {!isSettingsVariant && (
+                        <Text style={[styles.textCenter, styles.description, theme.fonts.regular]}>
+                            􀝋 {t('subscriptionOffering.startTrial.usedBy')}
+                        </Text>
+                    )}
                 </View>
 
                 <View style={[styles.periodContainer]}>
@@ -353,8 +365,8 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
                                         </Text>
                                     </View>
 
-                                    {/* Зелёная плашка "7-Day Free Trial" для годового плана */}
-                                    {(plan.id === 'yearly' || plan.hasFreeTrial) && (
+                                    {/* Зелёная плашка "7-Day Free Trial" — только в онбординге */}
+                                    {!isSettingsVariant && (plan.id === 'yearly' || plan.hasFreeTrial) && (
                                         <View style={styles.subscriptionLabel}>
                                             <Text style={styles.subscriptionLabelText}>
                                                 {plan.freeTrialText ?? t('subscriptionOffering.startTrial.freeTrial')}
@@ -390,33 +402,34 @@ export default function StartTrialScreen({onNext}: { onNext: () => void }) {
 
                 <View style={theme.flexBlocks.vertical8}>
                     <CustomButton
-                        title={selectedSubscription === 'yearly' ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe')}
+                        title={isSettingsVariant ? t('subscriptionOffering.startTrial.subscribe') : (selectedSubscription === 'yearly' ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe'))}
                         onPress={() => {
-                            // Событие: оплата + план
-                            amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
-                                plan: selectedSubscription,
-                            });
+                            if (!isSettingsVariant) {
+                                amplitudeAnalyticsService.trackEvent('Onboarding Payment', { plan: selectedSubscription });
+                            } else {
+                                amplitudeAnalyticsService.trackEvent('Profile Subscription Change Plan', { plan: selectedSubscription });
+                            }
                             purchaseSelectedPlan().catch(() => {});
                         }}
                         variant="primary"
                         disabled={isPurchasing || isLoadingPlans || subscriptionPlans.length === 0}
                     />
 
-                    <Pressable
-                        onPress={() => {
-                            // Событие: скип оплаты
-                            amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
-                            onNext();
-                        }}
-                    >
-                        <Text style={styles.skipTitle}>
-                            {t('subscriptionOffering.startTrial.skipOffer')}
-                        </Text>
-
-                        <Text style={styles.skipDescription}>
-                            {t('subscriptionOffering.startTrial.offerExpires')}
-                        </Text>
-                    </Pressable>
+                    {!isSettingsVariant && (
+                        <Pressable
+                            onPress={() => {
+                                amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
+                                onNext();
+                            }}
+                        >
+                            <Text style={styles.skipTitle}>
+                                {t('subscriptionOffering.startTrial.skipOffer')}
+                            </Text>
+                            <Text style={styles.skipDescription}>
+                                {t('subscriptionOffering.startTrial.offerExpires')}
+                            </Text>
+                        </Pressable>
+                    )}
                 </View>
             </View>
         </View>

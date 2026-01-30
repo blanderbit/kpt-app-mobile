@@ -268,6 +268,10 @@
         "noSubscription": "No subscription data",
         "noSubscriptionDescription": "Subscribe to access premium features.",
         "cancelledMessage": "You will not be charged in the future. You can still access the app until your current subscription ends.",
+        "changePlan": "Change plan",
+        "manageSubscription": "Manage subscription",
+        "manageUnavailableTitle": "Manage subscription",
+        "manageUnavailableMessage": "Subscription management is not available. You can manage or cancel your subscription in your device's App Store or Play Store settings.",
         "statuses": {
           "cancelled": "Cancelled"
         }
@@ -497,6 +501,122 @@
       "startFreeWeek": "Start Your FREE Week",
       "loadingPlans": "Loading offer...",
       "noPlansAvailable": "No plans available"
+    }
+  },
+  "onboarding_questions": {
+    "improvement_goal": {
+      "step_question": "What's the #1 thing you'd love to improve with KPT?",
+      "answers": {
+        "more_energy": {
+          "text": "More energy",
+          "subtitle": "Boost your daily vitality and feel more energized"
+        },
+        "work_life_balance": {
+          "text": "Work–life balance",
+          "subtitle": "Find harmony between your personal and professional life"
+        },
+        "healthy_habits": {
+          "text": "Building healthy habits",
+          "subtitle": "Create sustainable routines that stick"
+        },
+        "reducing_stress": {
+          "text": "Reducing stress",
+          "subtitle": "Manage daily pressures and find inner calm"
+        }
+      }
+    },
+    "main_challenge": {
+      "step_question": "Which challenge do you want to tackle first?",
+      "answers": {
+        "burned_out": {
+          "text": "Feeling burned out",
+          "subtitle": "Overwhelmed and exhausted from daily demands"
+        },
+        "no_progress": {
+          "text": "Lacking a sense of progress",
+          "subtitle": "Stuck in a rut and not seeing meaningful change"
+        },
+        "hard_motivated": {
+          "text": "Hard to stay motivated",
+          "subtitle": "Struggling to maintain enthusiasm and drive"
+        },
+        "busy_no_joy": {
+          "text": "Busy days with little joy",
+          "subtitle": "Filled with tasks but lacking fulfillment"
+        }
+      }
+    },
+    "life_approach": {
+      "step_question": "If you had to choose, what does your life feel more like?",
+      "answers": {
+        "chasing_results": {
+          "text": "Mostly chasing results",
+          "subtitle": "Focused on achievements and outcomes"
+        },
+        "about_enjoyment": {
+          "text": "Mostly about enjoyment",
+          "subtitle": "Prioritizing happiness and fun experiences"
+        },
+        "mix_chaotic": {
+          "text": "A mix / feels chaotic",
+          "subtitle": "Unpredictable blend of different approaches"
+        }
+      }
+    },
+    "biggest_change": {
+      "step_question": "Where would you love to see the biggest change?",
+      "answers": {
+        "health_body": {
+          "text": "Health & body",
+          "subtitle": "Physical wellness and fitness"
+        },
+        "productivity_focus": {
+          "text": "Productivity & focus",
+          "subtitle": "Getting more done with better concentration"
+        },
+        "emotional_wellbeing": {
+          "text": "Emotional well-being",
+          "subtitle": "Mental health and emotional balance"
+        },
+        "relationships_social": {
+          "text": "Relationships & social life",
+          "subtitle": "Connections with others and social fulfillment"
+        }
+      }
+    },
+    "starting_approach": {
+      "step_question": "What's the easiest way for you to start?",
+      "answers": {
+        "small_steps": {
+          "text": "Small daily steps",
+          "subtitle": "Gradual, manageable changes over time"
+        },
+        "challenges_goals": {
+          "text": "Challenges & bigger goals",
+          "subtitle": "Ambitious targets that push your limits"
+        },
+        "mix_both": {
+          "text": "A mix of both",
+          "subtitle": "Combination of small steps and bigger challenges"
+        }
+      }
+    },
+    "time_investment": {
+      "step_question": "How much time do you want to invest in yourself each day?",
+      "answers": {
+        "up_to_5_min": {
+          "text": "Up to 5 minutes",
+          "subtitle": "Quick daily check-ins and micro-habits"
+        },
+        "10_15_min": {
+          "text": "10–15 minutes",
+          "subtitle": "Short focused sessions for meaningful progress"
+        },
+        "20_plus_min": {
+          "text": "20+ minutes",
+          "subtitle": "Dedicated time for deep personal development"
+        }
+      }
     }
   }
 }

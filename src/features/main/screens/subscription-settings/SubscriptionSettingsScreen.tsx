@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -14,6 +14,9 @@ import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { useProfile } from "@app/hooks/profile.hook";
 import { useSubscriptionSummary } from "@shared/services/api/hooks";
 import type { SubscriptionStatus } from "@shared/services/api/types";
+import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
+import { revenueCatService } from "@shared/services/revenuecat";
+import CustomButton from "@shared/components/Button/Button";
 
 const ns = "main.profile.subscriptionSettingsScreen";
 
@@ -37,9 +40,40 @@ export default function SubscriptionSettingsScreen({ navigation }: {
     const { theme } = useCustomTheme();
     const { profile } = useProfile();
     const lang = (i18n.language || "en").split("-")[0];
-    const { data: summary, isLoading, isError } = useSubscriptionSummary(lang);
+    const { data: summary, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary(lang);
+    const { showSubscriptionOffering } = useSubscriptionOffering();
+    const [isOpeningManagement, setIsOpeningManagement] = useState(false);
 
     const onBack = () => navigation.goBack();
+
+    const onChangePlan = () => {
+        amplitudeAnalyticsService.trackEvent("Profile Subscription Change Plan Open");
+        showSubscriptionOffering(() => {
+            refetchSummary();
+        }, { variant: "settings" });
+    };
+
+    const onManageSubscription = async () => {
+        setIsOpeningManagement(true);
+        try {
+            const url = await revenueCatService.getManagementURL();
+            if (url) {
+                amplitudeAnalyticsService.trackEvent("Profile Subscription Manage Open");
+                const canOpen = await Linking.canOpenURL(url);
+                if (canOpen) {
+                    await Linking.openURL(url);
+                } else {
+                    Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+                }
+            } else {
+                Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+            }
+        } catch {
+            Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+        } finally {
+            setIsOpeningManagement(false);
+        }
+    };
 
     useEffect(() => {
         if (summary?.status === "cancelled") {
@@ -133,6 +167,27 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                                     {t(`${ns}.cancelledMessage`)}
                                 </Text>
                             )}
+                            <View style={[styles.actionsBlock, theme.flexBlocks.vertical8]}>
+                                <CustomButton
+                                    title={t(`${ns}.changePlan`)}
+                                    onPress={onChangePlan}
+                                    themeName="primary"
+                                    buttonStyle={styles.changePlanButton}
+                                />
+                                <Pressable
+                                    onPress={onManageSubscription}
+                                    disabled={isOpeningManagement}
+                                    style={({ pressed }) => [styles.actionButton, (pressed || isOpeningManagement) && { opacity: 0.7 }]}
+                                >
+                                    {isOpeningManagement ? (
+                                        <ActivityIndicator size="small" color={COLORS.gray_dark} />
+                                    ) : (
+                                        <Text style={[theme.fonts.subtitle, styles.actionButtonText]}>
+                                            {t(`${ns}.manageSubscription`)}
+                                        </Text>
+                                    )}
+                                </Pressable>
+                            </View>
                         </>
                     ) : (
                         <View style={styles.stubRow}>
@@ -143,6 +198,12 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                             <Text style={[theme.fonts.regular, { opacity: 0.6, textAlign: "center" }]}>
                                 {t(`${ns}.noSubscriptionDescription`)}
                             </Text>
+                            <CustomButton
+                                title={t(`${ns}.changePlan`)}
+                                onPress={onChangePlan}
+                                themeName="primary"
+                                buttonStyle={styles.changePlanButtonStub}
+                            />
                         </View>
                     )}
                 </View>
@@ -198,5 +259,26 @@ const styles = StyleSheet.create({
     settingsElementsBorderBottom: {
         borderBottomRightRadius: 16,
         borderBottomLeftRadius: 16
-    }
+    },
+    actionsBlock: {
+        paddingHorizontal: 16,
+        paddingTop: 8,
+        paddingBottom: 16,
+    },
+    changePlanButton: {
+        marginBottom: 8,
+    },
+    changePlanButtonStub: {
+        marginTop: 16,
+    },
+    actionButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: 44,
+    },
+    actionButtonText: {
+        color: COLORS.warning,
+    },
 });

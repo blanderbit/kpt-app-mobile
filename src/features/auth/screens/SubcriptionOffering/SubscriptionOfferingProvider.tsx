@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Modal, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import SubscriptionOfferingTemplate from './SubscriptionOfferingTemplate';
 import { getResponsiveHorizontalPadding, getResponsiveTopPadding } from '@shared/utils/screenUtils';
+import type { SubscriptionOfferingVariant } from './types';
+
+interface SubscriptionOfferingOptions {
+    variant?: SubscriptionOfferingVariant;
+}
 
 interface SubscriptionOfferingContextType {
-    showSubscriptionOffering: (onComplete?: () => void) => void;
+    showSubscriptionOffering: (onComplete?: () => void, options?: SubscriptionOfferingOptions) => void;
     hideSubscriptionOffering: () => void;
     isVisible: boolean;
 }
@@ -26,13 +31,14 @@ interface SubscriptionOfferingProviderProps {
 export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProviderProps> = ({ children }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [onCompleteCallback, setOnCompleteCallback] = useState<(() => void) | undefined>(undefined);
+    const [variant, setVariant] = useState<SubscriptionOfferingVariant>('onboarding');
     const horizontalPadding = getResponsiveHorizontalPadding(14);
     const topPadding = getResponsiveTopPadding(60);
 
-    const showSubscriptionOffering = (onComplete?: () => void) => {
+    const showSubscriptionOffering = (onComplete?: () => void, options?: SubscriptionOfferingOptions) => {
+        setVariant(options?.variant ?? 'onboarding');
         setIsVisible(true);
         if (onComplete) {
-            // Сохраняем сам callback, чтобы hideSubscriptionOffering его вызвал
             setOnCompleteCallback(() => onComplete);
         }
     };
@@ -84,6 +90,7 @@ export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProvider
                     <SubscriptionOfferingTemplate 
                         navigation={mockNavigation}
                         onComplete={hideSubscriptionOffering}
+                        variant={variant}
                     />
                 </View>
             )}
