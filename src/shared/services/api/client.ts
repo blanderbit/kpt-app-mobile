@@ -66,6 +66,7 @@ import {
   // Subscription types
   Subscription,
   SubscriptionSummaryDto,
+  SubscriptionSummaryResponse,
   CancelSubscriptionRequest,
   CancelSubscriptionResponse,
   // Mood tracker stats types
@@ -524,8 +525,8 @@ export class SubscriptionService extends ApiService {
     return this.get<Subscription>('/subscriptions/latest');
   }
 
-  async getLatestSubscriptionSummary(params?: { lang?: string }): Promise<SubscriptionSummaryDto> {
-    return this.get<SubscriptionSummaryDto>('/subscriptions/latest/summary', params);
+  async getLatestSubscriptionSummary(params?: { lang?: string }): Promise<SubscriptionSummaryResponse> {
+    return this.get<SubscriptionSummaryResponse>('/subscriptions/latest/summary', params);
   }
 
   async cancelSubscription(data: CancelSubscriptionRequest): Promise<CancelSubscriptionResponse> {

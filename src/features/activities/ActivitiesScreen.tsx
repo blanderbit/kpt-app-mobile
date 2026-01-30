@@ -59,7 +59,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const activityMaxWidth = isSmall ? getResponsiveActivityMaxWidth() : '70%';
 
     const lang = (i18n.language || 'en').split('-')[0];
-    const { data: subscriptionSummary } = useSubscriptionSummary(lang);
+    const { data: subscriptionSummaryResponse } = useSubscriptionSummary(lang);
+    const subscriptionSummary = subscriptionSummaryResponse?.subscription ?? null;
     const hasActiveSubscription = subscriptionSummary?.status === 'active';
 
     const [ satisfaction, setSatisfaction ] = useState(0)

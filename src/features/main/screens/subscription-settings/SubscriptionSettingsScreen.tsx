@@ -11,7 +11,6 @@ import { Label, LabelType } from "@shared/components/Label/Label";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { formatDateLong } from "@shared/utils/formatDate";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
-import { useProfile } from "@app/hooks/profile.hook";
 import { useSubscriptionSummary } from "@shared/services/api/hooks";
 import type { SubscriptionStatus } from "@shared/services/api/types";
 import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
@@ -38,9 +37,9 @@ export default function SubscriptionSettingsScreen({ navigation }: {
 }) {
     const { t, i18n } = useTranslation();
     const { theme } = useCustomTheme();
-    const { profile } = useProfile();
     const lang = (i18n.language || "en").split("-")[0];
-    const { data: summary, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary(lang);
+    const { data: summaryResponse, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary(lang);
+    const summary = summaryResponse?.subscription ?? null;
     const { showSubscriptionOffering } = useSubscriptionOffering();
     const [isOpeningManagement, setIsOpeningManagement] = useState(false);
 
@@ -103,28 +102,14 @@ export default function SubscriptionSettingsScreen({ navigation }: {
             </>
         }>
             <View style={theme.flexBlocks.vertical8}>
-                {(isLoading || summary) && (
-                    <View style={[theme.containers.cardRound, { paddingHorizontal: 16 }]}>
-                        <View style={theme.flexBlocks.horizontal4}>
-                            <MySubscriptionIcon />
-                            <Text style={[theme.fonts.subtitle, { textAlign: "left" }]}>
-                                {t(`${ns}.mySubscription`)}
-                            </Text>
-                        </View>
-                        <View style={theme.flexBlocks.vertical4}>
-                            <Text style={theme.fonts.titleSecond}>
-                                {profile?.email ?? "—"}
-                            </Text>
-                            {(planSubtitle != null && planSubtitle !== "") && (
-                                <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>
-                                    {planSubtitle}
-                                </Text>
-                            )}
-                        </View>
+                <View style={[theme.containers.cardRound, { paddingHorizontal: 16 }]}>
+                    <View style={theme.flexBlocks.horizontal4}>
+                        <MySubscriptionIcon />
+                        <Text style={[theme.fonts.subtitle, { textAlign: "left" }]}>
+                            {t(`${ns}.mySubscription`)}
+                        </Text>
                     </View>
-                )}
 
-                <View style={[theme.containers.cardRound]}>
                     {isLoading ? (
                         <View style={styles.loadingRow}>
                             <ActivityIndicator size="small" color={COLORS.gray_dark} />
@@ -132,14 +117,20 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                         </View>
                     ) : isError ? (
                         <View style={styles.stubRow}>
-                            <MySubscriptionIcon />
                             <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>{t(`${ns}.loadError`)}</Text>
                         </View>
                     ) : summary ? (
                         <>
-                            <Text style={[theme.fonts.titleSecond, { paddingHorizontal: 16 }]}>
-                                {planTitle}
-                            </Text>
+                            <View style={theme.flexBlocks.vertical4}>
+                                <Text style={[theme.fonts.titleSecond, { textTransform: "capitalize" }]}>
+                                    {planTitle}
+                                </Text>
+                                {(planSubtitle != null && planSubtitle !== "") && (
+                                    <Text style={[theme.fonts.regular, { opacity: 0.6 }]}>
+                                        {planSubtitle}
+                                    </Text>
+                                )}
+                            </View>
                             <View>
                                 <SectionItem
                                     label={`${ns}.subscription`}
@@ -163,7 +154,7 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                                 />
                             </View>
                             {showCancelledMessage && (
-                                <Text style={[theme.fonts.regular, { opacity: 0.6, paddingHorizontal: 16 }]}>
+                                <Text style={[theme.fonts.regular, { opacity: 0.6, paddingHorizontal: 0 }]}>
                                     {t(`${ns}.cancelledMessage`)}
                                 </Text>
                             )}
@@ -191,7 +182,6 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                         </>
                     ) : (
                         <View style={styles.stubRow}>
-                            <MySubscriptionIcon />
                             <Text style={[theme.fonts.titleSecond, { textAlign: "center" }]}>
                                 {t(`${ns}.noSubscription`)}
                             </Text>

@@ -625,6 +625,11 @@ export interface SubscriptionSummaryDto {
   periodEnd?: string;
 }
 
+/** Ответ GET /subscriptions/latest/summary — подписка или null */
+export interface SubscriptionSummaryResponse {
+  subscription: SubscriptionSummaryDto | null;
+}
+
 export interface CancelSubscriptionRequest {
   subscriptionId: string;
   reason?: string;
