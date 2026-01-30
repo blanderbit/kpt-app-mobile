@@ -272,6 +272,7 @@
         "manageSubscription": "Керування підпискою",
         "manageUnavailableTitle": "Керування підпискою",
         "manageUnavailableMessage": "Керування підпискою недоступне. Ви можете змінити або скасувати підписку в налаштуваннях App Store або Google Play на пристрої.",
+        "manageUnavailableOpenSettings": "Відкрити налаштування підписок",
         "statuses": {
           "cancelled": "Скасовано"
         }

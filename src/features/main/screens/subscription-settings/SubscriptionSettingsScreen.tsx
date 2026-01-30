@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -18,6 +18,8 @@ import { revenueCatService } from "@shared/services/revenuecat";
 import CustomButton from "@shared/components/Button/Button";
 
 const ns = "main.profile.subscriptionSettingsScreen";
+
+const IOS_SUBSCRIPTIONS_URL = "https://apps.apple.com/account/subscriptions";
 
 function statusToLabelType(s: SubscriptionStatus): LabelType {
     switch (s) {
@@ -52,6 +54,24 @@ export default function SubscriptionSettingsScreen({ navigation }: {
         }, { variant: "settings" });
     };
 
+    const showManageUnavailableAlert = () => {
+        if (Platform.OS === "ios") {
+            Alert.alert(
+                t(`${ns}.manageUnavailableTitle`),
+                t(`${ns}.manageUnavailableMessage`),
+                [
+                    { text: t("cancel"), style: "cancel" },
+                    {
+                        text: t(`${ns}.manageUnavailableOpenSettings`),
+                        onPress: () => Linking.openURL(IOS_SUBSCRIPTIONS_URL),
+                    },
+                ]
+            );
+        } else {
+            Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+        }
+    };
+
     const onManageSubscription = async () => {
         setIsOpeningManagement(true);
         try {
@@ -62,13 +82,13 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                 if (canOpen) {
                     await Linking.openURL(url);
                 } else {
-                    Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+                    showManageUnavailableAlert();
                 }
             } else {
-                Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+                showManageUnavailableAlert();
             }
         } catch {
-            Alert.alert(t(`${ns}.manageUnavailableTitle`), t(`${ns}.manageUnavailableMessage`));
+            showManageUnavailableAlert();
         } finally {
             setIsOpeningManagement(false);
         }

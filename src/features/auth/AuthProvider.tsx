@@ -205,8 +205,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
+            const appUserId = await revenueCatService.getAppUserID() ?? undefined;
+
             // Вызываем API логина
-            const response = await authService.login({ email, password });
+            const response = await authService.login({ email, password, appUserId });
 
             // Сохраняем токены
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
@@ -259,8 +261,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
+            const appUserId = await revenueCatService.getAppUserID() ?? undefined;
+
             // Вызываем API регистрации
-            await authService.register({ email, password, firstName });
+            await authService.register({ email, password, firstName: firstName ?? '', appUserId });
 
             // После успешной регистрации автоматически входим
             await login(email, password);
@@ -279,11 +283,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
+            const appUserId = await revenueCatService.getAppUserID() ?? undefined;
+
             // Вызываем API Firebase логина
             const response = await authService.firebaseAuth({
                 idToken,
-                authType: 'login'
-                // Поля онбординга пока не используем
+                authType: 'login',
+                appUserId
             });
             console.log('✅ Получен ответ от Firebase API:', response);
 
@@ -354,10 +360,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
+            const appUserId = await revenueCatService.getAppUserID() ?? undefined;
+
             // Вызываем API Firebase регистрации
             const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
+                appUserId,
                 ...onboardingData
             });
             console.log('✅ Получен ответ от Firebase API:', response);

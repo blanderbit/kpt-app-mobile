@@ -271,6 +271,7 @@
         "manageSubscription": "Управление подпиской",
         "manageUnavailableTitle": "Управление подпиской",
         "manageUnavailableMessage": "Управление подпиской недоступно. Вы можете изменить или отменить подписку в настройках App Store или Google Play на устройстве.",
+        "manageUnavailableOpenSettings": "Открыть настройки подписок",
         "statuses": {
           "cancelled": "Отменена"
         }

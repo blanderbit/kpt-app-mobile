@@ -87,6 +87,24 @@ class RevenueCatService {
   }
 
   /**
+   * Получение текущего app user id из RevenueCat.
+   * До регистрации/логина это обычно анонимный ID вида $RCAnonymousID:...
+   * После logIn — наш backend user id (строка).
+   * Доступен после инициализации SDK (Purchases.configure).
+   */
+  async getAppUserID(): Promise<string | null> {
+    if (!this.isInitialized) {
+      return null;
+    }
+    try {
+      return await Purchases.getAppUserID();
+    } catch (error) {
+      console.warn('RevenueCat getAppUserID failed:', error);
+      return null;
+    }
+  }
+
+  /**
    * Получение информации о текущем пользователе
    */
   async getCustomerInfo(): Promise<CustomerInfo> {

@@ -272,6 +272,7 @@
         "manageSubscription": "Manage subscription",
         "manageUnavailableTitle": "Manage subscription",
         "manageUnavailableMessage": "Subscription management is not available. You can manage or cancel your subscription in your device's App Store or Play Store settings.",
+        "manageUnavailableOpenSettings": "Open subscription settings",
         "statuses": {
           "cancelled": "Cancelled"
         }
