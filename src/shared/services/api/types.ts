@@ -32,8 +32,6 @@ export interface PaginatedResponse<T> {
 export interface LoginRequest {
   email: string;
   password: string;
-  /** RevenueCat app user id для линковки подписки с пользователем на бэкенде */
-  appUserId?: string;
 }
 
 export interface LoginResponse {
@@ -57,14 +55,11 @@ export interface RegisterRequest {
   taskTrackingMethod?: string;
   initSatisfactionLevel?: number;
   initHardnessLevel?: number;
-  appUserId?: string;
 }
 
 export interface FirebaseAuthRequest {
   idToken: string;
   authType?: 'login' | 'register';
-  /** RevenueCat app user id для линковки подписки с пользователем на бэкенде */
-  appUserId?: string;
   age?: string;
   feelingToday?: string;
   socialNetworks?: string[];
