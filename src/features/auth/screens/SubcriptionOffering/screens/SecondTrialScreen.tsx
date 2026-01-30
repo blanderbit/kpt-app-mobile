@@ -4,7 +4,6 @@ import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
-import {COLORS} from "@app/theme";
 import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { revenueCatService } from "@shared/services/revenuecat";

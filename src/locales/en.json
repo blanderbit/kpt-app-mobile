@@ -464,6 +464,7 @@
       "day7Description": "Your subscription will start Day/Month/Year. Cancel anytime before.",
       "yearly": "Yearly",
       "monthly": "Monthly",
+      "monthlyTrial": "Monthly (Free Trial)",
       "freeTrial": "7-Day Free Trial",
       "unlimitedAccess": "Unlimited free access for",
       "save58": "7 days (save 58%)",

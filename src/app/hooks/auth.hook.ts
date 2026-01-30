@@ -1,6 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { useLogin, useLogout, useCurrentUser, apiUtils } from '@shared/services/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, useContext } from "react";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -11,7 +9,7 @@ interface AuthContextType {
     register: (email: string, password: string, firstName: string) => Promise<void>;
     loginWithFirebase: (idToken: string) => Promise<void>;
     registerWithFirebase: (
-        idToken: string, 
+        idToken: string,
         onboardingData: {
             age?: string;
             feelingToday?: string;

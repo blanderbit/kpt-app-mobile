@@ -13,7 +13,7 @@ import { PurchasesStoreProduct } from "react-native-purchases";
 import type { SubscriptionOfferingVariant } from "@features/auth/screens/SubcriptionOffering/types";
 
 interface SubscriptionPlan {
-    id: 'yearly' | 'monthly';
+    id: 'yearly' | 'monthly' | 'monthly_trial';
     title: string;
     originalPrice: string | null;
     price: string;
@@ -93,18 +93,20 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     return;
                 }
 
-                // Находим monthly и yearly продукты
+                // Находим monthly, monthly_trial и yearly продукты
                 const monthlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
+                const monthlyTrialProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY_TRIAL);
                 const yearlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.YEARLY);
 
                 const plans: SubscriptionPlan[] = [];
 
                 // Процент выгоды годового vs месячного: (цена_месяц − цена_год/12) / цена_месяц
+                const monthlyPriceForSavings = monthlyTrialProduct?.price ?? monthlyProduct?.price ?? 0;
                 let savingsPercent: number | null = null;
-                if (yearlyProduct && monthlyProduct && monthlyProduct.price > 0) {
+                if (yearlyProduct && (monthlyProduct || monthlyTrialProduct) && monthlyPriceForSavings > 0) {
                     const yearlyPerMonth = yearlyProduct.price / 12;
                     savingsPercent = Math.round(
-                        ((monthlyProduct.price - yearlyPerMonth) / monthlyProduct.price) * 100
+                        ((monthlyPriceForSavings - yearlyPerMonth) / monthlyPriceForSavings) * 100
                     );
                     savingsPercent = Math.max(0, Math.min(100, savingsPercent));
                 }
@@ -148,7 +150,29 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     });
                 }
 
-                // Месячный план
+                // Месячный план с триалом
+                if (monthlyTrialProduct) {
+                    const monthlyPrice = monthlyTrialProduct.priceString || `${monthlyTrialProduct.price}`;
+                    const monthlyPriceString = `${monthlyPrice}/mo.`;
+                    const hasIntroPrice = monthlyTrialProduct.introPrice !== null && monthlyTrialProduct.introPrice !== undefined;
+                    const isFreeTrial = hasIntroPrice && monthlyTrialProduct.introPrice?.price === 0;
+
+                    plans.push({
+                        id: 'monthly_trial',
+                        title: t('subscriptionOffering.startTrial.monthlyTrial'),
+                        originalPrice: null,
+                        price: monthlyPriceString,
+                        pricePerMonth: null,
+                        hasFreeTrial: isFreeTrial,
+                        freeTrialText: isFreeTrial ? t('subscriptionOffering.startTrial.freeTrial') : null,
+                        descriptionText: '',
+                        descriptionHighlight: monthlyPriceString.replace('/mo.', '/month'),
+                        descriptionTextAfter: t('subscriptionOffering.startTrial.cancelAnytime'),
+                        product: monthlyTrialProduct
+                    });
+                }
+
+                // Месячный план без триала
                 if (monthlyProduct) {
                     const monthlyPrice = monthlyProduct.priceString || `${monthlyProduct.price}`;
                     const monthlyPriceString = `${monthlyPrice}/mo.`;
@@ -402,7 +426,7 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
 
                 <View style={theme.flexBlocks.vertical8}>
                     <CustomButton
-                        title={isSettingsVariant ? t('subscriptionOffering.startTrial.subscribe') : (selectedSubscription === 'yearly' ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe'))}
+                        title={isSettingsVariant ? t('subscriptionOffering.startTrial.subscribe') : (selectedSubscription === 'yearly' || (subscriptionPlans.find(p => p.id === selectedSubscription)?.hasFreeTrial) ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe'))}
                         onPress={() => {
                             if (!isSettingsVariant) {
                                 amplitudeAnalyticsService.trackEvent('Onboarding Payment', { plan: selectedSubscription });

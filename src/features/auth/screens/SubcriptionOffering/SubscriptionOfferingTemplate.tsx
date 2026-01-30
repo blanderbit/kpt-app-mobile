@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef} from "react";
 import {StyleSheet, Text, View, SafeAreaView, Pressable, Animated} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {CloseIcon} from "@assets/icons/CloseIcon";
@@ -9,7 +9,7 @@ import {LinearGradient} from "expo-linear-gradient";
 export default function SubscriptionOfferingTemplate({navigation, onComplete, variant = 'onboarding'}: SubscriptionOfferingTemplateProps) {
     const {theme} = useCustomTheme();
     const [currentStep, setCurrentStep] = useState(1);
-    
+
     // Анимационные значения для переходов между степами
     const fadeAnim = useRef(new Animated.Value(1)).current;
     const slideAnim = useRef(new Animated.Value(0)).current;
@@ -20,10 +20,10 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
     // Функция для анимированного перехода между степами
     const animateStepTransition = (newStep: number, direction: 'forward' | 'backward', callback?: () => void) => {
         setIsTransitioning(true);
-        
+
         const exitSlideValue = direction === 'forward' ? -50 : 50;
         const enterSlideValue = direction === 'forward' ? 50 : -50;
-        
+
         Animated.parallel([
             Animated.timing(fadeAnim, {
                 toValue: 0,
@@ -37,10 +37,10 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
             })
         ]).start(() => {
             setCurrentStep(newStep);
-            
+
             fadeAnim.setValue(0);
             slideAnim.setValue(enterSlideValue);
-            
+
             setTimeout(() => {
                 Animated.parallel([
                     Animated.timing(fadeAnim, {

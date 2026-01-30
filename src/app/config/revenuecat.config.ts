@@ -72,6 +72,7 @@ export const getRevenueCatApiKey = (): string => {
  */
 export const REVENUECAT_PRODUCT_IDS = {
   MONTHLY: 'plesury.monthly',
+  MONTHLY_TRIAL: 'plesury.monthly_trial',
   YEARLY: 'plesury.yearly',
 } as const;
 
@@ -80,6 +81,7 @@ export const REVENUECAT_PRODUCT_IDS = {
  */
 export const REVENUECAT_PRODUCT_IDENTIFIERS = [
   REVENUECAT_PRODUCT_IDS.MONTHLY,
+  REVENUECAT_PRODUCT_IDS.MONTHLY_TRIAL,
   REVENUECAT_PRODUCT_IDS.YEARLY,
 ] as const;
 

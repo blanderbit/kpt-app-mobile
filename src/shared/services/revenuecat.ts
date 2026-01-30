@@ -4,7 +4,6 @@ import Purchases, {
   PurchasesPackage,
   PurchasesStoreProduct,
 } from 'react-native-purchases';
-import { Platform } from 'react-native';
 
 // Типы для конфигурации
 export interface RevenueCatConfig {
@@ -249,14 +248,14 @@ class RevenueCatService {
     try {
       // Второй параметр опционален, SDK автоматически определит тип по платформе
       const products = await Purchases.getProducts(productIdentifiers, type as any);
-      
+
       if (!products || products.length === 0) {
         console.warn('[RevenueCat] getProducts returned empty array. This might indicate:');
         console.warn('- Products are not approved in App Store Connect yet');
         console.warn('- Products are not configured in RevenueCat Dashboard');
         console.warn('- Using StoreKit Configuration file in development (expected behavior)');
       }
-      
+
       return products;
     } catch (error: any) {
       // Не логируем как критическую ошибку, если это проблема конфигурации

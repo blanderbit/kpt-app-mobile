@@ -16,7 +16,6 @@ import { useCustomTheme } from '@app/theme/ThemeContext';
 import { useTranslation } from "react-i18next";
 import { ActivityLabel } from '@shared/components/ActivityLabel';
 import { ActivitiesScreenNavigationProp } from "@app/navigation/AppNavigator";
-import { InfoPopup } from "@shared/components/InfoPopup/InfoPopup";
 import LayersIcon from "@assets/icons/LayersIcon";
 import SemiCircleSplit from "@shared/components/GradientArc/GradientArc";
 import CustomButton from "@shared/components/Button/Button";
@@ -24,7 +23,6 @@ import { PlusIcon } from "@assets/icons/PlusIcon";
 import { useToast } from "@shared/components/Toast/ToastProvider";
 import { SuggestedActivitiesIcon } from "@assets/icons/SuggestedActivitiesIcon";
 import { ArchiveIcon } from "@assets/icons/ArchiveIcon";
-import { ReturnIcon } from "@assets/icons/ReturnIcon";
 import { ArchiveBackIcon } from "@assets/icons/ArchiveBackIcon";
 import { RectButton, Swipeable } from "react-native-gesture-handler";
 import { BurgerIcon } from "@assets/icons/BurgerIcon";
@@ -228,10 +226,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 // Invalidate queries
                 queryClient.invalidateQueries({ queryKey: ['activities'] });
                 queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
-                
+
                 // Получаем актуальный список активностей с сервера
                 const { data: updatedActivities } = await refetchMyActivities();
-                
+
                 // Обновляем локальное состояние новыми данными
                 if (updatedActivities?.data) {
                     setLocalActivities(updatedActivities.data);

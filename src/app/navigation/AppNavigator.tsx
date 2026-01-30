@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '@app/hooks/auth.hook';
 import { getResponsiveHorizontalPadding, getResponsiveTopPadding } from '@shared/utils/screenUtils';
@@ -92,7 +92,7 @@ export function AppNavigator() {
                     // Список роутов табов, для которых не нужна анимация
                     const tabRoutes = [Routes.TODAY, Routes.ACTIVITIES, Routes.PROFILE];
                     const isTabRoute = tabRoutes.includes(route.name as Routes);
-                    
+
                     return {
                         headerShown: false,
                         cardStyle: { backgroundColor: 'transparent' },
@@ -104,7 +104,7 @@ export function AppNavigator() {
                             close: { animation: 'timing', config: { duration: 0 } },
                         } : undefined,
                         // Для табов - без анимации, для остальных - с анимацией
-                        cardStyleInterpolator: isTabRoute 
+                        cardStyleInterpolator: isTabRoute
                             ? () => ({ cardStyle: { opacity: 1 } })
                             : ({ current, next, layouts }) => {
                                 const translateX = current.progress.interpolate({
@@ -134,16 +134,16 @@ export function AppNavigator() {
             >
                 { isAuthenticated ? (
                     <>
-                        <Stack.Screen 
-                            name={ Routes.TODAY } 
+                        <Stack.Screen
+                            name={ Routes.TODAY }
                             component={ TodayScreen }
                         />
-                        <Stack.Screen 
-                            name={ Routes.ACTIVITIES } 
+                        <Stack.Screen
+                            name={ Routes.ACTIVITIES }
                             component={ ActivitiesScreen }
                         />
-                        <Stack.Screen 
-                            name={ Routes.PROFILE } 
+                        <Stack.Screen
+                            name={ Routes.PROFILE }
                             component={ ProfileScreen }
                         />
                         <Stack.Screen name={ Routes.PERSONAL_INFO } component={ PersonalInfoScreen }/>

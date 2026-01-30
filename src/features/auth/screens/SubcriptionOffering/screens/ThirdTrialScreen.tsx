@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
+import { StyleSheet, Text, View, Alert} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
-import {COLORS} from "@app/theme";
 import {
-    BigNewsIcon,
     discountForeverIcon,
     radialGradientIcon
 } from "@features/auth/screens/SubcriptionOffering/screens/icons";
