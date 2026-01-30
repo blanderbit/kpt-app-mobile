@@ -269,7 +269,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const appUserId = await revenueCatService.getAppUserID().catch(() => null);
             // Данные онбординга (если пользователь прошёл онбординг и они есть в AsyncStorage)
             const onboardingData = await loadAllOnboardingData().catch(() => ({}));
-            await authService.register({
+            const registerResponse = await authService.register({
                 email,
                 password,
                 firstName: firstName ?? '',
@@ -283,6 +283,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 ...(onboardingData.initSatisfactionLevel != null ? { initSatisfactionLevel: onboardingData.initSatisfactionLevel } : {}),
                 ...(onboardingData.initHardnessLevel != null ? { initHardnessLevel: onboardingData.initHardnessLevel } : {}),
             });
+
+            // RevenueCat: сразу после регистрации привязываем подписки к новому user.id (из ответа бэкенда)
+            if (registerResponse.userId != null) {
+                await revenueCatService.setUserID(String(registerResponse.userId));
+            }
 
             // После успешной регистрации автоматически входим
             await login(email, password);
@@ -481,10 +486,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // Очищаем профиль при выходе
             await clearProfile();
-        } catch (error) {
-            console.error('Ошибка выхода:', error);
+        } catch (error: any) {
+            // После удаления аккаунта пользователь уже не существует — бэкенд вернёт "User not found".
+            // Это ожидаемо, не показываем ошибку и не логируем как ошибку.
+            const isUserNotFound = error?.message === 'User not found' || error?.data?.message === 'User not found';
+            if (!isUserNotFound) {
+                console.error('Ошибка выхода:', error);
+            }
             // Даже если API вызов не удался, очищаем локальное состояние
-            // Удаляем регистрацию нотификаций
             await notificationService.unregisterDevice();
             try {
                 await revenueCatService.logout();

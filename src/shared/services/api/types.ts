@@ -42,6 +42,12 @@ export interface LoginResponse {
   user: User;
 }
 
+/** Ответ POST /auth/register (201) */
+export interface RegisterResponse {
+  message: string;
+  userId: number;
+}
+
 export interface RegisterRequest {
   email: string;
   password: string;

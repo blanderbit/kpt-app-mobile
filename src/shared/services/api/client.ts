@@ -4,6 +4,7 @@ import {
   LoginRequest,
   LoginResponse,
   RegisterRequest,
+  RegisterResponse,
   FirebaseAuthRequest,
   FirebaseAuthResponse,
   ForgotPasswordRequest,
@@ -150,8 +151,8 @@ export class AuthService extends ApiService {
     return this.post<LoginResponse>('/auth/login', credentials);
   }
 
-  async register(userData: RegisterRequest): Promise<{ message: string }> {
-    return this.post<{ message: string }>('/auth/register', userData);
+  async register(userData: RegisterRequest): Promise<RegisterResponse> {
+    return this.post<RegisterResponse>('/auth/register', userData);
   }
 
   async firebaseAuth(firebaseData: FirebaseAuthRequest): Promise<FirebaseAuthResponse> {
