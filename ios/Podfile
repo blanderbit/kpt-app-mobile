@@ -41,11 +41,12 @@ target 'Plesury' do
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = deployment_target
+        # Только для RNFB: React Native Firebase подключает заголовки React-Core как немодульные.
+        # Глобально не включаем — может сломать другие поды (expo/expo#39607, invertase/react-native-firebase#7764).
+        if target.name.start_with?('RNFB')
+          config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+        end
       end
-    end
-
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = true
     end
 
 #     # https://github.com/dream-sports-labs/react-native-fast-image/issues/273
