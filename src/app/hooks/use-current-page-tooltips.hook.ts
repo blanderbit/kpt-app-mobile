@@ -2,13 +2,16 @@ import React from 'react';
 import { useNavigationState } from '@react-navigation/native';
 import { Routes, TooltipPagesConfig } from '@app/navigation/const';
 import { useTooltipsByPage } from '@shared/services/api/hooks';
+import { useAuth } from '@app/hooks/auth.hook';
 
 /**
- * Хук для автоматической загрузки тултипов для текущей страницы
- * Использует TooltipPagesConfig для определения какой page использовать
- * на основе текущего роута
+ * Хук для автоматической загрузки тултипов для текущей страницы.
+ * Тултипы загружаются только для авторизованного пользователя и только
+ * для страниц из TooltipPagesConfig (экран логина и прочие auth-экраны исключены).
  */
 export const useCurrentPageTooltips = () => {
+  const { isAuthenticated } = useAuth();
+
   // Получаем текущий роут из navigation state
   const currentRoute = useNavigationState(state => {
     console.log('🔔 [useCurrentPageTooltips] Navigation state:', {
@@ -32,9 +35,10 @@ export const useCurrentPageTooltips = () => {
   console.log('🔔 [useCurrentPageTooltips] Текущий роут:', currentRoute);
   console.log('🔔 [useCurrentPageTooltips] TooltipPage из конфига:', tooltipPage);
   console.log('🔔 [useCurrentPageTooltips] TooltipPage строка для запроса:', tooltipPageString);
-  console.log('🔔 [useCurrentPageTooltips] Будет ли выполнен запрос (enabled):', !!tooltipPageString);
+  const enabled = !!tooltipPageString && isAuthenticated;
+  console.log('🔔 [useCurrentPageTooltips] Будет ли выполнен запрос (enabled):', enabled);
   
-  const { data: tooltips, isLoading, error, refetch } = useTooltipsByPage(tooltipPageString);
+  const { data: tooltips, isLoading, error, refetch } = useTooltipsByPage(tooltipPageString, { enabled });
   
   // При каждом изменении страницы делаем refetch
   React.useEffect(() => {

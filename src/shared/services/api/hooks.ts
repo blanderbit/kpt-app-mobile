@@ -571,10 +571,11 @@ export const useAnalyticsOverview = (startDate?: string, endDate?: string) => {
 };
 
 // Tooltip hooks
-export const useTooltipsByPage = (page: string) => {
+export const useTooltipsByPage = (page: string, options?: { enabled?: boolean }) => {
+  const enabled = options?.enabled !== undefined ? options.enabled : !!page;
   console.log('🔔 [useTooltipsByPage] Вызов хука с page:', page);
   console.log('🔔 [useTooltipsByPage] Query key:', queryKeys.tooltipsByPage(page));
-  console.log('🔔 [useTooltipsByPage] Enabled:', !!page);
+  console.log('🔔 [useTooltipsByPage] Enabled:', enabled);
   
   const queryResult = useQuery({
     queryKey: queryKeys.tooltipsByPage(page),
@@ -582,7 +583,7 @@ export const useTooltipsByPage = (page: string) => {
       console.log('🔔 [useTooltipsByPage] Выполнение queryFn для page:', page);
       return tooltipService.getTooltipsByPage(page);
     },
-    enabled: !!page,
+    enabled: !!page && enabled,
     staleTime: 0, // Не кэшируем, всегда запрашиваем свежие данные
     refetchOnMount: true, // Всегда запрашиваем при монтировании компонента
     refetchOnWindowFocus: false, // Не запрашиваем при фокусе окна
@@ -727,4 +728,3 @@ export const useSubscriptionSummary = (lang?: string) => {
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
-

@@ -28,11 +28,11 @@ export enum TooltipPage {
     WELCOME = 'welcome'
 }
 
+// Тултипы только для страниц авторизованного пользователя (без LOGIN/SIGN_UP и т.д.)
 export const TooltipPagesConfig = {
     [Routes.TODAY]: TooltipPage.DASHBOARD,
     [Routes.ACTIVITIES]: TooltipPage.ACTIVITIES,
     [Routes.PROFILE]: TooltipPage.SETTINGS,
     [Routes.PERSONAL_INFO]: TooltipPage.PROFILE,
     [Routes.ONBOARDING]: TooltipPage.ONBOARDING,
-    [Routes.LOGIN]: TooltipPage.WELCOME,
 }
