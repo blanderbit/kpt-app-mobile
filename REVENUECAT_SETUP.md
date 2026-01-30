@@ -101,7 +101,8 @@ const customerInfo = await revenueCatService.restorePurchases();
 Сервис `revenueCatService` предоставляет следующие методы:
 
 - `initialize(config)` - Инициализация SDK
-- `setUserID(userID)` - Установка пользовательского ID
+- `getAppUserID()` - Получение текущего app user id из RevenueCat (для передачи на бэкенд в регистрации/логине)
+- `setUserID(userID)` - Установка пользовательского ID (вызов Purchases.logIn)
 - `logout()` - Выход пользователя
 - `getCustomerInfo()` - Получение информации о пользователе
 - `getOfferings()` - Получение текущих предложений
@@ -127,4 +128,14 @@ const customerInfo = await revenueCatService.restorePurchases();
 - **Android:** Тестовые аккаунты в Google Play Console
 
 RevenueCat автоматически определяет окружение (sandbox/production) на основе используемых аккаунтов.
+
+### Test Store (симуляция покупок)
+
+Если в проекте включён **Test Store** (ключ `revenueCatTestStoreApiKey` в .env), покупки не идут в реальный App Store / Play Store — при нажатии «Купить» RevenueCat показывает **диалог с тремя вариантами**:
+
+1. **Simulate successful purchase** — симуляция успешной покупки (подписка активируется).
+2. **Simulate failed purchase** — симуляция ошибки оплаты (для проверки обработки ошибок в приложении).
+3. **Cancel the purchase** — отмена пользователем.
+
+Если в логах видите ошибку **«Purchase failure simulated successfully in Test Store»** — это не баг приложения. Вы (или симулятор) выбрали в диалоге «Simulate failed purchase». Чтобы успешно «купить» подписку в тесте, при появлении диалога выбирайте **«Simulate successful purchase»**.
 

@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useAuth } from '@app/hooks/auth.hook';
 import { LoginIcon } from '@assets/icons/LoginIcon';
 import { Input } from '@shared/components/Input/Input';
-import { ErrorMessage } from '@shared/components/ErrorMessage/ErrorMessage';
 import { useTranslation } from 'react-i18next';
 import CustomButton from "@shared/components/Button/Button";
 import { AppleIcon } from "@assets/icons/AppleLogo";
