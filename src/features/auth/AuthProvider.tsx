@@ -10,6 +10,7 @@ import { amplitudeAnalyticsService } from '@shared/services/analytics';
 import { revenueCatService } from '@shared/services/revenuecat';
 import { queryClient } from '@shared/services/query/QueryProvider';
 import { clearOnboardingOnLogout } from '@shared/hooks/useOnboardingCleanup';
+import { loadAllOnboardingData } from '@shared/utils/onboardingStorage';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -205,8 +206,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
-            // Вызываем API логина
-            const response = await authService.login({ email, password });
+            // RevenueCat: передаём app user ID для привязки подписок к пользователю после логина
+            const appUserId = await revenueCatService.getAppUserID().catch(() => null);
+            const response = await authService.login({
+                email,
+                password,
+                ...(appUserId ? { appUserId } : {}),
+            });
 
             // Сохраняем токены
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
@@ -259,8 +265,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
-            // Вызываем API регистрации
-            await authService.register({ email, password, firstName: firstName ?? '' });
+            // RevenueCat: передаём app user ID для привязки подписок к пользователю при регистрации
+            const appUserId = await revenueCatService.getAppUserID().catch(() => null);
+            // Данные онбординга (если пользователь прошёл онбординг и они есть в AsyncStorage)
+            const onboardingData = await loadAllOnboardingData().catch(() => ({}));
+            await authService.register({
+                email,
+                password,
+                firstName: firstName ?? '',
+                ...(appUserId ? { appUserId } : {}),
+                ...(onboardingData.age ? { age: onboardingData.age } : {}),
+                ...(onboardingData.feelingToday ? { feelingToday: onboardingData.feelingToday } : {}),
+                ...(onboardingData.socialNetworks?.length ? { socialNetworks: onboardingData.socialNetworks } : {}),
+                ...(onboardingData.onboardingQuestionAndAnswers && Object.keys(onboardingData.onboardingQuestionAndAnswers).length ? { onboardingQuestionAndAnswers: onboardingData.onboardingQuestionAndAnswers } : {}),
+                ...(onboardingData.activities?.length ? { activities: onboardingData.activities } : {}),
+                ...(onboardingData.taskTrackingMethod ? { taskTrackingMethod: onboardingData.taskTrackingMethod } : {}),
+                ...(onboardingData.initSatisfactionLevel != null ? { initSatisfactionLevel: onboardingData.initSatisfactionLevel } : {}),
+                ...(onboardingData.initHardnessLevel != null ? { initHardnessLevel: onboardingData.initHardnessLevel } : {}),
+            });
 
             // После успешной регистрации автоматически входим
             await login(email, password);
@@ -279,10 +301,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
-            // Вызываем API Firebase логина
+            // RevenueCat: передаём app user ID для привязки подписок при логине через Firebase
+            const appUserId = await revenueCatService.getAppUserID().catch(() => null);
             const response = await authService.firebaseAuth({
                 idToken,
-                authType: 'login'
+                authType: 'login',
+                ...(appUserId ? { appUserId } : {}),
             });
             console.log('✅ Получен ответ от Firebase API:', response);
 
@@ -353,10 +377,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsLoading(true);
             setError(null);
 
-            // Вызываем API Firebase регистрации
+            // RevenueCat: передаём app user ID для привязки подписок при регистрации через Firebase
+            const appUserId = await revenueCatService.getAppUserID().catch(() => null);
             const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
+                ...(appUserId ? { appUserId } : {}),
                 ...onboardingData
             });
             console.log('✅ Получен ответ от Firebase API:', response);
@@ -408,6 +434,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = async () => {
+        // Сразу сбрасываем авторизацию, чтобы хуки (тултипы, профиль, аналитика и т.д.)
+        // перестали делать запросы и не стреляли ошибками после удаления токенов
+        setIsAuthenticated(false);
+        setUser(null);
+        setIsFirebaseUser(false);
+        setIsEmailVerified(false);
+        setError(null);
+        queryClient.cancelQueries(); // отменяем все запросы в полёте
+        queryClient.clear();
+
         try {
             setIsLoading(true);
 
@@ -440,18 +476,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Очищаем данные пользователя в аналитике
             amplitudeAnalyticsService.clearUser();
 
-            // Очищаем React Query кеш (все данные аналитики, активности, настроения и т.д.)
-            queryClient.clear();
-
             // Очищаем данные онбординга
             await clearOnboardingOnLogout();
 
-            // Обновляем состояние
-            setIsAuthenticated(false);
-            setUser(null);
-            setIsFirebaseUser(false);
-            setIsEmailVerified(false);
-            setError(null);
             // Очищаем профиль при выходе
             await clearProfile();
         } catch (error) {
@@ -468,16 +495,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await clearFirebaseFlag();
             await clearEmailVerifiedFlag();
 
-            // Очищаем React Query кеш даже при ошибке
-            queryClient.clear();
-
             // Очищаем данные онбординга даже при ошибке
             await clearOnboardingOnLogout();
 
-            setIsAuthenticated(false);
-            setUser(null);
-            setIsFirebaseUser(false);
-            setIsEmailVerified(false);
             await clearProfile();
         } finally {
             setIsLoading(false);

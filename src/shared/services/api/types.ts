@@ -32,6 +32,8 @@ export interface PaginatedResponse<T> {
 export interface LoginRequest {
   email: string;
   password: string;
+  /** RevenueCat app user ID (e.g. $RCAnonymousID:xxx) to link existing subscriptions to this user after login */
+  appUserId?: string;
 }
 
 export interface LoginResponse {
@@ -44,6 +46,8 @@ export interface RegisterRequest {
   email: string;
   password: string;
   firstName: string;
+  /** RevenueCat app user ID to link existing subscriptions to this user after register */
+  appUserId?: string;
   age?: string;
   feelingToday?: string;
   socialNetworks?: string[];
@@ -60,6 +64,8 @@ export interface RegisterRequest {
 export interface FirebaseAuthRequest {
   idToken: string;
   authType?: 'login' | 'register';
+  /** RevenueCat app user ID to link existing subscriptions to this user */
+  appUserId?: string;
   age?: string;
   feelingToday?: string;
   socialNetworks?: string[];
