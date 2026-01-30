@@ -267,6 +267,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // RevenueCat: передаём app user ID для привязки подписок к пользователю при регистрации
             const appUserId = await revenueCatService.getAppUserID().catch(() => null);
+            if (appUserId) {
+                console.log('[Auth] Register (email): sending appUserId to backend:', appUserId);
+            } else {
+                console.warn('[Auth] Register (email): RevenueCat appUserId is null — backend will not link subscriptions');
+            }
             // Данные онбординга (если пользователь прошёл онбординг и они есть в AsyncStorage)
             const onboardingData = await loadAllOnboardingData().catch(() => ({}));
             const registerResponse = await authService.register({
@@ -384,6 +389,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // RevenueCat: передаём app user ID для привязки подписок при регистрации через Firebase
             const appUserId = await revenueCatService.getAppUserID().catch(() => null);
+            if (appUserId) {
+                console.log('[Auth] Register (Firebase): sending appUserId to backend:', appUserId);
+            } else {
+                console.warn('[Auth] Register (Firebase): RevenueCat appUserId is null — backend will not link subscriptions');
+            }
             const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
