@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
@@ -14,7 +14,8 @@ import ToggleSwitch from "@shared/components/ToggleSwitch";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import {isSmallScreen} from "@shared/utils/screenUtils";
 import { revenueCatService } from "@shared/services/revenuecat";
-import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
+import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
+import type { PurchasesStoreProduct } from "react-native-purchases";
 
 const STAR_ICON_SVG = `
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -22,26 +23,64 @@ const STAR_ICON_SVG = `
 </svg>
 `
 
+interface PriceStrings {
+    priceOld: string;
+    priceNew: string;
+    yearlyPriceFull: string;
+    yearlyPricePerMonth: string;
+}
+
 export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
-    const [freeTrialEnabled, setFreeTrialEnabled] = React.useState(true);
-    const [isPurchasing, setIsPurchasing] = React.useState(false);
+    const [freeTrialEnabled, setFreeTrialEnabled] = useState(true);
+    const [isPurchasing, setIsPurchasing] = useState(false);
+    const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+    const [yearlyProduct, setYearlyProduct] = useState<PurchasesStoreProduct | null>(null);
+    const [priceStrings, setPriceStrings] = useState<PriceStrings | null>(null);
+
+    useEffect(() => {
+        const loadPlans = async () => {
+            if (!revenueCatService.getInitialized()) {
+                setIsLoadingPlans(false);
+                return;
+            }
+            try {
+                setIsLoadingPlans(true);
+                const products = await revenueCatService.getProducts(REVENUECAT_PRODUCT_IDENTIFIERS);
+                const monthly = products?.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
+                const yearly = products?.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.YEARLY);
+                if (yearly) setYearlyProduct(yearly);
+                if (monthly && yearly) {
+                    const currency = monthly.currencyCode || yearly.currencyCode || 'USD';
+                    const priceOld = monthly.priceString ?? `${monthly.price.toFixed(2)} ${currency}`;
+                    const pricePerMonth = yearly.price / 12;
+                    const priceNew = `${pricePerMonth.toFixed(2)} ${currency}`;
+                    const yearlyPriceFull = yearly.priceString ?? `${yearly.price.toFixed(2)} ${currency}`;
+                    const yearlyPricePerMonth = `${pricePerMonth.toFixed(2)} ${currency}`;
+                    setPriceStrings({
+                        priceOld,
+                        priceNew,
+                        yearlyPriceFull,
+                        yearlyPricePerMonth,
+                    });
+                }
+            } catch {
+                // fallback
+            } finally {
+                setIsLoadingPlans(false);
+            }
+        };
+        loadPlans();
+    }, []);
 
     const purchaseYearly = async () => {
-        if (!revenueCatService.getInitialized()) {
-            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
+        if (!revenueCatService.getInitialized() || !yearlyProduct) {
             return;
         }
         setIsPurchasing(true);
         try {
-            const products = await revenueCatService.getProducts([REVENUECAT_PRODUCT_IDS.YEARLY]);
-            const product = products?.[0];
-            if (!product) {
-                console.warn('[RevenueCat] Product not found:', REVENUECAT_PRODUCT_IDS.YEARLY);
-                return;
-            }
-            await revenueCatService.purchaseProduct(product);
+            await revenueCatService.purchaseProduct(yearlyProduct);
             onNext();
         } catch (e: any) {
             if (e?.userCancelled) {
@@ -57,6 +96,28 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
             setIsPurchasing(false);
         }
     };
+
+    if (isLoadingPlans) {
+        return (
+            <View style={[styles.container, theme.flexBlocks.vertical16, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter]}>
+                <Text style={theme.fonts.regular}>
+                    {t('subscriptionOffering.thirdTrial.loadingPlans')}
+                </Text>
+            </View>
+        );
+    }
+
+    if (!priceStrings || !yearlyProduct) {
+        return (
+            <View style={[styles.container, theme.flexBlocks.vertical16, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter]}>
+                <Text style={theme.fonts.regular}>
+                    {t('subscriptionOffering.thirdTrial.noPlansAvailable')}
+                </Text>
+            </View>
+        );
+    }
+
+    const { priceOld, priceNew, yearlyPriceFull, yearlyPricePerMonth } = priceStrings;
 
     return (
         <View style={[styles.container, isSmallScreen() ? theme.flexBlocks.vertical32 : theme.flexBlocks.vertical64]}>
@@ -82,10 +143,10 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                 <View style={theme.flexBlocks.vertical4}>
                     <View style={[theme.flexBlocks.horizontal4, theme.flexBlocks.justifyCenter]}>
                         <Text style={[styles.mainPrice, styles.mainPriceOld]}>
-                            {t('subscriptionOffering.thirdTrial.priceOld')}
+                            {t('subscriptionOffering.thirdTrial.priceOld', { price: priceOld })}
                         </Text>
                         <Text style={styles.mainPrice}>
-                            {t('subscriptionOffering.thirdTrial.priceNew')}
+                            {t('subscriptionOffering.thirdTrial.priceNew', { price: priceNew })}
                         </Text>
                     </View>
 
@@ -130,13 +191,13 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                                 </Text>
 
                                 <Text style={styles.subscriptionBlockDescription}>
-                                    {t('subscriptionOffering.thirdTrial.yearlyDescription')}
+                                    {t('subscriptionOffering.thirdTrial.yearlyDescription', { yearlyPrice: yearlyPriceFull })}
                                 </Text>
                             </View>
 
                             <View>
                                 <Text style={styles.subscriptionBlockPrice}>
-                                    {t('subscriptionOffering.thirdTrial.yearlyPrice')}
+                                    {t('subscriptionOffering.thirdTrial.yearlyPrice', { price: yearlyPricePerMonth })}
                                 </Text>
                             </View>
                         </View>
@@ -158,7 +219,6 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
                     <CustomButton
                         title={t('subscriptionOffering.thirdTrial.startFreeWeek')}
                         onPress={() => {
-                            // Событие: оплата + план
                             amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
                                 plan: 'yearly',
                                 free_trial_enabled: freeTrialEnabled,

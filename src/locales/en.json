@@ -469,16 +469,19 @@
     },
     "secondTrial": {
       "oneTimeOffer": "One-time offer!",
-      "title": "41% OFF when you start your free trial now",
+      "title": "{{percent}}% OFF when you start your free trial now",
+      "titleFallback": "Save when you start your free trial now",
       "description": "Biggest discount ever - just for you",
       "startFreeOffer": "Start my FREE offer",
-      "skipOffer": "Skip this one-time offer"
+      "skipOffer": "Skip this one-time offer",
+      "loadingPlans": "Loading offer...",
+      "noPlansAvailable": "No plans available"
     },
     "thirdTrial": {
       "title": "Your one time offer",
       "subtitle": "7-Day Free Trial",
-      "priceOld": "7.08",
-      "priceNew": "2.91 USD/month",
+      "priceOld": "{{price}}",
+      "priceNew": "{{price}}/month",
       "onceYouClose": "Once you close your one-time offer, it's gone!",
       "freeTrialEnabled": "Free Trial Enabled",
       "freeTrialDisabled": "Free Trial Disabled",
@@ -486,10 +489,12 @@
       "on": "On",
       "sevenDayFreeTrial": "7-DAY FREE TRIAL",
       "yearly": "Yearly",
-      "yearlyDescription": "12mo - 34.99 USD",
-      "yearlyPrice": "2.91 USD/mo",
+      "yearlyDescription": "12mo - {{yearlyPrice}}",
+      "yearlyPrice": "{{price}}/mo",
       "noPaymentNow": "No Payment Now",
-      "startFreeWeek": "Start Your FREE Week"
+      "startFreeWeek": "Start Your FREE Week",
+      "loadingPlans": "Loading offer...",
+      "noPlansAvailable": "No plans available"
     }
   }
 }

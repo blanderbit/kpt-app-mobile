@@ -32,6 +32,7 @@ export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProvider
     const showSubscriptionOffering = (onComplete?: () => void) => {
         setIsVisible(true);
         if (onComplete) {
+            // Сохраняем сам callback, чтобы hideSubscriptionOffering его вызвал
             setOnCompleteCallback(() => onComplete);
         }
     };
@@ -39,8 +40,9 @@ export const SubscriptionOfferingProvider: React.FC<SubscriptionOfferingProvider
     const hideSubscriptionOffering = () => {
         setIsVisible(false);
         if (onCompleteCallback) {
-            onCompleteCallback();
+            const cb = onCompleteCallback();
             setOnCompleteCallback(undefined);
+            if (typeof cb === 'function') cb();
         }
     };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Pressable, StyleSheet, Text, View, Alert} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
@@ -8,27 +8,53 @@ import {COLORS} from "@app/theme";
 import {BigNewsIcon} from "@features/auth/screens/SubcriptionOffering/screens/icons";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { revenueCatService } from "@shared/services/revenuecat";
-import { REVENUECAT_PRODUCT_IDS } from "@app/config/revenuecat.config";
+import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
+import type { PurchasesStoreProduct } from "react-native-purchases";
 
 export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
-    const [isPurchasing, setIsPurchasing] = React.useState(false);
+    const [isPurchasing, setIsPurchasing] = useState(false);
+    const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+    const [savingsPercent, setSavingsPercent] = useState<number | null>(null);
+    const [yearlyProduct, setYearlyProduct] = useState<PurchasesStoreProduct | null>(null);
+
+    useEffect(() => {
+        const loadPlans = async () => {
+            if (!revenueCatService.getInitialized()) {
+                setIsLoadingPlans(false);
+                return;
+            }
+            try {
+                setIsLoadingPlans(true);
+                const products = await revenueCatService.getProducts(REVENUECAT_PRODUCT_IDENTIFIERS);
+                const monthly = products?.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
+                const yearly = products?.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.YEARLY);
+                if (yearly) setYearlyProduct(yearly);
+                if (monthly && yearly && monthly.price > 0) {
+                    const yearlyPerMonth = yearly.price / 12;
+                    const percent = Math.round(((monthly.price - yearlyPerMonth) / monthly.price) * 100);
+                    setSavingsPercent(Math.max(0, Math.min(100, percent)));
+                }
+            } catch {
+                // fallback: no percent
+            } finally {
+                setIsLoadingPlans(false);
+            }
+        };
+        loadPlans();
+    }, []);
 
     const purchaseYearly = async () => {
-        if (!revenueCatService.getInitialized()) {
-            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
+        if (!revenueCatService.getInitialized() || !yearlyProduct) {
+            if (!yearlyProduct) {
+                console.warn('[RevenueCat] Yearly product not loaded');
+            }
             return;
         }
         setIsPurchasing(true);
         try {
-            const products = await revenueCatService.getProducts([REVENUECAT_PRODUCT_IDS.YEARLY]);
-            const product = products?.[0];
-            if (!product) {
-                console.warn('[RevenueCat] Product not found:', REVENUECAT_PRODUCT_IDS.YEARLY);
-                return;
-            }
-            await revenueCatService.purchaseProduct(product);
+            await revenueCatService.purchaseProduct(yearlyProduct);
             onNext();
         } catch (e: any) {
             if (e?.userCancelled) {
@@ -45,16 +71,20 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
         }
     };
 
+    const titleText = savingsPercent != null
+        ? t('subscriptionOffering.secondTrial.title', { percent: savingsPercent })
+        : t('subscriptionOffering.secondTrial.titleFallback');
+
     return (
         <View style={[styles.container, theme.flexBlocks.vertical16]}>
             <View style={[styles.content, theme.flexBlocks.vertical16]}>
-                <View style={theme.flexBlocks.vertical8}>
+                <View style={[theme.flexBlocks.vertical8, styles.headerBlock]}>
                     <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
                         􀆅 {t('subscriptionOffering.secondTrial.oneTimeOffer')}
                     </Text>
 
-                    <Text style={[styles.textCenter, theme.fonts.title]}>
-                        {t('subscriptionOffering.secondTrial.title')}
+                    <Text style={[styles.textCenter, theme.fonts.title, styles.titleText]}>
+                        {titleText}
                     </Text>
 
                     <Text style={[styles.textCenter, styles.description, theme.fonts.regular]}>
@@ -75,30 +105,36 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
                 </View>
 
                 <View style={theme.flexBlocks.vertical16}>
-                    <CustomButton
-                        title={t('subscriptionOffering.secondTrial.startFreeOffer')}
-                        onPress={() => {
-                            // Событие: оплата + план
-                            amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
-                                plan: 'second_trial',
-                            });
-                            purchaseYearly().catch(() => {});
-                        }}
-                        variant="primary"
-                        disabled={isPurchasing}
-                    />
-
-                    <Pressable
-                        onPress={() => {
-                            // Событие: скип оплаты
-                            amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
-                            onNext();
-                        }}
-                    >
-                        <Text style={styles.skipTitle}>
-                            {t('subscriptionOffering.secondTrial.skipOffer')}
+                    {isLoadingPlans ? (
+                        <Text style={[theme.fonts.regular, styles.textCenter]}>
+                            {t('subscriptionOffering.secondTrial.loadingPlans')}
                         </Text>
-                    </Pressable>
+                    ) : (
+                        <>
+                            <CustomButton
+                                title={t('subscriptionOffering.secondTrial.startFreeOffer')}
+                                onPress={() => {
+                                    amplitudeAnalyticsService.trackEvent('Onboarding Payment', {
+                                        plan: 'second_trial',
+                                    });
+                                    purchaseYearly().catch(() => {});
+                                }}
+                                variant="primary"
+                                disabled={isPurchasing || !yearlyProduct}
+                            />
+
+                            <Pressable
+                                onPress={() => {
+                                    amplitudeAnalyticsService.trackEvent('Onboarding Skip Payment');
+                                    onNext();
+                                }}
+                            >
+                                <Text style={styles.skipTitle}>
+                                    {t('subscriptionOffering.secondTrial.skipOffer')}
+                                </Text>
+                            </Pressable>
+                        </>
+                    )}
                 </View>
             </View>
         </View>
@@ -111,6 +147,13 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+    },
+    headerBlock: {
+        flexShrink: 0,
+    },
+    titleText: {
+        flexShrink: 0,
+        paddingTop: 10,
     },
     textCenter: {
         textAlign: 'center',
