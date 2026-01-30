@@ -185,6 +185,7 @@
     "activities": {
       "myActivities": "My activities",
       "addNewActivity": "Write new activity...",
+      "activitiesLimitReachedPlaceholder": "Free version limited to 3 activities. Upgrade to add more.",
       "suggestedActivities": "Suggested activities",
       "archivedActivities": "Archived activities",
       "activitySuccessfullyAdded": "Activity successfully added",
@@ -321,6 +322,7 @@
   "approve": "Approve",
   "toast": {
     "activityNameMinLength": "The name of activity should not be less than 10 symbols.",
+    "activitiesLimitReached": "Free version is limited to 3 activities. Upgrade to add more.",
     "activitySuccessfullyAdded": "Activity successfully added",
     "failedToAddActivity": "Failed to add activity",
     "activityArchived": "Activity archived",

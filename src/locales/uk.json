@@ -185,6 +185,7 @@
     "activities": {
       "myActivities": "Мої активності",
       "addNewActivity": "Написати нову активність...",
+      "activitiesLimitReachedPlaceholder": "Безкоштовна версія: максимум 3 активності. Оформіть підписку, щоб додати більше.",
       "suggestedActivities": "Запропоновані активності",
       "archivedActivities": "Архівовані активності",
       "activitySuccessfullyAdded": "Активність успішно додана",
@@ -321,6 +322,7 @@
   "approve": "Підтвердити",
   "toast": {
     "activityNameMinLength": "Назва активності повинна містити не менше 10 символів.",
+    "activitiesLimitReached": "Безкоштовна версія обмежена 3 активностями. Оформіть підписку, щоб додати більше.",
     "activitySuccessfullyAdded": "Активність успішно додана",
     "failedToAddActivity": "Не вдалося додати активність",
     "activityArchived": "Активність архівована",

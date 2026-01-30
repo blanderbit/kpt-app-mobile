@@ -40,6 +40,7 @@ import {
     useChangeActivityPosition,
     useArchivedActivities,
     useRestoreActivity,
+    useSubscriptionSummary,
     queryKeys
 } from '@shared/services/api/hooks';
 import { Activity } from '@shared/services/api/types';
@@ -48,12 +49,18 @@ import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScr
 import { amplitudeAnalyticsService } from '@shared/services/analytics';
 import { useFocusEffect } from '@react-navigation/native';
 
+const FREE_ACTIVITIES_LIMIT = 3;
+
 export default function ActivitiesScreen({ navigation }: { navigation: ActivitiesScreenNavigationProp }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { theme } = useCustomTheme();
     const { showToast } = useToast();
     const isSmall = isSmallScreen();
     const activityMaxWidth = isSmall ? getResponsiveActivityMaxWidth() : '70%';
+
+    const lang = (i18n.language || 'en').split('-')[0];
+    const { data: subscriptionSummary } = useSubscriptionSummary(lang);
+    const hasActiveSubscription = subscriptionSummary?.status === 'active';
 
     const [ satisfaction, setSatisfaction ] = useState(0)
     const [ achieveness, setAchieveness ] = useState(0)
@@ -77,6 +84,9 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const { data: myActivities, isLoading, error, refetch: refetchMyActivities } = useMyActivities();
     const { data: suggestedActivitiesData } = useSuggestedActivities();
     const { data: archivedActivities } = useArchivedActivities();
+
+    const activitiesCount = (localActivities || myActivities?.data)?.length ?? 0;
+    const isActivitiesLimitReached = !hasActiveSubscription && activitiesCount >= FREE_ACTIVITIES_LIMIT;
 
     // Синхронизируем локальное состояние с данными из API
     // Сбрасываем локальное состояние только если данные изменились и мы не в процессе drag
@@ -189,6 +199,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     }, []);
 
     const handleAddNewActivity = () => {
+        if (isActivitiesLimitReached) {
+            showToast({ message: t('toast.activitiesLimitReached'), type: "error" });
+            return;
+        }
         const activityValue = activityValueRef.current.trim();
         if ( activityValue.length < 10 ) {
             showToast({ message: t('toast.activityNameMinLength'), type: "error" })
@@ -253,6 +267,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     };
 
     const handleAddSuggestedActivity = (suggestedActivityId: number) => {
+        if (isActivitiesLimitReached) {
+            showToast({ message: t('toast.activitiesLimitReached'), type: "error" });
+            return;
+        }
         addSuggestedActivityMutation.mutate({
             id: suggestedActivityId
         }, {
@@ -498,10 +516,11 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         <TextInput
                             key={inputKey}
                             ref={inputRef}
-                            style={ [ styles.textInput, styles.textInputWithButton ] }
-                            placeholder={ t('main.activities.addNewActivity') }
+                            style={ [ styles.textInput, styles.textInputWithButton, isActivitiesLimitReached && styles.inputDisabled ] }
+                            placeholder={ isActivitiesLimitReached ? t('main.activities.activitiesLimitReachedPlaceholder') : t('main.activities.addNewActivity') }
                             multiline
                             defaultValue=""
+                            editable={ !isActivitiesLimitReached }
                             onChangeText={ (val) => {
                                 activityValueRef.current = val;
                                 if ( val.endsWith('\n') ) {
@@ -516,10 +535,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                       buttonStyle={ {
                                           ...styles.addBtn,
                                           ...styles.addBtnFixed,
-                                          ...(newActivity ? {} : { opacity: 0 }),
+                                          ...(newActivity && !isActivitiesLimitReached ? {} : { opacity: 0 }),
                                       } }
                                       contentStyle={ { gap: 4 } }
-                                      disabled={ newActivity.trim().length < 10 }>
+                                      disabled={ newActivity.trim().length < 10 || isActivitiesLimitReached }>
                             <PlusIcon color="#fff" size={ 20 }/>
                         </CustomButton>
                     </View>
@@ -560,7 +579,8 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                     <CustomButton title={ t('add') }
                                                   onPress={ () => handleAddSuggestedActivity(activity.id) }
                                                   buttonStyle={ [ styles.addBtn, styles.addBtnFixed ] }
-                                                  contentStyle={ { gap: 4 } }>
+                                                  contentStyle={ { gap: 4 } }
+                                                  disabled={ isActivitiesLimitReached }>
                                         <PlusIcon color="#fff" size={ 20 }/>
                                     </CustomButton>
                                 </View>
@@ -702,6 +722,9 @@ const styles = StyleSheet.create({
         flex: 1,
         flexShrink: 1,
         maxWidth: undefined, // Убираем maxWidth когда есть кнопка
+    },
+    inputDisabled: {
+        opacity: 0.6,
     },
     addBtn: {
         width: 'auto',

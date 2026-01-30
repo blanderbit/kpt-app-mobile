@@ -184,6 +184,7 @@
     "activities": {
       "myActivities": "Мои активности",
       "addNewActivity": "Написать новую активность...",
+      "activitiesLimitReachedPlaceholder": "Бесплатная версия: максимум 3 активности. Оформите подписку, чтобы добавить больше.",
       "suggestedActivities": "Предложенные активности",
       "archivedActivities": "Архивированные активности",
       "activitySuccessfullyAdded": "Активность успешно добавлена",
@@ -320,6 +321,7 @@
   "approve": "Подтвердить",
   "toast": {
     "activityNameMinLength": "Название активности должно содержать не менее 10 символов.",
+    "activitiesLimitReached": "Бесплатная версия ограничена 3 активностями. Оформите подписку, чтобы добавить больше.",
     "activitySuccessfullyAdded": "Активность успешно добавлена",
     "failedToAddActivity": "Не удалось добавить активность",
     "activityArchived": "Активность архивирована",
