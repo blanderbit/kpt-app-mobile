@@ -160,8 +160,8 @@ export default function OnboardingTemplate({
             if (savedStep) {
                 setCurrentStep(savedStep);
             }
-        } catch (error) {
-            console.error('Error loading onboarding progress:', error);
+        } catch {
+            // ignore
         }
     };
 
@@ -191,8 +191,8 @@ export default function OnboardingTemplate({
                 satisfactionLevel: satisfactionLevelValue ? JSON.parse(satisfactionLevelValue) : prev.satisfactionLevel,
                 hardnessLevel: hardnessLevelValue ? JSON.parse(hardnessLevelValue) : prev.hardnessLevel,
             }));
-        } catch (error) {
-            console.error('Error loading stored onboarding data:', error);
+        } catch {
+            // ignore
         }
     };
 
@@ -214,9 +214,8 @@ export default function OnboardingTemplate({
                 ONBOARDING_KEYS.SELECTED_ACTIVITIES,
                 JSON.stringify(activitiesToSave)
             );
-            console.log('✅ Selected activities saved:', activitiesToSave);
-        } catch (error) {
-            console.error('❌ Error saving selected activities:', error);
+        } catch {
+            // ignore
         }
     };
 
@@ -247,7 +246,6 @@ export default function OnboardingTemplate({
         if (lastRecommendationsPayloadRef.current === recommendationsPayloadKey) return;
 
         lastRecommendationsPayloadRef.current = recommendationsPayloadKey;
-        console.log('[Onboarding] generateActivityRecommendations payload:', recommendationsPayload);
         // Событие: генерация саджестед
         amplitudeAnalyticsService.trackEvent('Onboarding Generate Suggested', {
             mood: recommendationsPayload.feelingToday,
@@ -584,8 +582,6 @@ export default function OnboardingTemplate({
     const onNext = async () => {
         // Если используется захардкоженная дата, сразу переходим на экран оплаты
         if (USE_HARDCODED_ONBOARDING_DATA) {
-            console.log('🚀 [Onboarding] Using hardcoded data - skipping to payment screen');
-            console.log('📋 [Onboarding] Hardcoded onboarding data:', JSON.stringify(onboardingData, null, 2));
             showSubscriptionOffering(handleSubscriptionOfferingComplete);
             return;
         }
@@ -595,11 +591,6 @@ export default function OnboardingTemplate({
 
             // Если следующий степ - SeventeenthStep (последний), показываем SubscriptionOfferingTemplate
             if (newStep === stepNumbers.seventeenthStep) {
-                // Логируем всю онбординг дату перед показом экрана оплаты
-                console.log('📋 [Onboarding] Full onboarding data before payment screen:', JSON.stringify(onboardingData, null, 2));
-                console.log('📋 [Onboarding] Copy this JSON to hardcode for quick access to payment screen:');
-                console.log(JSON.stringify(onboardingData, null, 2));
-
                 showSubscriptionOffering(handleSubscriptionOfferingComplete);
                 return;
             }
@@ -628,9 +619,8 @@ export default function OnboardingTemplate({
         // Сохраняем mood в AsyncStorage
         try {
             await AsyncStorage.setItem(ONBOARDING_KEYS.MOOD, mood);
-            console.log('💾 [OnboardingTemplate] Saved mood to AsyncStorage:', mood);
-        } catch (error) {
-            console.error('❌ [OnboardingTemplate] Error saving mood:', error);
+        } catch {
+            // ignore
         }
 
         setOnboardingData(prev => ({
@@ -722,9 +712,7 @@ export default function OnboardingTemplate({
                     AsyncStorage.multiSet([
                         [ONBOARDING_KEYS.SATISFACTION_LEVEL, JSON.stringify(satisfactionLevel)],
                         [ONBOARDING_KEYS.HARDNESS_LEVEL, JSON.stringify(hardnessLevel)],
-                    ]).catch(error => {
-                        console.error('Error saving satisfaction/hardness levels:', error);
-                    });
+                    ]).catch(() => {});
                 }}
             />,
             [stepNumbers.ninthStep]: <NinthStep

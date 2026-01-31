@@ -138,8 +138,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     const onSubmitChangePassword = async (data: PasswordFormData) => {
         try {
-            console.log('🔐 Начинаем смену пароля...');
-
             await changePassword.mutateAsync({
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
@@ -161,14 +159,10 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     const onSubmitChangeEmail = async (data: EmailFormData) => {
         try {
-            console.log('📧 Начинаем смену email...');
-
             await changeEmail.mutateAsync({
                 newEmail: data.newEmail,
                 password: data.password,
             });
-
-            console.log('✅ Email успешно изменен, открываем модал подтверждения');
 
             // Сохраняем новый email для подтверждения
             setNewEmailToConfirm(data.newEmail);
@@ -211,7 +205,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             });
             setNameDisabled(true);
         } catch (error: any) {
-            console.error('❌ Ошибка смены имени:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.personalInfoScreen.nameChangeError'));
             Alert.alert(t('main.profile.settings.error'), msg, [{ text: t('ok') }]);
         }
@@ -219,8 +212,6 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
 
     const handleConfirmEmailChange = async () => {
         try {
-            console.log('✅ Email успешно подтвержден и изменен');
-
             // Обновляем профиль с сервера для получения актуальных данных
             await refreshProfile();
 
@@ -236,8 +227,8 @@ export default function PersonalInfoScreen({ navigation }: { navigation: Persona
             setEmailChangeModalOpen(false);
             setNewEmailToConfirm('');
 
-        } catch (error: any) {
-            console.error('❌ Ошибка обновления профиля после изменения email:', error);
+        } catch {
+            // ignore
         }
     };
 

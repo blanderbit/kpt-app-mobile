@@ -26,9 +26,7 @@ export const configureGoogleSignIn = async () => {
         }
 
         await GoogleSignin.configure(config);
-        console.log('Google Sign In configured successfully');
     } catch (error) {
-        console.error('Failed to configure Google Sign In:', error);
         throw error;
     }
 };
@@ -45,15 +43,9 @@ export const signInGoogle = async (): Promise<string> => {
         }
 
         const response = await GoogleSignin.signIn();
-        
-        // Логируем ответ для отладки
-        console.log('Google Sign-In response:', JSON.stringify(response, null, 2));
-
-        // В зависимости от версии библиотеки, idToken может быть в разных местах
         const idToken = response.data?.idToken || response.idToken;
 
         if (!idToken) {
-            console.error('Google Sign-In response structure:', response);
             throw new Error('Google Sign-In failed - no ID token returned. Response: ' + JSON.stringify(response));
         }
 
@@ -62,7 +54,6 @@ export const signInGoogle = async (): Promise<string> => {
 
         return await user.getIdToken();
     } catch (error) {
-        console.error('Google Sign-In error:', error);
         throw error;
     }
 };
@@ -73,13 +64,8 @@ export const logoutGoogle = async () => {
 };
 
 export const signInAppleIos = async (): Promise<string> => {
-    console.log('signInAppleIos called');
     try {
-        // Generate a random nonce (raw nonce)
-        // According to @invertase/react-native-apple-authentication docs,
-        // the library may hash the nonce automatically if we pass raw nonce
         const rawNonce = uuid();
-        console.log('Raw nonce generated:', rawNonce);
 
         // Pass raw nonce to the library - it should hash it automatically
         const appleAuthRequestResponse = await appleAuth.performRequest({
@@ -92,8 +78,6 @@ export const signInAppleIos = async (): Promise<string> => {
             throw new Error('Apple Sign-In failed - no identify token returned');
         }
 
-        console.log('Apple auth response received');
-
         // Create a Firebase credential from the response
         // Use the same raw nonce that we passed to the library
         const {identityToken} = appleAuthRequestResponse;
@@ -102,15 +86,9 @@ export const signInAppleIos = async (): Promise<string> => {
             rawNonce,
         );
 
-        console.log('Apple credential created with raw nonce');
-
         const {user} = await auth().signInWithCredential(appleCredential);
-
-        console.log('Firebase user signed in:', user.uid);
-
         return await user.getIdToken();
     } catch (e) {
-        console.error('Apple Sign-In error:', e);
         throw e;
     }
 };

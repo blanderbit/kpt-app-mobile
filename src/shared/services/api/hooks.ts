@@ -573,39 +573,14 @@ export const useAnalyticsOverview = (startDate?: string, endDate?: string) => {
 // Tooltip hooks
 export const useTooltipsByPage = (page: string, options?: { enabled?: boolean }) => {
   const enabled = options?.enabled !== undefined ? options.enabled : !!page;
-  console.log('🔔 [useTooltipsByPage] Вызов хука с page:', page);
-  console.log('🔔 [useTooltipsByPage] Query key:', queryKeys.tooltipsByPage(page));
-  console.log('🔔 [useTooltipsByPage] Enabled:', enabled);
-  
-  const queryResult = useQuery({
+  return useQuery({
     queryKey: queryKeys.tooltipsByPage(page),
-    queryFn: () => {
-      console.log('🔔 [useTooltipsByPage] Выполнение queryFn для page:', page);
-      return tooltipService.getTooltipsByPage(page);
-    },
+    queryFn: () => tooltipService.getTooltipsByPage(page),
     enabled: !!page && enabled,
-    staleTime: 0, // Не кэшируем, всегда запрашиваем свежие данные
-    refetchOnMount: true, // Всегда запрашиваем при монтировании компонента
-    refetchOnWindowFocus: false, // Не запрашиваем при фокусе окна
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
-
-  // Логируем результат запроса
-  if (queryResult.data) {
-    console.log('🔔 [useTooltipsByPage] ✅ Данные получены:');
-    console.log('🔔 [useTooltipsByPage] Количество тултипов:', queryResult.data?.length || 0);
-    console.log('🔔 [useTooltipsByPage] Полный ответ data:', JSON.stringify(queryResult.data, null, 2));
-  }
-  if (queryResult.error) {
-    console.error('🔔 [useTooltipsByPage] ❌ Ошибка в хуке:', queryResult.error);
-  }
-  console.log('🔔 [useTooltipsByPage] Статус запроса:', {
-    isLoading: queryResult.isLoading,
-    isError: queryResult.isError,
-    isSuccess: queryResult.isSuccess,
-    isFetching: queryResult.isFetching,
-  });
-
-  return queryResult;
 };
 
 export const useTooltipsByPageAndType = (page: string, type: string) => {
@@ -637,34 +612,12 @@ export const useRandomArticle = () => {
 };
 
 export const useArticleById = (id: number) => {
-  console.log('📰 [useArticleById] Запрос статьи с ID:', id);
-  
-  const queryResult = useQuery({
+  return useQuery({
     queryKey: queryKeys.articleById(id),
-    queryFn: async () => {
-      console.log('📰 [useArticleById] Выполнение запроса для ID:', id);
-      const result = await articleService.getArticleById(id);
-      console.log('📰 [useArticleById] ✅ Получена статья:', JSON.stringify(result, null, 2));
-      return result;
-    },
+    queryFn: () => articleService.getArticleById(id),
     enabled: !!id && !isNaN(id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
-
-  if (queryResult.data) {
-    console.log('📰 [useArticleById] Данные в кэше:', queryResult.data);
-  }
-  if (queryResult.error) {
-    console.error('📰 [useArticleById] ❌ Ошибка:', queryResult.error);
-  }
-  console.log('📰 [useArticleById] Статус запроса:', {
-    isLoading: queryResult.isLoading,
-    isError: queryResult.isError,
-    isSuccess: queryResult.isSuccess,
-    isFetching: queryResult.isFetching,
-  });
-
-  return queryResult;
 };
 
 export const useHideArticle = () => {
@@ -687,34 +640,12 @@ export const useRandomSurvey = () => {
 };
 
 export const useSurveyById = (id: number) => {
-  console.log('📋 [useSurveyById] Запрос опроса с ID:', id);
-  
-  const queryResult = useQuery({
+  return useQuery({
     queryKey: queryKeys.surveyById(id),
-    queryFn: async () => {
-      console.log('📋 [useSurveyById] Выполнение запроса для ID:', id);
-      const result = await surveyService.getSurveyById(id);
-      console.log('📋 [useSurveyById] ✅ Получен опрос:', JSON.stringify(result, null, 2));
-      return result;
-    },
+    queryFn: () => surveyService.getSurveyById(id),
     enabled: !!id && !isNaN(id),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
-
-  if (queryResult.data) {
-    console.log('📋 [useSurveyById] Данные в кэше:', queryResult.data);
-  }
-  if (queryResult.error) {
-    console.error('📋 [useSurveyById] ❌ Ошибка:', queryResult.error);
-  }
-  console.log('📋 [useSurveyById] Статус запроса:', {
-    isLoading: queryResult.isLoading,
-    isError: queryResult.isError,
-    isSuccess: queryResult.isSuccess,
-    isFetching: queryResult.isFetching,
-  });
-
-  return queryResult;
 };
 
 // Subscription hooks

@@ -83,7 +83,6 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
                 ]
             );
         } catch (error: any) {
-            console.error('Reset password error:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.checkEmailScreen.errorMessage'));
             Alert.alert(
                 t('auth.checkEmailScreen.errorTitle'),
@@ -110,7 +109,7 @@ export default function CheckEmailScreen({ navigation, route }: { navigation: Ch
                     );
                 }
             })
-            .catch((err) => console.error('Ошибка при открытии почты', err));
+            .catch(() => {});
     };
 
     return (

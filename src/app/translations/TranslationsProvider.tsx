@@ -13,14 +13,10 @@ export const TranslationsProvider: React.FC<TranslationsProviderProps> = ({ chil
     useEffect(() => {
         const loadTranslations = async () => {
             try {
-                console.log('🌐 [TranslationsProvider] Starting translations loading...');
                 await initializeI18n();
-                console.log('🌐 [TranslationsProvider] Translations loaded successfully');
                 setIsLoading(false);
             } catch (err) {
-                console.error('🌐 [TranslationsProvider] Failed to load translations:', err);
                 setError(err instanceof Error ? err : new Error('Unknown error'));
-                // Даже при ошибке продолжаем работу, чтобы приложение не зависло
                 setIsLoading(false);
             }
         };
@@ -36,9 +32,8 @@ export const TranslationsProvider: React.FC<TranslationsProviderProps> = ({ chil
         );
     }
 
-    // Если есть ошибка, всё равно рендерим приложение, но с предупреждением
     if (error) {
-        console.warn('🌐 [TranslationsProvider] Continuing with error:', error.message);
+        // продолжаем рендер приложения
     }
 
     return <>{children}</>;

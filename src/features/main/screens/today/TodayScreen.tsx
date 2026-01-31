@@ -65,22 +65,11 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     // При каждом попадании на TodayScreen делаем refetch для получения новых случайных значений
     useFocusEffect(
         React.useCallback(() => {
-            console.log('📅 [TodayScreen] Попадание на экран, запрашиваем новые random article и survey');
-            // Событие: открытие главной страницы
             amplitudeAnalyticsService.trackEvent('Today Screen Opened');
             refetchArticle();
             refetchSurvey();
         }, [refetchArticle, refetchSurvey])
     );
-
-    console.log('TodayScreen state:', { 
-        isEmailVerified, 
-        isAuthenticated, 
-        profileEmail: profile?.email,
-        profileLoaded: !!profile,
-        tooltipVisible: emailVerificationTooltipVisible,
-        shouldShowTooltip: isAuthenticated && !isEmailVerified
-    })
 
     const [ circlesCount, setCirclesCount ] = useState(0);
     const [ weeklyTotalModalOpen, setWeeklyTotalModalOpen ] = useState(false);
@@ -114,18 +103,12 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
         }
         if ( section.mode === AdditionalActivityType.ARTICLE ) {
             if (randomArticle?.id) {
-                console.log('📰 [TodayScreen] Переход к статье с ID:', randomArticle.id);
                 navigation.navigate(Routes.ARTICLE, { id: randomArticle.id.toString() });
-            } else {
-                console.log('📰 [TodayScreen] ⚠️ Статья не загружена, ID отсутствует');
             }
         }
         if ( section.mode === AdditionalActivityType.SURVEY ) {
             if (randomSurvey?.id) {
-                console.log('📋 [TodayScreen] Переход к опросу с ID:', randomSurvey.id);
                 navigation.navigate(Routes.SURVEY, { id: randomSurvey.id.toString() });
-            } else {
-                console.log('📋 [TodayScreen] ⚠️ Опрос не загружен, ID отсутствует');
             }
         }
     }
@@ -158,7 +141,6 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
 
     // Показываем tooltip для неподтвержденного email
     useEffect(() => {
-        console.log('useEffect triggered:', { isEmailVerified, isAuthenticated, profile: !!profile, email: profile?.email });
         if (isAuthenticated && !isEmailVerified && profile && profile.email) {
             setEmailVerificationTooltipVisible(true);
         }
@@ -498,9 +480,7 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                                      setSatisfactionLevel(0);
                                                      setHardnessLevel(0);
                                                  },
-                                                 onError: (error) => {
-                                                     console.error('Ошибка при закрытии активности:', error);
-                                                 },
+                                                 onError: () => {},
                                              }
                                          );
                                      }

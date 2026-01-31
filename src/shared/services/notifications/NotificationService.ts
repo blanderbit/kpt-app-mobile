@@ -20,10 +20,7 @@ export class NotificationService {
    */
   async requestPermissionsIfNeeded(): Promise<string> {
     // Работаем только на iOS
-    if (Platform.OS !== 'ios') {
-      console.log('[NotificationService] Skipping permission request - not iOS');
-      return 'denied';
-    }
+    if (Platform.OS !== 'ios') return 'denied';
 
     try {
       // Проверяем текущий статус разрешений
@@ -31,16 +28,13 @@ export class NotificationService {
       
       // Если разрешения уже предоставлены или отклонены, возвращаем текущий статус
       if (currentStatus === 'granted' || currentStatus === 'denied') {
-        console.log('[NotificationService] Permissions already determined:', currentStatus);
         this.lastPermissionStatus = currentStatus;
         return currentStatus;
       }
 
       // Если разрешения еще не запрашивались (undetermined), запрашиваем их
       if (currentStatus === 'undetermined') {
-        console.log('[NotificationService] Requesting notification permissions...');
         const { status: newStatus } = await Notifications.requestPermissionsAsync();
-        console.log('[NotificationService] Permission request result:', newStatus);
         this.lastPermissionStatus = newStatus;
         return newStatus;
       }
@@ -48,8 +42,7 @@ export class NotificationService {
       // Для других статусов (например, 'blocked') возвращаем текущий статус
       this.lastPermissionStatus = currentStatus;
       return currentStatus;
-    } catch (error) {
-      console.error('[NotificationService] Error requesting permissions:', error);
+    } catch {
       return 'denied';
     }
   }
@@ -61,36 +54,24 @@ export class NotificationService {
    */
   async registerDevice(): Promise<void> {
     // Работаем только на iOS
-    if (Platform.OS !== 'ios') {
-      console.log('[NotificationService] Skipping registration - not iOS');
-      return;
-    }
+    if (Platform.OS !== 'ios') return;
 
     try {
       // Проверяем, что пользователь авторизован
       const hasTokens = await apiUtils.hasTokens();
-      if (!hasTokens) {
-        console.log('[NotificationService] User not authenticated, skipping registration');
-        return;
-      }
+      if (!hasTokens) return;
 
       // Запрашиваем разрешения, если они еще не были запрошены
       const permissionStatus = await this.requestPermissionsIfNeeded();
       
       // Регистрируем устройство только если разрешения предоставлены
-      if (permissionStatus !== 'granted') {
-        console.log('[NotificationService] Notification permissions not granted:', permissionStatus);
-        return;
-      }
+      if (permissionStatus !== 'granted') return;
 
       // Получаем токен устройства
       const tokenResponse = await Notifications.getDevicePushTokenAsync();
       const deviceToken = tokenResponse.data;
 
-      if (!deviceToken) {
-        console.log('[NotificationService] Device token is empty');
-        return;
-      }
+      if (!deviceToken) return;
 
       // Сохраняем токен локально
       await AsyncStorage.setItem(DEVICE_TOKEN_KEY, deviceToken);
@@ -101,13 +82,10 @@ export class NotificationService {
           token: deviceToken,
           platform: Platform.OS,
         });
-        console.log('[NotificationService] Device token registered successfully');
-      } catch (error) {
-        console.error('[NotificationService] Failed to register device token on server:', error);
+      } catch {
         // Не выбрасываем ошибку, чтобы не блокировать запуск приложения
       }
-    } catch (error) {
-      console.error('[NotificationService] Error registering device:', error);
+    } catch {
       // Не выбрасываем ошибку, чтобы не блокировать запуск приложения
     }
   }
@@ -118,18 +96,13 @@ export class NotificationService {
    */
   async unregisterDevice(): Promise<void> {
     // Работаем только на iOS
-    if (Platform.OS !== 'ios') {
-      console.log('[NotificationService] Skipping unregistration - not iOS');
-      return;
-    }
+    if (Platform.OS !== 'ios') return;
 
     try {
       // Получаем сохраненный токен
       const deviceToken = await AsyncStorage.getItem(DEVICE_TOKEN_KEY);
 
       if (!deviceToken) {
-        console.log('[NotificationService] No device token found to unregister');
-        // Удаляем ключ из хранилища на всякий случай
         await AsyncStorage.removeItem(DEVICE_TOKEN_KEY);
         return;
       }
@@ -137,23 +110,19 @@ export class NotificationService {
       // Удаляем токен на сервере
       try {
         await authService.deleteDeviceToken(deviceToken);
-        console.log('[NotificationService] Device token unregistered successfully');
-      } catch (error) {
-        console.error('[NotificationService] Failed to unregister device token on server:', error);
+      } catch {
         // Продолжаем удаление локального токена даже если серверный запрос не удался
       }
 
       // Удаляем токен из локального хранилища
       await AsyncStorage.removeItem(DEVICE_TOKEN_KEY);
       this.lastPermissionStatus = null;
-    } catch (error) {
-      console.error('[NotificationService] Error unregistering device:', error);
-      // Пытаемся удалить токен из хранилища даже при ошибке
+    } catch {
       try {
         await AsyncStorage.removeItem(DEVICE_TOKEN_KEY);
         this.lastPermissionStatus = null;
-      } catch (storageError) {
-        console.error('[NotificationService] Error removing token from storage:', storageError);
+      } catch {
+        // ignore
       }
     }
   }
@@ -168,51 +137,22 @@ export class NotificationService {
       const hasTokens = await apiUtils.hasTokens();
       const storedToken = await AsyncStorage.getItem(DEVICE_TOKEN_KEY);
       
-      console.log('[NotificationService] Checking permissions on app resume:', {
-        currentStatus: status,
-        lastStatus: this.lastPermissionStatus,
-        hasTokens,
-        hasStoredToken: !!storedToken
-      });
-      
-      // Если статус изменился
-      if (this.lastPermissionStatus !== status) {
-        console.log('[NotificationService] Permission status changed:', this.lastPermissionStatus, '->', status);
-      }
-      
-      // Если разрешения предоставлены
       if (status === 'granted') {
-        // Проверяем, нужно ли регистрировать устройство
-        // Регистрируем если:
-        // 1. Пользователь авторизован
-        // 2. Нет сохраненного токена ИЛИ статус изменился на 'granted'
         if (hasTokens) {
           if (!storedToken || this.lastPermissionStatus !== status) {
-            console.log('[NotificationService] Permissions granted, registering device');
             await this.registerDevice();
-          } else {
-            console.log('[NotificationService] Device already registered, skipping');
           }
-        } else {
-          console.log('[NotificationService] Permissions granted but user not authenticated, skipping registration');
         }
-      } 
-      // Если разрешения были отозваны (были granted, стали не granted)
-      else if (this.lastPermissionStatus === 'granted' && status !== 'granted') {
-        // Разрешения отозваны - удаляем регистрацию
-        console.log('[NotificationService] Permissions revoked, unregistering device');
+      } else if (this.lastPermissionStatus === 'granted' && status !== 'granted') {
         await this.unregisterDevice();
-      }
-      // Если разрешения не предоставлены и есть сохраненный токен - удаляем его
-      else if (status !== 'granted' && storedToken) {
-        console.log('[NotificationService] Permissions not granted but token exists, cleaning up');
+      } else if (status !== 'granted' && storedToken) {
         await AsyncStorage.removeItem(DEVICE_TOKEN_KEY);
       }
       
       // Обновляем последний известный статус
       this.lastPermissionStatus = status;
-    } catch (error) {
-      console.error('[NotificationService] Error checking permission changes:', error);
+    } catch {
+      // ignore
     }
   }
 

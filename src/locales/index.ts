@@ -30,16 +30,8 @@ function normalizeLanguageCode(code: string): string {
  * Загружает переводы с бекенда для указанного языка
  */
 async function loadTranslationsFromBackend(languageCode: string): Promise<Record<string, any>> {
-    try {
-        console.log(`🌐 [i18n] ⬇️  Loading translations from backend for language: ${languageCode}`);
-        const { languageService } = await import('@shared/services/api');
-        const translations = await languageService.getTranslationsByCode(languageCode);
-        console.log(`🌐 [i18n] ✅ Translations successfully loaded from backend for language: ${languageCode}`);
-        return translations;
-    } catch (error) {
-        console.error(`🌐 [i18n] ❌ Failed to load translations from backend for ${languageCode}:`, error);
-        throw error;
-    }
+    const { languageService } = await import('@shared/services/api');
+    return languageService.getTranslationsByCode(languageCode);
 }
 
 /**
@@ -48,23 +40,14 @@ async function loadTranslationsFromBackend(languageCode: string): Promise<Record
 export async function initializeI18n() {
     const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'en';
     const normalizedLanguage = normalizeLanguageCode(deviceLanguage);
-    
-    console.log(`🌐 [i18n] 📱 Device language: ${deviceLanguage}`);
-    console.log(`🌐 [i18n] 🔄 Normalized language code: ${normalizedLanguage}`);
-    console.log(`🌐 [i18n] 🎯 TARGET LANGUAGE: ${normalizedLanguage.toUpperCase()} (will be loaded from backend)`);
 
-    // Загружаем переводы с бекенда для нужного языка
     let translations: Record<string, any>;
     try {
         translations = await loadTranslationsFromBackend(normalizedLanguage);
-    } catch (error) {
-        console.error(`🌐 [i18n] ❌ Critical: Failed to load translations for ${normalizedLanguage}, falling back to 'en'`);
-        // Если не удалось загрузить нужный язык, пытаемся загрузить английский
+    } catch {
         try {
             translations = await loadTranslationsFromBackend('en');
-            console.log(`🌐 [i18n] ✅ Fallback: Using English translations`);
-        } catch (fallbackError) {
-            console.error(`🌐 [i18n] ❌ Critical: Failed to load even English translations`);
+        } catch {
             throw new Error('Failed to load translations from backend');
         }
     }
@@ -83,8 +66,6 @@ export async function initializeI18n() {
                 escapeValue: false
             }
         });
-
-    console.log(`🌐 [i18n] ✅ i18n initialized successfully with language: ${normalizedLanguage.toUpperCase()} (from backend)`);
 }
 
 export default i18n;

@@ -54,13 +54,10 @@ export default function SignUpScreen({ navigation }: { navigation: SignUpScreenN
     });
 
     const onSubmit = async (data: FormData) => {
-        console.log('📝 Форма регистрации отправлена:', data);
         try {
             setIsSubmitting(true);
-            // Используем функцию register из useAuth
             await register(data.email, data.password, data.name);
         } catch (error: any) {
-            console.error('❌ Ошибка в onSubmit:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.registrationErrorMessage'));
             Alert.alert(
                 t('auth.signUp.registrationError'),

@@ -18,8 +18,6 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
     const { width } = useWindowDimensions();
 
     const { id } = route.params;
-    console.log('📋 [SurveyScreen] Получен ID из route.params:', id);
-    console.log('📋 [SurveyScreen] ID как число:', Number(id));
     const surveyId = Number(id);
     
     const { data: survey, isLoading, error, isFetching } = useSurveyById(surveyId);
@@ -35,12 +33,6 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
         }, [surveyId])
     );
 
-    useEffect(() => {
-        console.log('📋 [SurveyScreen] useEffect - survey изменился:', survey);
-        console.log('📋 [SurveyScreen] isLoading:', isLoading);
-        console.log('📋 [SurveyScreen] error:', error);
-        console.log('📋 [SurveyScreen] isFetching:', isFetching);
-    }, [survey, isLoading, error, isFetching]);
 
     const onBack = () => {
         // Событие: закрыть сюрвей
@@ -51,11 +43,8 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
     };
 
     const onStart = () => {
-        console.log('📋 [SurveyScreen] Нажата кнопка Let\'s start для опроса:', surveyId);
         if (survey && survey.questions && survey.questions.length > 0) {
             navigation.navigate(Routes.SURVEY_QUESTIONS, { survey });
-        } else {
-            console.log('📋 [SurveyScreen] ⚠️ У опроса нет вопросов');
         }
     };
 
@@ -86,7 +75,6 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
     }
 
     if (error || !survey) {
-        console.log('📋 [SurveyScreen] ❌ Ошибка или опрос не найден:', error);
         return (
             <PageWithHeader headerContent={
                 <>
@@ -117,15 +105,6 @@ export default function SurveyScreen({ navigation, route }: { navigation: Survey
             </PageWithHeader>
         );
     }
-
-    console.log('📋 [SurveyScreen] ✅ Отображаем опрос:', {
-        id: survey.id,
-        title: survey.title,
-        description: survey.description,
-        questionsCount: survey.questions?.length || 0,
-        hasImage: !!(survey.file?.fileUrl),
-        imageUrl: survey.file?.fileUrl,
-    });
 
     // Обработка description - может быть строкой или null
     const descriptionText = survey.description || null;

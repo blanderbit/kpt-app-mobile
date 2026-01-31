@@ -397,34 +397,17 @@ export class LanguageService extends ApiService {
    */
   async getTranslationsByCode(code: string): Promise<Record<string, any>> {
     try {
-      console.log(`[LanguageService] Fetching language info for code: ${code}`);
-      // Получаем информацию о языке
       const languageInfo = await this.getLanguageByCode(code);
-      console.log(`[LanguageService] Language info received:`, {
-        code: languageInfo.code,
-        hasTranslations: !!languageInfo.translations?.translations
-      });
-      
-      // Проверяем наличие переводов в ответе
       if (!languageInfo.translations?.translations) {
         throw new Error(`No translations found in response for language code: ${code}`);
       }
-
-      // Парсим JSON строку в объект
       try {
         const translations = JSON.parse(languageInfo.translations.translations);
-        console.log(`[LanguageService] ✅ Translations parsed successfully for code: ${code}`);
         return translations;
-      } catch (parseError) {
-        console.error(`[LanguageService] ❌ Failed to parse translations JSON for code ${code}:`, parseError);
+      } catch {
         throw new Error(`Invalid translations JSON format for language code: ${code}`);
       }
     } catch (error: any) {
-      console.error(`[LanguageService] ❌ Error fetching translations for code ${code}:`, {
-        message: error.message,
-        status: error.status || error.response?.status,
-        response: error.response?.data
-      });
       throw error;
     }
   }
@@ -433,44 +416,15 @@ export class LanguageService extends ApiService {
 // Сервис для подсказок
 export class TooltipService extends ApiService {
   async getTooltipsByPage(page: string): Promise<Tooltip[]> {
-    console.log('🔔 [TooltipService] Запрос тултипов для страницы:', page);
-    console.log('🔔 [TooltipService] URL:', `/tooltips/page/${page}`);
-    try {
-      const result = await this.get<Tooltip[]>(`/tooltips/page/${page}`);
-      console.log('🔔 [TooltipService] ✅ Успешный ответ:');
-      console.log('🔔 [TooltipService] Количество тултипов:', result?.length || 0);
-      console.log('🔔 [TooltipService] Полный ответ:', JSON.stringify(result, null, 2));
-      if (result && result.length > 0) {
-        result.forEach((tooltip, index) => {
-          console.log(`🔔 [TooltipService] Тултип ${index + 1}:`, {
-            id: tooltip.id,
-            type: tooltip.type,
-            page: tooltip.page,
-            json: tooltip.json,
-            createdAt: tooltip.createdAt,
-            updatedAt: tooltip.updatedAt
-          });
-        });
-      }
-      return result;
-    } catch (error) {
-      console.error('🔔 [TooltipService] ❌ Ошибка запроса тултипов:', error);
-      throw error;
-    }
+    return this.get<Tooltip[]>(`/tooltips/page/${page}`);
   }
 
   async getTooltipsByPageAndType(page: string, type: string): Promise<Tooltip[]> {
-    console.log('🔔 [TooltipService] Запрос тултипов для страницы и типа:', page, type);
-    const result = await this.get<Tooltip[]>(`/tooltips/page/${page}/type/${type}`);
-    console.log('🔔 [TooltipService] Получено тултипов:', result?.length || 0);
-    return result;
+    return this.get<Tooltip[]>(`/tooltips/page/${page}/type/${type}`);
   }
 
   async closeTooltip(tooltipId: number): Promise<{ message: string }> {
-    console.log('🔔 [TooltipService] Закрытие тултипа:', tooltipId);
-    const result = await this.post<{ message: string }>(`/tooltips/close/${tooltipId}`);
-    console.log('🔔 [TooltipService] Тултип закрыт:', result);
-    return result;
+    return this.post<{ message: string }>(`/tooltips/close/${tooltipId}`);
   }
 }
 

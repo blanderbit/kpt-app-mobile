@@ -46,20 +46,17 @@ export default function SecondTrialScreen({onNext}: { onNext: () => void }) {
 
     const purchaseYearly = async () => {
         if (!revenueCatService.getInitialized() || !yearlyProduct) {
-            if (!yearlyProduct) {
-                console.warn('[RevenueCat] Yearly product not loaded');
-            }
             return;
         }
         setIsPurchasing(true);
         try {
-            await revenueCatService.purchaseProduct(yearlyProduct);
+            const customerInfo = await revenueCatService.purchaseProduct(yearlyProduct);
+            await revenueCatService.logPurchaseForBackend(customerInfo);
             onNext();
         } catch (e: any) {
             if (e?.userCancelled) {
                 return;
             }
-            console.error('[RevenueCat] Purchase failed:', e);
             Alert.alert(
                 t('subscriptionOffering.startTrial.purchaseErrorTitle'),
                 t('subscriptionOffering.startTrial.purchaseErrorMessage'),

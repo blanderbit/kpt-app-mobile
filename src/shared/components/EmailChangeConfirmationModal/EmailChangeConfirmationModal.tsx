@@ -57,14 +57,9 @@ export const EmailChangeConfirmationModal: React.FC<EmailChangeConfirmationModal
     }
 
     try {
-      console.log('📧 Подтверждаем изменение email с кодом:', code);
-      
       await confirmEmailChangeMutation.mutateAsync({
         code: code,
       });
-      
-      console.log('✅ Email успешно подтвержден и изменен');
-      
       Alert.alert(
         t('main.today.emailVerification.modal.successTitle'),
         t('main.today.emailVerification.modal.successMessage'),
@@ -79,7 +74,6 @@ export const EmailChangeConfirmationModal: React.FC<EmailChangeConfirmationModal
         ]
       );
     } catch (error: any) {
-      console.error('❌ Ошибка подтверждения изменения email:', error);
       const errorMessage = error.message?.toLowerCase();
       if (errorMessage?.includes('invalid email change code')) {
         setError(t('main.profile.personalInfoScreen.invalidEmailChangeCode'));

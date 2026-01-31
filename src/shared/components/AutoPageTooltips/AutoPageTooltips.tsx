@@ -38,7 +38,6 @@ export const AutoPageTooltips = ({
   // Сбрасываем видимые тултипы, если список тултипов изменился или стал пустым
   useEffect(() => {
     if (tooltipsToShow.length === 0) {
-      console.log('🔔 [AutoPageTooltips] Нет тултипов для отображения, очищаем видимые');
       setVisibleTooltips([]);
       setCurrentTooltipIndex(0);
     }
@@ -48,11 +47,9 @@ export const AutoPageTooltips = ({
   useEffect(() => {
     if (autoShow && tooltipsToShow.length > 0 && !isLoading) {
       const firstTooltipId = tooltipsToShow[0]?.id;
-      console.log('🔔 [AutoPageTooltips] Показываем тултип с ID:', firstTooltipId);
       setVisibleTooltips([firstTooltipId].filter(Boolean) as number[]);
       setCurrentTooltipIndex(0); // Сбрасываем индекс при показе первого тултипа
     } else if (tooltipsToShow.length === 0 && !isLoading) {
-      console.log('🔔 [AutoPageTooltips] Нет тултипов для показа (массив пустой)');
       setVisibleTooltips([]);
     }
   }, [autoShow, tooltipsToShow, isLoading]);
@@ -71,15 +68,10 @@ export const AutoPageTooltips = ({
   // Закрытие текущего тултипа
   const closeCurrentTooltip = async () => {
     const currentTooltip = tooltipsToShow[currentTooltipIndex];
-    console.log('🔔 [AutoPageTooltips] Закрытие тултипа, текущий индекс:', currentTooltipIndex);
     if (currentTooltip) {
-      console.log('🔔 [AutoPageTooltips] Закрываем тултип с ID:', currentTooltip.id);
       try {
-        // Вызываем API для закрытия тултипа
         await closeTooltipMutation.mutateAsync(currentTooltip.id);
-        console.log('🔔 [AutoPageTooltips] ✅ Тултип успешно закрыт через API, ID:', currentTooltip.id);
-      } catch (error) {
-        console.error('🔔 [AutoPageTooltips] ❌ Ошибка при закрытии тултипа:', error);
+      } catch {
         // Продолжаем выполнение даже если API вызов не удался
       }
       // Удаляем текущий тултип из видимых

@@ -27,8 +27,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             await AsyncStorage.setItem('is_firebase_user', isFirebase.toString());
             setIsFirebaseUser(isFirebase);
-        } catch (error) {
-            console.error('Ошибка сохранения флага Firebase:', error);
+        } catch {
+            // ignore storage error
         }
     };
 
@@ -36,8 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const flag = await AsyncStorage.getItem('is_firebase_user');
             return flag === 'true';
-        } catch (error) {
-            console.error('Ошибка получения флага Firebase:', error);
+        } catch {
             return false;
         }
     };
@@ -46,19 +45,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             await AsyncStorage.removeItem('is_firebase_user');
             setIsFirebaseUser(false);
-        } catch (error) {
-            console.error('Ошибка очистки флага Firebase:', error);
+        } catch {
+            // ignore
         }
     };
 
     // Функции для работы с флагом emailVerified
     const setEmailVerifiedFlag = async (isVerified: boolean) => {
         try {
-            console.log('setEmailVerifiedFlag: saving to storage:', isVerified);
             await AsyncStorage.setItem('email_verified', isVerified.toString());
-            console.log('setEmailVerifiedFlag: saved to storage successfully');
-        } catch (error) {
-            console.error('Ошибка сохранения флага emailVerified:', error);
+        } catch {
+            // ignore
         }
     };
 
@@ -66,27 +63,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             const flag = await AsyncStorage.getItem('email_verified');
             const isVerified = flag === 'true';
-            console.log('getEmailVerifiedFlag: retrieved from storage:', flag, 'parsed as:', isVerified);
             return isVerified;
-        } catch (error) {
-            console.error('Ошибка получения флага emailVerified:', error);
+        } catch {
             return false;
         }
     };
 
     const clearEmailVerifiedFlag = async () => {
         try {
-            console.log('clearEmailVerifiedFlag: removing from storage');
             await AsyncStorage.removeItem('email_verified');
-            console.log('clearEmailVerifiedFlag: removed from storage successfully');
-        } catch (error) {
-            console.error('Ошибка очистки флага emailVerified:', error);
+        } catch {
+            // ignore
         }
     };
 
     // Функция для обновления состояния emailVerified (используется после подтверждения)
     const updateEmailVerifiedState = (isVerified: boolean) => {
-        console.log('updateEmailVerifiedState: updating state to', isVerified);
         setIsEmailVerified(isVerified);
     };
 
@@ -117,7 +109,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                         // Загружаем флаг emailVerified из хранилища
                         const emailVerifiedFlag = await getEmailVerifiedFlag();
-                        console.log('AuthProvider: emailVerified from storage:', emailVerifiedFlag);
                         setIsEmailVerified(emailVerifiedFlag);
 
                         // Обновляем профиль после успешной аутентификации
@@ -155,8 +146,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     // Нет токенов, очищаем флаг Firebase
                     await clearFirebaseFlag();
                 }
-            } catch (error) {
-                console.error('Ошибка проверки аутентификации:', error);
+            } catch {
+                // ignore
             } finally {
                 setIsLoading(false);
                 setIsInitializing(false);
@@ -267,11 +258,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // RevenueCat: передаём app user ID для привязки подписок к пользователю при регистрации
             const appUserId = await revenueCatService.getAppUserID().catch(() => null);
-            if (appUserId) {
-                console.log('[Auth] Register (email): sending appUserId to backend:', appUserId);
-            } else {
-                console.warn('[Auth] Register (email): RevenueCat appUserId is null — backend will not link subscriptions');
-            }
             // Данные онбординга (если пользователь прошёл онбординг и они есть в AsyncStorage)
             const onboardingData = await loadAllOnboardingData().catch(() => ({}));
             const registerResponse = await authService.register({
@@ -297,7 +283,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // После успешной регистрации автоматически входим
             await login(email, password);
         } catch (error: any) {
-            console.error('❌ Ошибка регистрации:', error);
             const errorMessage = error.message || 'auth.signUp.registrationErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
@@ -318,21 +303,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 authType: 'login',
                 ...(appUserId ? { appUserId } : {}),
             });
-            console.log('✅ Получен ответ от Firebase API:', response);
-
-            // Сохраняем токены
-            console.log('💾 Сохраняем токены...');
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
-            console.log('✅ Токены сохранены');
-
-            // Устанавливаем флаг Firebase
             await setFirebaseFlag(true);
-
-            // Сохраняем флаг emailVerified (для Firebase пользователей всегда true)
             await setEmailVerifiedFlag(true);
-
-            // Обновляем состояние
-            console.log('🔄 Обновляем состояние...');
             setUser(response.user);
             setIsAuthenticated(true);
             setIsFirebaseUser(true);
@@ -359,9 +332,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     method: 'firebase',
                 });
             }
-            console.log('✅ Firebase вход выполнен успешно');
         } catch (error: any) {
-            console.error('❌ Ошибка Firebase входа:', error);
             const errorMessage = error.message || 'auth.googleSignInErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
@@ -389,20 +360,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             // RevenueCat: передаём app user ID для привязки подписок при регистрации через Firebase
             const appUserId = await revenueCatService.getAppUserID().catch(() => null);
-            if (appUserId) {
-                console.log('[Auth] Register (Firebase): sending appUserId to backend:', appUserId);
-            } else {
-                console.warn('[Auth] Register (Firebase): RevenueCat appUserId is null — backend will not link subscriptions');
-            }
             const response = await authService.firebaseAuth({
                 idToken,
                 authType: 'register',
                 ...(appUserId ? { appUserId } : {}),
                 ...onboardingData
             });
-            console.log('✅ Получен ответ от Firebase API:', response);
-
-            // Сохраняем токены
             await apiUtils.setAuthTokens(response.accessToken, response.refreshToken);
 
             // Устанавливаем флаг Firebase
@@ -439,7 +402,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 });
             }
         } catch (error: any) {
-            console.error('❌ Ошибка Firebase регистрации:', error);
             const errorMessage = error.message || 'auth.signUp.googleSignInErrorMessage';
             setError(errorMessage);
             throw new Error(errorMessage);
@@ -474,9 +436,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // RevenueCat: сбрасываем пользователя
             try {
                 await revenueCatService.logout();
-            } catch (e) {
+            } catch {
                 // не блокируем логаут приложения из-за RevenueCat
-                console.warn('RevenueCat logout failed:', e);
             }
 
             // Очищаем токены
@@ -499,16 +460,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error: any) {
             // После удаления аккаунта пользователь уже не существует — бэкенд вернёт "User not found".
             // Это ожидаемо, не показываем ошибку и не логируем как ошибку.
-            const isUserNotFound = error?.message === 'User not found' || error?.data?.message === 'User not found';
-            if (!isUserNotFound) {
-                console.error('Ошибка выхода:', error);
-            }
             // Даже если API вызов не удался, очищаем локальное состояние
             await notificationService.unregisterDevice();
             try {
                 await revenueCatService.logout();
-            } catch (e) {
-                console.warn('RevenueCat logout failed:', e);
+            } catch {
+                // ignore
             }
             await apiUtils.removeAuthTokens();
             await clearFirebaseFlag();

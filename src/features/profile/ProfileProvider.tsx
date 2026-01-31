@@ -24,11 +24,10 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                 const hasTokens = await apiUtils.hasTokens();
                 
                 if (hasTokens) {
-                    console.log('🔄 Принудительно обновляем профиль при старте приложения...');
                     await refreshProfile();
                 }
-            } catch (error) {
-                console.error('❌ Ошибка инициализации профиля:', error);
+            } catch {
+                // ignore
             }
         };
 
@@ -41,15 +40,13 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
     const loadProfileFromStorage = async () => {
         try {
-            console.log('📱 Загружаем профиль из AsyncStorage...');
             const storedProfile = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
             if (storedProfile) {
                 const parsedProfile = JSON.parse(storedProfile);
                 setProfile(parsedProfile);
-                console.log('✅ Профиль загружен из AsyncStorage:', parsedProfile.firstName);
             }
-        } catch (error) {
-            console.error('❌ Ошибка загрузки профиля из AsyncStorage:', error);
+        } catch {
+            // ignore
         } finally {
             setIsLoading(false);
         }
@@ -57,27 +54,20 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
     const saveProfileToStorage = async (profileData: any) => {
         try {
-            console.log('💾 Сохраняем профиль в AsyncStorage...');
             await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profileData));
-            console.log('✅ Профиль сохранен в AsyncStorage');
-        } catch (error) {
-            console.error('❌ Ошибка сохранения профиля в AsyncStorage:', error);
+        } catch {
+            // ignore
         }
     };
 
     const refreshProfile = async () => {
         try {
-            console.log('🔄 Обновляем профиль с сервера...');
             setIsLoading(true);
             setError(null);
-
             const profileData = await authService.getCurrentUser();
-            console.log('✅ Профиль получен с сервера:', profileData.firstName);
-            
             setProfile(profileData);
             await saveProfileToStorage(profileData);
         } catch (error: any) {
-            console.error('❌ Ошибка обновления профиля:', error);
             setError(error.message || 'main.profile.settings.loadProfileError');
         } finally {
             setIsLoading(false);
@@ -85,7 +75,6 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const updateProfile = (profileData: any) => {
-        console.log('🔄 Обновляем профиль в контексте...', profileData);
         setProfile(profileData);
         saveProfileToStorage(profileData);
         
@@ -98,8 +87,8 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             setProfile(null);
             setError(null);
             await AsyncStorage.removeItem(PROFILE_STORAGE_KEY);
-        } catch (error) {
-            console.error('❌ Ошибка очистки профиля:', error);
+        } catch {
+            // ignore
         }
     };
 

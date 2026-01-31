@@ -37,16 +37,16 @@ export default function FifthStep({onNext}: FifthStepProps) {
                 const parsedData = JSON.parse(savedData);
                 setSelectedNetworks(parsedData);
             }
-        } catch (error) {
-            console.error('Error loading saved social networks:', error);
+        } catch {
+            // ignore
         }
     };
 
     const saveData = async (networks: string[]) => {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEYS.SOCIAL_NETWORKS, JSON.stringify(networks));
-        } catch (error) {
-            console.error('Error saving social networks:', error);
+        } catch {
+            // ignore
         }
     };
 

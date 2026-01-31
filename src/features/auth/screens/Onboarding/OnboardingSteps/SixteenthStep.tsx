@@ -24,7 +24,6 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
     const checkNotificationPermission = useCallback(async () => {
         try {
             const { status } = await Notifications.getPermissionsAsync();
-            console.log('Current notification permission status:', status);
             setPermissionStatus(status as any);
 
             if (status === 'granted') {
@@ -33,8 +32,7 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
             } else if (status === 'denied') {
                 setIsPermissionChecked(true);
             }
-        } catch (error) {
-            console.log('Error checking notification permission:', error);
+        } catch {
             setIsPermissionChecked(true);
         }
     }, []);
@@ -45,17 +43,11 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
             setPermissionStatus(status as any);
 
             if (status === 'granted') {
-                console.log('Notification permission granted');
                 await registerTokenIfNeeded(true);
-            } else if (status === 'denied') {
-                console.log('Notification permission denied');
-            } else {
-                console.log('Notification permission blocked or undetermined');
             }
 
             setIsPermissionChecked(true);
-        } catch (error) {
-            console.log('Error requesting notification permission:', error);
+        } catch {
             setIsPermissionChecked(true);
         }
     }, []);
@@ -74,7 +66,6 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
             }
 
             if (!storedToken) {
-                console.log('Cannot register device: push token is empty');
                 return;
             }
 
@@ -94,14 +85,13 @@ export default function SixteenthStep({onNext}: { onNext: () => void }) {
             //     await AsyncStorage.setItem(DEVICE_ID_KEY, deviceId);
             // }
 
-            console.log('Registering device token', { storedToken, platform: Platform.OS /*, deviceId*/ });
             // await registerDeviceToken({
             //     token: storedToken,
             //     platform: Platform.OS,
             //     // deviceId,
             // });
-        } catch (error) {
-            console.log('Failed to register device token:', error);
+        } catch {
+            // ignore
         }
     }, []);
 

@@ -85,18 +85,14 @@ export default function App() {
 
     // Инициализация AppsFlyer
     useEffect(() => {
-        appsFlyerService.initialize((deepLink, data) => {
-            console.log('[App] AppsFlyer deep link received:', deepLink, data);
-            // AppsFlyer уже обработал ссылку и откроет её через Linking
-            // React Navigation автоматически обработает deep link
+        appsFlyerService.initialize(() => {
+            // AppsFlyer обрабатывает deep link, React Navigation обработает навигацию
         });
     }, []);
 
     // Инициализация Google Sign In
     useEffect(() => {
-        configureGoogleSignIn().catch((error) => {
-            console.error('[App] Failed to configure Google Sign In:', error);
-        });
+        configureGoogleSignIn().catch(() => {});
     }, []);
 
     // RevenueCat инициализируется в index.ts при старте приложения

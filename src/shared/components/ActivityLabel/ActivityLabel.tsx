@@ -19,14 +19,6 @@ export const ActivityLabel = ({
     const activityConfig = ACTIVITY_TYPES[id];
 
     if (!activityConfig) {
-        // Логируем проблему с неизвестным типом активности
-        console.warn('⚠️ [ActivityLabel] Unknown activity type:', {
-            id,
-            idType: typeof id,
-            idValue: id,
-            availableTypes: Object.keys(ACTIVITY_TYPES),
-        });
-        
         return (
             <View style={[
                 styles.activityLabel,

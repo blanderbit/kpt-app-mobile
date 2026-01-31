@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import Purchases, {
   CustomerInfo,
   PurchasesOffering,
@@ -21,32 +22,28 @@ class RevenueCatService {
    */
   initialize(config: RevenueCatConfig): void {
     if (this.isInitialized) {
-      console.warn('RevenueCat is already initialized');
       return;
     }
 
     try {
-      // Определяем платформу и используем соответствующий API ключ
-      // Для iOS и Android нужны разные ключи
       Purchases.configure({
         apiKey: config.apiKey,
         appUserID: config.appUserID ?? this.pendingAppUserID,
       });
 
       this.isInitialized = true;
-      console.log('RevenueCat initialized successfully');
 
-      // Если userID был выставлен до инициализации — применяем его сейчас
+      // Лог для бэкенда: ровно строка app_user_id (RC SDK)
+      Purchases.getAppUserID().then((appUserId) => {
+        console.log('[RC Backend Check] app_user_id:', appUserId);
+      });
+
       const userIdToApply = config.appUserID ?? this.pendingAppUserID;
       if (userIdToApply) {
-        // logIn возвращает customerInfo/created, но нам здесь достаточно факта привязки
-        Purchases.logIn(userIdToApply).catch((e) => {
-          console.warn('RevenueCat logIn after initialize failed:', e);
-        });
+        Purchases.logIn(userIdToApply).catch(() => {});
         this.pendingAppUserID = undefined;
       }
     } catch (error) {
-      console.error('Error initializing RevenueCat:', error);
       throw error;
     }
   }
@@ -64,7 +61,6 @@ class RevenueCatService {
     try {
       await Purchases.logIn(userID);
     } catch (error) {
-      console.error('Error setting user ID:', error);
       throw error;
     }
   }
@@ -80,7 +76,6 @@ class RevenueCatService {
     try {
       await Purchases.logOut();
     } catch (error) {
-      console.error('Error logging out:', error);
       throw error;
     }
   }
@@ -97,8 +92,7 @@ class RevenueCatService {
     }
     try {
       return await Purchases.getAppUserID();
-    } catch (error) {
-      console.warn('RevenueCat getAppUserID failed:', error);
+    } catch {
       return null;
     }
   }
@@ -107,12 +101,7 @@ class RevenueCatService {
    * Получение информации о текущем пользователе
    */
   async getCustomerInfo(): Promise<CustomerInfo> {
-    try {
-      return await Purchases.getCustomerInfo();
-    } catch (error) {
-      console.error('Error getting customer info:', error);
-      throw error;
-    }
+    return await Purchases.getCustomerInfo();
   }
 
   /**
@@ -125,8 +114,7 @@ class RevenueCatService {
       const customerInfo = await this.getCustomerInfo();
       const info = customerInfo as CustomerInfo & { managementURL?: string | null };
       return info.managementURL ?? null;
-    } catch (error) {
-      console.error('Error getting management URL:', error);
+    } catch {
       return null;
     }
   }
@@ -139,7 +127,6 @@ class RevenueCatService {
       const offerings = await Purchases.getOfferings();
       return offerings.current;
     } catch (error) {
-      console.error('Error getting offerings:', error);
       throw error;
     }
   }
@@ -152,7 +139,6 @@ class RevenueCatService {
       const offerings = await Purchases.getOfferings();
       return offerings.all;
     } catch (error) {
-      console.error('Error getting all offerings:', error);
       throw error;
     }
   }
@@ -161,38 +147,42 @@ class RevenueCatService {
    * Покупка пакета
    */
   async purchasePackage(packageToPurchase: PurchasesPackage): Promise<CustomerInfo> {
-    try {
-      const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
-      return customerInfo;
-    } catch (error) {
-      console.error('Error purchasing package:', error);
-      throw error;
-    }
+    const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
+    return customerInfo;
   }
 
   /**
    * Покупка продукта напрямую
    */
   async purchaseProduct(product: PurchasesStoreProduct): Promise<CustomerInfo> {
-    try {
-      const { customerInfo } = await Purchases.purchaseStoreProduct(product);
-      return customerInfo;
-    } catch (error) {
-      console.error('Error purchasing product:', error);
-      throw error;
-    }
+    const { customerInfo } = await Purchases.purchaseStoreProduct(product);
+    return customerInfo;
   }
 
   /**
    * Восстановление покупок
    */
   async restorePurchases(): Promise<CustomerInfo> {
-    try {
-      return await Purchases.restorePurchases();
-    } catch (error) {
-      console.error('Error restoring purchases:', error);
-      throw error;
-    }
+    return await Purchases.restorePurchases();
+  }
+
+  /**
+   * Лог для бэкенда после покупки: app_user_id, время, платформа, getCustomerInfo (entitlements).
+   * Вызывать сразу после успешного purchasePackage/purchaseProduct.
+   */
+  async logPurchaseForBackend(customerInfo: CustomerInfo): Promise<void> {
+    const appUserId = await this.getAppUserID();
+    const purchaseTime = new Date().toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    const platform = Platform.OS === 'ios' ? 'iOS' : 'Android';
+    const active = customerInfo.entitlements.active;
+    const activeKeys = typeof active === 'object' && active !== null
+      ? (active instanceof Map ? Array.from(active.keys()) : Object.keys(active))
+      : [];
+    const activeSnapshot = active instanceof Map ? Object.fromEntries(active) : active;
+    console.log('[RC Backend Check] app_user_id:', appUserId);
+    console.log('[RC Backend Check] purchase_time:', purchaseTime);
+    console.log('[RC Backend Check] platform:', platform);
+    console.log('[RC Backend Check] getCustomerInfo (after purchase) — entitlements.active:', JSON.stringify({ activeEntitlementIds: activeKeys, active: activeSnapshot }, null, 2));
   }
 
   /**
@@ -207,8 +197,7 @@ class RevenueCatService {
         return activeEntitlements.size > 0;
       }
       return Object.keys(activeEntitlements).length > 0;
-    } catch (error) {
-      console.error('Error checking subscription status:', error);
+    } catch {
       return false;
     }
   }
@@ -221,7 +210,6 @@ class RevenueCatService {
       const customerInfo = await this.getCustomerInfo();
       return customerInfo.entitlements.active;
     } catch (error) {
-      console.error('Error getting active entitlements:', error);
       throw error;
     }
   }
@@ -233,8 +221,7 @@ class RevenueCatService {
     try {
       const customerInfo = await this.getCustomerInfo();
       return customerInfo.entitlements.active[entitlementID] !== undefined;
-    } catch (error) {
-      console.error('Error checking entitlement:', error);
+    } catch {
       return false;
     }
   }
@@ -249,23 +236,11 @@ class RevenueCatService {
       // Второй параметр опционален, SDK автоматически определит тип по платформе
       const products = await Purchases.getProducts(productIdentifiers, type as any);
 
-      if (!products || products.length === 0) {
-        console.warn('[RevenueCat] getProducts returned empty array. This might indicate:');
-        console.warn('- Products are not approved in App Store Connect yet');
-        console.warn('- Products are not configured in RevenueCat Dashboard');
-        console.warn('- Using StoreKit Configuration file in development (expected behavior)');
-      }
-
       return products;
     } catch (error: any) {
-      // Не логируем как критическую ошибку, если это проблема конфигурации
       if (error?.message?.includes('configuration') || error?.message?.includes('App Store Connect')) {
-        console.warn('[RevenueCat] Configuration issue when getting products:', error.message);
-        console.warn('This is expected if products are not yet approved in App Store Connect.');
-        // Возвращаем пустой массив вместо throw, чтобы приложение не падало
         return [];
       }
-      console.error('[RevenueCat] Error getting products:', error);
       throw error;
     }
   }

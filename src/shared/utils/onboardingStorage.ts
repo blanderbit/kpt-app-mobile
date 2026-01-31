@@ -29,9 +29,7 @@ export const clearOnboardingData = async (): Promise<void> => {
             ONBOARDING_KEYS.SATISFACTION_LEVEL,
             ONBOARDING_KEYS.HARDNESS_LEVEL,
         ]);
-        console.log('✅ Onboarding data cleared successfully');
     } catch (error) {
-        console.error('❌ Error clearing onboarding data:', error);
     }
 };
 
@@ -43,7 +41,6 @@ export const hasOnboardingData = async (): Promise<boolean> => {
         const keys = await AsyncStorage.getAllKeys();
         return keys.some(key => Object.values(ONBOARDING_KEYS).includes(key as any));
     } catch (error) {
-        console.error('❌ Error checking onboarding data:', error);
         return false;
     }
 };
@@ -60,7 +57,6 @@ export const getOnboardingProgress = async (): Promise<number | null> => {
         }
         return null;
     } catch (error) {
-        console.error('❌ Error getting onboarding progress:', error);
         return null;
     }
 };
@@ -72,7 +68,6 @@ export const saveOnboardingProgress = async (step: number): Promise<void> => {
     try {
         await AsyncStorage.setItem(ONBOARDING_KEYS.PROGRESS, JSON.stringify({ currentStep: step }));
     } catch (error) {
-        console.error('❌ Error saving onboarding progress:', error);
     }
 };
 
@@ -109,14 +104,6 @@ export const loadAllOnboardingData = async (): Promise<{
         const selectedActivitiesValue = entries[5]?.[1];
         const satisfactionLevelValue = entries[6]?.[1];
         const hardnessLevelValue = entries[7]?.[1];
-
-        console.log('📦 [loadAllOnboardingData] Raw values from AsyncStorage:');
-        console.log('  - moodValue:', moodValue);
-        console.log('  - ageValue:', ageValue);
-        console.log('  - taskMethodValue:', taskMethodValue);
-        console.log('  - satisfactionLevelValue:', satisfactionLevelValue);
-        console.log('  - hardnessLevelValue:', hardnessLevelValue);
-
         // Преобразуем questions в правильный формат
         let onboardingQuestionAndAnswers: Record<string, string | string[]> | undefined;
         if (questionsValue) {
@@ -153,14 +140,11 @@ export const loadAllOnboardingData = async (): Promise<{
             try {
                 // Пытаемся распарсить как JSON (на случай если сохранено через JSON.stringify)
                 parsedMood = JSON.parse(moodValue);
-                console.log('📦 [loadAllOnboardingData] Parsed mood as JSON:', parsedMood);
             } catch {
                 // Если не JSON, используем как есть (строка)
                 parsedMood = moodValue;
-                console.log('📦 [loadAllOnboardingData] Using mood as string:', parsedMood);
             }
         } else {
-            console.warn('⚠️ [loadAllOnboardingData] moodValue is null or undefined!');
         }
 
         // Парсим satisfactionLevel и hardnessLevel
@@ -204,15 +188,8 @@ export const loadAllOnboardingData = async (): Promise<{
             initSatisfactionLevel: parsedSatisfactionLevel,
             initHardnessLevel: parsedHardnessLevel,
         };
-
-        console.log('📦 [loadAllOnboardingData] Final result:', {
-            ...result,
-            feelingToday: result.feelingToday,
-        });
-
         return result;
     } catch (error) {
-        console.error('❌ Error loading onboarding data:', error);
         return {};
     }
 };

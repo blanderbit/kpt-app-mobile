@@ -25,12 +25,6 @@ export const CurrentMoodProvider = ({ children, isAuthenticated }: CurrentMoodPr
             
             setCurrentMood(currentMoodData);
             setHasMoodForToday(moodDate === today);
-            
-            console.log('🎭 Текущее настроение загружено:', {
-                mood: currentMoodData.moodType,
-                date: moodDate,
-                isToday: moodDate === today
-            });
         } else if (!isAuthenticated) {
             setCurrentMood(null);
             setHasMoodForToday(false);
@@ -39,10 +33,9 @@ export const CurrentMoodProvider = ({ children, isAuthenticated }: CurrentMoodPr
 
     const refreshCurrentMood = async () => {
         try {
-            console.log('🔄 Обновляем текущее настроение...');
             await refetch();
-        } catch (error) {
-            console.error('❌ Ошибка обновления настроения:', error);
+        } catch {
+            // ignore
         }
     };
 

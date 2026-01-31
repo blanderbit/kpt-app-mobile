@@ -28,14 +28,6 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
     const totalQuestions = questions.length;
     const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
-    console.log('📋 [SurveyQuestionsScreen] Текущий вопрос:', {
-        index: currentQuestionIndex,
-        total: totalQuestions,
-        questionId: currentQuestion?.id,
-        questionText: currentQuestion?.text,
-        questionType: currentQuestion?.type,
-    });
-
     const onBack = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(prev => prev - 1);
@@ -110,14 +102,8 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
         if (isLastQuestion) {
             try {
                 setIsSubmitting(true);
-                console.log('📋 [SurveyQuestionsScreen] Отправка ответов на сервер...');
-                
                 const payload = prepareAnswersPayload();
-                console.log('📋 [SurveyQuestionsScreen] Payload:', JSON.stringify(payload, null, 2));
-                
-                const response = await surveyService.submitSurveyAnswer(survey.id, payload);
-                console.log('📋 [SurveyQuestionsScreen] ✅ Ответы успешно отправлены:', response);
-                
+                await surveyService.submitSurveyAnswer(survey.id, payload);
                 // Событие: ответ на сюрвей
                 amplitudeAnalyticsService.trackEvent('Survey Answer Submitted', {
                     survey_id: survey.id,
@@ -126,8 +112,7 @@ export default function SurveyQuestionsScreen({ navigation, route }: { navigatio
                 
                 // Переходим на Today страницу после успешной отправки
                 navigation.navigate(Routes.TODAY);
-            } catch (error) {
-                console.error('📋 [SurveyQuestionsScreen] ❌ Ошибка отправки ответов:', error);
+            } catch {
                 // TODO: Показать ошибку пользователю
             } finally {
                 setIsSubmitting(false);

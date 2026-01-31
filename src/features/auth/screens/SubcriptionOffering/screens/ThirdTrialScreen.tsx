@@ -78,13 +78,13 @@ export default function ThirdTrialScreen({onNext}: { onNext: () => void }) {
         }
         setIsPurchasing(true);
         try {
-            await revenueCatService.purchaseProduct(yearlyProduct);
+            const customerInfo = await revenueCatService.purchaseProduct(yearlyProduct);
+            await revenueCatService.logPurchaseForBackend(customerInfo);
             onNext();
         } catch (e: any) {
             if (e?.userCancelled) {
                 return;
             }
-            console.error('[RevenueCat] Purchase failed:', e);
             Alert.alert(
                 t('subscriptionOffering.startTrial.purchaseErrorTitle'),
                 t('subscriptionOffering.startTrial.purchaseErrorMessage'),

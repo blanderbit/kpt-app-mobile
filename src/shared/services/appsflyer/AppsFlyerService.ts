@@ -28,19 +28,13 @@ class AppsFlyerService {
    * @param onDeepLink - Callback для обработки deep links от AppsFlyer
    */
   initialize(onDeepLink?: DeepLinkCallback): void {
-    if (this.isInitialized) {
-      console.warn('[AppsFlyer] Service already initialized');
-      return;
-    }
+    if (this.isInitialized) return;
 
     try {
       const appId = Platform.OS === 'ios' ? APPSFLYER_APP_ID_IOS : APPSFLYER_APP_ID_ANDROID;
 
       // Проверяем, что ключи настроены
-      if (APPSFLYER_DEV_KEY.includes('YOUR_') || appId.includes('YOUR_')) {
-        console.warn('[AppsFlyer] API keys not configured. Please update AppsFlyerService.ts');
-        return;
-      }
+      if (APPSFLYER_DEV_KEY.includes('YOUR_') || appId.includes('YOUR_')) return;
 
       // Сохраняем callback
       if (onDeepLink) {
@@ -58,18 +52,15 @@ class AppsFlyerService {
           timeToWaitForATTUserAuthorization: 10,
         },
         (result) => {
-          console.log('[AppsFlyer] Initialization result:', result);
           this.isInitialized = true;
           
           // Настраиваем listeners после успешной инициализации
           this.setupListeners();
         },
-        (error) => {
-          console.error('[AppsFlyer] Initialization error:', error);
-        }
+        () => {}
       );
-    } catch (error) {
-      console.error('[AppsFlyer] Failed to initialize:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -79,7 +70,6 @@ class AppsFlyerService {
   private setupListeners(): void {
     // Обработка данных конверсии (установка приложения)
     appsFlyer.onInstallConversionData((data) => {
-      console.log('[AppsFlyer] Install conversion data:', data);
       // Обрабатываем deep link из данных конверсии, если он есть
       if (data?.is_first_launch && data?.deep_link_value) {
         this.handleDeepLink(data);
@@ -88,13 +78,11 @@ class AppsFlyerService {
 
     // Обработка deep links
     appsFlyer.onDeepLink((data) => {
-      console.log('[AppsFlyer] Deep link received:', data);
       this.handleDeepLink(data);
     });
 
     // Обработка атрибуции при открытии приложения
     appsFlyer.onAppOpenAttribution((data) => {
-      console.log('[AppsFlyer] App open attribution:', data);
       this.handleDeepLink(data);
     });
   }
@@ -114,17 +102,15 @@ class AppsFlyerService {
 
       // Если есть deep link, открываем его через Linking
       if (deepLinkValue) {
-        Linking.openURL(deepLinkValue).catch((err) => {
-          console.error('[AppsFlyer] Failed to open deep link:', err);
-        });
+        Linking.openURL(deepLinkValue).catch(() => {});
       }
 
       // Вызываем callback
       if (this.deepLinkCallback) {
         this.deepLinkCallback(deepLinkValue || null, deepLinkData);
       }
-    } catch (error) {
-      console.error('[AppsFlyer] Error handling deep link:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -135,10 +121,7 @@ class AppsFlyerService {
    * @returns AppsFlyer OneLink URL
    */
   generateOneLink(deepLink: string, params: Record<string, string> = {}): string {
-    if (ONELINK_ID.includes('YOUR_')) {
-      console.warn('[AppsFlyer] OneLink ID not configured. Returning original deep link.');
-      return deepLink;
-    }
+    if (ONELINK_ID.includes('YOUR_')) return deepLink;
 
     const baseUrl = `https://app.appsflyer.com/${ONELINK_ID}`;
     const queryParams = new URLSearchParams({
@@ -155,19 +138,11 @@ class AppsFlyerService {
    * @param eventValues - Параметры события
    */
   logEvent(eventName: string, eventValues: Record<string, any> = {}): void {
-    if (!this.isInitialized) {
-      console.warn('[AppsFlyer] Service not initialized. Cannot log event.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
-      appsFlyer.logEvent(eventName, eventValues, (result) => {
-        console.log(`[AppsFlyer] Event logged: ${eventName}`, result);
-      }, (error) => {
-        console.error(`[AppsFlyer] Failed to log event ${eventName}:`, error);
-      });
-    } catch (error) {
-      console.error(`[AppsFlyer] Error logging event ${eventName}:`, error);
+      appsFlyer.logEvent(eventName, eventValues, () => {}, () => {});
+    } catch {
+      // ignore
     }
   }
 
@@ -177,21 +152,14 @@ class AppsFlyerService {
    * @param userData - Данные пользователя
    */
   setUserData(userId: string, userData: Record<string, any> = {}): void {
-    if (!this.isInitialized) {
-      console.warn('[AppsFlyer] Service not initialized. Cannot set user data.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
-      // Установка customer user ID
       appsFlyer.setCustomerUserId(userId);
-
-      // Установка дополнительных данных пользователя
       if (Object.keys(userData).length > 0) {
         appsFlyer.setAdditionalData(userData);
       }
-    } catch (error) {
-      console.error('[AppsFlyer] Error setting user data:', error);
+    } catch {
+      // ignore
     }
   }
 

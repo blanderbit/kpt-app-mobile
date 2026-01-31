@@ -37,7 +37,6 @@ export default function TenthStep({onNext}: { onNext: () => void }) {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEYS.AGE, JSON.stringify(age));
         } catch (error) {
-            console.error('Error saving age:', error);
         }
     };
 

@@ -32,15 +32,7 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
             
             if (articleId && !isNaN(articleId) && !hasCalledHideRef.current) {
                 hasCalledHideRef.current = true;
-                console.log('📰 [ArticleScreen] Вызываем hideArticle для ID:', articleId);
-                hideArticleMutation.mutate(articleId, {
-                    onSuccess: () => {
-                        console.log('📰 [ArticleScreen] ✅ Статья успешно скрыта');
-                    },
-                    onError: (error) => {
-                        console.error('📰 [ArticleScreen] ❌ Ошибка при скрытии статьи:', error);
-                    },
-                });
+                hideArticleMutation.mutate(articleId);
             }
             
             // Сбрасываем флаг при размонтировании (когда уходим с экрана)
@@ -50,14 +42,6 @@ export default function ArticleScreen({ navigation, route }: { navigation: Artic
         }, [articleId]) // Убрали hideArticleMutation из зависимостей
     );
 
-    useEffect(() => {
-        if (article) {
-            console.log('📰 [ArticleScreen] ✅ Статья загружена:', {
-                id: article.id,
-                title: article.title,
-            });
-        }
-    }, [article]);
 
     const onBack = () => {
         // Событие: закрытие артикла

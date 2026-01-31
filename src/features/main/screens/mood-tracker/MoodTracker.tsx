@@ -79,8 +79,7 @@ export default function MoodTracker({ visible, onClose }: { visible: boolean, on
                 handleClose();
 
                 showToast({message: t('toast.moodSuccessfullyTracked'), type: 'success'})
-            } catch (error) {
-                console.error('Ошибка сохранения настроения:', error);
+            } catch {
                 showToast({message: t('toast.moodNotTracked'), type: 'error'})
             }
         }

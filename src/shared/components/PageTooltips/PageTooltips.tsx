@@ -59,8 +59,7 @@ export const PageTooltips = ({
       try {
         // Вызываем API для закрытия тултипа
         await closeTooltipMutation.mutateAsync(currentTooltip.id);
-      } catch (error) {
-        console.error('Ошибка при закрытии тултипа:', error);
+      } catch {
         // Продолжаем выполнение даже если API вызов не удался
       }
     }

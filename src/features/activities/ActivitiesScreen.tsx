@@ -163,23 +163,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         }, [refetchMyActivities])
     );
 
-    // Debug logs для myActivities с бекенда
-    useEffect(() => {
-        if (myActivities?.data) {
-            console.log('📋 [ActivitiesScreen] Мои активности с бекенда:', {
-                totalCount: myActivities.data.length,
-                activities: myActivities.data.map(activity => ({
-                    id: activity.id,
-                    activityName: activity.activityName,
-                    activityType: activity.activityType,
-                    position: activity.position,
-                    status: activity.status,
-                })),
-                fullData: JSON.stringify(myActivities.data, null, 2)
-            });
-        }
-    }, [myActivities?.data]);
-
     const updateActivityState = useCallback((value: string) => {
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
@@ -216,7 +199,6 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                 amplitudeAnalyticsService.trackEvent('Activities Create Activity', {
                     activity_name: activityValue,
                 });
-                console.log('✅ Activity created successfully:', data);
                 showToast({ message: t('toast.activitySuccessfullyAdded'), type: "success" });
                 activityValueRef.current = '';
                 setNewActivity("");
@@ -308,17 +290,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
         if (from === to) return;
 
         const movedActivity = data[to];
-        // Передаем индекс напрямую (0-based), как ожидает бэкенд
         const newPosition = to;
-
-        console.log('🔄 [handleDragEnd] Перемещение активности:', {
-            activityId: movedActivity.id,
-            activityName: movedActivity.activityName,
-            from,
-            to,
-            oldPosition: movedActivity.position,
-            newPosition,
-        });
 
         // Обновляем локальное состояние сразу (для мгновенного отклика UI)
         const updatedData = data.map((activity, index) => ({
@@ -353,15 +325,13 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                         from_position: from,
                         to_position: to,
                     });
-                    console.log('✅ [handleDragEnd] Позиция успешно обновлена');
                     // Инвалидируем кэш для синхронизации с сервером
                     queryClient.invalidateQueries({ queryKey: ['activities'] });
                     queryClient.invalidateQueries({ queryKey: ['activities', 'my'] });
                     // Не сбрасываем локальное состояние, так как оно уже обновлено оптимистично
                     // После refetch данные синхронизируются автоматически через useEffect
                 },
-                onError: (error) => {
-                    console.error('❌ [handleDragEnd] Ошибка обновления позиции:', error);
+                onError: () => {
                     showToast({ message: t('toast.failedToUpdateActivityPosition'), type: "error" });
                     // Откатываем оптимистичное обновление
                     if (previousData) {

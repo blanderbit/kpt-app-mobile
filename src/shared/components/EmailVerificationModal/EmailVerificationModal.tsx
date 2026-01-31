@@ -41,14 +41,11 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   // Отправляем код подтверждения при открытии модала
   useEffect(() => {
     if (visible) {
-      console.log('EmailVerificationModal opened, sending verification email...');
       sendVerificationEmailMutation.mutate(undefined, {
         onSuccess: () => {
-          console.log('Verification email sent successfully');
           setResendSecondsLeft(60);
         },
-        onError: (error) => {
-          console.error('Failed to send verification email:', error);
+        onError: () => {
           Alert.alert(
             t('main.today.emailVerification.modal.errorTitle'),
             t('main.today.emailVerification.modal.sendFailed'),
@@ -105,8 +102,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
           },
         ]
       );
-    } catch (error: any) {
-      console.error('Email verification error:', error);
+    } catch {
       Alert.alert(
         t('main.today.emailVerification.modal.errorTitle'),
         t('main.today.emailVerification.modal.errorMessage'),
@@ -117,10 +113,8 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
 
   const handleResendCode = () => {
     if (resendSecondsLeft > 0) return;
-    console.log('Resending verification code...');
     sendVerificationEmailMutation.mutate(undefined, {
       onSuccess: () => {
-        console.log('Verification code resent successfully');
         Alert.alert(
           t('main.today.emailVerification.modal.resendSuccessTitle'),
           t('main.today.emailVerification.modal.resendSuccessMessage'),
@@ -128,8 +122,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
         );
         setResendSecondsLeft(60);
       },
-      onError: (error) => {
-        console.error('Failed to resend verification code:', error);
+      onError: () => {
         Alert.alert(
           t('main.today.emailVerification.modal.errorTitle'),
           t('main.today.emailVerification.modal.resendFailed'),

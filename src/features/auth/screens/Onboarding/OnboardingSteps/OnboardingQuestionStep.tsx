@@ -52,7 +52,6 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
                 }
             }
         } catch (error) {
-            console.error('Error loading saved question answers:', error);
         }
     };
 
@@ -65,7 +64,6 @@ export default function OnboardingQuestionStep({questionIndex, onNext}: Onboardi
             parsedData[currentQuestion.stepName] = answers;
             await AsyncStorage.setItem(ONBOARDING_KEYS.QUESTIONS, JSON.stringify(parsedData));
         } catch (error) {
-            console.error('Error saving question answers:', error);
         }
     };
 

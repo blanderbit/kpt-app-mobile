@@ -56,8 +56,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                     onPress: async () => {
                         try {
                             await logout();
-                        } catch (error) {
-                            console.error('❌ Ошибка выхода:', error);
+                        } catch {
                             Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.logoutError'), [{ text: t('ok') }]);
                         }
                     },
@@ -86,7 +85,6 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                                 [{ text: t('ok') }]
                             );
                         } catch (error: any) {
-                            console.error('❌ Ошибка удаления аккаунта:', error);
                             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('main.profile.settings.deleteAccountError'));
                             Alert.alert(
                                 t('main.profile.settings.error'),
@@ -167,8 +165,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                         Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'), [{ text: t('ok') }]);
                     }
                 })
-                .catch((err) => {
-                    console.error('Ошибка при открытии почты:', err);
+                .catch(() => {
                     Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.mailClientError'), [{ text: t('ok') }]);
                 });
         } else if (nested.label === 'main.profile.settings.privacyPolicy') {
@@ -186,8 +183,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                         Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                     }
                 })
-                .catch((err) => {
-                    console.error('Ошибка при открытии ссылки:', err);
+                .catch(() => {
                     Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                 });
         } else if (nested.label === 'main.profile.settings.termsConditions') {
@@ -205,8 +201,7 @@ export default function ProfileScreen({ navigation }: { navigation: ProfileScree
                         Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                     }
                 })
-                .catch((err) => {
-                    console.error('Ошибка при открытии ссылки:', err);
+                .catch(() => {
                     Alert.alert(t('main.profile.settings.error'), t('main.profile.settings.linkError'), [{ text: t('ok') }]);
                 });
         }

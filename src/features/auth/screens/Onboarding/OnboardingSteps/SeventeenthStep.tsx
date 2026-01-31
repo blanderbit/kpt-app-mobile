@@ -28,13 +28,9 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     };
 
     const handleGoogleSignIn = async () => {
-        console.log('🔵 [SeventeenthStep] Google sign up clicked');
         try {
-            console.log('🔵 [SeventeenthStep] Calling signUpWithGoogle...');
             await signUpWithGoogle();
-            console.log('✅ [SeventeenthStep] Google sign up successful');
         } catch (error: any) {
-            console.error('❌ [SeventeenthStep] Google sign up error:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.googleSignInErrorMessage'));
             Alert.alert(
                 t('auth.signUp.googleSignInError'),
@@ -45,13 +41,9 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     };
 
     const handleAppleSignIn = async () => {
-        console.log('🍎 [SeventeenthStep] Apple sign up clicked');
         try {
-            console.log('🍎 [SeventeenthStep] Calling signUpWithApple...');
             await signUpWithApple();
-            console.log('✅ [SeventeenthStep] Apple sign up successful');
         } catch (error: any) {
-            console.error('❌ [SeventeenthStep] Apple sign up error:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.appleSignInErrorMessage'));
             Alert.alert(
                 t('auth.signUp.appleSignInError'),

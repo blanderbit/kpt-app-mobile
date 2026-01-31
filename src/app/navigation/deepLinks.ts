@@ -310,7 +310,6 @@ export function parseDeepLink(url: string): { route: Routes; params: any } | nul
     // Находим конфигурацию по пути
     const config = Object.values(DEEP_LINKS).find(link => link.path === path);
     if (!config) {
-      console.warn(`[DeepLink] Unknown path: ${path}`);
       return null;
     }
 
@@ -325,15 +324,12 @@ export function parseDeepLink(url: string): { route: Routes; params: any } | nul
 
     // Проверяем обязательные параметры
     if (config.route === Routes.ARTICLE && !params.id) {
-      console.warn('[DeepLink] Missing required parameter "id" for ARTICLE route');
       return null;
     }
     if (config.route === Routes.SURVEY && !params.id) {
-      console.warn('[DeepLink] Missing required parameter "id" for SURVEY route');
       return null;
     }
     if (config.route === Routes.CHECK_EMAIL && !params.email) {
-      console.warn('[DeepLink] Missing required parameter "email" for CHECK_EMAIL route');
       return null;
     }
 
@@ -341,8 +337,7 @@ export function parseDeepLink(url: string): { route: Routes; params: any } | nul
       route: config.route,
       params,
     };
-  } catch (error) {
-    console.error('[DeepLink] Error parsing deep link:', error);
+  } catch {
     return null;
   }
 }

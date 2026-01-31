@@ -42,7 +42,6 @@ export default function EleventhStep({onNext}: { onNext: () => void }) {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEYS.TASK_METHOD, JSON.stringify(method));
         } catch (error) {
-            console.error('Error saving task tracking method:', error);
         }
     };
 

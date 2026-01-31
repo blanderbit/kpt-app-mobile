@@ -74,7 +74,6 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
     useEffect(() => {
         const loadSubscriptionPlans = async () => {
             if (!revenueCatService.getInitialized()) {
-                console.warn('[RevenueCat] Not initialized yet, cannot load plans');
                 setIsLoadingPlans(false);
                 return;
             }
@@ -84,11 +83,6 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                 const products = await revenueCatService.getProducts(REVENUECAT_PRODUCT_IDENTIFIERS);
 
                 if (!products || products.length === 0) {
-                    console.warn('[RevenueCat] No products found. This might be because:');
-                    console.warn('1. Products are not approved in App Store Connect yet');
-                    console.warn('2. Products are not configured correctly in RevenueCat Dashboard');
-                    console.warn('3. Using StoreKit Configuration file in development');
-                    console.warn('Products will be available once approved in App Store Connect.');
                     setIsLoadingPlans(false);
                     return;
                 }
@@ -192,21 +186,9 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     });
                 }
 
-                if (plans.length === 0) {
-                    console.warn('[RevenueCat] No valid subscription plans found. Products might not be available yet.');
-                    console.warn('Please ensure products are approved in App Store Connect.');
-                } else {
-                    console.log(`[RevenueCat] Successfully loaded ${plans.length} subscription plan(s)`);
-                }
-                
                 setSubscriptionPlans(plans);
-            } catch (error: any) {
-                console.error('[RevenueCat] Error loading subscription plans:', error);
-                // Не показываем критическую ошибку пользователю, просто логируем
-                // Это нормально для development, когда продукты еще не одобрены
-                if (error?.message?.includes('configuration') || error?.message?.includes('App Store Connect')) {
-                    console.warn('[RevenueCat] Configuration issue detected. This is expected if products are not yet approved in App Store Connect.');
-                }
+            } catch {
+                // планы не загрузились (например, продукты не одобрены в App Store Connect)
             } finally {
                 setIsLoadingPlans(false);
             }
@@ -249,25 +231,22 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
         const selectedPlan = subscriptionPlans.find(plan => plan.id === selectedSubscription);
 
         if (!selectedPlan || !selectedPlan.product) {
-            console.warn('[RevenueCat] Selected plan or product not found');
             return;
         }
 
         if (!revenueCatService.getInitialized()) {
-            console.warn('[RevenueCat] Not initialized yet, cannot purchase');
             return;
         }
 
         setIsPurchasing(true);
         try {
-            await revenueCatService.purchaseProduct(selectedPlan.product);
+            const customerInfo = await revenueCatService.purchaseProduct(selectedPlan.product);
+            await revenueCatService.logPurchaseForBackend(customerInfo);
             onNext();
         } catch (e: any) {
-            // В библиотеке обычно есть e.userCancelled
             if (e?.userCancelled) {
                 return;
             }
-            console.error('[RevenueCat] Purchase failed:', e);
             Alert.alert(
                 t('subscriptionOffering.startTrial.purchaseErrorTitle'),
                 t('subscriptionOffering.startTrial.purchaseErrorMessage'),

@@ -38,7 +38,6 @@ export default function FourthStep({onNext}: FourthStepProps) {
                 setSelectedMoodType(savedData);
             }
         } catch (error) {
-            console.error('Error loading saved mood selection:', error);
         }
     };
 
@@ -46,7 +45,6 @@ export default function FourthStep({onNext}: FourthStepProps) {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEYS.MOOD, mood);
         } catch (error) {
-            console.error('Error saving mood selection:', error);
         }
     };
 

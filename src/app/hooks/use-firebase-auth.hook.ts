@@ -62,33 +62,17 @@ export const useFirebaseAuth = () => {
   };
 
   const signUpWithGoogle = async () => {
-    console.log('🔵 [useFirebaseAuth] signUpWithGoogle called');
     try {
       setIsLoading(true);
       setError(null);
-
-      console.log('🔵 [useFirebaseAuth] Getting Firebase token from Google...');
-      // Получаем Firebase токен от Google
       const firebaseToken = await signInGoogle();
-      
       if (!firebaseToken) {
         throw new Error('Не удалось получить токен от Google');
       }
-      
-      console.log('🔵 [useFirebaseAuth] Firebase token received, loading onboarding data...');
-      // Загружаем данные онбординга
       const onboardingData = await loadAllOnboardingData();
-      console.log('🔵 [useFirebaseAuth] Onboarding data loaded:', onboardingData);
-      console.log('🔵 [useFirebaseAuth] feelingToday:', onboardingData.feelingToday);
-      
-      console.log('🔵 [useFirebaseAuth] Calling registerWithFirebase...');
-      // Регистрируемся в ваше API с Firebase токеном
       await registerWithFirebase(firebaseToken, onboardingData);
-      
-      console.log('✅ [useFirebaseAuth] Registration successful');
       return firebaseToken;
     } catch (error: any) {
-      console.error('❌ [useFirebaseAuth] signUpWithGoogle error:', error);
       const errorMessage = error.message || 'Не удалось зарегистрироваться через Google';
       setError(errorMessage);
       throw error;
@@ -98,35 +82,19 @@ export const useFirebaseAuth = () => {
   };
 
   const signUpWithApple = async () => {
-    console.log('🍎 [useFirebaseAuth] signUpWithApple called');
     try {
       setIsLoading(true);
       setError(null);
-      
-      console.log('🍎 [useFirebaseAuth] Getting Firebase token from Apple...');
-      // Получаем Firebase токен от Apple
       const firebaseToken = Platform.OS === "ios" 
         ? await signInAppleIos() 
         : await signInAppleAndroid();
-      
       if (!firebaseToken) {
         throw new Error('Не удалось получить токен от Apple');
       }
-      
-      console.log('🍎 [useFirebaseAuth] Firebase token received, loading onboarding data...');
-      // Загружаем данные онбординга
       const onboardingData = await loadAllOnboardingData();
-      console.log('🍎 [useFirebaseAuth] Onboarding data loaded:', onboardingData);
-      console.log('🍎 [useFirebaseAuth] feelingToday:', onboardingData.feelingToday);
-      
-      console.log('🍎 [useFirebaseAuth] Calling registerWithFirebase...');
-      // Регистрируемся в ваше API с Firebase токеном
       await registerWithFirebase(firebaseToken, onboardingData);
-      
-      console.log('✅ [useFirebaseAuth] Registration successful');
       return firebaseToken;
     } catch (error: any) {
-      console.error('❌ [useFirebaseAuth] signUpWithApple error:', error);
       const errorMessage = error.message || 'Не удалось зарегистрироваться через Apple';
       setError(errorMessage);
       throw error;

@@ -21,7 +21,6 @@ class AmplitudeAnalyticsService {
    */
   async initialize(userEmail?: string): Promise<void> {
     if (this.isInitialized) {
-      console.log('[Analytics] Already initialized');
       // Если уже инициализирован, но передан новый email, обновляем его
       if (userEmail) {
         this.setUser(userEmail);
@@ -33,14 +32,12 @@ class AmplitudeAnalyticsService {
       await init(AMPLITUDE_API_KEY, userEmail || '', { disableCookies: true }).promise;
 
       this.isInitialized = true;
-      console.log('[Analytics] Amplitude initialized successfully');
-      
       // Устанавливаем email как userId сразу после инициализации, если он передан
       if (userEmail) {
         this.setUser(userEmail);
       }
-    } catch (error) {
-      console.error('[Analytics] Failed to initialize Amplitude:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -50,16 +47,11 @@ class AmplitudeAnalyticsService {
    * @param properties - Свойства события (опционально)
    */
   trackEvent(eventName: string, properties?: AnalyticsEventProperties): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       track(eventName, properties);
-      console.log(`[Analytics] Event tracked: ${eventName}`, properties);
-    } catch (error) {
-      console.error(`[Analytics] Failed to track event ${eventName}:`, error);
+    } catch {
+      // ignore
     }
   }
 
@@ -68,16 +60,11 @@ class AmplitudeAnalyticsService {
    * @param userId - ID пользователя
    */
   setUser(userId: string | null): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       setUserId(userId);
-      console.log(`[Analytics] User ID set: ${userId}`);
-    } catch (error) {
-      console.error('[Analytics] Failed to set user ID:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -86,11 +73,7 @@ class AmplitudeAnalyticsService {
    * @param properties - Свойства пользователя
    */
   setUserProperties(properties: UserProperties): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       const identifyObj = new Identify();
       Object.keys(properties).forEach((key) => {
@@ -100,9 +83,8 @@ class AmplitudeAnalyticsService {
         }
       });
       identify(identifyObj);
-      console.log('[Analytics] User properties set:', properties);
-    } catch (error) {
-      console.error('[Analytics] Failed to set user properties:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -112,18 +94,13 @@ class AmplitudeAnalyticsService {
    * @param value - Значение
    */
   addUserProperty(property: string, value: string | number | boolean): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       const identifyObj = new Identify();
       identifyObj.set(property, value);
       identify(identifyObj);
-      console.log(`[Analytics] User property added: ${property} = ${value}`);
-    } catch (error) {
-      console.error(`[Analytics] Failed to add user property ${property}:`, error);
+    } catch {
+      // ignore
     }
   }
 
@@ -133,16 +110,11 @@ class AmplitudeAnalyticsService {
    * @param groupName - Название группы
    */
   setUserGroup(groupType: string, groupName: string): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       setGroup(groupType, groupName);
-      console.log(`[Analytics] User group set: ${groupType} = ${groupName}`);
-    } catch (error) {
-      console.error('[Analytics] Failed to set user group:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -163,16 +135,11 @@ class AmplitudeAnalyticsService {
    * @param revenue - Объект с данными о покупке
    */
   trackRevenue(revenue: Revenue): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       track('Revenue', undefined, { revenue });
-      console.log('[Analytics] Revenue tracked:', revenue);
-    } catch (error) {
-      console.error('[Analytics] Failed to track revenue:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -180,16 +147,11 @@ class AmplitudeAnalyticsService {
    * Принудительная отправка всех накопленных событий
    */
   async flush(): Promise<void> {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       await flush().promise;
-      console.log('[Analytics] Events flushed');
-    } catch (error) {
-      console.error('[Analytics] Failed to flush events:', error);
+    } catch {
+      // ignore
     }
   }
 
@@ -197,16 +159,11 @@ class AmplitudeAnalyticsService {
    * Очистка данных пользователя (при выходе)
    */
   clearUser(): void {
-    if (!this.isInitialized) {
-      console.warn('[Analytics] Not initialized. Call initialize() first.');
-      return;
-    }
-
+    if (!this.isInitialized) return;
     try {
       setUserId(null);
-      console.log('[Analytics] User data cleared');
-    } catch (error) {
-      console.error('[Analytics] Failed to clear user data:', error);
+    } catch {
+      // ignore
     }
   }
 }

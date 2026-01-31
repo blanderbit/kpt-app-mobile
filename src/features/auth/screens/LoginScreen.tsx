@@ -39,9 +39,7 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
 
     // Очищаем данные онбординга при попадании на страницу логина
     useEffect(() => {
-        clearOnboardingData().catch(error => {
-            console.error('Error clearing onboarding data on login screen:', error);
-        });
+        clearOnboardingData().catch(() => {});
     }, []);
 
     const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -53,12 +51,10 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     });
 
     const onSubmit = async (data: FormData) => {
-        console.log('📝 Форма отправлена:', data);
         try {
             setIsSubmitting(true);
             await login(data.email, data.password);
         } catch (error: any) {
-            console.error('❌ Ошибка в onSubmit:', error);
             const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.loginErrorMessage'));
             Alert.alert(
                 t('auth.loginError'),

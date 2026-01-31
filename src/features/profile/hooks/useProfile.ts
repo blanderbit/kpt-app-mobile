@@ -42,9 +42,7 @@ export const useUpdateProfile = () => {
       // Инвалидируем связанные запросы
       queryClient.invalidateQueries({ queryKey: ['auth'] });
     },
-    onError: (error) => {
-      console.error('Ошибка обновления профиля:', error);
-    },
+    onError: () => {},
   });
 };
 
@@ -52,9 +50,7 @@ export const useUpdateProfile = () => {
 export const useChangeEmail = () => {
   return useMutation({
     mutationFn: (data: ChangeEmailRequest) => profileService.changeEmail(data),
-    onError: (error) => {
-      console.error('Ошибка смены email:', error);
-    },
+    onError: () => {},
   });
 };
 
@@ -62,9 +58,7 @@ export const useChangeEmail = () => {
 export const useConfirmEmailChange = () => {
   return useMutation({
     mutationFn: (data: ConfirmEmailChangeRequest) => profileService.confirmEmailChange(data),
-    onError: (error) => {
-      console.error('Ошибка подтверждения смены email:', error);
-    },
+    onError: () => {},
   });
 };
 
@@ -72,9 +66,7 @@ export const useConfirmEmailChange = () => {
 export const useChangePassword = () => {
   return useMutation({
     mutationFn: (data: ChangePasswordRequest) => profileService.changePassword(data),
-    onError: (error) => {
-      console.error('Ошибка смены пароля:', error);
-    },
+    onError: () => {},
   });
 };
 
@@ -88,8 +80,6 @@ export const useDeleteAccount = () => {
       // Очищаем все данные после удаления аккаунта
       queryClient.clear();
     },
-    onError: (error) => {
-      console.error('Ошибка удаления аккаунта:', error);
-    },
+    onError: () => {},
   });
 };
