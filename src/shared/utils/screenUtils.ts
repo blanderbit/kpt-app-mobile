@@ -2,6 +2,16 @@ import { Dimensions, Platform, DimensionValue } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+// Минимальная ширина для определения планшета (iPad mini ~768, многие планшеты от 600)
+const TABLET_MIN_WIDTH = 600;
+
+/**
+ * Проверяет, работает ли приложение на планшете
+ */
+export const isTablet = (): boolean => {
+    return SCREEN_WIDTH >= TABLET_MIN_WIDTH;
+};
+
 // Размеры экранов iPhone (высота в портретной ориентации)
 export const SCREEN_SIZES = {
     // Маленькие экраны (iPhone 7, 8, SE)

@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert} from "react-native";
+import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ScrollView} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -7,6 +7,7 @@ import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
 import {LinearGradient} from "expo-linear-gradient";
 import {COLORS} from "@app/theme";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
+import { isTablet } from "@shared/utils/screenUtils";
 import { revenueCatService } from "@shared/services/revenuecat";
 import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
 import { PurchasesStoreProduct } from "react-native-purchases";
@@ -258,10 +259,11 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
     };
 
     const isSettingsVariant = variant === 'settings';
+    const tabletMode = isTablet();
 
-    return (
-        <View style={[styles.container, theme.flexBlocks.vertical16]}>
-            <View style={[styles.content, theme.flexBlocks.vertical16]}>
+    const content = (
+        <>
+            <View style={[styles.content, tabletMode && styles.contentTablet, theme.flexBlocks.vertical16]}>
                 <View style={theme.flexBlocks.vertical8}>
                     {!isSettingsVariant && (
                         <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
@@ -280,7 +282,7 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     )}
                 </View>
 
-                <View style={[styles.periodContainer]}>
+                <View style={[styles.periodContainer, tabletMode && styles.periodContainerTablet]}>
                     {subscriptionSteps.map((step, index) => (
                         <View
                             key={index}
@@ -316,7 +318,11 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     </LinearGradient>
                 </View>
 
-                <View style={[styles.subscriptionContainer, theme.flexBlocks.vertical8]}>
+                <View style={[
+                    styles.subscriptionContainer,
+                    tabletMode && styles.subscriptionContainerTablet,
+                    theme.flexBlocks.vertical8
+                ]}>
                     {isLoadingPlans ? (
                         <View style={styles.loadingContainer}>
                             <Text style={theme.fonts.regular}>{t('subscriptionOffering.startTrial.loadingPlans')}</Text>
@@ -337,10 +343,15 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                             >
                                 <View style={[
                                     styles.subscriptionBlock,
+                                    tabletMode && styles.subscriptionBlockTablet,
                                     isSelected && styles.subscriptionBlockSelected
                                 ]}>
-                                    <View style={[theme.flexBlocks.justifySpaceBetween, theme.flexBlocks.alignCenter]}>
-                                        <View>
+                                    <View style={[
+                                        theme.flexBlocks.justifySpaceBetween,
+                                        theme.flexBlocks.alignCenter,
+                                        tabletMode && styles.subscriptionBlockRowTablet
+                                    ]}>
+                                        <View style={tabletMode && styles.subscriptionBlockLeftTablet}>
                                             <Text style={[
                                                 styles.subscriptionTitle,
                                                 isSelected && styles.subscriptionTitleSelected
@@ -360,10 +371,14 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                                             )}
                                         </View>
 
-                                        <Text style={[
-                                            styles.subscriptionPrice,
-                                            isSelected && styles.subscriptionPriceSelected
-                                        ]}>
+                                        <Text
+                                            style={[
+                                                styles.subscriptionPrice,
+                                                isSelected && styles.subscriptionPriceSelected,
+                                                tabletMode && styles.subscriptionPriceTablet
+                                            ]}
+                                            numberOfLines={1}
+                                        >
                                             {plan.pricePerMonth || plan.price}
                                         </Text>
                                     </View>
@@ -383,7 +398,7 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                 </View>
             </View>
 
-            <View style={theme.flexBlocks.vertical16}>
+            <View style={[theme.flexBlocks.vertical16, tabletMode && styles.buttonsSectionTablet]}>
                 <View style={styles.subscriptionDescription}>
                     {(() => {
                         const selectedPlan = subscriptionPlans.find(plan => plan.id === selectedSubscription);
@@ -435,6 +450,27 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     )}
                 </View>
             </View>
+        </>
+    );
+
+    if (tabletMode) {
+        return (
+            <ScrollView
+                style={styles.container}
+                contentContainerStyle={styles.scrollContentTablet}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+            >
+                <View style={styles.tabletInner}>
+                    {content}
+                </View>
+            </ScrollView>
+        );
+    }
+
+    return (
+        <View style={[styles.container, theme.flexBlocks.vertical16]}>
+            {content}
         </View>
     );
 }
@@ -443,8 +479,25 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    scrollContentTablet: {
+        flexGrow: 1,
+        paddingBottom: 24,
+    },
+    tabletInner: {
+        maxWidth: 480,
+        width: '100%',
+        alignSelf: 'center',
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+    },
     content: {
         flex: 1,
+    },
+    contentTablet: {
+        flex: 0,
+    },
+    buttonsSectionTablet: {
+        marginTop: 16,
     },
     textCenter: {
         textAlign: 'center',
@@ -456,6 +509,10 @@ const styles = StyleSheet.create({
         opacity: .6
     },
     periodContainer: {},
+    periodContainerTablet: {
+        maxWidth: '100%',
+        overflow: 'hidden',
+    },
     iconBlockContainer: {
         borderRadius: 44,
         position: 'absolute',
@@ -482,6 +539,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 12
     },
+    subscriptionContainerTablet: {
+        maxWidth: '100%',
+        overflow: 'hidden',
+    },
     subscriptionBlock: {
         position: 'relative',
         padding: 12,
@@ -489,8 +550,21 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#D6D8DD',
     },
+    subscriptionBlockTablet: {
+        minWidth: 0,
+    },
+    subscriptionBlockRowTablet: {
+        minWidth: 0,
+    },
+    subscriptionBlockLeftTablet: {
+        flex: 1,
+        minWidth: 0,
+    },
     subscriptionBlockSelected: {
         borderColor: '#246B56'
+    },
+    subscriptionPriceTablet: {
+        flexShrink: 0,
     },
     subscriptionTitle: {
         fontSize: 14,
