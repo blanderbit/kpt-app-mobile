@@ -335,6 +335,7 @@
     "activityAddedToList": "Activity added to your list",
     "suggestedActivityRemoved": "Suggested activity removed",
     "failedToRemoveSuggestedActivity": "Failed to remove suggested activity",
+    "suggestedActivitiesLimitReached": "You can add only one suggested activity without a subscription. Upgrade to add more.",
     "failedToUpdateActivityPosition": "Failed to update activity position",
     "activityRestored": "Activity restored",
     "failedToRestoreActivity": "Failed to restore activity",

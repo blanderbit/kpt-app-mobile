@@ -335,6 +335,7 @@
     "activityAddedToList": "Активність додана до вашого списку",
     "suggestedActivityRemoved": "Запропонована активність видалена",
     "failedToRemoveSuggestedActivity": "Не вдалося видалити запропоновану активність",
+    "suggestedActivitiesLimitReached": "Без підписки можна додати лише одну активність із запропонованих. Оформіть підписку, щоб додати більше.",
     "failedToUpdateActivityPosition": "Не вдалося оновити позицію активності",
     "activityRestored": "Активність відновлена",
     "failedToRestoreActivity": "Не вдалося відновити активність",

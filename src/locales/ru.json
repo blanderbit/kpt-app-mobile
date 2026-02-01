@@ -334,6 +334,7 @@
     "activityAddedToList": "Активность добавлена в ваш список",
     "suggestedActivityRemoved": "Предложенная активность удалена",
     "failedToRemoveSuggestedActivity": "Не удалось удалить предложенную активность",
+    "suggestedActivitiesLimitReached": "Без подписки можно добавить только одну активность из предложенных. Оформите подписку, чтобы добавить больше.",
     "failedToUpdateActivityPosition": "Не удалось обновить позицию активности",
     "activityRestored": "Активность восстановлена",
     "failedToRestoreActivity": "Не удалось восстановить активность",

@@ -185,6 +185,8 @@ export interface Activity {
   content?: string;
   position: number;
   status: 'active' | 'closed';
+  /** Whether this activity was created from a suggested activity */
+  fromSuggestedActivity?: boolean;
   closedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -199,6 +201,8 @@ export interface ActivityResponse {
   content?: string;
   position: number;
   status: 'active' | 'closed';
+  /** Whether this activity was created from a suggested activity */
+  fromSuggestedActivity?: boolean;
   closedAt?: string;
   createdAt: string;
   updatedAt: string;

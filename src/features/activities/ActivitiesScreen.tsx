@@ -38,9 +38,9 @@ import {
     useChangeActivityPosition,
     useArchivedActivities,
     useRestoreActivity,
-    useSubscriptionSummary,
     queryKeys
 } from '@shared/services/api/hooks';
+import { useRevenueCatSubscription } from '@shared/hooks/useRevenueCatSubscription';
 import { Activity } from '@shared/services/api/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { TabScreenContainer } from '@shared/components/TabScreenContainer/TabScreenContainer';
@@ -50,16 +50,13 @@ import { useFocusEffect } from '@react-navigation/native';
 const FREE_ACTIVITIES_LIMIT = 3;
 
 export default function ActivitiesScreen({ navigation }: { navigation: ActivitiesScreenNavigationProp }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { theme } = useCustomTheme();
     const { showToast } = useToast();
     const isSmall = isSmallScreen();
     const activityMaxWidth = isSmall ? getResponsiveActivityMaxWidth() : '70%';
 
-    const lang = (i18n.language || 'en').split('-')[0];
-    const { data: subscriptionSummaryResponse } = useSubscriptionSummary(lang);
-    const subscriptionSummary = subscriptionSummaryResponse?.subscription ?? null;
-    const hasActiveSubscription = subscriptionSummary?.status === 'active';
+    const { hasActiveSubscription } = useRevenueCatSubscription();
 
     const [ satisfaction, setSatisfaction ] = useState(0)
     const [ achieveness, setAchieveness ] = useState(0)
@@ -86,6 +83,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
 
     const activitiesCount = (localActivities || myActivities?.data)?.length ?? 0;
     const isActivitiesLimitReached = !hasActiveSubscription && activitiesCount >= FREE_ACTIVITIES_LIMIT;
+
+    const activitiesList = localActivities ?? myActivities?.data ?? [];
+    const suggestedActivitiesInMyCount = activitiesList.filter((a) => a.fromSuggestedActivity === true).length;
+    const isSuggestedLimitReachedWithoutSubscription = !hasActiveSubscription && suggestedActivitiesInMyCount >= 1;
 
     // Синхронизируем локальное состояние с данными из API
     // Сбрасываем локальное состояние только если данные изменились и мы не в процессе drag
@@ -250,6 +251,10 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
     const handleAddSuggestedActivity = (suggestedActivityId: number) => {
         if (isActivitiesLimitReached) {
             showToast({ message: t('toast.activitiesLimitReached'), type: "error" });
+            return;
+        }
+        if (isSuggestedLimitReachedWithoutSubscription) {
+            showToast({ message: t('toast.suggestedActivitiesLimitReached'), type: "error" });
             return;
         }
         addSuggestedActivityMutation.mutate({
@@ -554,7 +559,7 @@ export default function ActivitiesScreen({ navigation }: { navigation: Activitie
                                                   onPress={ () => handleAddSuggestedActivity(activity.id) }
                                                   buttonStyle={ [ styles.addBtn, styles.addBtnFixed ] }
                                                   contentStyle={ { gap: 4 } }
-                                                  disabled={ isActivitiesLimitReached }>
+                                                  disabled={ isActivitiesLimitReached || isSuggestedLimitReachedWithoutSubscription }>
                                         <PlusIcon color="#fff" size={ 20 }/>
                                     </CustomButton>
                                 </View>
