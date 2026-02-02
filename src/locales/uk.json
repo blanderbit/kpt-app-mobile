@@ -512,7 +512,7 @@
   },
   "onboarding_questions": {
     "improvement_goal": {
-      "step_question": "Що б ви хотіли покращити насамперед із KPT?",
+      "step_question": "Що б ви хотіли покращити насамперед із Plesury?",
       "answers": {
         "more_energy": {
           "text": "Більше енергії",

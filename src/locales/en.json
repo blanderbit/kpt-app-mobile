@@ -512,7 +512,7 @@
   },
   "onboarding_questions": {
     "improvement_goal": {
-      "step_question": "What's the #1 thing you'd love to improve with KPT?",
+      "step_question": "What's the #1 thing you'd love to improve with Plesury?",
       "answers": {
         "more_energy": {
           "text": "More energy",

@@ -511,7 +511,7 @@
   },
   "onboarding_questions": {
     "improvement_goal": {
-      "step_question": "Что бы вы хотели улучшить в первую очередь с KPT?",
+      "step_question": "Что бы вы хотели улучшить в первую очередь с Plesury?",
       "answers": {
         "more_energy": {
           "text": "Больше энергии",
