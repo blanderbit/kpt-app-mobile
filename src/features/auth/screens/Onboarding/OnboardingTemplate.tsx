@@ -29,40 +29,6 @@ import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffer
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { isSmallScreen } from "@shared/utils/screenUtils";
 
-// ЗАХАРДКОЖЕННЫЕ ДАННЫЕ ОНБОРДИНГА ДЛЯ БЫСТРОГО ДОСТУПА К ЭКРАНУ ОПЛАТЫ
-// Скопируйте JSON из console.log перед экраном оплаты и вставьте сюда
-// Затем установите USE_HARDCODED_ONBOARDING_DATA = true для использования
-const USE_HARDCODED_ONBOARDING_DATA = true;
-const HARDCODED_ONBOARDING_DATA = {
-    "mood": "excellent",
-    "socialNetworks": [
-        "facebook"
-    ],
-    "questions": {
-        "improvement_goal": [
-            "more_energy"
-        ],
-        "main_challenge": [
-            "burned_out"
-        ],
-        "life_approach": [
-            "chasing_results"
-        ],
-        "biggest_change": [
-            "health_body"
-        ],
-        "starting_approach": [
-            "small_steps"
-        ],
-        "time_investment": [
-            "up_to_5_min"
-        ]
-    },
-    "selectedActivities": [],
-    "satisfactionLevel": 65,
-    "hardnessLevel": 54
-};
-
 export default function OnboardingTemplate({
                                                navigation,
                                            }: OnboardingTemplateProps) {
@@ -103,7 +69,7 @@ export default function OnboardingTemplate({
         selectedActivities: Array<{ activityName: string; content?: string }>;
         satisfactionLevel?: number;
         hardnessLevel?: number;
-    }>(USE_HARDCODED_ONBOARDING_DATA ? HARDCODED_ONBOARDING_DATA : {
+    }>({
         mood: null,
         socialNetworks: [],
         questions: {},
@@ -580,12 +546,6 @@ export default function OnboardingTemplate({
     };
 
     const onNext = async () => {
-        // Если используется захардкоженная дата, сразу переходим на экран оплаты
-        if (USE_HARDCODED_ONBOARDING_DATA) {
-            showSubscriptionOffering(handleSubscriptionOfferingComplete);
-            return;
-        }
-
         if (currentStep < totalSteps) {
             const newStep = currentStep + 1;
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiError } from './config';
+import { ApiError, getApiLangParam } from './config';
 import {
   authService,
   profileService,
@@ -649,13 +649,11 @@ export const useSurveyById = (id: number) => {
 };
 
 // Subscription hooks
-export const useSubscriptionSummary = (lang?: string) => {
+export const useSubscriptionSummary = () => {
+  const lang = getApiLangParam();
   return useQuery({
     queryKey: queryKeys.subscriptionSummary(lang),
-    queryFn: () =>
-      subscriptionService.getLatestSubscriptionSummary(
-        lang ? { lang } : undefined,
-      ),
+    queryFn: () => subscriptionService.getLatestSubscriptionSummary(),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };

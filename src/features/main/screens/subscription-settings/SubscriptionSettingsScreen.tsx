@@ -37,10 +37,9 @@ function statusToLabelType(s: SubscriptionStatus): LabelType {
 export default function SubscriptionSettingsScreen({ navigation }: {
     navigation: SubscriptionSettingsScreenNavigationProp
 }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { theme } = useCustomTheme();
-    const lang = (i18n.language || "en").split("-")[0];
-    const { data: summaryResponse, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary(lang);
+    const { data: summaryResponse, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary();
     const summary = summaryResponse?.subscription ?? null;
     const { showSubscriptionOffering } = useSubscriptionOffering();
     const [isOpeningManagement, setIsOpeningManagement] = useState(false);

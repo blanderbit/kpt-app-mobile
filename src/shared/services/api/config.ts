@@ -1,7 +1,23 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from 'i18next';
 
 // Базовый URL для API
+
+/**
+ * Возвращает код языка для query-параметра API:
+ * ru — русский, ua — украинский, en — для всех остальных
+ */
+export function getApiLangParam(): string {
+  try {
+    const lng = (i18n.language || i18n.lng || 'en').toLowerCase().split('-')[0];
+    if (lng === 'ru') return 'ru';
+    if (lng === 'ua' || lng === 'uk') return 'ua';
+    return 'en';
+  } catch {
+    return 'en';
+  }
+}
 export const API_BASE_URL = 'https://api.plesury.com';
 
 // Интерфейс для ответа API
@@ -80,7 +96,7 @@ const createApiClient = (): AxiosInstance => {
     },
   });
 
-  // Интерцептор для запросов - добавляем токен авторизации
+  // Интерцептор для запросов - добавляем токен авторизации и параметр языка
   client.interceptors.request.use(
     async (config) => {
       try {
@@ -91,6 +107,8 @@ const createApiClient = (): AxiosInstance => {
       } catch (error) {
         // Игнорируем ошибки получения токена
       }
+      // Добавляем параметр lang ко всем запросам для локализации ответов
+      config.params = { ...config.params, lang: getApiLangParam() };
       return config;
     },
     (error) => {

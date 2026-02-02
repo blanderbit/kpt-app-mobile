@@ -480,8 +480,8 @@ export class SubscriptionService extends ApiService {
     return this.get<Subscription>('/subscriptions/latest');
   }
 
-  async getLatestSubscriptionSummary(params?: { lang?: string }): Promise<SubscriptionSummaryResponse> {
-    return this.get<SubscriptionSummaryResponse>('/subscriptions/latest/summary', params);
+  async getLatestSubscriptionSummary(): Promise<SubscriptionSummaryResponse> {
+    return this.get<SubscriptionSummaryResponse>('/subscriptions/latest/summary');
   }
 
   async cancelSubscription(data: CancelSubscriptionRequest): Promise<CancelSubscriptionResponse> {
