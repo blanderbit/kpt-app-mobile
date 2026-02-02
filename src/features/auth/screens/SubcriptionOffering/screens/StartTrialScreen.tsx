@@ -83,6 +83,27 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                 setIsLoadingPlans(true);
                 const products = await revenueCatService.getProducts(REVENUECAT_PRODUCT_IDENTIFIERS);
 
+                // Лог всех планов из RevenueCat (сырые продукты)
+                console.log('[Subscription Plans] RevenueCat products count:', products?.length ?? 0);
+                products?.forEach((p, index) => {
+                    console.log(`[Subscription Plans] Product ${index}:`, {
+                        identifier: p.identifier,
+                        price: p.price,
+                        priceString: p.priceString,
+                        currencyCode: p.currencyCode,
+                        introPrice: p.introPrice
+                            ? {
+                                price: p.introPrice?.price,
+                                priceString: p.introPrice?.priceString,
+                                period: p.introPrice?.period,
+                                periodUnit: p.introPrice?.periodUnit,
+                                periodNumberOfUnits: p.introPrice?.periodNumberOfUnits,
+                                cycles: p.introPrice?.cycles,
+                            }
+                            : null,
+                    });
+                });
+
                 if (!products || products.length === 0) {
                     setIsLoadingPlans(false);
                     return;
@@ -128,8 +149,8 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
 
                     const descriptionHighlight =
                         savingsPercent !== null
-                            ? t('subscriptionOffering.startTrial.savePercent', { percent: savingsPercent })
-                            : t('subscriptionOffering.startTrial.save58');
+                            ? t('subscriptionOffering.startTrial.savePercentOnly', { percent: savingsPercent })
+                            : t('subscriptionOffering.startTrial.save58Only');
 
                     plans.push({
                         id: 'yearly',
@@ -139,13 +160,13 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                         pricePerMonth: pricePerMonthString,
                         hasFreeTrial: isFreeTrial,
                         freeTrialText: isFreeTrial ? t('subscriptionOffering.startTrial.freeTrial') : null,
-                        descriptionText: t('subscriptionOffering.startTrial.unlimitedAccess'),
+                        descriptionText: t('subscriptionOffering.startTrial.unlimitedAccessOnly'),
                         descriptionHighlight,
                         product: yearlyProduct
                     });
                 }
 
-                // Месячный план с триалом
+                // Месячный план с триалом — только у него показываем "Unlimited free access for 7 days"
                 if (monthlyTrialProduct) {
                     const monthlyPrice = monthlyTrialProduct.priceString || `${monthlyTrialProduct.price}`;
                     const monthlyPriceString = `${monthlyPrice}/mo.`;
@@ -160,9 +181,9 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                         pricePerMonth: null,
                         hasFreeTrial: isFreeTrial,
                         freeTrialText: isFreeTrial ? t('subscriptionOffering.startTrial.freeTrial') : null,
-                        descriptionText: '',
-                        descriptionHighlight: monthlyPriceString.replace('/mo.', '/month'),
-                        descriptionTextAfter: t('subscriptionOffering.startTrial.cancelAnytime'),
+                        descriptionText: t('subscriptionOffering.startTrial.unlimitedAccess'),
+                        descriptionHighlight: t('subscriptionOffering.startTrial.days7'),
+                        descriptionTextAfter: '',
                         product: monthlyTrialProduct
                     });
                 }
@@ -260,6 +281,9 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
 
     const isSettingsVariant = variant === 'settings';
     const tabletMode = isTablet();
+    const displayPlans = isSettingsVariant
+        ? subscriptionPlans.filter(plan => !plan.product?.identifier?.toLowerCase().includes('trial'))
+        : subscriptionPlans;
 
     const content = (
         <>
@@ -327,74 +351,74 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                         <View style={styles.loadingContainer}>
                             <Text style={theme.fonts.regular}>{t('subscriptionOffering.startTrial.loadingPlans')}</Text>
                         </View>
-                    ) : subscriptionPlans.length === 0 ? (
+                    ) : displayPlans.length === 0 ? (
                         <View style={styles.loadingContainer}>
                             <Text style={theme.fonts.regular}>{t('subscriptionOffering.startTrial.noPlansAvailable')}</Text>
                         </View>
                     ) : (
-                        subscriptionPlans.map((plan) => {
-                        const isSelected = selectedSubscription === plan.id;
-
-                        return (
-                            <TouchableOpacity
-                                key={plan.id}
-                                activeOpacity={0.7}
-                                onPress={() => setSelectedSubscription(plan.id)}
-                            >
-                                <View style={[
-                                    styles.subscriptionBlock,
-                                    tabletMode && styles.subscriptionBlockTablet,
-                                    isSelected && styles.subscriptionBlockSelected
-                                ]}>
+                        displayPlans.map((plan) => {
+                            const isSelected = selectedSubscription === plan.id;
+                            return (
+                                <TouchableOpacity
+                                    key={plan.id}
+                                    activeOpacity={0.7}
+                                    onPress={() => setSelectedSubscription(plan.id)}
+                                >
                                     <View style={[
-                                        theme.flexBlocks.justifySpaceBetween,
-                                        theme.flexBlocks.alignCenter,
-                                        tabletMode && styles.subscriptionBlockRowTablet
+                                        styles.subscriptionBlock,
+                                        tabletMode && styles.subscriptionBlockTablet,
+                                        isSelected && styles.subscriptionBlockSelected
                                     ]}>
-                                        <View style={tabletMode && styles.subscriptionBlockLeftTablet}>
-                                            <Text style={[
-                                                styles.subscriptionTitle,
-                                                isSelected && styles.subscriptionTitleSelected
-                                            ]}>
-                                                {plan.title}
+                                        <View style={[
+                                            theme.flexBlocks.justifySpaceBetween,
+                                            theme.flexBlocks.alignCenter,
+                                            tabletMode && styles.subscriptionBlockRowTablet
+                                        ]}>
+                                            <View style={tabletMode && styles.subscriptionBlockLeftTablet}>
+                                                <Text style={[
+                                                    styles.subscriptionTitle,
+                                                    isSelected && styles.subscriptionTitleSelected
+                                                ]}>
+                                                    {plan.title}
+                                                </Text>
+                                                {plan.originalPrice && (
+                                                    <View style={theme.flexBlocks.horizontal4}>
+                                                        <Text
+                                                            style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
+                                                            {plan.originalPrice}
+                                                        </Text>
+                                                        <Text style={styles.subscriptionPrice}>
+                                                            {plan.price}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
+
+                                            <Text
+                                                style={[
+                                                    styles.subscriptionPrice,
+                                                    isSelected && styles.subscriptionPriceSelected,
+                                                    tabletMode && styles.subscriptionPriceTablet
+                                                ]}
+                                                numberOfLines={1}
+                                            >
+                                                {plan.pricePerMonth || plan.price}
                                             </Text>
-                                            {plan.originalPrice && (
-                                                <View style={theme.flexBlocks.horizontal4}>
-                                                    <Text
-                                                        style={[styles.subscriptionPrice, styles.subscriptionPriceCrossed]}>
-                                                        {plan.originalPrice}
-                                                    </Text>
-                                                    <Text style={styles.subscriptionPrice}>
-                                                        {plan.price}
-                                                    </Text>
-                                                </View>
-                                            )}
                                         </View>
 
-                                        <Text
-                                            style={[
-                                                styles.subscriptionPrice,
-                                                isSelected && styles.subscriptionPriceSelected,
-                                                tabletMode && styles.subscriptionPriceTablet
-                                            ]}
-                                            numberOfLines={1}
-                                        >
-                                            {plan.pricePerMonth || plan.price}
-                                        </Text>
+                                        {/* Зелёная плашка "7-Day Free Trial" — только на онбординге и только для пакетов с "trial" в identifier из RevenueCat */}
+                                        {!isSettingsVariant && plan.product?.identifier?.toLowerCase().includes('trial') && (
+                                            <View style={styles.subscriptionLabel}>
+                                                <Text style={styles.subscriptionLabelText}>
+                                                    {plan.freeTrialText ?? t('subscriptionOffering.startTrial.freeTrial')}
+                                                </Text>
+                                            </View>
+                                        )}
                                     </View>
-
-                                    {/* Зелёная плашка "7-Day Free Trial" — только в онбординге */}
-                                    {!isSettingsVariant && (plan.id === 'yearly' || plan.hasFreeTrial) && (
-                                        <View style={styles.subscriptionLabel}>
-                                            <Text style={styles.subscriptionLabelText}>
-                                                {plan.freeTrialText ?? t('subscriptionOffering.startTrial.freeTrial')}
-                                            </Text>
-                                        </View>
-                                    )}
-                                </View>
-                            </TouchableOpacity>
-                        );
-                    }))}
+                                </TouchableOpacity>
+                            );
+                        })
+                    )}
                 </View>
             </View>
 
@@ -402,8 +426,11 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                 <View style={styles.subscriptionDescription}>
                     {(() => {
                         const selectedPlan = subscriptionPlans.find(plan => plan.id === selectedSubscription);
-                        if (!selectedPlan) return null;
-                        const { descriptionText, descriptionHighlight, descriptionTextAfter } = selectedPlan;
+                        const effectivePlan = selectedPlan && (!isSettingsVariant || !selectedPlan.product?.identifier?.toLowerCase().includes('trial'))
+                            ? selectedPlan
+                            : displayPlans[0];
+                        if (!effectivePlan) return null;
+                        const { descriptionText, descriptionHighlight, descriptionTextAfter } = effectivePlan;
                         const hasLeading = Boolean(descriptionText?.trim());
                         return (
                             <Text style={[theme.fonts.regular, styles.descriptionText]}>
@@ -420,7 +447,7 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
 
                 <View style={theme.flexBlocks.vertical8}>
                     <CustomButton
-                        title={isSettingsVariant ? t('subscriptionOffering.startTrial.subscribe') : (selectedSubscription === 'yearly' || (subscriptionPlans.find(p => p.id === selectedSubscription)?.hasFreeTrial) ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe'))}
+                        title={isSettingsVariant ? t('subscriptionOffering.startTrial.subscribe') : (subscriptionPlans.find(p => p.id === selectedSubscription)?.product?.identifier?.toLowerCase().includes('trial') ? t('subscriptionOffering.startTrial.startFreeTrial') : t('subscriptionOffering.startTrial.subscribe'))}
                         onPress={() => {
                             if (!isSettingsVariant) {
                                 amplitudeAnalyticsService.trackEvent('Onboarding Payment', { plan: selectedSubscription });
@@ -549,6 +576,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 2,
         borderColor: '#D6D8DD',
+        overflow: 'visible',
     },
     subscriptionBlockTablet: {
         minWidth: 0,

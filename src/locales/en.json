@@ -8,7 +8,7 @@
     "activities": "Activities",
     "profile": "Profile"
   },
-    "auth": {
+  "auth": {
     "login": "Log in",
     "logout": "Log out",
     "email": "Your email",
@@ -468,8 +468,12 @@
       "monthlyTrial": "Monthly (Free Trial)",
       "freeTrial": "7-Day Free Trial",
       "unlimitedAccess": "Unlimited free access for",
+      "days7": "7 days",
+      "unlimitedAccessOnly": "Unlimited access",
       "save58": "7 days (save 58%)",
+      "save58Only": "Save 58%",
       "savePercent": "7 days (save {{percent}}%)",
+      "savePercentOnly": "Save {{percent}}%",
       "cancelAnytime": ". Cancel anytime",
       "startFreeTrial": "Start my FREE trial now",
       "subscribe": "Subscribe",
@@ -619,6 +623,159 @@
           "text": "20+ minutes",
           "subtitle": "Dedicated time for deep personal development"
         }
+      }
+    }
+  },
+  "activity_types": {
+    "fitness": {
+      "name": "Fitness and sports",
+      "description": "Physical exercise, workouts, sports",
+      "keywords": { "0": "sport", "1": "workout", "2": "fitness", "3": "running", "4": "swimming", "5": "cycling", "6": "yoga", "7": "pilates", "8": "strength", "9": "cardio", "10": "gymnastics", "11": "dance", "12": "boxing", "13": "martial arts", "14": "football", "15": "basketball", "16": "tennis", "17": "volleyball", "18": "skiing", "19": "snowboarding", "20": "surfing", "21": "rock climbing", "22": "weights", "23": "dumbbells" }
+    },
+    "work": {
+      "name": "Work and projects",
+      "description": "Professional activity, projects, tasks",
+      "keywords": { "0": "work", "1": "project", "2": "task", "3": "meeting", "4": "presentation", "5": "report", "6": "code", "7": "development", "8": "design", "9": "marketing", "10": "sales", "11": "client", "12": "business", "13": "startup", "14": "conference", "15": "training", "16": "mentoring", "17": "planning", "18": "analysis", "19": "research", "20": "documentation" }
+    },
+    "education": {
+      "name": "Learning and development",
+      "description": "Learning new skills, courses, self-improvement",
+      "keywords": { "0": "study", "1": "course", "2": "learning", "3": "lecture", "4": "seminar", "5": "masterclass", "6": "book", "7": "article", "8": "podcast", "9": "video", "10": "webinar", "11": "training", "12": "language", "13": "programming", "14": "design", "15": "marketing", "16": "management", "17": "psychology", "18": "philosophy", "19": "history", "20": "science", "21": "technology" }
+    },
+    "hobby": {
+      "name": "Hobbies and creativity",
+      "description": "Personal interests, creative projects",
+      "keywords": { "0": "hobby", "1": "creativity", "2": "drawing", "3": "painting", "4": "sculpture", "5": "photography", "6": "music", "7": "singing", "8": "playing instrument", "9": "composing", "10": "handicraft", "11": "knitting", "12": "sewing", "13": "embroidery", "14": "decoupage", "15": "scrapbooking", "16": "collecting", "17": "modeling", "18": "gardening", "19": "cooking" }
+    },
+    "travel": {
+      "name": "Travel and trips",
+      "description": "Trips, tours, tourism",
+      "keywords": { "0": "travel", "1": "trip", "2": "tour", "3": "excursion", "4": "vacation", "5": "business trip", "6": "hiking", "7": "camping", "8": "mountaineering", "9": "diving", "10": "rafting", "11": "safari", "12": "city", "13": "country", "14": "continent", "15": "island", "16": "mountain", "17": "sea", "18": "forest", "19": "museum", "20": "attraction", "21": "monument", "22": "temple", "23": "castle" }
+    },
+    "social": {
+      "name": "Social activity",
+      "description": "Meeting friends, events, volunteering",
+      "keywords": { "0": "meeting", "1": "friends", "2": "family", "3": "party", "4": "birthday", "5": "wedding", "6": "event", "7": "festival", "8": "concert", "9": "exhibition", "10": "theatre", "11": "cinema", "12": "cafe", "13": "restaurant", "14": "bar", "15": "club", "16": "volunteering", "17": "charity", "18": "help", "19": "support", "20": "communication", "21": "network", "22": "community" }
+    },
+    "health": {
+      "name": "Health and medicine",
+      "description": "Medical procedures, treatment, prevention",
+      "keywords": { "0": "health", "1": "medicine", "2": "doctor", "3": "hospital", "4": "clinic", "5": "pharmacy", "6": "medicine", "7": "pill", "8": "injection", "9": "surgery", "10": "rehabilitation", "11": "massage", "12": "physiotherapy", "13": "consultation", "14": "examination", "15": "analysis", "16": "diet", "17": "nutrition", "18": "vitamins", "19": "supplements", "20": "meditation", "21": "relaxation" }
+    },
+    "finance": {
+      "name": "Finance and investments",
+      "description": "Money management, investments, planning",
+      "keywords": { "0": "finance", "1": "money", "2": "budget", "3": "income", "4": "expenses", "5": "savings", "6": "investments", "7": "stocks", "8": "bonds", "9": "cryptocurrency", "10": "bank", "11": "credit", "12": "deposit", "13": "insurance", "14": "pension", "15": "tax", "16": "reporting", "17": "planning", "18": "savings", "19": "spending", "20": "salary", "21": "bonus", "22": "dividends" }
+    },
+    "home": {
+      "name": "Home and household",
+      "description": "Household chores, repairs, cleaning",
+      "keywords": { "0": "home", "1": "household", "2": "cleaning", "3": "laundry", "4": "cooking", "5": "repairs", "6": "construction", "7": "interior design", "8": "furniture", "9": "appliances", "10": "gardening", "11": "flowers", "12": "pets", "13": "animals", "14": "children", "15": "parenting", "16": "children education", "17": "organization", "18": "order", "19": "cleanliness", "20": "comfort", "21": "coziness" }
+    },
+    "technology": {
+      "name": "Technology and IT",
+      "description": "Programming, tech projects, gadgets",
+      "keywords": { "0": "technology", "1": "IT", "2": "programming", "3": "code", "4": "development", "5": "web", "6": "mobile app", "7": "game", "8": "website", "9": "server", "10": "database", "11": "algorithm", "12": "machine learning", "13": "artificial intelligence", "14": "blockchain", "15": "gadget", "16": "smartphone", "17": "computer", "18": "laptop", "19": "tablet", "20": "smart home" }
+    },
+    "nature": {
+      "name": "Nature and ecology",
+      "description": "Environmental projects, nature protection, research",
+      "keywords": { "0": "nature", "1": "ecology", "2": "environment", "3": "protection", "4": "conservation", "5": "recycling", "6": "sustainable development", "7": "green energy", "8": "solar panels", "9": "wind turbines", "10": "electric car", "11": "vegetarianism", "12": "veganism", "13": "organic products", "14": "forest", "15": "park", "16": "garden", "17": "farm", "18": "animals", "19": "plants", "20": "biodiversity" }
+    },
+    "culture": {
+      "name": "Culture and arts",
+      "description": "Cultural events, studying art",
+      "keywords": { "0": "culture", "1": "art", "2": "museum", "3": "gallery", "4": "exhibition", "5": "theatre", "6": "opera", "7": "ballet", "8": "concert", "9": "film", "10": "book", "11": "literature", "12": "poetry", "13": "painting", "14": "sculpture", "15": "architecture", "16": "history", "17": "archaeology", "18": "ethnography", "19": "folklore", "20": "traditions", "21": "customs", "22": "religion", "23": "philosophy" }
+    },
+    "general": {
+      "name": "General activities",
+      "description": "Other activities that do not fit specific categories",
+      "keywords": { "0": "activity", "1": "task", "2": "occupation", "3": "process", "4": "action", "5": "event", "6": "occasion", "7": "situation", "8": "circumstance", "9": "condition", "10": "state", "11": "mode", "12": "schedule", "13": "timetable", "14": "planning", "15": "organization", "16": "management", "17": "control", "18": "monitoring", "19": "analysis", "20": "assessment" }
+    },
+    "categories": {
+      "health": "Health and sports",
+      "professional": "Professional activity",
+      "personal": "Personal development",
+      "creative": "Creativity and hobbies",
+      "adventure": "Adventure and travel",
+      "social": "Social activity",
+      "medical": "Medicine and treatment",
+      "business": "Business and finance",
+      "lifestyle": "Lifestyle",
+      "technical": "Technical projects",
+      "environmental": "Ecology and nature",
+      "cultural": "Culture and arts",
+      "other": "Other"
+    }
+  },
+  "mood_types": {
+    "excellent": { "name": "Excellent", "description": "Outstanding mood, full of delight" },
+    "great": { "name": "Great", "description": "Very good mood" },
+    "good": { "name": "Good", "description": "Good mood" },
+    "fine": { "name": "Fine", "description": "Normal, calm mood" },
+    "okay": { "name": "Okay", "description": "Neutral mood" },
+    "meh": { "name": "Meh", "description": "Not so great mood" },
+    "bad": { "name": "Bad", "description": "Bad mood" },
+    "terrible": { "name": "Terrible", "description": "Very bad mood" },
+    "angry": { "name": "Angry", "description": "Angry, irritated mood" },
+    "stressed": { "name": "Stressed", "description": "Stressed, anxious state" },
+    "excited": { "name": "Excited", "description": "Excited, lively mood" },
+    "energetic": { "name": "Energetic", "description": "Full of energy and enthusiasm" },
+    "relaxed": { "name": "Relaxed", "description": "Calm, relaxed state" },
+    "focused": { "name": "Focused", "description": "Focused, determined" },
+    "creative": { "name": "Creative", "description": "Creative, inspired mood" },
+    "tired": { "name": "Tired", "description": "Tired, worn-out state" },
+    "categories": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    }
+  },
+  "social_networks": {
+    "facebook": { "name": "Facebook", "description": "The world's largest social network for connecting with friends and family" },
+    "instagram": { "name": "Instagram", "description": "Platform for sharing photos and videos with friends" },
+    "twitter": { "name": "Twitter", "description": "Microblog for quick sharing of thoughts and news" },
+    "linkedin": { "name": "LinkedIn", "description": "Professional network for business contacts" },
+    "youtube": { "name": "YouTube", "description": "Platform for watching and uploading video content" },
+    "tiktok": { "name": "TikTok", "description": "Platform for short-form music videos" },
+    "telegram": { "name": "Telegram", "description": "Fast and secure messenger for communication" },
+    "whatsapp": { "name": "WhatsApp", "description": "Popular messenger for chatting with friends and family" },
+    "discord": { "name": "Discord", "description": "Platform for gamers and communities" },
+    "reddit": { "name": "Reddit", "description": "Community of forums and discussions on various topics" },
+    "snapchat": { "name": "Snapchat", "description": "Platform for sharing disappearing photos and videos" },
+    "pinterest": { "name": "Pinterest", "description": "Platform for discovering and saving ideas and inspiration" },
+    "categories": {
+      "social": "Social Networks",
+      "professional": "Professional Networks",
+      "video": "Video",
+      "messenger": "Messaging",
+      "gaming": "Gaming",
+      "community": "Community",
+      "lifestyle": "Lifestyle"
+    }
+  },
+  "subscription_summary": {
+    "plan_interval": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "unknown": "Unknown"
+    },
+    "status": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "past_due": "Past due",
+      "pending": "Pending",
+      "unknown": "Unknown"
+    },
+    "plans": {
+      "monthly": {
+        "name": "Monthly Premium",
+        "description": "Full access to premium features with a monthly renewal."
+      },
+      "yearly": {
+        "name": "Yearly Premium",
+        "description": "Full access to premium features with the best annual value."
       }
     }
   }
