@@ -10,7 +10,6 @@ import { DailyActivityIcon } from "@assets/icons/DailyActivityIcon";
 import {
     AdditionalActivityType,
     additionalTaskSections,
-    DailyActivitySections,
     DailyActivityType
 } from "@features/main/screens/today/const";
 import { AddButton } from "@shared/components/AddButton/AddButton";
@@ -46,19 +45,25 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
     const { profile } = useProfile();
     const { hasMoodForToday, currentMood } = useCurrentMoodContext();
     const { isEmailVerified, isAuthenticated } = useAuth();
-    
+
     // Загружаем случайную статью и опрос при монтировании экрана
     const { data: randomArticle, refetch: refetchArticle } = useRandomArticle();
     const { data: randomSurvey, refetch: refetchSurvey } = useRandomSurvey();
-    
+
     // Загружаем активности пользователя с бекенда
     const { data: myActivitiesData, isLoading: isLoadingActivities } = useMyActivities();
     const myActivities = myActivitiesData?.data || [];
     const closeActivityMutation = useCloseActivity();
-    
+
     // Загружаем статистику активностей для виджета "Your weekly total"
     const { data: activityStatistics } = useActivityStatistics();
-    
+
+    const hasNoWeekStatistics =
+        !activityStatistics ||
+        activityStatistics.totalRatedActivities === 0 ||
+        (Number(activityStatistics.averageSatisfactionLevel) === 0 &&
+            Number(activityStatistics.averageHardnessLevel) === 0);
+
     // Сохраняем ID выбранной активности
     const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null);
 
@@ -118,15 +123,15 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
         if (!myActivities || myActivities.length === 0) {
             return [];
         }
-        
+
         return myActivities
             .sort((a, b) => a.position - b.position) // Сортируем по position
             .map((activity) => {
                 // Получаем satisfactionLevel и hardnessLevel из первого элемента rateActivities
-                const firstRateActivity = activity.rateActivities && activity.rateActivities.length > 0 
-                    ? activity.rateActivities[0] 
+                const firstRateActivity = activity.rateActivities && activity.rateActivities.length > 0
+                    ? activity.rateActivities[0]
                     : null;
-                
+
                 return {
                     id: activity.id,
                     activityName: activity.activityName,
@@ -202,7 +207,16 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                     </View>
 
                     <View style={ styles.weekInfo }>
-                        {activityStatistics?.relationship ? (
+                        {hasNoWeekStatistics ? (
+                            <>
+                                <Text style={ theme.fonts.subheader }>
+                                    { t('main.today.weekTotal.noInfo') }
+                                </Text>
+                                <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
+                                    { t('main.today.weekTotal.description') }
+                                </Text>
+                            </>
+                        ) : activityStatistics?.relationship ? (
                             <Text style={ theme.fonts.subheader }>
                                 { t(`main.today.weekTotal.relationship.${activityStatistics.relationship}`) }
                             </Text>
@@ -211,7 +225,6 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                 <Text style={ theme.fonts.subheader }>
                                     { t('main.today.weekTotal.noInfo') }
                                 </Text>
-
                                 <Text style={ [ theme.fonts.regular, { opacity: .6 } ] }>
                                     { t('main.today.weekTotal.description') }
                                 </Text>
@@ -275,20 +288,20 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                         id={section.activityType}
                                     />
 
-                                    <Pressable 
-                                        style={ styles.activityContent } 
+                                    <Pressable
+                                        style={ styles.activityContent }
                                         onPress={ () => onSectionClick(section) }
                                         disabled={ section.done }
                                     >
                                         <Text
-                                            style={ [ 
-                                                styles.activityTitle, 
-                                                theme.fonts.subheader, 
+                                            style={ [
+                                                styles.activityTitle,
+                                                theme.fonts.subheader,
                                                 section.done ? {
                                                     ...styles.activitySectionDone,
                                                     textDecorationLine: 'line-through',
                                                     opacity: 0.3
-                                                } : {} 
+                                                } : {}
                                             ] }>
                                             { section.activityName }
                                         </Text>
@@ -319,15 +332,15 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                     // Фильтруем секции: если для ARTICLE или SURVEY нет данных, не показываем секцию
                                     const isArticleSection = section.mode === AdditionalActivityType.ARTICLE;
                                     const isSurveySection = section.mode === AdditionalActivityType.SURVEY;
-                                    
+
                                     if (isArticleSection && !randomArticle) {
                                         return false; // Не показываем секцию ARTICLE, если нет данных
                                     }
-                                    
+
                                     if (isSurveySection && !randomSurvey) {
                                         return false; // Не показываем секцию SURVEY, если нет данных
                                     }
-                                    
+
                                     return true; // Показываем все остальные секции
                                 })
                                 .map((section, index) => {
@@ -335,32 +348,32 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                 const isArticleSection = section.mode === AdditionalActivityType.ARTICLE;
                                 const isSurveySection = section.mode === AdditionalActivityType.SURVEY;
                                 const isBlocked = isMoodSection && hasMoodForToday;
-                                
+
                                 // Получаем данные для article и survey
                                 const articleData = isArticleSection ? randomArticle : null;
                                 const surveyData = isSurveySection ? randomSurvey : null;
-                                
+
                                 // Определяем текст для отображения
                                 let displayTitle = t(section.label);
                                 let displayInfo = t(section.info);
                                 let displayDescription = section.description ? t(section.description) : null;
-                                
+
                                 // Если есть данные из API, используем их
                                 if (articleData) {
                                     displayInfo = articleData.title || displayInfo;
                                     if (articleData.text) {
-                                        displayDescription = articleData.text.length > 100 
-                                            ? articleData.text.substring(0, 100) + '...' 
+                                        displayDescription = articleData.text.length > 100
+                                            ? articleData.text.substring(0, 100) + '...'
                                             : articleData.text;
                                     }
                                 }
-                                
+
                                 if (surveyData) {
                                     displayInfo = surveyData.title || displayInfo;
                                     if (surveyData.description) {
                                         if (typeof surveyData.description === 'string') {
-                                            displayDescription = surveyData.description.length > 100 
-                                                ? surveyData.description.substring(0, 100) + '...' 
+                                            displayDescription = surveyData.description.length > 100
+                                                ? surveyData.description.substring(0, 100) + '...'
                                                 : surveyData.description;
                                         } else {
                                             // Если description - объект, используем fallback
@@ -368,35 +381,35 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                         }
                                     }
                                 }
-                                
+
                                 return (
-                                    <Pressable 
-                                        key={ index } 
+                                    <Pressable
+                                        key={ index }
                                         style={ {
                                             ...styles.activitySection,
                                             backgroundColor: '#fff',
                                             borderRadius: 24,
                                             opacity: isBlocked ? 0.6 : 1
-                                        } } 
+                                        } }
                                         onPress={ () => onAdditionalSectionClick(section) }
                                         disabled={ isBlocked }
                                     >
                                         <View style={ [ theme.flexBlocks.horizontal4, theme.flexBlocks.alignCenter ] }>
                                             { section.icon }
 
-                                            <Text style={ [ 
+                                            <Text style={ [
                                                 theme.fonts.subtitle,
                                             ] }>
                                                 { displayTitle }
                                             </Text>
-                                            
+
                                             { isBlocked && (
                                                 <WhiteCheckmarkIcon />
                                             )}
                                         </View>
 
                                         <View style={ theme.flexBlocks.vertical4 }>
-                                            <Text style={ [ 
+                                            <Text style={ [
                                                 theme.fonts.subheader,
                                                 isBlocked && {
                                                     color: '#000',
@@ -408,12 +421,12 @@ export default function TodayScreen({ navigation }: { navigation: TodayScreenNav
                                             </Text>
 
                                             { displayDescription &&
-                                                <Text style={ [ 
-                                                    theme.fonts.regular, 
+                                                <Text style={ [
+                                                    theme.fonts.regular,
                                                     { opacity: .6 },
                                                 ] } numberOfLines={2}>
                                                     { displayDescription }
-                                                </Text> 
+                                                </Text>
                                             }
                                         </View>
                                     </Pressable>
