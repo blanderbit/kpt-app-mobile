@@ -61,9 +61,9 @@ export default function NinthStep({
                 showsVerticalScrollIndicator={false}
             >
                 {recommendations.map((item, index) => {
-                    // Определяем тип активности по содержимому или используем дефолтный
-                    const activityType = determineActivityType(item);
-                    
+                    // Тип с бэкенда (activityType + activityTypeLabel) или определяем по содержимому
+                    const activityType = item.activityType ?? determineActivityType(item);
+
                     return (
                         <View
                             key={`${item.activityName}-${index}`}
@@ -77,7 +77,7 @@ export default function NinthStep({
                                 index !== recommendations.length - 1 && styles.activityDivider
                             ]}
                         >
-                            <ActivityLabel id={activityType} />
+                            <ActivityLabel id={activityType} label={item.activityTypeLabel} />
 
                             <View style={[styles.activityContent, { gap: isSmall ? getResponsiveGap(4) : 4 }]}>
                                 <Text style={[styles.activityTitle, theme.fonts.activityTitle]}>

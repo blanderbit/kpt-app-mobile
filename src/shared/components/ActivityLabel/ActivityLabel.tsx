@@ -1,20 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useCustomTheme } from '@app/theme/ThemeContext';
 import { ACTIVITY_TYPES } from './const';
 
 interface ActivityLabelProps {
     id: string;
+    /** Готовый текст лейбла (например с бэкенда) — если передан, показывается вместо перевода по id */
+    label?: string;
     textStyle?: any;
     containerStyle?: any;
 }
 
-export const ActivityLabel = ({ 
+export const ActivityLabel = ({
     id,
+    label: labelOverride,
     textStyle,
     containerStyle
 }: ActivityLabelProps) => {
     const { theme } = useCustomTheme();
+    const { t } = useTranslation();
 
     const activityConfig = ACTIVITY_TYPES[id];
 
@@ -35,6 +40,18 @@ export const ActivityLabel = ({
     const { icon, name, color } = activityConfig;
     const backgroundColor = `${color}4D`;
 
+    // Готовый лейбл с бэкенда или переведённый текст (бэкенд может отдавать name как ключ перевода)
+    const labelByKey = t(`activity_types.${id}.name`);
+    const labelFromName = name && name.includes('.') ? t(name) : name;
+    const displayName =
+        labelOverride != null && labelOverride !== ''
+            ? labelOverride
+            : labelByKey !== `activity_types.${id}.name`
+              ? labelByKey
+              : labelFromName !== name
+                ? labelFromName
+                : name;
+
     return (
         <View style={[
             styles.activityLabel,
@@ -47,7 +64,7 @@ export const ActivityLabel = ({
                 { color },
                 textStyle
             ]}>
-                {name}
+                {displayName}
             </Text>
         </View>
     );

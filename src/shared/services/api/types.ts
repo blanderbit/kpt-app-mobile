@@ -361,6 +361,10 @@ export interface ActivityRecommendation {
   content: string;
   confidenceScore: number;
   reasoning: string;
+  /** Код типа (например fitness, health) — для подстановки в ActivityLabel */
+  activityType?: string;
+  /** Уже переведённое название типа с бэкенда (например «Фитнес и спорт») */
+  activityTypeLabel?: string;
 }
 
 export interface ActivityRecommendationsResponse {
