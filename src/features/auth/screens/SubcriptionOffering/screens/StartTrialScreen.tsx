@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from "react";
-import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ScrollView} from "react-native";
+import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ScrollView, Linking} from "react-native";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -40,6 +40,8 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
     const [isPurchasing, setIsPurchasing] = useState(false);
     const [isLoadingPlans, setIsLoadingPlans] = useState(true);
     const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+    const [hasExistingSubscription, setHasExistingSubscription] = useState(false);
+    const [isRestoring, setIsRestoring] = useState(false);
     const stepRefs = useRef<(View | null)[]>([]);
 
     const measureStepHeight = (index: number) => {
@@ -108,6 +110,10 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     setIsLoadingPlans(false);
                     return;
                 }
+
+                // Проверяем, есть ли уже активная подписка на этом устройстве (другой/старый аккаунт)
+                const subscribed = await revenueCatService.isSubscribed();
+                setHasExistingSubscription(subscribed);
 
                 // Находим monthly, monthly_trial и yearly продукты
                 const monthlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
@@ -279,6 +285,41 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
         }
     };
 
+    const handleRestorePurchases = async () => {
+        if (!revenueCatService.getInitialized()) return;
+        setIsRestoring(true);
+        try {
+            const customerInfo = await revenueCatService.restorePurchases();
+            const hasActive = (customerInfo?.entitlements?.active && (customerInfo.entitlements.active instanceof Map ? customerInfo.entitlements.active.size > 0 : Object.keys(customerInfo.entitlements.active).length > 0));
+            setHasExistingSubscription(hasActive);
+            if (hasActive) {
+                await revenueCatService.logPurchaseForBackend(customerInfo);
+                onNext();
+            } else {
+                Alert.alert(
+                    t('subscriptionOffering.startTrial.purchaseErrorTitle'),
+                    t('subscriptionOffering.startTrial.purchaseErrorMessage'),
+                    [{ text: t('ok') }]
+                );
+            }
+        } catch {
+            Alert.alert(
+                t('subscriptionOffering.startTrial.purchaseErrorTitle'),
+                t('subscriptionOffering.startTrial.purchaseErrorMessage'),
+                [{ text: t('ok') }]
+            );
+        } finally {
+            setIsRestoring(false);
+        }
+    };
+
+    const handleManageSubscription = async () => {
+        try {
+            const url = await revenueCatService.getManagementURL();
+            if (url) await Linking.openURL(url);
+        } catch (_) {}
+    };
+
     const isSettingsVariant = variant === 'settings';
     const tabletMode = isTablet();
     const displayPlans = isSettingsVariant
@@ -288,6 +329,36 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
     const content = (
         <>
             <View style={[styles.content, tabletMode && styles.contentTablet, theme.flexBlocks.vertical16]}>
+                {hasExistingSubscription ? (
+                    <View style={theme.flexBlocks.vertical16}>
+                        <Text style={[styles.textCenter, theme.fonts.title]}>
+                            {t('subscriptionOffering.startTrial.alreadySubscribedTitle')}
+                        </Text>
+                        <Text style={[styles.textCenter, theme.fonts.regular, styles.description, { marginVertical: 12 }]}>
+                            {t('subscriptionOffering.startTrial.alreadySubscribedMessage')}
+                        </Text>
+                        <View style={theme.flexBlocks.vertical8}>
+                            <CustomButton
+                                title={t('subscriptionOffering.startTrial.continueWithSubscription')}
+                                onPress={onNext}
+                                themeName="primary"
+                                disabled={isRestoring}
+                            />
+                            <CustomButton
+                                title={t('subscriptionOffering.startTrial.restorePurchases')}
+                                onPress={handleRestorePurchases}
+                                themeName="secondary"
+                                disabled={isRestoring}
+                            />
+                            <Pressable onPress={handleManageSubscription} style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}>
+                                <Text style={[styles.skipTitle, { textAlign: 'center' }]}>
+                                    {t('subscriptionOffering.startTrial.manageSubscription')}
+                                </Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                ) : (
+                <>
                 <View style={theme.flexBlocks.vertical8}>
                     {!isSettingsVariant && (
                         <Text style={[styles.textCenter, styles.oneTimeOffer, theme.fonts.regular]}>
@@ -420,7 +491,6 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                         })
                     )}
                 </View>
-            </View>
 
             <View style={[theme.flexBlocks.vertical16, tabletMode && styles.buttonsSectionTablet]}>
                 <View style={styles.subscriptionDescription}>
@@ -475,7 +545,17 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                             </Text>
                         </Pressable>
                     )}
+                    {!isSettingsVariant && (
+                        <Pressable onPress={handleRestorePurchases} disabled={isRestoring} style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1, marginTop: 8 }]}>
+                            <Text style={[theme.fonts.regular, { color: COLORS.gray_dark, textAlign: 'center' }]}>
+                                {t('subscriptionOffering.startTrial.restorePurchases')}
+                            </Text>
+                        </Pressable>
+                    )}
                 </View>
+            </View>
+                </>
+                )}
             </View>
         </>
     );

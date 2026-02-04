@@ -1,5 +1,5 @@
 import React, {useState, useRef} from "react";
-import {StyleSheet, Text, View, SafeAreaView, Pressable, Animated} from "react-native";
+import {StyleSheet, View, SafeAreaView, Pressable, Animated, Image} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {CloseIcon} from "@assets/icons/CloseIcon";
 import {SubscriptionOfferingTemplateProps} from "./types";
@@ -110,9 +110,11 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
             <View style={styles.fullScreenContainer}>
                 <SafeAreaView style={{flex: 1}}>
                     <View style={[styles.header, theme.flexBlocks.justifyCenter, theme.flexBlocks.alignCenter]}>
-                        <Text style={theme.fonts.label}>
-                            Logo
-                        </Text>
+                        <Image
+                            source={require('../../../../../assets/plesury-icon.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
 
                         <Pressable
                             onPress={onClose}
@@ -164,6 +166,10 @@ const styles = StyleSheet.create({
         position: 'relative',
         paddingVertical: 8,
         paddingHorizontal: 16
+    },
+    logo: {
+        width: 32,
+        height: 32,
     },
     smallBtn: {
         position: 'absolute',

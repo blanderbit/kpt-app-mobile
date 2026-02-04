@@ -478,7 +478,12 @@
       "startFreeTrial": "Start my FREE trial now",
       "subscribe": "Subscribe",
       "skipOffer": "Skip this one-time offer",
-      "offerExpires": "Offer expires when you exit this screen!"
+      "offerExpires": "Offer expires when you exit this screen!",
+      "alreadySubscribedTitle": "Subscription already active",
+      "alreadySubscribedMessage": "This device already has an active subscription (linked to your Apple ID). Tap Continue to use it with this account, or Restore purchases if the subscription doesn't appear.",
+      "restorePurchases": "Restore purchases",
+      "continueWithSubscription": "Continue",
+      "manageSubscription": "Manage subscription"
     },
     "secondTrial": {
       "oneTimeOffer": "One-time offer!",
