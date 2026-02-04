@@ -14,6 +14,7 @@ import { useCustomTheme } from "@app/theme/ThemeContext";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { Routes } from "@app/navigation/const";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
+import { isSocialSignInCancelError } from '@features/auth/screens/socialSignInErrors';
 import { clearOnboardingData } from '@shared/utils/onboardingStorage';
 import { getResponsivePadding, getResponsiveGap, isSmallScreen } from '@shared/utils/screenUtils';
 
@@ -77,16 +78,20 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const handleGoogleSignIn = async () => {
         try {
             await signInWithGoogle();
-        } catch {
-            // Ошибка входа через Google — не показываем алерт пользователю
+        } catch (error: any) {
+            if (isSocialSignInCancelError(error)) return;
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.googleSignInErrorMessage'));
+            Alert.alert(t('auth.googleSignInError'), msg, [{ text: t('ok') }]);
         }
     };
 
     const handleAppleSignIn = async () => {
         try {
             await signInWithApple();
-        } catch {
-            // Ошибка входа через Apple — не показываем алерт пользователю
+        } catch (error: any) {
+            if (isSocialSignInCancelError(error)) return;
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.appleSignInErrorMessage'));
+            Alert.alert(t('auth.appleSignInError'), msg, [{ text: t('ok') }]);
         }
     };
 

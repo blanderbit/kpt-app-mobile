@@ -1,5 +1,5 @@
 import React from "react";
-import {Pressable, StyleSheet, Text, View, ScrollView} from "react-native";
+import {Pressable, StyleSheet, Text, View, Alert, ScrollView} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import CustomButton from "@shared/components/Button/Button";
 import {RemoteSvg} from "@shared/components/RemoteSvgIcon/RemoteSvgIcon";
@@ -10,6 +10,7 @@ import { Routes } from "@app/navigation/const";
 import { useNavigation } from "@react-navigation/native";
 import { LoginScreenNavigationProp } from "@app/navigation/AppNavigator";
 import { useFirebaseAuth } from '@app/hooks/use-firebase-auth.hook';
+import { isSocialSignInCancelError } from '@features/auth/screens/socialSignInErrors';
 import { useTranslation } from 'react-i18next';
 import { isSmallScreen } from "@shared/utils/screenUtils";
 
@@ -30,16 +31,20 @@ export default function SeventeenthStep({onNext}: { onNext: () => void }) {
     const handleGoogleSignIn = async () => {
         try {
             await signUpWithGoogle();
-        } catch {
-            // Ошибка входа через Google — не показываем алерт пользователю
+        } catch (error: any) {
+            if (isSocialSignInCancelError(error)) return;
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.googleSignInErrorMessage'));
+            Alert.alert(t('auth.signUp.googleSignInError'), msg, [{ text: t('ok') }]);
         }
     };
 
     const handleAppleSignIn = async () => {
         try {
             await signUpWithApple();
-        } catch {
-            // Ошибка входа через Apple — не показываем алерт пользователю
+        } catch (error: any) {
+            if (isSocialSignInCancelError(error)) return;
+            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.signUp.appleSignInErrorMessage'));
+            Alert.alert(t('auth.signUp.appleSignInError'), msg, [{ text: t('ok') }]);
         }
     };
 
