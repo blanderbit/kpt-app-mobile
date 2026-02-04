@@ -21,7 +21,6 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
     const [appUserId, setAppUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!__DEV__) return;
         revenueCatService.getAppUserID().then(setAppUserId).catch(() => {});
     }, []);
 
@@ -151,7 +150,7 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
                             {renderCurrentStep()}
                         </Animated.View>
                     </View>
-                    {__DEV__ && appUserId != null && (
+                    {appUserId != null && (
                         <View style={styles.appUserIdBlock}>
                             <Text style={styles.appUserIdLabel}>RevenueCat app_user_id (для отладки)</Text>
                             <Text style={styles.appUserIdValue} selectable>{appUserId}</Text>

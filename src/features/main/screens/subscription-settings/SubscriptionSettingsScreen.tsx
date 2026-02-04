@@ -46,7 +46,6 @@ export default function SubscriptionSettingsScreen({ navigation }: {
     const [appUserId, setAppUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!__DEV__) return;
         revenueCatService.getAppUserID().then(setAppUserId).catch(() => {});
     }, []);
 
@@ -222,7 +221,7 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                         </View>
                     )}
                 </View>
-                {__DEV__ && appUserId != null && (
+                {appUserId != null && (
                     <View style={styles.appUserIdBlock}>
                         <Text style={[theme.fonts.regular, styles.appUserIdLabel]}>RevenueCat app_user_id (для отладки)</Text>
                         <Text style={[theme.fonts.regular, styles.appUserIdValue]} selectable>{appUserId}</Text>

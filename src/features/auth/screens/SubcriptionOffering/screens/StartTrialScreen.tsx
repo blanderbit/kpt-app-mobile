@@ -111,9 +111,9 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                     return;
                 }
 
-                // Проверяем, есть ли уже активная подписка на этом устройстве (другой/старый аккаунт)
-                const subscribed = await revenueCatService.isSubscribed();
-                setHasExistingSubscription(subscribed);
+                // Экран «подписка уже оформлена» временно отключён для дебага
+                // const subscribed = await revenueCatService.isSubscribed();
+                // setHasExistingSubscription(subscribed);
 
                 // Находим monthly, monthly_trial и yearly продукты
                 const monthlyProduct = products.find(p => p.identifier === REVENUECAT_PRODUCT_IDS.MONTHLY);
@@ -329,35 +329,7 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
     const content = (
         <>
             <View style={[styles.content, tabletMode && styles.contentTablet, theme.flexBlocks.vertical16]}>
-                {hasExistingSubscription ? (
-                    <View style={theme.flexBlocks.vertical16}>
-                        <Text style={[styles.textCenter, theme.fonts.title]}>
-                            {t('subscriptionOffering.startTrial.alreadySubscribedTitle')}
-                        </Text>
-                        <Text style={[styles.textCenter, theme.fonts.regular, styles.description, { marginVertical: 12 }]}>
-                            {t('subscriptionOffering.startTrial.alreadySubscribedMessage')}
-                        </Text>
-                        <View style={theme.flexBlocks.vertical8}>
-                            <CustomButton
-                                title={t('subscriptionOffering.startTrial.continueWithSubscription')}
-                                onPress={onNext}
-                                themeName="primary"
-                                disabled={isRestoring}
-                            />
-                            <CustomButton
-                                title={t('subscriptionOffering.startTrial.restorePurchases')}
-                                onPress={handleRestorePurchases}
-                                themeName="secondary"
-                                disabled={isRestoring}
-                            />
-                            <Pressable onPress={handleManageSubscription} style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}>
-                                <Text style={[styles.skipTitle, { textAlign: 'center' }]}>
-                                    {t('subscriptionOffering.startTrial.manageSubscription')}
-                                </Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                ) : (
+                {/* Экран «подписка уже оформлена» временно отключён — всегда показываем выбор плана */}
                 <>
                 <View style={theme.flexBlocks.vertical8}>
                     {!isSettingsVariant && (
@@ -555,7 +527,6 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
                 </View>
             </View>
                 </>
-                )}
             </View>
         </>
     );
