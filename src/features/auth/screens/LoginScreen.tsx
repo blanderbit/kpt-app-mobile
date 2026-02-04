@@ -77,26 +77,16 @@ export default function LoginScreen({ navigation }: { navigation: LoginScreenNav
     const handleGoogleSignIn = async () => {
         try {
             await signInWithGoogle();
-        } catch (error: any) {
-            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.googleSignInErrorMessage'));
-            Alert.alert(
-                t('auth.googleSignInError'),
-                msg,
-                [{ text: t('ok') }]
-            );
+        } catch {
+            // Ошибка входа через Google — не показываем алерт пользователю
         }
     };
 
     const handleAppleSignIn = async () => {
         try {
             await signInWithApple();
-        } catch (error: any) {
-            const msg = error?.message && (error.message.startsWith('auth.') || error.message.startsWith('main.')) ? t(error.message) : (error?.message || t('auth.appleSignInErrorMessage'));
-            Alert.alert(
-                t('auth.appleSignInError'),
-                msg,
-                [{ text: t('ok') }]
-            );
+        } catch {
+            // Ошибка входа через Apple — не показываем алерт пользователю
         }
     };
 
