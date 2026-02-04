@@ -43,6 +43,12 @@ export default function SubscriptionSettingsScreen({ navigation }: {
     const summary = summaryResponse?.subscription ?? null;
     const { showSubscriptionOffering } = useSubscriptionOffering();
     const [isOpeningManagement, setIsOpeningManagement] = useState(false);
+    const [appUserId, setAppUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!__DEV__) return;
+        revenueCatService.getAppUserID().then(setAppUserId).catch(() => {});
+    }, []);
 
     const onBack = () => navigation.goBack();
 
@@ -216,6 +222,12 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                         </View>
                     )}
                 </View>
+                {__DEV__ && appUserId != null && (
+                    <View style={styles.appUserIdBlock}>
+                        <Text style={[theme.fonts.regular, styles.appUserIdLabel]}>RevenueCat app_user_id (для отладки)</Text>
+                        <Text style={[theme.fonts.regular, styles.appUserIdValue]} selectable>{appUserId}</Text>
+                    </View>
+                )}
             </View>
         </PageWithHeader>
     );
@@ -289,5 +301,22 @@ const styles = StyleSheet.create({
     },
     actionButtonText: {
         color: COLORS.warning,
+    },
+    appUserIdBlock: {
+        marginTop: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: COLORS.gray_light,
+        borderRadius: 12,
+    },
+    appUserIdLabel: {
+        fontSize: 12,
+        opacity: 0.8,
+        marginBottom: 4,
+    },
+    appUserIdValue: {
+        fontSize: 11,
+        fontFamily: 'monospace',
+        color: COLORS.gray_dark,
     },
 });
