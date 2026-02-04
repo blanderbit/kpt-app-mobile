@@ -487,6 +487,14 @@ export class SubscriptionService extends ApiService {
   async cancelSubscription(data: CancelSubscriptionRequest): Promise<CancelSubscriptionResponse> {
     return this.post<CancelSubscriptionResponse>('/subscriptions/revenuecat/cancel', data);
   }
+
+  /**
+   * Синхронизация состояния подписки с бэкендом после restore.
+   * Бэкенд должен перезапросить данные из RevenueCat для текущего пользователя и обновить кэш.
+   */
+  async syncSubscriptionWithBackend(): Promise<void> {
+    return this.post<void>('/subscriptions/revenuecat/sync', {});
+  }
 }
 
 // Экспорт всех сервисов

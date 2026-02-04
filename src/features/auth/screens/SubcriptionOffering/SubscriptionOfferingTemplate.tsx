@@ -1,12 +1,10 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef} from "react";
 import {StyleSheet, View, SafeAreaView, Pressable, Animated, Image, Text} from "react-native";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {CloseIcon} from "@assets/icons/CloseIcon";
 import {SubscriptionOfferingTemplateProps} from "./types";
 import {subscriptionOfferingSteps} from "./screens/const";
 import {LinearGradient} from "expo-linear-gradient";
-import {revenueCatService} from "@shared/services/revenuecat";
-import {COLORS} from "@app/theme";
 
 export default function SubscriptionOfferingTemplate({navigation, onComplete, variant = 'onboarding'}: SubscriptionOfferingTemplateProps) {
     const {theme} = useCustomTheme();
@@ -18,11 +16,6 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     const totalSteps = subscriptionOfferingSteps.length;
-    const [appUserId, setAppUserId] = useState<string | null>(null);
-
-    useEffect(() => {
-        revenueCatService.getAppUserID().then(setAppUserId).catch(() => {});
-    }, []);
 
     // Функция для анимированного перехода между степами
     const animateStepTransition = (newStep: number, direction: 'forward' | 'backward', callback?: () => void) => {
@@ -150,12 +143,6 @@ export default function SubscriptionOfferingTemplate({navigation, onComplete, va
                             {renderCurrentStep()}
                         </Animated.View>
                     </View>
-                    {appUserId != null && (
-                        <View style={styles.appUserIdBlock}>
-                            <Text style={styles.appUserIdLabel}>RevenueCat app_user_id (для отладки)</Text>
-                            <Text style={styles.appUserIdValue} selectable>{appUserId}</Text>
-                        </View>
-                    )}
                 </SafeAreaView>
             </View>
         </LinearGradient>
@@ -217,24 +204,5 @@ const styles = StyleSheet.create({
     info: {
         opacity: 0.6,
         textAlign: 'center',
-    },
-    appUserIdBlock: {
-        marginHorizontal: 16,
-        marginBottom: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: COLORS.gray_light,
-        borderRadius: 12,
-    },
-    appUserIdLabel: {
-        fontSize: 12,
-        opacity: 0.8,
-        marginBottom: 4,
-        color: COLORS.gray_dark,
-    },
-    appUserIdValue: {
-        fontSize: 11,
-        fontFamily: 'monospace',
-        color: COLORS.gray_dark,
     },
 });

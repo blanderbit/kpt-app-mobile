@@ -1,5 +1,6 @@
 import React, {useState, useRef, useEffect} from "react";
 import {StyleSheet, Text, View, TouchableOpacity, Pressable, Alert, ScrollView, Linking} from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
 import CustomButton from "@shared/components/Button/Button";
 import {useCustomTheme} from "@app/theme/ThemeContext";
 import {useTranslation} from "react-i18next";
@@ -9,6 +10,9 @@ import {COLORS} from "@app/theme";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
 import { isTablet } from "@shared/utils/screenUtils";
 import { revenueCatService } from "@shared/services/revenuecat";
+import { subscriptionService } from "@shared/services/api/client";
+import { queryKeys } from "@shared/services/api/hooks";
+import { REVENUECAT_SUBSCRIPTION_QUERY_KEY } from "@shared/hooks/useRevenueCatSubscription";
 import { REVENUECAT_PRODUCT_IDS, REVENUECAT_PRODUCT_IDENTIFIERS } from "@app/config/revenuecat.config";
 import { PurchasesStoreProduct } from "react-native-purchases";
 import type { SubscriptionOfferingVariant } from "@features/auth/screens/SubcriptionOffering/types";
@@ -33,6 +37,7 @@ interface StartTrialScreenProps {
 }
 
 export default function StartTrialScreen({ onNext, variant = 'onboarding' }: StartTrialScreenProps) {
+    const queryClient = useQueryClient();
     const {t} = useTranslation();
     const {theme} = useCustomTheme();
     const [stepHeights, setStepHeights] = useState<number[]>([]);
@@ -292,6 +297,10 @@ export default function StartTrialScreen({ onNext, variant = 'onboarding' }: Sta
             const customerInfo = await revenueCatService.restorePurchases();
             const hasActive = (customerInfo?.entitlements?.active && (customerInfo.entitlements.active instanceof Map ? customerInfo.entitlements.active.size > 0 : Object.keys(customerInfo.entitlements.active).length > 0));
             setHasExistingSubscription(hasActive);
+            // Синхронизируем состояние подписки с бэкендом (после очистки в Sandbox RC отдаёт пустые entitlements — бэк обновит кэш)
+            await subscriptionService.syncSubscriptionWithBackend().catch(() => {});
+            queryClient.invalidateQueries({ queryKey: queryKeys.subscriptionSummary() });
+            queryClient.invalidateQueries({ queryKey: REVENUECAT_SUBSCRIPTION_QUERY_KEY });
             if (hasActive) {
                 await revenueCatService.logPurchaseForBackend(customerInfo);
                 onNext();

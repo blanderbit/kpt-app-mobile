@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Linking, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowIcon } from "@assets/icons/ArrowIcon";
 import PageWithHeader from "@shared/components/PageWithHeader/PageWithHeader";
 import { useCustomTheme } from "@app/theme/ThemeContext";
@@ -11,10 +13,12 @@ import { Label, LabelType } from "@shared/components/Label/Label";
 import { SectionItem } from "@shared/components/SectionItem/SectionItem";
 import { formatDateLong } from "@shared/utils/formatDate";
 import { amplitudeAnalyticsService } from "@shared/services/analytics";
-import { useSubscriptionSummary } from "@shared/services/api/hooks";
+import { useSubscriptionSummary, queryKeys } from "@shared/services/api/hooks";
+import { subscriptionService } from "@shared/services/api/client";
 import type { SubscriptionStatus } from "@shared/services/api/types";
 import { useSubscriptionOffering } from "@features/auth/screens/SubcriptionOffering/SubscriptionOfferingProvider";
 import { revenueCatService } from "@shared/services/revenuecat";
+import { REVENUECAT_SUBSCRIPTION_QUERY_KEY } from "@shared/hooks/useRevenueCatSubscription";
 import CustomButton from "@shared/components/Button/Button";
 
 const ns = "main.profile.subscriptionSettingsScreen";
@@ -39,15 +43,25 @@ export default function SubscriptionSettingsScreen({ navigation }: {
 }) {
     const { t } = useTranslation();
     const { theme } = useCustomTheme();
+    const queryClient = useQueryClient();
     const { data: summaryResponse, isLoading, isError, refetch: refetchSummary } = useSubscriptionSummary();
     const summary = summaryResponse?.subscription ?? null;
     const { showSubscriptionOffering } = useSubscriptionOffering();
     const [isOpeningManagement, setIsOpeningManagement] = useState(false);
-    const [appUserId, setAppUserId] = useState<string | null>(null);
 
-    useEffect(() => {
-        revenueCatService.getAppUserID().then(setAppUserId).catch(() => {});
-    }, []);
+    // При каждом заходе на экран — restore + sync, чтобы бэкенд обновил данные подписки (например после очистки Sandbox)
+    useFocusEffect(
+        React.useCallback(() => {
+            if (!revenueCatService.getInitialized()) return;
+            revenueCatService.restorePurchases()
+                .then(() => subscriptionService.syncSubscriptionWithBackend())
+                .catch(() => {})
+                .finally(() => {
+                    queryClient.invalidateQueries({ queryKey: queryKeys.subscriptionSummary() });
+                    queryClient.invalidateQueries({ queryKey: REVENUECAT_SUBSCRIPTION_QUERY_KEY });
+                });
+        }, [queryClient])
+    );
 
     const onBack = () => navigation.goBack();
 
@@ -221,12 +235,6 @@ export default function SubscriptionSettingsScreen({ navigation }: {
                         </View>
                     )}
                 </View>
-                {appUserId != null && (
-                    <View style={styles.appUserIdBlock}>
-                        <Text style={[theme.fonts.regular, styles.appUserIdLabel]}>RevenueCat app_user_id (для отладки)</Text>
-                        <Text style={[theme.fonts.regular, styles.appUserIdValue]} selectable>{appUserId}</Text>
-                    </View>
-                )}
             </View>
         </PageWithHeader>
     );
@@ -300,22 +308,5 @@ const styles = StyleSheet.create({
     },
     actionButtonText: {
         color: COLORS.warning,
-    },
-    appUserIdBlock: {
-        marginTop: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: COLORS.gray_light,
-        borderRadius: 12,
-    },
-    appUserIdLabel: {
-        fontSize: 12,
-        opacity: 0.8,
-        marginBottom: 4,
-    },
-    appUserIdValue: {
-        fontSize: 11,
-        fontFamily: 'monospace',
-        color: COLORS.gray_dark,
     },
 });
