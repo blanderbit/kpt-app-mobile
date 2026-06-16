@@ -3,7 +3,7 @@
 
 set -e
 
-PROJECT_ROOT="/Users/danil/WORK/KptApp"
+PROJECT_ROOT="/Users/andrii/projects/kpt-app-mobile"
 IOS_DIR="$PROJECT_ROOT/ios"
 
 echo "🚀 Подготовка к сборке iOS билда..."
